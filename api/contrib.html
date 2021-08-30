@@ -360,42 +360,43 @@
 <li><p><a class="reference internal" href="#bprloss" id="id42">BPRLoss</a></p></li>
 <li><p><a class="reference internal" href="#hingeloss" id="id43">HingeLoss</a></p></li>
 <li><p><a class="reference internal" href="#logisticloss" id="id44">LogisticLoss</a></p></li>
-<li><p><a class="reference internal" href="#warploss" id="id45">WARPLoss</a></p></li>
+<li><p><a class="reference internal" href="#rocstarloss" id="id45">RocStarLoss</a></p></li>
+<li><p><a class="reference internal" href="#warploss" id="id46">WARPLoss</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#modules" id="id46">Modules</a></p>
+<li><p><a class="reference internal" href="#modules" id="id47">Modules</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id47">ArcFace and SubCenterArcFace</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id48">Arc Margin Product</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id49">CosFace and AdaCos</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface" id="id50">CurricularFace</a></p></li>
-<li><p><a class="reference internal" href="#sse" id="id51">sSE</a></p></li>
-<li><p><a class="reference internal" href="#cse" id="id52">cSE</a></p></li>
-<li><p><a class="reference internal" href="#scse" id="id53">scSE</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.softmax" id="id54">SoftMax</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id48">ArcFace and SubCenterArcFace</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id49">Arc Margin Product</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id50">CosFace and AdaCos</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface" id="id51">CurricularFace</a></p></li>
+<li><p><a class="reference internal" href="#sse" id="id52">sSE</a></p></li>
+<li><p><a class="reference internal" href="#cse" id="id53">cSE</a></p></li>
+<li><p><a class="reference internal" href="#scse" id="id54">scSE</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.softmax" id="id55">SoftMax</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#optimizers" id="id55">Optimizers</a></p>
+<li><p><a class="reference internal" href="#optimizers" id="id56">Optimizers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#adamp" id="id56">AdamP</a></p></li>
-<li><p><a class="reference internal" href="#lamb" id="id57">Lamb</a></p></li>
-<li><p><a class="reference internal" href="#lookahead" id="id58">Lookahead</a></p></li>
-<li><p><a class="reference internal" href="#qhadamw" id="id59">QHAdamW</a></p></li>
-<li><p><a class="reference internal" href="#radam" id="id60">RAdam</a></p></li>
-<li><p><a class="reference internal" href="#ralamb" id="id61">Ralamb</a></p></li>
-<li><p><a class="reference internal" href="#sgdp" id="id62">SGDP</a></p></li>
+<li><p><a class="reference internal" href="#adamp" id="id57">AdamP</a></p></li>
+<li><p><a class="reference internal" href="#lamb" id="id58">Lamb</a></p></li>
+<li><p><a class="reference internal" href="#lookahead" id="id59">Lookahead</a></p></li>
+<li><p><a class="reference internal" href="#qhadamw" id="id60">QHAdamW</a></p></li>
+<li><p><a class="reference internal" href="#radam" id="id61">RAdam</a></p></li>
+<li><p><a class="reference internal" href="#ralamb" id="id62">Ralamb</a></p></li>
+<li><p><a class="reference internal" href="#sgdp" id="id63">SGDP</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers" id="id63">Schedulers</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers" id="id64">Schedulers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#onecyclelrwithwarmup" id="id64">OneCycleLRWithWarmup</a></p></li>
+<li><p><a class="reference internal" href="#onecyclelrwithwarmup" id="id65">OneCycleLRWithWarmup</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#scripts" id="id65">Scripts</a></p></li>
+<li><p><a class="reference internal" href="#scripts" id="id66">Scripts</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.contrib"></span><section id="module-catalyst.contrib.datasets">
@@ -1202,8 +1203,62 @@ but risk overfitting.</p></li>
 </dd></dl>
 
 </section>
+<section id="rocstarloss">
+<h5><a class="toc-backref" href="#id45">RocStarLoss</a><a class="headerlink" href="#rocstarloss" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.recsys.RocStarLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">RocStarLoss</code><span class="sig-paren">(</span><em class="sig-param">delta: float = 1.0</em>, <em class="sig-param">sample_size: int = 100</em>, <em class="sig-param">sample_size_gamma: int = 1000</em>, <em class="sig-param">update_gamma_each: int = 50</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#RocStarLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.RocStarLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.nn.criterion.recsys.PairwiseLoss</span></code></p>
+<p>Roc-star loss function.</p>
+<p>Smooth approximation for ROC-AUC. It has been proposed in
+<a class="reference external" href="https://github.com/iridiumblue/roc-star">Roc-star: An objective function for ROC-AUC that actually works</a>.</p>
+<p>Adapted from:
+<a class="reference external" href="https://github.com/iridiumblue/roc-star/issues/2">https://github.com/iridiumblue/roc-star/issues/2</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta</strong> – Param from the article. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>sample_size</strong> – Number of examples to take for ROC AUC approximation. Default: <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></li>
+<li><p><strong>sample_size_gamma</strong> – Number of examples to take for Gamma parameter approximation.
+Default: <code class="docutils literal notranslate"><span class="pre">1000</span></code>.</p></li>
+<li><p><strong>update_gamma_each</strong> – Number of steps after which to recompute gamma value.
+Default: <code class="docutils literal notranslate"><span class="pre">50</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion</span> <span class="kn">import</span> <span class="n">recsys</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">RocStarLoss</span><span class="p">()(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">output</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.recsys.RocStarLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#RocStarLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.RocStarLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward propagation method for the roc-star loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – Tensor of model predictions in [0, 1] range. Shape <code class="docutils literal notranslate"><span class="pre">(B</span> <span class="pre">x</span> <span class="pre">1)</span></code>.</p></li>
+<li><p><strong>targets</strong> – Tensor of true labels in {0, 1}. Shape <code class="docutils literal notranslate"><span class="pre">(B</span> <span class="pre">x</span> <span class="pre">1)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="warploss">
-<h5><a class="toc-backref" href="#id45">WARPLoss</a><a class="headerlink" href="#warploss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id46">WARPLoss</a><a class="headerlink" href="#warploss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.WARPLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">WARPLoss</code><span class="sig-paren">(</span><em class="sig-param">max_num_trials: Optional[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#WARPLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.WARPLoss" title="Permalink to this definition">¶</a></dt>
@@ -1225,22 +1280,22 @@ In practice it means that we optimize for ranks 1 to max_num_trials-1.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion</span> <span class="kn">import</span> <span class="n">recsys</span>
 
-<span class="n">input_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">output</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">WARPLoss</span><span class="p">()(</span><span class="n">input_</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">WARPLoss</span><span class="p">()(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 <span class="n">output</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.recsys.WARPLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input_: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#WARPLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#WARPLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward propagation method for the WARP loss.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_</strong> – Iterable of tensors containing predictions for all items.</p></li>
-<li><p><strong>target</strong> – Iterable of tensors containing true labels for all items.</p></li>
+<li><p><strong>outputs</strong> – Iterable of tensors containing predictions for all items.</p></li>
+<li><p><strong>targets</strong> – Iterable of tensors containing true labels for all items.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1255,9 +1310,9 @@ In practice it means that we optimize for ranks 1 to max_num_trials-1.</p>
 </section>
 </section>
 <section id="modules">
-<h3><a class="toc-backref" href="#id46">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id47">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <section id="module-catalyst.contrib.nn.modules.arcface">
-<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id47">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
+<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id48">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcface.ArcFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcface.</code><code class="sig-name descname">ArcFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em>, <em class="sig-param">eps: float = 1e-06</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#ArcFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.ArcFace" title="Permalink to this definition">¶</a></dt>
@@ -1396,7 +1451,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.arcmargin">
-<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id48">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
+<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id49">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcmargin.</code><code class="sig-name descname">ArcMarginProduct</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcmargin.html#ArcMarginProduct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct" title="Permalink to this definition">¶</a></dt>
@@ -1451,7 +1506,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.cosface">
-<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id49">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
+<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id50">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.cosface.CosFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.cosface.</code><code class="sig-name descname">CosFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#CosFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.CosFace" title="Permalink to this definition">¶</a></dt>
@@ -1585,7 +1640,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.curricularface">
-<span id="curricularface"></span><h4><a class="toc-backref" href="#id50">CurricularFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.curricularface" title="Permalink to this headline">¶</a></h4>
+<span id="curricularface"></span><h4><a class="toc-backref" href="#id51">CurricularFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.curricularface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.curricularface.CurricularFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.curricularface.</code><code class="sig-name descname">CurricularFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace" title="Permalink to this definition">¶</a></dt>
@@ -1653,7 +1708,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="sse">
-<h4><a class="toc-backref" href="#id51">sSE</a><a class="headerlink" href="#sse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id52">sSE</a><a class="headerlink" href="#sse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.sSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">sSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE" title="Permalink to this definition">¶</a></dt>
@@ -1683,7 +1738,7 @@ in the feature map of the input.</p>
 
 </section>
 <section id="cse">
-<h4><a class="toc-backref" href="#id52">cSE</a><a class="headerlink" href="#cse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id53">cSE</a><a class="headerlink" href="#cse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.cSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">cSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#cSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.cSE" title="Permalink to this definition">¶</a></dt>
@@ -1718,7 +1773,7 @@ Default: 16.</p></li>
 
 </section>
 <section id="scse">
-<h4><a class="toc-backref" href="#id53">scSE</a><a class="headerlink" href="#scse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id54">scSE</a><a class="headerlink" href="#scse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.scSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">scSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#scSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.scSE" title="Permalink to this definition">¶</a></dt>
@@ -1752,7 +1807,7 @@ Default: 16.</p></li>
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.softmax">
-<span id="softmax"></span><h4><a class="toc-backref" href="#id54">SoftMax</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.softmax" title="Permalink to this headline">¶</a></h4>
+<span id="softmax"></span><h4><a class="toc-backref" href="#id55">SoftMax</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.softmax" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.softmax.SoftMax">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.softmax.</code><code class="sig-name descname">SoftMax</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">num_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/softmax.html#SoftMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.softmax.SoftMax" title="Permalink to this definition">¶</a></dt>
@@ -1810,9 +1865,9 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 </section>
 </section>
 <section id="optimizers">
-<h3><a class="toc-backref" href="#id55">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id56">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
 <section id="adamp">
-<h4><a class="toc-backref" href="#id56">AdamP</a><a class="headerlink" href="#adamp" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id57">AdamP</a><a class="headerlink" href="#adamp" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.adamp.AdamP">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.adamp.</code><code class="sig-name descname">AdamP</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">delta=0.1</em>, <em class="sig-param">wd_ratio=0.1</em>, <em class="sig-param">nesterov=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/adamp.html#AdamP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.adamp.AdamP" title="Permalink to this definition">¶</a></dt>
@@ -1877,7 +1932,7 @@ parameters compared to that applied on scale-variant parameters
 
 </section>
 <section id="lamb">
-<h4><a class="toc-backref" href="#id57">Lamb</a><a class="headerlink" href="#lamb" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id58">Lamb</a><a class="headerlink" href="#lamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lamb.</code><code class="sig-name descname">Lamb</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr: Optional[float] = 0.001</em>, <em class="sig-param">betas: Optional[Tuple[float</em>, <em class="sig-param">float]] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: Optional[float] = 1e-06</em>, <em class="sig-param">weight_decay: Optional[float] = 0.0</em>, <em class="sig-param">adam: Optional[bool] = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb" title="Permalink to this definition">¶</a></dt>
@@ -1911,7 +1966,7 @@ this into Adam. Useful for comparison purposes.</p></li>
 
 </section>
 <section id="lookahead">
-<h4><a class="toc-backref" href="#id58">Lookahead</a><a class="headerlink" href="#lookahead" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id59">Lookahead</a><a class="headerlink" href="#lookahead" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lookahead.Lookahead">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lookahead.</code><code class="sig-name descname">Lookahead</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">k: int = 5</em>, <em class="sig-param">alpha: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lookahead.html#Lookahead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lookahead.Lookahead" title="Permalink to this definition">¶</a></dt>
@@ -1931,7 +1986,7 @@ this into Adam. Useful for comparison purposes.</p></li>
 
 </section>
 <section id="qhadamw">
-<h4><a class="toc-backref" href="#id59">QHAdamW</a><a class="headerlink" href="#qhadamw" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id60">QHAdamW</a><a class="headerlink" href="#qhadamw" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.qhadamw.QHAdamW">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.qhadamw.</code><code class="sig-name descname">QHAdamW</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.995</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">nus=(0.7</em>, <em class="sig-param">1.0)</em>, <em class="sig-param">weight_decay=0.0</em>, <em class="sig-param">eps=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/qhadamw.html#QHAdamW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW" title="Permalink to this definition">¶</a></dt>
@@ -1983,7 +2038,7 @@ numerical stability
 
 </section>
 <section id="radam">
-<h4><a class="toc-backref" href="#id60">RAdam</a><a class="headerlink" href="#radam" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id61">RAdam</a><a class="headerlink" href="#radam" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.radam.RAdam">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.radam.</code><code class="sig-name descname">RAdam</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">weight_decay=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/radam.html#RAdam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.radam.RAdam" title="Permalink to this definition">¶</a></dt>
@@ -2004,7 +2059,7 @@ and Beyond</a>.</p>
 
 </section>
 <section id="ralamb">
-<h4><a class="toc-backref" href="#id61">Ralamb</a><a class="headerlink" href="#ralamb" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id62">Ralamb</a><a class="headerlink" href="#ralamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.ralamb.Ralamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.ralamb.</code><code class="sig-name descname">Ralamb</code><span class="sig-paren">(</span><em class="sig-param">params: Iterable</em>, <em class="sig-param">lr: float = 0.001</em>, <em class="sig-param">betas: Tuple[float</em>, <em class="sig-param">float] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: float = 1e-08</em>, <em class="sig-param">weight_decay: float = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/ralamb.html#Ralamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.ralamb.Ralamb" title="Permalink to this definition">¶</a></dt>
@@ -2038,7 +2093,7 @@ numerical stability (default: 1e-8)</p></li>
 
 </section>
 <section id="sgdp">
-<h4><a class="toc-backref" href="#id62">SGDP</a><a class="headerlink" href="#sgdp" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id63">SGDP</a><a class="headerlink" href="#sgdp" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.sgdp.SGDP">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.sgdp.</code><code class="sig-name descname">SGDP</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=&lt;required parameter&gt;</em>, <em class="sig-param">momentum=0</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">dampening=0</em>, <em class="sig-param">nesterov=False</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">delta=0.1</em>, <em class="sig-param">wd_ratio=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/sgdp.html#SGDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.sgdp.SGDP" title="Permalink to this definition">¶</a></dt>
@@ -2098,9 +2153,9 @@ parameters compared to that applied on scale-variant parameters
 </section>
 </section>
 <section id="module-catalyst.contrib.nn.schedulers">
-<span id="schedulers"></span><h3><a class="toc-backref" href="#id63">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers" title="Permalink to this headline">¶</a></h3>
+<span id="schedulers"></span><h3><a class="toc-backref" href="#id64">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers" title="Permalink to this headline">¶</a></h3>
 <section id="onecyclelrwithwarmup">
-<h4><a class="toc-backref" href="#id64">OneCycleLRWithWarmup</a><a class="headerlink" href="#onecyclelrwithwarmup" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id65">OneCycleLRWithWarmup</a><a class="headerlink" href="#onecyclelrwithwarmup" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.schedulers.onecycle.</code><code class="sig-name descname">OneCycleLRWithWarmup</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">num_steps: int</em>, <em class="sig-param">lr_range=(1.0</em>, <em class="sig-param">0.005)</em>, <em class="sig-param">init_lr: float = None</em>, <em class="sig-param">warmup_steps: int = 0</em>, <em class="sig-param">warmup_fraction: float = None</em>, <em class="sig-param">decay_steps: int = 0</em>, <em class="sig-param">decay_fraction: float = None</em>, <em class="sig-param">momentum_range=(0.8</em>, <em class="sig-param">0.99</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">init_momentum: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/onecycle.html#OneCycleLRWithWarmup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup" title="Permalink to this definition">¶</a></dt>
@@ -2145,7 +2200,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </section>
 </section>
 <section id="scripts">
-<h2><a class="toc-backref" href="#id65">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id66">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
 <p>You can use contrib scripts with <cite>catalyst-contrib</cite> in your terminal.
 For example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib tag2label --help
@@ -2270,6 +2325,7 @@ preprocessed resized images</p>
 <li><a class="reference internal" href="#bprloss">BPRLoss</a></li>
 <li><a class="reference internal" href="#hingeloss">HingeLoss</a></li>
 <li><a class="reference internal" href="#logisticloss">LogisticLoss</a></li>
+<li><a class="reference internal" href="#rocstarloss">RocStarLoss</a></li>
 <li><a class="reference internal" href="#warploss">WARPLoss</a></li>
 </ul>
 </li>

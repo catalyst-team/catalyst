@@ -365,11 +365,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_assert_equal_size</span><span class="p">(</span><span class="n">input_</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">input_</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape mismatch: </span><span class="si">{</span><span class="n">input_</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_assert_equal_size</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape mismatch: </span><span class="si">{</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
@@ -544,27 +544,27 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
-        <span class="n">input_</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-        <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">max_num_trials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">max_num_trials</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">max_num_trials</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">max_num_trials</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
 
-        <span class="n">positive_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">input_</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
-        <span class="n">negative_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">input_</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
-        <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">input_</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">positive_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+        <span class="n">negative_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">all_labels_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">all_labels_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">Y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
 
-            <span class="n">msk</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">msk</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
             <span class="c1"># Find the positive label for this example</span>
             <span class="n">j</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -587,7 +587,7 @@
 
                 <span class="n">num_trials</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="c1"># calculate the score margin</span>
-                <span class="n">sample_score_margin</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">input_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">neg_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">input_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                <span class="n">sample_score_margin</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">neg_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">sample_score_margin</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># checks if no violating examples have been found</span>
@@ -599,11 +599,11 @@
 
         <span class="n">loss</span> <span class="o">=</span> <span class="n">L</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mi">1</span>
-            <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">positive_indices</span> <span class="o">*</span> <span class="n">input_</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">negative_indices</span> <span class="o">*</span> <span class="n">input_</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">positive_indices</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">negative_indices</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">ctx</span><span class="o">.</span><span class="n">save_for_backward</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">save_for_backward</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">L</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">positive_indices</span> <span class="o">=</span> <span class="n">positive_indices</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">negative_indices</span> <span class="o">=</span> <span class="n">negative_indices</span>
@@ -613,7 +613,7 @@
     <span class="c1"># This function has only a single output, so it gets only one gradient</span>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
-        <span class="n">input_</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">saved_variables</span>
+        <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">saved_variables</span>
         <span class="n">L</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">positive_indices</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">positive_indices</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -649,10 +649,10 @@
 <span class="sd">        import torch</span>
 <span class="sd">        from catalyst.contrib.nn.criterion import recsys</span>
 
-<span class="sd">        input_ = torch.randn(5, 3, requires_grad=True)</span>
-<span class="sd">        target = torch.randn(5, 3, requires_grad=True)</span>
+<span class="sd">        outputs = torch.randn(5, 3, requires_grad=True)</span>
+<span class="sd">        targets = torch.randn(5, 3, requires_grad=True)</span>
 
-<span class="sd">        output = recsys.WARPLoss()(input_, target)</span>
+<span class="sd">        output = recsys.WARPLoss()(outputs, targets)</span>
 <span class="sd">        output.backward()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -660,18 +660,149 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_num_trials</span> <span class="o">=</span> <span class="n">max_num_trials</span>
 
-<div class="viewcode-block" id="WARPLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="WARPLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Forward propagation method for the WARP loss.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            input_: Iterable of tensors containing predictions for all items.</span>
-<span class="sd">            target: Iterable of tensors containing true labels for all items.</span>
+<span class="sd">            outputs: Iterable of tensors containing predictions for all items.</span>
+<span class="sd">            targets: Iterable of tensors containing true labels for all items.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            computed loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_equal_size</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">WARP</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num_trials</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_equal_size</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">WARP</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num_trials</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RocStarLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.recsys.RocStarLoss">[docs]</a><span class="k">class</span> <span class="nc">RocStarLoss</span><span class="p">(</span><span class="n">PairwiseLoss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Roc-star loss function.</span>
+
+<span class="sd">    Smooth approximation for ROC-AUC. It has been proposed in</span>
+<span class="sd">    `Roc-star\: An objective function for ROC-AUC that actually works`_.</span>
+
+<span class="sd">    .. _Roc-star\: An objective function for ROC-AUC that actually works:</span>
+<span class="sd">        https://github.com/iridiumblue/roc-star</span>
+
+<span class="sd">    Adapted from:</span>
+<span class="sd">    https://github.com/iridiumblue/roc-star/issues/2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        delta: Param from the article. Default: ``1.0``.</span>
+<span class="sd">        sample_size: Number of examples to take for ROC AUC approximation. Default: ``100``.</span>
+<span class="sd">        sample_size_gamma: Number of examples to take for Gamma parameter approximation.</span>
+<span class="sd">            Default: ``1000``.</span>
+<span class="sd">        update_gamma_each: Number of steps after which to recompute gamma value.</span>
+<span class="sd">            Default: ``50``.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import torch</span>
+<span class="sd">            from catalyst.contrib.nn.criterion import recsys</span>
+
+<span class="sd">            outputs = torch.randn(5, 1, requires_grad=True)</span>
+<span class="sd">            targets = torch.randn(5, 1, requires_grad=True)</span>
+
+<span class="sd">            output = recsys.RocStarLoss()(outputs, targets)</span>
+<span class="sd">            output.backward()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">sample_size_gamma</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">update_gamma_each</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size_gamma</span> <span class="o">=</span> <span class="n">sample_size_gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_gamma_each</span> <span class="o">=</span> <span class="n">update_gamma_each</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">sample_size_gamma</span><span class="p">)</span>
+
+        <span class="c1"># Randomly init labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs_history</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="n">size</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targets_history</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="RocStarLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.recsys.RocStarLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the roc-star loss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: Tensor of model predictions in [0, 1] range. Shape ``(B x 1)``.</span>
+<span class="sd">            targets: Tensor of true labels in {0, 1}. Shape ``(B x 1)``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            computed loss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_equal_size</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-8</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_gamma_each</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_gamma</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">positive</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">targets</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">negative</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">targets</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Take last `sample_size` elements from history</span>
+        <span class="n">outputs_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="p">:]</span>
+        <span class="n">targets_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="p">:]</span>
+
+        <span class="n">positive_history</span> <span class="o">=</span> <span class="n">outputs_history</span><span class="p">[</span><span class="n">targets_history</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">negative_history</span> <span class="o">=</span> <span class="n">outputs_history</span><span class="p">[</span><span class="n">targets_history</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">positive</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">negative_history</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-</span> <span class="n">positive</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">loss_positive</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss_positive</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">negative</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">negative</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-</span> <span class="n">positive_history</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">loss_negative</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss_negative</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_negative</span> <span class="o">+</span> <span class="n">loss_positive</span>
+
+        <span class="c1"># Update FIFO queue</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs_history</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs_history</span><span class="p">[</span><span class="n">batch_size</span><span class="p">:],</span> <span class="n">outputs</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targets_history</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets_history</span><span class="p">[</span><span class="n">batch_size</span><span class="p">:],</span> <span class="n">targets</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Take last `sample_size_gamma` elements from history</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size_gamma</span> <span class="p">:]</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size_gamma</span> <span class="p">:]</span>
+
+        <span class="n">positive</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">targets</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">negative</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">targets</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Create matrix of size sample_size_gamma x sample_size_gamma</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">positive</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">negative</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">AUC</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">num_wrong_ordered</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">AUC</span><span class="p">)</span> <span class="o">*</span> <span class="n">diff</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Adjunct gamma, so that among correct ordered samples `delta * num_wrong_ordered`</span>
+        <span class="c1"># were considered ordered incorrectly with gamma added</span>
+        <span class="n">correct_ordered</span> <span class="o">=</span> <span class="n">diff</span><span class="p">[</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num_wrong_ordered</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">correct_ordered</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">correct_ordered</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -679,6 +810,7 @@
     <span class="s2">&quot;BPRLoss&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HingeLoss&quot;</span><span class="p">,</span>
     <span class="s2">&quot;LogisticLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RocStarLoss&quot;</span><span class="p">,</span>
     <span class="s2">&quot;WARPLoss&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
