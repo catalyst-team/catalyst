@@ -1,4 +1,4 @@
-from catalyst.dl import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 
 class ContrastiveRunner(SupervisedRunner):
