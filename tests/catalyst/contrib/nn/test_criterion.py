@@ -132,6 +132,31 @@ def test_adaptive_hinge_loss():
     assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
 
 
+def test_roc_star_loss():
+    from catalyst.contrib.nn.criterion.recsys import RocStarLoss
+
+    params = dict(sample_size=5, sample_size_gamma=5, update_gamma_each=1)
+    const_history = torch.Tensor([[0], [1], [0], [0], [1], [1], [0], [1], [0], [1]])  # rand seq
+
+    outputs = torch.Tensor([[0], [1], [0], [1], [0]])
+    targets = torch.Tensor([[1], [0], [1], [0], [1]])
+
+    loss = RocStarLoss(**params)
+    loss.outputs_history = const_history
+    loss.targets_history = const_history
+    assert float(loss.forward(outputs, outputs)) == pytest.approx(0, 0.001)
+
+    loss.__init__(**params)
+    loss.outputs_history = const_history
+    loss.targets_history = const_history
+    assert float(loss.forward(targets, targets)) == pytest.approx(0, 0.001)
+
+    loss.__init__(**params)
+    loss.outputs_history = const_history
+    loss.targets_history = const_history
+    assert float(loss.forward(outputs, targets)) == pytest.approx(2, 0.001)
+
+
 @pytest.mark.parametrize(
     "embeddings_left,embeddings_right,offdiag_lambda,eps,true_value",
     (
