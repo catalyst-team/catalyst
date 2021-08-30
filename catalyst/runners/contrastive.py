@@ -12,7 +12,6 @@ class IContrastiveRunner(IRunner):
         output_key: Any = "logits",
         target_key: str = "targets",
         loss_key: str = "loss",
-        encoder: RunnerModel = None,
     ):
         """Init."""
         IRunner.__init__(self)
@@ -21,7 +20,6 @@ class IContrastiveRunner(IRunner):
         self._output_key = output_key
         self._target_key = target_key
         self._loss_key = loss_key
-        self._encoder = encoder
 
 
 class ContrastiveRunner(IContrastiveRunner, Runner):
@@ -56,3 +54,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
             "embedding2": embedding2,
             "target": target,
         }
+
+    def train(self, encoder: RunnerModel, *args, **kwargs) -> None:
+        self._encoder = encoder
+        super().train(self, *args, **kwargs)

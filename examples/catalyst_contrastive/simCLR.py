@@ -67,27 +67,17 @@ if __name__ == "__main__":
     #     simCLRDatasetWrapper(cifar_test, transforms=transforms), batch_size=batch_size, num_workers=5
     # )
 
-    class Model(nn.Module):
-        def __init__(self, feature_dim=128, **resnet_kwargs):
-            super(Model, self).__init__()
-            # encoder
-            self.encoder = nn.Sequential(ResnetEncoder(**resnet_kwargs), nn.Flatten())
-            # projection head
-            self.g = nn.Sequential(
-                nn.Linear(2048, 512, bias=False),
-                nn.ReLU(inplace=True),
-                nn.Linear(512, feature_dim, bias=True),
-            )
-
-        def forward(self, x):
-            feature = self.encoder(x)
-            out = self.g(feature)
-            return F.normalize(out, dim=-1)
-
-    model = Model(feature_dim=args.feature_dim, arch="resnet50", frozen=False,)
+    encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
+    model = nn.Sequential(
+        nn.Linear(2048, 512, bias=False),
+        nn.ReLU(inplace=True),
+        nn.Linear(512, args.feature_dim, bias=True),
+    )
 
     # 2. model and optimizer
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    optimizer = Adam(
+        [{"params": encoder.parameters()}, {"params": model.parameters()}], lr=args.learning_rate
+    )
 
     # 3. criterion with triplets sampling
     criterion = NTXentLoss(tau=args.temperature)
@@ -103,6 +93,7 @@ if __name__ == "__main__":
 
     runner.train(
         model=model,
+        encdoer=encoder,
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
