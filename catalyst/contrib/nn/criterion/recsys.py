@@ -433,7 +433,7 @@ class RocStarLoss(PairwiseLoss):
             return torch.sum(outputs) * 1e-8
 
         if self.steps % self.update_gamma_each == 0:
-            self.update_gamma()
+            self._update_gamma()
         self.steps += 1
 
         positive = outputs[targets > 0]
@@ -471,7 +471,7 @@ class RocStarLoss(PairwiseLoss):
 
         return loss
 
-    def update_gamma(self):
+    def _update_gamma(self):
         # Take last `sample_size_gamma` elements from history
         outputs = self.outputs_history[-self.sample_size_gamma :]
         targets = self.targets_history[-self.sample_size_gamma :]
