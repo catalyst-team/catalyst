@@ -8,9 +8,9 @@ import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
+from catalyst.data.dataset.contrastive import ContrastiveDataset
 from catalyst.runners.contrastive import ContrastiveRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
