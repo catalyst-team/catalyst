@@ -21,22 +21,12 @@ def read_csv(csv_path: str):
             else:
                 yield {colname: val for colname, val in zip(colnames, row)}
 
-
-class ContrastiveRunner(dl.SupervisedRunner):
-    def handle_batch(self, batch):
-        # model train/valid step
-        # unpack the batch
-        emb1 = self.model(batch["aug1"])
-        emb2 = self.model(batch["aug2"])
-        self.batch = {"proj1": emb1, "proj2": emb2, "target": batch["target"]}
-
-
 batch_size = 1024
 aug_strength = 1.0
 from torchvision import transforms
-from catalyst.contrib.datasets import MNIST
 
 from catalyst.contrib.data.datawrappers import ContrastiveDataset
+from catalyst.contrib.datasets import MNIST
 
 transforms = transform = transforms.Compose(
     [
@@ -116,7 +106,7 @@ callbacks = [
     ),
 ]
 
-runner = ContrastiveRunner()
+runner = dl.ContrastiveRunner()
 
 logdir = "./logdir"
 runner.train(
