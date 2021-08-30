@@ -497,5 +497,6 @@ __all__ = [
     "BPRLoss",
     "HingeLoss",
     "LogisticLoss",
+    "RocStarLoss",
     "WARPLoss",
 ]
