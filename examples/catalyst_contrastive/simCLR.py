@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     runner.train(
         model=model,
-        encdoer=encoder,
+        encoder=encoder,
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
