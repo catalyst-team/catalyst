@@ -415,7 +415,9 @@ class RocStarLoss(PairwiseLoss):
 
         # Randomly init labels
         self.outputs_history = torch.rand((size + 2, 1))
-        self.targets_history = torch.cat((torch.randint(2, (size, 1)), torch.Tensor([[0], [1]])))
+        self.targets_history = torch.cat(
+            (torch.randint(2, (size, 1)), torch.LongTensor([[0], [1]]))
+        )
 
     def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Forward propagation method for the roc-star loss.
