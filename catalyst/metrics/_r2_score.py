@@ -1,0 +1,61 @@
+from typing import Optional
+
+import torch
+
+from catalyst.metrics._metric import ICallbackLoaderMetric
+
+
+class R2Metric(ICallbackLoaderMetric):
+    """This metric accumulates r2 score along loader
+
+    Args:
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: metric prefix
+        suffix: metric suffix
+    """
+
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
+    ) -> None:
+        """Init R2Metric"""
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.num_examples = 0
+        self.delta_sum = 0
+        self.y_sum = 0
+        self.y_sq_sum = 0
+
+    def reset(self, num_batches: int, num_samples: int) -> None:
+        """
+        Reset metrics fields
+        """
+        self.num_examples = 0
+        self.delta_sum = 0
+        self.y_sum = 0
+        self.y_sq_sum = 0
+
+    def update(self, y_true, y_pred) -> None:
+        """
+        Update accumulated data with new batch
+        """
+        self.num_examples += len(y_true)
+        self.delta_sum += torch.sum(torch.square(y_pred - y_true))
+        self.y_sum += torch.sum(y_true)
+        self.y_sq_sum += torch.sum(torch.square(y_true))
+
+    def compute(self) -> torch.Tensor:
+        """
+        Return accumulated metric
+        """
+        return 1 - self.delta_sum / (self.y_sq_sum - (self.y_sum ** 2) / self.num_examples)
+
+    def compute_key_value(self) -> torch.Tensor:
+        """
+        Return accumulated metric
+        """
+        return self.compute()
+
+
+__all__ = ["R2Metric"]
