@@ -36,7 +36,7 @@ class ContrastiveRunner(dl.SupervisedRunner):
 batch_size = 1024
 aug_strength = 1.0
 from torchvision import transforms
-from torchvision.datasets import MNIST
+from catalyst.contrib.datasets import MNIST
 
 from catalyst.contrib.data.datawrappers import ContrastiveDataset
 
