@@ -5,12 +5,10 @@ from sklearn.ensemble import RandomForestClassifier
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
-import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.data.datawrappers import ContrastiveDataset
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 
 
