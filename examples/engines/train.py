@@ -8,7 +8,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from catalyst import dl, SETTINGS
+from catalyst import dl, SETTINGS, utils
 from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.nn import ResidualBlock
 from catalyst.data import transforms
@@ -76,13 +76,14 @@ def resnet9(in_channels: int, num_classes: int, size: int = 16):
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir, engine: str):
+    def __init__(self, logdir: str, engine: str, sync_bn: bool = False):
         super().__init__()
         self._logdir = logdir
         self._engine = engine
+        self._sync_bn = sync_bn
 
     def get_engine(self):
-        return E2E[self._engine]()
+        return E2E[self._engine](sync_bn=True) if self._sync_bn else E2E[self._engine]()
 
     def get_loggers(self):
         return {
@@ -171,7 +172,8 @@ if __name__ == "__main__":
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
+    utils.boolean_flag(parser, "sync-bn", default=False)
     args, _ = parser.parse_known_args()
-    args.logdir = args.logdir or f"logs_{args.engine}".replace("-", "_")
-    runner = CustomRunner(args.logdir, args.engine)
+    args.logdir = args.logdir or f"logs_{args.engine}_sbn{int(args.sync_bn)}".replace("-", "_")
+    runner = CustomRunner(args.logdir, args.engine, args.sync_bn)
     runner.run()
