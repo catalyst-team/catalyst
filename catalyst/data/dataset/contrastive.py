@@ -1,5 +1,7 @@
 from typing import Any, Callable, Dict
 
+from torch.utils.data import Dataset
+
 
 class ContrastiveDataset(Dataset):
     """The Contrastive Dataset.
