@@ -66,14 +66,14 @@ class CometLogger(ILogger):
     Config API example:
     .. code-block:: yaml
         loggers:
-            neptune:
+            comet:
                 _target_: CometLogger
                 project_name: my_project
         ...
     Hydra API example:
     .. code-block:: yaml
         loggers:
-            neptune:
+            comet:
                 _target_: catalyst.dl.CometLogger
                 project_name: my_project
         ...
