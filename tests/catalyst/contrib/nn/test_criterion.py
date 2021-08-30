@@ -52,29 +52,29 @@ def test_warp_loss():
 
     loss = WARPLoss(max_num_trials=1)
 
-    input_ = torch.Tensor([[0, 0, 0, 1]])
-    target = torch.Tensor([[0, 0, 0, 1]])
-    assert float(loss.forward(input_, target)) == pytest.approx(0, 0.001)
+    outputs = torch.Tensor([[0, 0, 0, 1]])
+    targets = torch.Tensor([[0, 0, 0, 1]])
+    assert float(loss.forward(outputs, targets)) == pytest.approx(0, 0.001)
 
-    x2_input_ = torch.stack((input_.squeeze(0), input_.squeeze(0)))
-    x2_target = torch.stack((target.squeeze(0), target.squeeze(0)))
-    assert float(loss.forward(x2_input_, x2_target)) == pytest.approx(0, 0.001)
+    x2_outputs = torch.stack((outputs.squeeze(0), outputs.squeeze(0)))
+    x2_targets = torch.stack((targets.squeeze(0), targets.squeeze(0)))
+    assert float(loss.forward(x2_outputs, x2_targets)) == pytest.approx(0, 0.001)
 
-    input_ = torch.Tensor([[0, 0, 0, 0]])
-    target = torch.Tensor([[0, 0, 0, 1]])
-    assert float(loss.forward(input_, target)) == pytest.approx(1.0986, 0.001)
+    outputs = torch.Tensor([[0, 0, 0, 0]])
+    targets = torch.Tensor([[0, 0, 0, 1]])
+    assert float(loss.forward(outputs, targets)) == pytest.approx(1.0986, 0.001)
 
-    x2_input_ = torch.stack((input_.squeeze(0), input_.squeeze(0)))
-    x2_target = torch.stack((target.squeeze(0), target.squeeze(0)))
-    assert float(loss.forward(x2_input_, x2_target)) == pytest.approx(2 * 1.0986, 0.001)
+    x2_outputs = torch.stack((outputs.squeeze(0), outputs.squeeze(0)))
+    x2_target = torch.stack((targets.squeeze(0), targets.squeeze(0)))
+    assert float(loss.forward(x2_outputs, x2_target)) == pytest.approx(2 * 1.0986, 0.001)
 
-    input_ = torch.Tensor([[0.5, 0.5, 0.5, 1]])
-    target = torch.Tensor([[0, 0, 0, 1]])
-    assert float(loss.forward(input_, target)) == pytest.approx(0.5493, 0.001)
+    outputs = torch.Tensor([[0.5, 0.5, 0.5, 1]])
+    targets = torch.Tensor([[0, 0, 0, 1]])
+    assert float(loss.forward(outputs, targets)) == pytest.approx(0.5493, 0.001)
 
-    input_ = torch.Tensor([[0.5, 0, 0.5, 1]])
-    target = torch.Tensor([[0, 0, 0, 1]])
-    loss_value = float(loss.forward(input_, target))
+    outputs = torch.Tensor([[0.5, 0, 0.5, 1]])
+    targets = torch.Tensor([[0, 0, 0, 1]])
+    loss_value = float(loss.forward(outputs, targets))
     assert loss_value == pytest.approx(0.5493, 0.001) or loss_value == pytest.approx(0, 0.001)
 
 
