@@ -40,7 +40,7 @@ class CometLogger(ILogger):
             ...
             loggers={
                 "comet": dl.CometLogger(
-                    project_name="my-comet-project
+                    project_name="my-comet-project"
                 )
             }
         )
