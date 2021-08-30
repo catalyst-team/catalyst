@@ -5,10 +5,12 @@ from sklearn.ensemble import RandomForestClassifier
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
+from torchvision import transforms
 
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.data.datawrappers import ContrastiveDataset
+from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.criterion import NTXentLoss
 
 
@@ -21,12 +23,9 @@ def read_csv(csv_path: str):
             else:
                 yield {colname: val for colname, val in zip(colnames, row)}
 
+
 batch_size = 1024
 aug_strength = 1.0
-from torchvision import transforms
-
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
-from catalyst.contrib.datasets import MNIST
 
 transforms = transform = transforms.Compose(
     [
@@ -42,7 +41,6 @@ contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
 # Cifar10MLDataset has mistakes
 # cifar_train = Cifar10MLDataset(root="./data", download=True, transform=None)
 
-from torchvision.datasets import MNIST
 
 train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=batch_size, num_workers=2)
 

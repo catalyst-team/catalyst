@@ -46,7 +46,8 @@ class ContrastiveDataset(Dataset):
         """
         Args:
             dataset: original dataset for augmentation
-            transforms: transforms which will be applied to original batch to get both left and right output batch.
+            transforms: transforms which will be applied to original batch to get both
+            left and right output batch.
             transform_left: transform only for left batch
             transform_right: transform only for right batch
 
@@ -61,7 +62,8 @@ class ContrastiveDataset(Dataset):
             self.transform_left = transforms
         else:
             raise ValueError(
-                "Specify transforms or 'transform_left' and 'transform_right' simultaneously or only 'transforms'."
+                """Specify transforms or 'transform_left' and 'transform_right'
+                simultaneously or only 'transforms'."""
             )
         self.dataset = dataset
 
