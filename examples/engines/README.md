@@ -12,6 +12,7 @@ pip install catalyst
 CUDA_VISIBLE_DEVICES="0" python train.py --engine=de
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=dp
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=ddp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=ddp --sync-bn
 ```
 
 ### PyTorch AMP
@@ -20,6 +21,7 @@ pip install torch>=1.8.0 catalyst
 
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=amp-dp
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=amp-ddp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=amp-ddp --sync-bn
 ```
 
 ### PyTorch XLA
@@ -40,6 +42,7 @@ pip install catalyst && install-apex
 
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=apex-dp
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=apex-ddp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=apex-ddp --sync-bn
 ```
 
 ### DeepSpeed
@@ -59,6 +62,9 @@ pip install torch>=1.8.0 catalyst[fairscale]
 
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-pp
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-ddp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-ddp --sync-bn
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-ddp-amp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-ddp-amp --sync-bn
 CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-fddp
+CUDA_VISIBLE_DEVICES="0,1" python train.py --engine=fs-fddp --sync-bn
 ```
