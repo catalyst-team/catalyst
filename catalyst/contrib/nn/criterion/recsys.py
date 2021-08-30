@@ -377,11 +377,11 @@ class RocStarLoss(PairwiseLoss):
 
     Args:
         delta: Param from the article. Default: ``1.0``.
-        sample_size: Number of examples to take for ROC AUC approximation. Default: ``10``.
+        sample_size: Number of examples to take for ROC AUC approximation. Default: ``100``.
         sample_size_gamma: Number of examples to take for Gamma parameter approximation.
-            Default: ``10``.
+            Default: ``1000``.
         update_gamma_each: Number of steps after which to recompute gamma value.
-            Default: ``10``.
+            Default: ``50``.
 
     Example:
 
@@ -400,9 +400,9 @@ class RocStarLoss(PairwiseLoss):
     def __init__(
         self,
         delta: float = 1.0,
-        sample_size: int = 10,
-        sample_size_gamma: int = 10,
-        update_gamma_each: int = 10,
+        sample_size: int = 100,
+        sample_size_gamma: int = 1000,
+        update_gamma_each: int = 50,
     ):
         super().__init__()
         self.delta = delta
@@ -414,8 +414,8 @@ class RocStarLoss(PairwiseLoss):
         size = max(sample_size, sample_size_gamma)
 
         # Randomly init labels
-        self.outputs_history = torch.rand((size, 1))
-        self.targets_history = torch.randint(2, (size, 1))
+        self.outputs_history = torch.rand((size + 2, 1))
+        self.targets_history = torch.cat((torch.randint(2, (size, 1)), torch.Tensor([[0], [1]])))
 
     def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Forward propagation method for the roc-star loss.
@@ -428,6 +428,9 @@ class RocStarLoss(PairwiseLoss):
             computed loss
         """
         self._assert_equal_size(outputs, targets)
+
+        if torch.sum(targets) == 0 or torch.sum(targets) == targets.shape[0]:
+            return torch.sum(outputs) * 1e-8
 
         if self.steps % self.update_gamma_each == 0:
             self.update_gamma()
@@ -485,7 +488,8 @@ class RocStarLoss(PairwiseLoss):
         # were considered ordered incorrectly with gamma added
         correct_ordered = diff[diff > 0].flatten().sort().values
         idx = min(int(num_wrong_ordered * self.delta), len(correct_ordered) - 1)
-        self.gamma = correct_ordered[idx]
+        if idx >= 0:
+            self.gamma = correct_ordered[idx]
 
 
 __all__ = [
