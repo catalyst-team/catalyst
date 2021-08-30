@@ -331,7 +331,7 @@
 <li><p><a class="reference internal" href="#general-metrics" id="id19">General Metrics</a></p>
 <ul>
 <li><p><a class="reference internal" href="#accumulativemetric" id="id20">AccumulativeMetric</a></p></li>
-<li><p><a class="reference internal" href="#additivevaluemetric" id="id21">AdditiveValueMetric</a></p></li>
+<li><p><a class="reference internal" href="#additivemetric" id="id21">AdditiveMetric</a></p></li>
 <li><p><a class="reference internal" href="#confusionmatrixmetric" id="id22">ConfusionMatrixMetric</a></p></li>
 <li><p><a class="reference internal" href="#functionalbatchmetric" id="id23">FunctionalBatchMetric</a></p></li>
 <li><p><a class="reference internal" href="#functionalloadermetric" id="id24">FunctionalLoaderMetric</a></p></li>
@@ -624,11 +624,11 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 </section>
-<section id="additivevaluemetric">
-<h3><a class="toc-backref" href="#id21">AdditiveValueMetric</a><a class="headerlink" href="#additivevaluemetric" title="Permalink to this headline">¶</a></h3>
+<section id="additivemetric">
+<h3><a class="toc-backref" href="#id21">AdditiveMetric</a><a class="headerlink" href="#additivemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.metrics._additive.AdditiveValueMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._additive.</code><code class="sig-name descname">AdditiveValueMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">mode: str = 'numpy'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._additive.AdditiveMetric">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._additive.</code><code class="sig-name descname">AdditiveMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">mode: str = 'numpy'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.IMetric" title="catalyst.metrics._metric.IMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.IMetric</span></code></a></p>
 <p>This metric computes mean and std values of input data.</p>
 <dl class="field-list simple">
@@ -650,7 +650,7 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 <span class="n">num_samples_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
 <span class="n">true_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.666667</span><span class="p">,</span> <span class="mf">2.333333</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">3.666667</span><span class="p">]</span>
 
-<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">()</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">true_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">num_samples_list</span><span class="p">,</span> <span class="n">true_values</span><span class="p">):</span>
     <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">)</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
@@ -687,7 +687,7 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
         <span class="p">}</span>
 
@@ -738,8 +738,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 <p>Please follow the <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> sections for more use cases.</p>
 </div>
 <dl class="method">
-<dt id="catalyst.metrics._additive.AdditiveValueMetric.compute">
-<code class="sig-name descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[float, float]<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric.compute" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._additive.AdditiveMetric.compute">
+<code class="sig-name descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[float, float]<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveMetric.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveMetric.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns mean and std values of all the input data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -749,14 +749,14 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.metrics._additive.AdditiveValueMetric.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric.reset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._additive.AdditiveMetric.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveMetric.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveMetric.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset all fields</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.metrics._additive.AdditiveValueMetric.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">value: float</em>, <em class="sig-param">num_samples: int</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric.update" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._additive.AdditiveMetric.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">value: float</em>, <em class="sig-param">num_samples: int</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveMetric.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveMetric.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update mean metric value and std with new value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1073,7 +1073,7 @@ It computes mean value of accuracy and it’s approximate std value
 <dl class="class">
 <dt id="catalyst.metrics._accuracy.MultilabelAccuracyMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._accuracy.</code><code class="sig-name descname">MultilabelAccuracyMetric</code><span class="sig-paren">(</span><em class="sig-param">threshold: Union[float</em>, <em class="sig-param">torch.Tensor] = 0.5</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_accuracy.html#MultilabelAccuracyMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accuracy.MultilabelAccuracyMetric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._additive.AdditiveValueMetric" title="catalyst.metrics._additive.AdditiveValueMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._additive.AdditiveValueMetric</span></code></a>, <a class="reference internal" href="#catalyst.metrics._metric.ICallbackBatchMetric" title="catalyst.metrics._metric.ICallbackBatchMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackBatchMetric</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._additive.AdditiveMetric" title="catalyst.metrics._additive.AdditiveMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._additive.AdditiveMetric</span></code></a>, <a class="reference internal" href="#catalyst.metrics._metric.ICallbackBatchMetric" title="catalyst.metrics._metric.ICallbackBatchMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackBatchMetric</span></code></a></p>
 <p>This metric computes accuracy for multilabel classification case.
 It computes mean value of accuracy and it’s approximate std value
 (note that it’s not a real accuracy std but std of accuracy over batch mean values).</p>
@@ -4633,7 +4633,7 @@ with shape [bs; …, 1]</p></li>
 </li>
 <li><a class="reference internal" href="#general-metrics">General Metrics</a><ul>
 <li><a class="reference internal" href="#accumulativemetric">AccumulativeMetric</a></li>
-<li><a class="reference internal" href="#additivevaluemetric">AdditiveValueMetric</a></li>
+<li><a class="reference internal" href="#additivemetric">AdditiveMetric</a></li>
 <li><a class="reference internal" href="#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
 <li><a class="reference internal" href="#functionalbatchmetric">FunctionalBatchMetric</a></li>
 <li><a class="reference internal" href="#functionalloadermetric">FunctionalLoaderMetric</a></li>

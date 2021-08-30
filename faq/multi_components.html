@@ -351,7 +351,7 @@ it’s very easy to use run experiments in multi-components setup
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
         <span class="p">}</span>
 
@@ -438,7 +438,7 @@ it’s very easy to use run experiments in multi-components setup
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
         <span class="p">}</span>
 
@@ -531,7 +531,7 @@ That it, simple enough, no extra abstractions required.</p>
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
         <span class="p">}</span>
 
@@ -626,7 +626,7 @@ That it, simple enough, no extra abstractions required.</p>
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
         <span class="p">}</span>
 

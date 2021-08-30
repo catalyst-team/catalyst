@@ -420,7 +420,7 @@
 <span class="sd">            def on_loader_start(self, runner):</span>
 <span class="sd">                super().on_loader_start(runner)</span>
 <span class="sd">                self.meters = {</span>
-<span class="sd">                    key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                    key: metrics.AdditiveMetric(compute_on_call=False)</span>
 <span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
 <span class="sd">                }</span>
 
@@ -743,7 +743,7 @@
 <span class="sd">                def on_loader_start(self, runner):</span>
 <span class="sd">                    super().on_loader_start(runner)</span>
 <span class="sd">                    self.meters = {</span>
-<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        key: metrics.AdditiveMetric(compute_on_call=False)</span>
 <span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
 <span class="sd">                    }</span>
 
@@ -913,7 +913,7 @@
 <span class="sd">                def on_loader_start(self, runner):</span>
 <span class="sd">                    super().on_loader_start(runner)</span>
 <span class="sd">                    self.meters = {</span>
-<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        key: metrics.AdditiveMetric(compute_on_call=False)</span>
 <span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
 <span class="sd">                    }</span>
 

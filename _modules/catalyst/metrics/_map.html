@@ -313,7 +313,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveValueMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._average_precision</span> <span class="kn">import</span> <span class="n">mean_average_precision</span>
 
@@ -458,8 +458,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_name_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">map</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_name_std</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">map</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/std&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">topk_args</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AdditiveValueMetric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">AdditiveValueMetric</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AdditiveMetric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">AdditiveMetric</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">))</span>
         <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

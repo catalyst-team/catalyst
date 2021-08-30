@@ -314,7 +314,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="n">AccumulativeMetric</span><span class="p">,</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveValueMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveMetric</span>
 
 
 <div class="viewcode-block" id="FunctionalBatchMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._functional_metric.FunctionalBatchMetric">[docs]</a><span class="k">class</span> <span class="nc">FunctionalBatchMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
@@ -370,7 +370,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span> <span class="o">=</span> <span class="n">metric_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="n">metric_key</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span> <span class="o">=</span> <span class="n">AdditiveValueMetric</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span> <span class="o">=</span> <span class="n">AdditiveMetric</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset all statistics&quot;&quot;&quot;</span>

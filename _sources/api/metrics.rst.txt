@@ -47,9 +47,9 @@ AccumulativeMetric
     :exclude-members: __init__
     :show-inheritance:
 
-AdditiveValueMetric
+AdditiveMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._additive.AdditiveValueMetric
+.. autoclass:: catalyst.metrics._additive.AdditiveMetric
     :members:
     :exclude-members: __init__
     :show-inheritance:
