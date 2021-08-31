@@ -293,7 +293,7 @@ class SklearnModelCallback(Callback):
         model_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
-        concat_mode: bool = False,
+        concat_mode: bool = True,
         **model_kwargs,
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
