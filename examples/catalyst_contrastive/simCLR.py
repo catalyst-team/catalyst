@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     model = ContrastiveModel(projection_head, encoder)
     # 2. model and optimizer
-    optimizer = Adam([model.parameters()], lr=args.learning_rate)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
     # 3. criterion with triplets sampling
     criterion = NTXentLoss(tau=args.temperature)
