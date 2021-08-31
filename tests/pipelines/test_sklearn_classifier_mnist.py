@@ -41,7 +41,7 @@ def train_experiment(device, engine=None):
         # 1. train, valid and test loaders
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=transforms)
         train_labels = train_data.targets.cpu().numpy().tolist()
         train_sampler = data.BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
         train_loader = DataLoader(train_data, batch_sampler=train_sampler)
