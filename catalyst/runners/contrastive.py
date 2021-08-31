@@ -1,8 +1,51 @@
+import torch
 from typing import Any, Mapping
 
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
 from catalyst.typing import RunnerModel
+from catalyst.core import Callback, IEngine
+
+
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
+from collections import OrderedDict
+import os
+
+import torch
+from torch import nn, optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.utils.data import DataLoader
+
+from catalyst.callbacks.batch_overfit import BatchOverfitCallback
+from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
+from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
+from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.core.callback import Callback
+from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
+from catalyst.core.runner import IRunner, RunnerException
+from catalyst.core.trial import ITrial
+from catalyst.data.loader import ILoaderWrapper
+from catalyst.engines import IEngine
+from catalyst.loggers.console import ConsoleLogger
+from catalyst.loggers.csv import CSVLogger
+from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners.supervised import ISupervisedRunner
+from catalyst.typing import (
+    Criterion,
+    Model,
+    Optimizer,
+    RunnerCriterion,
+    RunnerModel,
+    RunnerOptimizer,
+    RunnerScheduler,
+    Scheduler,
+)
+from catalyst.utils.data import get_loaders_from_params
+from catalyst.utils.misc import maybe_recursive_call, set_global_seed
+from catalyst.utils.torch import get_available_engine
 
 
 class IContrastiveRunner(IRunner):
@@ -100,35 +143,78 @@ class IContrastiveRunner(IRunner):
 
 
 class ContrastiveRunner(IContrastiveRunner, Runner):
-    def predict_batch(self, batch):
-        # model train/valid step
-        # unpack the batch
-        sample_aug1, sample_aug2, target = batch
-        embedding1 = self._encoder(sample_aug1)
-        embedding2 = self._encoder(sample_aug2)
-        projection1 = self.model(embedding1)
-        projection2 = self.model(embedding2)
-        self.batch = {
-            
-            self._target_key: target,
-        }
+    """Runner for experiments with contrastive model."""
 
-    def handle_batch(self, batch):
-        # model train/valid step
-        # unpack the batch
-        sample_aug1, sample_aug2, target = batch
-        embedding1 = self._encoder(sample_aug1)
-        embedding2 = self._encoder(sample_aug2)
-        projection1 = self.model(embedding1)
-        projection2 = self.model(embedding2)
-        self.batch = {
-            f"{self._projection_key}_1": projection1,
-            f"{self._projection_key}_2": projection2,
-            f"{self._embedding_key}_1": embedding1,
-            f"{self._embedding_key}_2": embedding2,
-            self._target_key: target,
-        }
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        engine: IEngine = None,
+        input_key: Any = "features",
+        output_key: Any = "logits",
+        target_key: str = "targets",
+        loss_key: str = "loss",
+        augemention_key: str = "aug",
+        projection_key: str = "projections",
+        embedding_key: str = "embeddings",
+    ):
+        """Init."""
+        IContrastiveRunner.__init__(
+            self,
+            input_key: Any = "features",
+            output_key: Any = "logits",
+            target_key: str = "targets",
+            loss_key: str = "loss",
+            augemention_key: str = "aug",
+            projection_key: str = "projections",
+            embedding_key: str = "embeddings",
+        )
+        Runner.__init__(self, model=model, engine=engine)
 
-    def train(self, encoder: RunnerModel, *args, **kwargs) -> None:
-        self._encoder = encoder
-        super().train(self, *args, **kwargs)
+    @torch.no_grad()
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        """
+        Run model inference on specified data batch.
+
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
+        Args:
+            batch: dictionary with data batch from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        batch = self._process_batch(batch)
+        batch = self.engine.sync_device(tensor_or_module=batch)
+        output = self.forward(batch, **kwargs)
+        return output
+
+    def get_callbacks(self, stage: str) -> Mapping[str, Callback]:
+        """Prepares the callbacks for selected stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            dictionary with stage callbacks
+        """
+        # I took it from supervised runner should be remade 
+        callbacks = super().get_callbacks(stage=stage)
+        is_callback_exists = lambda callback_fn: any(
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
+        )
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+            callbacks["_criterion"] = CriterionCallback(
+                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
+            )
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+            ISchedulerCallback
+        ):
+            callbacks["_scheduler"] = SchedulerCallback(
+                loader_key=self._valid_loader, metric_key=self._valid_metric
+            )
+        return callbacks
