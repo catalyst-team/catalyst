@@ -288,7 +288,7 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
-            collected_size = self.storage.collected_batches
+            collected_size = self.storage.collected_samples
             loader_len = runner.loader_sample_len
             assert (
                 self.storage.collected_batches == runner.loader_sample_len
