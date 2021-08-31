@@ -267,6 +267,9 @@ class SklearnModelCallback(Callback):
         Args:
             runner: runner for the experiment.
         """
+        assert (
+            torch.isnan(runner.batch[self.feature_key]).sum() == 0
+        ), "SklearnModelCallback can't process Tensors with NaN!"
         if runner.loader_key == self._train_loader:
             self.storage.update(**runner.batch)
         if runner.loader_key in self._valid_loaders:
@@ -285,8 +288,17 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
-            # model fit
-            # pdb.set_trace()
+            collected_size = self.storage.collected_samples
+            loader_len = runner.loader_sample_len
+
+            assert (
+                collected_size == loader_len
+            ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
+
+            assert (
+                torch.isnan(data[self.feature_key]).sum() == 0
+            ), "SklearnModelCallback - NaN after Accumulation!"
+
             self.model = self.model_fabric_fn()
             if self.target_key is None:
                 features = data[self.feature_key].detach().cpu().numpy()
