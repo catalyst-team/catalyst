@@ -9,9 +9,9 @@ import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from catalyst.contrib.datasets import MNIST
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
+from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
@@ -40,20 +40,16 @@ def train_experiment(device, engine=None):
         utils.set_global_seed(RANDOM_STATE)
         # 1. train, valid and test loaders
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
-        
+
         train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
         train_labels = train_data.targets.cpu().numpy().tolist()
         train_sampler = data.BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
         train_loader = DataLoader(train_data, batch_sampler=train_sampler)
 
-        valid_dataset = datasets.MNIST(
-            root=os.getcwd(), transform=transforms, train=False, download=True
-        )
+        valid_dataset = MNIST(root=os.getcwd(), transform=transforms, train=False, download=True)
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=32)
 
-        test_dataset = datasets.MNIST(
-            root=os.getcwd(), transform=transforms, train=False, download=True
-        )
+        test_dataset = MNIST(root=os.getcwd(), transform=transforms, train=False, download=True)
         test_loader = DataLoader(dataset=test_dataset, batch_size=32)
 
         # 2. model and optimizer
@@ -127,4 +123,3 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-train_experiment("cuda:0")

@@ -1,5 +1,4 @@
-from typing import Callable, Dict, Iterable, List, Optional, Union
-from collections import defaultdict
+from typing import Callable, List, Union
 from functools import partial
 import importlib
 
@@ -241,7 +240,7 @@ class SklearnModelCallback(Callback):
         self.predict_method = predict_method
         self.predict_key = predict_key
         self.model = None
-        
+
         if self.target_key:
             self.storage = AccumulativeMetric(keys=[feature_key, target_key])
         if self.target_key is None:
@@ -291,7 +290,7 @@ class SklearnModelCallback(Callback):
             data = self.storage.compute_key_value()
             collected_size = self.storage.collected_samples
             loader_len = runner.loader_sample_len
-            
+
             assert (
                 collected_size == loader_len
             ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
