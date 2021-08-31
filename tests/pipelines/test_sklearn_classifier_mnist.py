@@ -40,7 +40,7 @@ def train_experiment(device, engine=None):
         # 1. train, valid and test loaders
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
         train_dataset = datasets.MNIST(
-            root=os.getcwd(), download=True, transform=transforms, train=False
+            root=os.getcwd(), download=True, transform=transforms, train=True
         )
         labels = train_dataset.targets.tolist()
         sampler = data.BalanceBatchSampler(labels=labels, p=5, k=10)
@@ -88,6 +88,7 @@ def train_experiment(device, engine=None):
                 feature_key="embeddings",
                 target_key="targets",
                 train_loader="train",
+                concat_mode=True,
                 valid_loaders=["valid", "infer"],
                 model_fn=LogisticRegression,
                 predict_method="predict_proba",
@@ -129,3 +130,6 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cuda:0")
