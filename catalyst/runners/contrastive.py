@@ -69,8 +69,8 @@ class IContrastiveRunner(IRunner):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 3
             batch = {
-                f"{self._augemention_prefix}_1": batch[0],
-                f"{self._augemention_prefix}_2": batch[1],
+                f"{self._augemention_prefix}_left": batch[0],
+                f"{self._augemention_prefix}_right": batch[1],
                 self._target_key: batch[2],
             }
         return batch
@@ -114,18 +114,18 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         engine: IEngine = None,
         target_key: str = "targets",
         loss_key: str = "loss",
-        augemention_key: str = "aug",
-        projection_key: str = "projections",
-        embedding_key: str = "embeddings",
+        augemention_prefix: str = "aug",
+        projection_prefix: str = "projections",
+        embedding_prefix: str = "embeddings",
     ):
         """Init."""
         IContrastiveRunner.__init__(
             self,
             target_key=target_key,
             loss_key=loss_key,
-            augemention_key=augemention_key,
-            projection_key=projection_key,
-            embedding_key=embedding_key,
+            augemention_prefix=augemention_prefix,
+            projection_prefix=projection_prefix,
+            embedding_prefix=embedding_prefix,
         )
         Runner.__init__(self, model=model, engine=engine)
 

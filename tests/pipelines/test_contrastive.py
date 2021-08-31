@@ -9,7 +9,7 @@ from torchvision import transforms
 
 from catalyst import dl
 from catalyst.contrib import nn
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
+from catalyst.data.dataset import ContrastiveDataset
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.criterion import NTXentLoss
 
