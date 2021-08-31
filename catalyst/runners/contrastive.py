@@ -23,8 +23,9 @@ class IContrastiveRunner(IRunner):
         output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
         loss_key: key for ``runner.batch_metrics`` to store criterion loss output
-        projection_key: key for ``runner.batch`` to store model projection
-        embedding_key: key for `runner.batch`` to store model embeddings
+        augemention_prefix: key for ``runner.batch`` to sample augumentions
+        projection_prefix: key for ``runner.batch`` to store model projection
+        embedding_prefix: key for `runner.batch`` to store model embeddings
 
     Abstraction, please check out implementations for more details:
 
