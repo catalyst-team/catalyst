@@ -578,6 +578,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: runner for the experiment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;SklearnModelCallback can&#39;t process Tensors with NaN!&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_loader</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loaders</span><span class="p">:</span>
@@ -596,8 +599,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_loader</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
-            <span class="c1"># model fit</span>
-            <span class="c1"># pdb.set_trace()</span>
+            <span class="n">collected_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">collected_samples</span>
+            <span class="n">loader_len</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_sample_len</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">collected_size</span> <span class="o">==</span> <span class="n">loader_len</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;collected samples - </span><span class="si">{</span><span class="n">collected_size</span><span class="si">}</span><span class="s2"> != loader sample len - </span><span class="si">{</span><span class="n">loader_len</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="p">),</span> <span class="s2">&quot;SklearnModelCallback - NaN after Accumulation!&quot;</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fabric_fn</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">features</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
