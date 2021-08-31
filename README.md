@@ -233,7 +233,7 @@ class CustomRunner(dl.Runner):
     def on_loader_start(self, runner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["loss", "accuracy01", "accuracy03"]
         }
 
@@ -511,7 +511,7 @@ runner.train(
     callbacks=[
         dl.CriterionCallback(metric_key="loss1", input_key="logits1", target_key="targets1"),
         dl.CriterionCallback(metric_key="loss2", input_key="logits2", target_key="targets2"),
-        dl.MetricAggregationCallback(prefix="loss", metrics=["loss1", "loss2"], mode="mean"),
+        dl.MetricAggregationCallback(metric_key="loss", metrics=["loss1", "loss2"], mode="mean"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.AccuracyCallback(
@@ -777,7 +777,7 @@ callbacks = [
     dl.CriterionCallback(
         input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"
     ),
-    dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
+    dl.MetricAggregationCallback(metric_key="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
     dl.OptimizerCallback(metric_key="loss", model_key="student"),
     dl.CheckpointCallback(
         logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
@@ -1112,7 +1112,7 @@ class CustomRunner(dl.IRunner):
     def on_loader_start(self, runner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["loss_ae", "loss_kld", "loss"]
         }
 
@@ -1541,7 +1541,7 @@ runner.run()
 - Training stages support.
 - Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
 - Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, FairScale, DeepSpeed](./examples/engines)
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
 
 
 ### Tests

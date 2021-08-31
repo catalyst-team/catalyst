@@ -39,7 +39,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -128,7 +128,7 @@ Multi-model example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -223,7 +223,7 @@ Multi-optimizer example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -320,7 +320,7 @@ Multi-criterion example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 

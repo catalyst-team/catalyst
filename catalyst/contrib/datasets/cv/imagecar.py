@@ -1,11 +1,14 @@
 from typing import Callable, Optional
 from pathlib import Path
 
-import cv2
 import requests
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.functional import _extract_archive
+from catalyst.settings import SETTINGS
+
+if SETTINGS.cv_required:
+    import cv2
 
 DATASET_IDX = "1lq6wOcxtIR3LnIARvlIBZBwJzL7h0FYc"
 CHUNK_SIZE = 32768

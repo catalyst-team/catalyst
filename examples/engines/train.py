@@ -6,8 +6,9 @@ import os
 
 from torch import nn, optim
 from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
 
-from catalyst import dl, SETTINGS
+from catalyst import dl, SETTINGS, utils
 from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.nn import ResidualBlock
 from catalyst.data import transforms
@@ -28,6 +29,11 @@ if SETTINGS.apex_required:
         {"apex-dp": dl.DataParallelAPEXEngine, "apex-ddp": dl.DistributedDataParallelAPEXEngine}
     )
 
+if SETTINGS.deepspeed_required:
+    E2E.update(
+        {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
+    )
+
 if SETTINGS.fairscale_required:
     E2E.update(
         {
@@ -41,10 +47,8 @@ if SETTINGS.fairscale_required:
         }
     )
 
-if SETTINGS.deepspeed_required:
-    E2E.update(
-        {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
-    )
+if SETTINGS.xla_required:
+    E2E.update({"xla": dl.XLAEngine, "xla-ddp": dl.DistributedXLAEngine})
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -72,13 +76,14 @@ def resnet9(in_channels: int, num_classes: int, size: int = 16):
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir, engine: str):
+    def __init__(self, logdir: str, engine: str, sync_bn: bool = False):
         super().__init__()
         self._logdir = logdir
         self._engine = engine
+        self._sync_bn = sync_bn
 
     def get_engine(self):
-        return E2E[self._engine]()
+        return E2E[self._engine](sync_bn=True) if self._sync_bn else E2E[self._engine]()
 
     def get_loggers(self):
         return {
@@ -100,9 +105,25 @@ class CustomRunner(dl.IRunner):
         )
         train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
         valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
+        if self.engine.is_ddp:
+            train_sampler = DistributedSampler(
+                train_data,
+                num_replicas=self.engine.world_size,
+                rank=self.engine.rank,
+                shuffle=True,
+            )
+            valid_sampler = DistributedSampler(
+                valid_data,
+                num_replicas=self.engine.world_size,
+                rank=self.engine.rank,
+                shuffle=False,
+            )
+        else:
+            train_sampler = valid_sampler = None
+
         return {
-            "train": DataLoader(train_data, batch_size=32),
-            "valid": DataLoader(valid_data, batch_size=32),
+            "train": DataLoader(train_data, batch_size=32, sampler=train_sampler, num_workers=4),
+            "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler, num_workers=4),
         }
 
     def get_model(self, stage: str):
@@ -140,7 +161,6 @@ class CustomRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
-
         self.batch = {
             "features": x,
             "targets": y,
@@ -152,7 +172,8 @@ if __name__ == "__main__":
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
+    utils.boolean_flag(parser, "sync-bn", default=False)
     args, _ = parser.parse_known_args()
-    args.logdir = args.logdir or f"logs_{args.engine}".replace("-", "_")
-    runner = CustomRunner(args.logdir, args.engine)
+    args.logdir = args.logdir or f"logs_{args.engine}_sbn{int(args.sync_bn)}".replace("-", "_")
+    runner = CustomRunner(args.logdir, args.engine, args.sync_bn)
     runner.run()

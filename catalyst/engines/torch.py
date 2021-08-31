@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Tuple, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 import copy
 import os
 
@@ -97,6 +97,11 @@ class DeviceEngine(IEngine):
         """Process world size for distributed training."""
         return 1
 
+    @property
+    def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
+        return None
+
     def sync_device(
         self, tensor_or_module: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module]
     ) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
@@ -106,6 +111,10 @@ class DeviceEngine(IEngine):
     def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode."""
         return tensor
+
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
+        return metrics
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -302,6 +311,9 @@ class DistributedDataParallelEngine(DeviceEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
@@ -357,12 +369,17 @@ class DistributedDataParallelEngine(DeviceEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
+
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
     ):
@@ -370,6 +387,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         super().__init__()
         self.address = address or "localhost"
         self.port = port or 12345
+        self._sync_bn = sync_bn
         self._rank = 0
         self._device = None
 
@@ -386,9 +404,8 @@ class DistributedDataParallelEngine(DeviceEngine):
         if "world_size" not in self.process_group_kwargs:
             self.process_group_kwargs["world_size"] = torch.cuda.device_count()
 
-        self._world_size = (
-            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
-        )
+        self._backend = self.process_group_kwargs["backend"]
+        self._world_size = self.process_group_kwargs["world_size"]
 
     def __repr__(self):  # noqa: D105
         return (
@@ -408,6 +425,40 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
+    @property
+    def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
+        return self._backend
+
+    def barrier(self) -> None:
+        """
+        Synchronizes all processes.
+
+        This collective blocks processes until the all runs enter the function.
+        """
+        dist.barrier()
+
+    def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
+
+        Returns:
+            wrapped function.
+        """
+        return torch.multiprocessing.spawn(
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True,
+        )
+
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -422,6 +473,10 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         self.process_group_kwargs["rank"] = rank
         self.process_group_kwargs["world_size"] = world_size
+
+        os.environ["RANK"] = str(self._rank)
+        os.environ["LOCAL_RANK"] = str(self._rank)
+        os.environ["WORLD_SIZE"] = str(self._world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(**self.process_group_kwargs)
@@ -445,6 +500,14 @@ class DistributedDataParallelEngine(DeviceEngine):
         """
         return ddp_reduce(tensor, mode, self.world_size)
 
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
+        metrics = {
+            k: self.sync_tensor(torch.tensor(v, device=self.device), "mean")
+            for k, v in metrics.items()
+        }
+        return metrics
+
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
@@ -456,8 +519,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         model = model_fn()
         model = self.sync_device(model)
         if isinstance(model, nn.Module):
+            if self._sync_bn:
+                model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
             model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
+            if self._sync_bn:
+                model = {k: nn.SyncBatchNorm.convert_sync_batchnorm(v) for k, v in model.items()}
             model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
         else:
             raise ValueError("Model should be ``nn.Module`` or ``dict``")

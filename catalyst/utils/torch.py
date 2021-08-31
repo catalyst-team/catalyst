@@ -25,6 +25,9 @@ from catalyst.utils.misc import maybe_recursive_call, merge_dicts
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine
 
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
+
 # TODO: move to global registry with activation functions
 ACTIVATIONS = {  # noqa: WPS407
     None: "sigmoid",
@@ -172,15 +175,12 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 def get_device() -> torch.device:
     """Simple returning the best available device (TPU > GPU > CPU)."""
-    is_available_gpu = torch.cuda.is_available()
-    device = "cpu"
+    device = torch.device("cpu")
     if SETTINGS.xla_required:
-        import torch_xla.core.xla_model as xm
-
         device = xm.xla_device()
-    elif is_available_gpu:
-        device = "cuda"
-    return torch.device(device)
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    return device
 
 
 def get_available_engine(

@@ -2,12 +2,12 @@ from typing import Dict, Iterable, List, Optional
 
 import torch
 
-from catalyst.metrics._metric import AccumulationMetric
+from catalyst.metrics._accumulative import AccumulativeMetric
 from catalyst.metrics.functional._cmc_score import cmc_score, masked_cmc_score
 from catalyst.utils.distributed import get_rank
 
 
-class CMCMetric(AccumulationMetric):
+class CMCMetric(AccumulativeMetric):
     """Cumulative Matching Characteristics
 
     Args:
@@ -167,7 +167,7 @@ class CMCMetric(AccumulationMetric):
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
-            accumulative_fields=[embeddings_key, labels_key, is_query_key],
+            keys=[embeddings_key, labels_key, is_query_key],
         )
         self.embeddings_key = embeddings_key
         self.labels_key = labels_key
@@ -232,7 +232,7 @@ class CMCMetric(AccumulationMetric):
         return kv_metrics
 
 
-class ReidCMCMetric(AccumulationMetric):
+class ReidCMCMetric(AccumulativeMetric):
     """Cumulative Matching Characteristics for Reid case
 
     Args:
@@ -303,7 +303,7 @@ class ReidCMCMetric(AccumulationMetric):
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
-            accumulative_fields=[embeddings_key, pids_key, cids_key, is_query_key],
+            keys=[embeddings_key, pids_key, cids_key, is_query_key],
         )
         self.embeddings_key = embeddings_key
         self.pids_key = pids_key

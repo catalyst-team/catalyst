@@ -295,7 +295,7 @@ class CustomRunner(dl.Runner):
     def on_loader_start(self, runner: dl.IRunner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["critic_loss", "actor_loss"]
         }
 

@@ -4,8 +4,6 @@ from copy import deepcopy
 import logging
 import os
 
-import hydra
-from omegaconf import DictConfig, OmegaConf
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
@@ -22,6 +20,7 @@ from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
+from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Criterion,
     Model,
@@ -36,6 +35,10 @@ from catalyst.typing import (
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
+
+if SETTINGS.hydra_required:
+    import hydra
+    from omegaconf import DictConfig, OmegaConf
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +55,10 @@ class HydraRunner(IRunner):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, cfg: DictConfig):
+    def __init__(self, cfg: "DictConfig"):
         """Init."""
         super().__init__()
-        self._config: DictConfig = deepcopy(cfg)
+        self._config: "DictConfig" = deepcopy(cfg)
 
         self._apex: bool = self._config.args.apex or False
         self._amp: bool = self._config.args.amp or False
@@ -177,11 +180,11 @@ class HydraRunner(IRunner):
 
         return loggers
 
-    def _get_transform_from_params(self, params: DictConfig) -> Callable:
+    def _get_transform_from_params(self, params: "DictConfig") -> Callable:
         transform: Callable = hydra.utils.instantiate(params)
         return transform
 
-    def get_transform(self, params: DictConfig) -> Callable:
+    def get_transform(self, params: "DictConfig") -> Callable:
         """
         Returns the data transforms for a dataset.
 
@@ -194,7 +197,7 @@ class HydraRunner(IRunner):
         transform = self._get_transform_from_params(params)
         return transform
 
-    def _get_dataset_from_params(self, params: DictConfig) -> "Dataset":
+    def _get_dataset_from_params(self, params: "DictConfig") -> "Dataset":
         transform_params = params.pop("transform", None)
         if transform_params:
             transform = self.get_transform(transform_params)
@@ -264,7 +267,7 @@ class HydraRunner(IRunner):
         return loaders
 
     @staticmethod
-    def _get_model_from_params(params: DictConfig) -> RunnerModel:
+    def _get_model_from_params(params: "DictConfig") -> RunnerModel:
         params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
@@ -280,12 +283,12 @@ class HydraRunner(IRunner):
     def get_model(self, stage: str) -> RunnerModel:
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
-        model_params: DictConfig = self._config.model
+        model_params: "DictConfig" = self._config.model
         model: RunnerModel = self._get_model_from_params(model_params)
         return model
 
     @staticmethod
-    def _get_criterion_from_params(params: DictConfig) -> RunnerCriterion:
+    def _get_criterion_from_params(params: "DictConfig") -> RunnerCriterion:
         params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
@@ -301,12 +304,12 @@ class HydraRunner(IRunner):
         """Returns the criterion for a given stage."""
         if "criterion" not in self._config.stages[stage]:
             return None
-        criterion_params: DictConfig = self._config.stages[stage].criterion
+        criterion_params: "DictConfig" = self._config.stages[stage].criterion
         criterion = self._get_criterion_from_params(criterion_params)
         return criterion
 
     def _get_optimizer_from_params(
-        self, model: RunnerModel, stage: str, params: DictConfig
+        self, model: RunnerModel, stage: str, params: "DictConfig"
     ) -> Optimizer:
         # @TODO 1: refactor; this method is too long
         params = deepcopy(params)
@@ -353,7 +356,7 @@ class HydraRunner(IRunner):
         if "optimizer" not in self._config.stages[stage]:
             return None
 
-        optimizer_params: DictConfig = self._config.stages[stage].optimizer
+        optimizer_params: "DictConfig" = self._config.stages[stage].optimizer
         optimizer_params = deepcopy(optimizer_params)
         is_key_value = optimizer_params._key_value or False
 
@@ -372,7 +375,7 @@ class HydraRunner(IRunner):
 
     @staticmethod
     def _get_scheduler_from_params(
-        *, optimizer: RunnerOptimizer, params: DictConfig
+        *, optimizer: RunnerOptimizer, params: "DictConfig"
     ) -> RunnerScheduler:
         params = deepcopy(params)
         is_key_value = params._key_value or False
@@ -396,12 +399,12 @@ class HydraRunner(IRunner):
         """Returns the schedulers for a given stage."""
         if "scheduler" not in self._config.stages[stage]:
             return None
-        scheduler_params: DictConfig = self._config.stages[stage].scheduler
+        scheduler_params: "DictConfig" = self._config.stages[stage].scheduler
         scheduler = self._get_scheduler_from_params(optimizer=optimizer, params=scheduler_params)
         return scheduler
 
     @staticmethod
-    def _get_callback_from_params(params: DictConfig):
+    def _get_callback_from_params(params: "DictConfig"):
         params = deepcopy(params)
         wrapper_params = params.pop("_wrapper", None)
         target = params.pop("_target_")
@@ -460,7 +463,7 @@ class SupervisedHydraRunner(ISupervisedRunner, HydraRunner):
 
     def __init__(
         self,
-        cfg: DictConfig = None,
+        cfg: "DictConfig" = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",

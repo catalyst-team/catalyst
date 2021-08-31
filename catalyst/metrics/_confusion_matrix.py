@@ -3,8 +3,13 @@ from typing import Any, List
 import numpy as np
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import IMetric
-from catalyst.utils.distributed import all_gather, get_rank
+from catalyst.utils import get_device
+from catalyst.utils.distributed import all_gather, get_backend
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class ConfusionMatrixMetric(IMetric):
@@ -82,13 +87,13 @@ class ConfusionMatrixMetric(IMetric):
         self.num_classes = num_classes
         self.normalized = normalized
         self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
-        self._is_ddp = False
+        self._ddp_backend = None
         self.reset()
 
     def reset(self) -> None:
         """Reset confusion matrix, filling it with zeros."""
         self.conf.fill(0)
-        self._is_ddp = get_rank() > -1
+        self._ddp_backend = get_backend()
 
     def update(self, predictions: torch.Tensor, targets: torch.Tensor) -> None:
         """Computes the confusion matrix of ``K x K`` size where ``K`` is no of classes.
@@ -150,10 +155,19 @@ class ConfusionMatrixMetric(IMetric):
             to ground-truth targets and columns corresponds to predicted
             targets.
         """
-        if self._is_ddp:
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        if self._ddp_backend == "xla":
+            # if you have "RuntimeError: Aborted: Session XXX is not found" here
+            # please, ask Google for a more powerful TPU setup ;)
+            device = get_device()
+            value = torch.tensor([self.conf], device=device)
+            self.conf = xm.all_gather(value).sum(0).cpu().detach().numpy()
+        elif self._ddp_backend == "ddp":
             value: List[np.ndarray] = all_gather(self.conf)
             value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
             self.conf = value
+
         if self.normalized:
             conf = self.conf.astype(np.float32)
             return conf / conf.sum(1).clip(min=1e-12)[:, None]

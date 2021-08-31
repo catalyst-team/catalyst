@@ -2,8 +2,8 @@ from typing import Callable, Dict, Iterable
 
 import torch
 
-from catalyst.metrics import AccumulationMetric, ICallbackBatchMetric, ICallbackLoaderMetric
-from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics import AccumulativeMetric, ICallbackBatchMetric, ICallbackLoaderMetric
+from catalyst.metrics._additive import AdditiveMetric
 
 
 class FunctionalBatchMetric(ICallbackBatchMetric):
@@ -59,7 +59,7 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_fn = metric_fn
         self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
-        self.additive_metric = AdditiveValueMetric()
+        self.additive_metric = AdditiveMetric()
 
     def reset(self):
         """Reset all statistics"""
@@ -179,8 +179,8 @@ class FunctionalLoaderMetric(ICallbackLoaderMetric):
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_fn = metric_fn
         self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
-        self.accumulative_metric = AccumulationMetric(
-            accumulative_fields=accumulative_fields, compute_on_call=compute_on_call
+        self.accumulative_metric = AccumulativeMetric(
+            keys=accumulative_fields, compute_on_call=compute_on_call
         )
 
     def reset(self, num_batches: int, num_samples: int) -> None:

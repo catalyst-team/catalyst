@@ -42,5 +42,6 @@ from catalyst.contrib.nn.criterion.recsys import (
     BPRLoss,
     HingeLoss,
     LogisticLoss,
+    RocStarLoss,
     WARPLoss,
 )
