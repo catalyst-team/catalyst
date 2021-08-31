@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 import pickle
 
 import numpy as np
@@ -21,13 +21,15 @@ class CometLogger(ILogger):
     https://www.comet.ml/docs/quick-start/.
 
     Args:
-        workspace : Optional,``str``, Workspace used to log the experiment.
-        project_name: Optional,``str``, Project used to log the experiment.
-        experiment_id: Optional,``str``, Experiment Key string of an existing Experiment.
+        workspace: Workspace to log the experiment.
+        project_name: Project to log the experiment.
+        experiment_id: Experiment ID of a previously logged Experiment.
             Used to continue logging to an existing experiment (resume experiment).
-        tags: Optional,``list[str]``, A list of tags to add to the Experiment.
-        experiment_kwargs: Optional,``dict``, Additional keyword arguments.
-            Used to pass additional arguments to the Experiment object
+        comet_mode: Specifies whether to run an Online Experiment 
+            or Offline Experiment  
+        tags: A list of tags to add to the Experiment.
+        experiment_kwargs: Used to pass additional arguments to 
+            the Experiment object
 
     Python API examples:
 
@@ -64,30 +66,36 @@ class CometLogger(ILogger):
         runner = CustomRunner().run()
 
     Config API example:
+    
     .. code-block:: yaml
+    
         loggers:
             comet:
                 _target_: CometLogger
                 project_name: my_project
         ...
+        
     Hydra API example:
+    
     .. code-block:: yaml
+    
         loggers:
             comet:
                 _target_: catalyst.dl.CometLogger
                 project_name: my_project
         ...
+    
     """
 
     def __init__(
         self,
-        workspace: str = None,
-        project_name: str = None,
-        experiment_id: str = None,
+        workspace: Optional[str] = None,
+        project_name: Optional[str] = None,
+        experiment_id: Optional[str] = None,
         comet_mode: str = "online",
-        tags: List = None,
+        tags: List[str] = None,
         logging_frequency: int = 1,
-        **experiment_kwargs,
+        **experiment_kwargs: Dict,
     ) -> None:
         self.comet_mode = comet_mode
         self.workspace = workspace
