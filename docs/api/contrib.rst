@@ -212,6 +212,13 @@ LogisticLoss
     :undoc-members:
     :show-inheritance:
 
+RocStarLoss
+***********
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.RocStarLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 WARPLoss
 ********
 .. autoclass:: catalyst.contrib.nn.criterion.recsys.WARPLoss
