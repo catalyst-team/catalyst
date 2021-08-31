@@ -22,7 +22,6 @@ class SklearnModelCallback(Callback):
         model_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
-        concat_mode: label for robust solution for the accumulation but it can be slow
         model_kwargs: additional parameters for ``model_fn``
 
     .. note::
@@ -220,7 +219,6 @@ class SklearnModelCallback(Callback):
         model_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
-        concat_mode: bool = True,
         **model_kwargs,
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
@@ -243,8 +241,7 @@ class SklearnModelCallback(Callback):
         self.predict_method = predict_method
         self.predict_key = predict_key
         self.model = None
-        self.concat_mode = concat_mode
-
+        
         if self.target_key:
             self.storage = AccumulativeMetric(keys=[feature_key, target_key])
         if self.target_key is None:
@@ -294,14 +291,14 @@ class SklearnModelCallback(Callback):
             data = self.storage.compute_key_value()
             collected_size = self.storage.collected_samples
             loader_len = runner.loader_sample_len
-            if not self.concat_mode:
-                assert (
-                    collected_size == loader_len
-                ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
+            
+            assert (
+                collected_size == loader_len
+            ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
 
-                assert (
-                    torch.isnan(data[self.feature_key]).sum() == 0
-                ), "SklearnModelCallback - NaN after Accumulation!"
+            assert (
+                torch.isnan(data[self.feature_key]).sum() == 0
+            ), "SklearnModelCallback - NaN after Accumulation!"
 
             self.model = self.model_fabric_fn()
             if self.target_key is None:
