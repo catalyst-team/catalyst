@@ -10,80 +10,6 @@ from catalyst.core.callback import Callback
 from catalyst.metrics._accumulative import AccumulativeMetric
 
 
-class ConcatAccumulationMetric(AccumulationMetric):
-    """This metric accumulates all the input data along loader
-
-    Args:
-        accumulative_fields: list of keys to accumulate data from batch
-        compute_on_call: if True, allows compute metric's value on call
-        prefix: metric prefix
-        suffix: metric suffix
-    """
-
-    def __init__(
-        self,
-        accumulative_fields: Iterable[str] = None,
-        compute_on_call: bool = True,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None,
-    ) -> None:
-        """Init AccumulationMetric"""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
-        self.accumulative_fields = accumulative_fields or ()
-        self.storage = None
-        self.num_samples = None
-        self.collected_batches = None
-        self.collected_samples = None
-
-    def reset(self, num_batches: int, num_samples: int) -> None:
-        """
-        Reset metrics fields
-
-        Args:
-            num_batches: expected number of batches
-            num_samples: expected number of samples to accumulate
-        """
-        self.num_batches = num_batches
-        self.num_samples = num_samples
-        self.collected_batches = 0
-        self.collected_samples = 0
-        self.storage = defaultdict(lambda: [])
-
-    def update(self, **kwargs) -> None:
-        """
-        Update accumulated data with new batch
-
-        Args:
-            **kwargs: tensors that should be accumulates
-        """
-        bs = 0
-        for field_name in self.accumulative_fields:
-            bs = kwargs[field_name].shape[0]
-            self.storage[field_name].append(kwargs[field_name].detach().cpu())
-        self.collected_samples += bs
-        self.collected_batches += 1
-
-    def compute(self) -> Dict[str, torch.Tensor]:
-        """
-        Return accumulated data
-
-        Returns:
-            dict of accumulated data
-        """
-        for field in self.storage:
-            self.storage[field] = torch.cat(self.storage[field])
-        return self.storage
-
-    def compute_key_value(self) -> Dict[str, torch.Tensor]:
-        """
-        Return accumulated data
-
-        Returns:
-            dict of accumulated data
-        """
-        return self.compute()
-
-
 class SklearnModelCallback(Callback):
     """Callback to train a classifier on the train loader and
     to give predictions on the valid loader.
@@ -319,21 +245,10 @@ class SklearnModelCallback(Callback):
         self.model = None
         self.concat_mode = concat_mode
 
-        if self.concat_mode:
-            accumulator = ConcatAccumulationMetric
-        else:
-            accumulator = AccumulationMetric
-
         if self.target_key:
-<<<<<<< HEAD
-            self.storage = accumulator(accumulative_fields=[feature_key, target_key])
-        if self.target_key is None:
-            self.storage = accumulator(accumulative_fields=[feature_key])
-=======
             self.storage = AccumulativeMetric(keys=[feature_key, target_key])
         if self.target_key is None:
             self.storage = AccumulativeMetric(keys=[feature_key])
->>>>>>> master
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """
