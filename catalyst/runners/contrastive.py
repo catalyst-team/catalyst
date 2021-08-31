@@ -14,25 +14,14 @@ import os
 import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.utils.data import DataLoader
 
-from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
-from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, RunnerException
-from catalyst.core.trial import ITrial
-from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
-from catalyst.loggers.console import ConsoleLogger
-from catalyst.loggers.csv import CSVLogger
-from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
     Model,
@@ -82,8 +71,6 @@ class IContrastiveRunner(IRunner):
 
     def __init__(
         self,
-        input_key: Any = "features",
-        output_key: Any = "logits",
         target_key: str = "targets",
         loss_key: str = "loss",
         augemention_key: str = "aug",
@@ -93,8 +80,6 @@ class IContrastiveRunner(IRunner):
         """Init."""
         IRunner.__init__(self)
 
-        self._input_key = input_key
-        self._output_key = output_key
         self._target_key = target_key
         self._loss_key = loss_key
         self._projection_key = projection_key
@@ -149,8 +134,6 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         self,
         model: RunnerModel = None,
         engine: IEngine = None,
-        input_key: Any = "features",
-        output_key: Any = "logits",
         target_key: str = "targets",
         loss_key: str = "loss",
         augemention_key: str = "aug",
@@ -160,13 +143,11 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         """Init."""
         IContrastiveRunner.__init__(
             self,
-            input_key: Any = "features",
-            output_key: Any = "logits",
-            target_key: str = "targets",
-            loss_key: str = "loss",
-            augemention_key: str = "aug",
-            projection_key: str = "projections",
-            embedding_key: str = "embeddings",
+            target_key = target_key,
+            loss_key  = loss_key,
+            augemention_key  = augemention_key,
+            projection_key  = projection_key,
+            embedding_key = embedding_key,
         )
         Runner.__init__(self, model=model, engine=engine)
 
@@ -191,7 +172,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         output = self.forward(batch, **kwargs)
         return output
 
-    def get_callbacks(self, stage: str) -> Mapping[str, Callback]:
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Prepares the callbacks for selected stage.
 
         Args:
