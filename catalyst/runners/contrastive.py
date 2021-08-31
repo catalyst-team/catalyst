@@ -50,11 +50,11 @@ class IContrastiveRunner(IRunner):
 
     def __init__(
         self,
-        target_key: str = "targets",
+        target_key: str = "target",
         loss_key: str = "loss",
         augemention_prefix: str = "aug",
-        projection_prefix: str = "projections",
-        embedding_prefix: str = "embeddings",
+        projection_prefix: str = "projection",
+        embedding_prefix: str = "embedding",
     ):
         """Init."""
         IRunner.__init__(self)
@@ -86,7 +86,13 @@ class IContrastiveRunner(IRunner):
             f"{self._embedding_prefix}_left": embedding1,
             f"{self._embedding_prefix}_right": embedding2,
         }
+
         return batch
+
+    def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
+        self.batch = self._process_batch(self.batch)
+        super().on_batch_start(runner)
 
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
@@ -104,6 +110,16 @@ class IContrastiveRunner(IRunner):
         """
         return self._process_input(batch, **kwargs)
 
+    def handle_batch(self, batch: Mapping[str, Any]) -> None:
+        """
+        Inner method to handle specified data batch.
+        Used to make a train/valid/infer stage during Experiment run.
+
+        Args:
+            batch: dictionary with data batches from DataLoader.
+        """
+        self.batch = {**batch, **self.forward(batch)}
+
 
 class ContrastiveRunner(IContrastiveRunner, Runner):
     """Runner for experiments with contrastive model."""
@@ -112,11 +128,11 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         self,
         model: RunnerModel = None,
         engine: IEngine = None,
-        target_key: str = "targets",
+        target_key: str = "target",
         loss_key: str = "loss",
         augemention_prefix: str = "aug",
-        projection_prefix: str = "projections",
-        embedding_prefix: str = "embeddings",
+        projection_prefix: str = "projection",
+        embedding_prefix: str = "embedding",
     ):
         """Init."""
         IContrastiveRunner.__init__(
@@ -150,25 +166,25 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         output = self.forward(batch, **kwargs)
         return output
 
-    def handle_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
-        """
-        Run model forward on specified data batch.
+    # def handle_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+    #     """
+    #     Run model forward on specified data batch.
 
-        .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
+    #     .. warning::
+    #         You should not override this method. If you need specific model
+    #         call, override forward() method
 
-        Args:
-            batch: dictionary with data batch from DataLoader.
-            **kwargs: additional kwargs to pass to the model
+    #     Args:
+    #         batch: dictionary with data batch from DataLoader.
+    #         **kwargs: additional kwargs to pass to the model
 
-        Returns:
-            Mapping[str, Any]: model output dictionary
-        """
-        batch = self._process_batch(batch)
-        batch = self.engine.sync_device(tensor_or_module=batch)
-        output = self.forward(batch, **kwargs)
-        return output
+    #     Returns:
+    #         Mapping[str, Any]: model output dictionary
+    #     """
+    #     batch = self._process_batch(batch)
+    #     batch = self.engine.sync_device(tensor_or_module=batch)
+    #     output = self.forward(batch, **kwargs)
+    #     return output
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Prepares the callbacks for selected stage.
