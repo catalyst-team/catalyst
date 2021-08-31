@@ -36,7 +36,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
             "projection2": projection2,
             "embedding1": embedding1,
             "embedding2": embedding2,
-            "target": target,
+            self._target_key: target,
         }
 
     def handle_batch(self, batch):
@@ -52,7 +52,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
             "projection2": projection2,
             "embedding1": embedding1,
             "embedding2": embedding2,
-            "target": target,
+            self._target_key: target,
         }
 
     def train(self, encoder: RunnerModel, *args, **kwargs) -> None:
