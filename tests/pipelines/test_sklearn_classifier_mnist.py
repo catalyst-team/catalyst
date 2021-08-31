@@ -9,6 +9,7 @@ import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
+from catalyst.contrib.datasets import MNIST
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
@@ -17,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 5
+TRAIN_EPOCH = 3
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -39,14 +40,11 @@ def train_experiment(device, engine=None):
         utils.set_global_seed(RANDOM_STATE)
         # 1. train, valid and test loaders
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
-        train_dataset = datasets.MNIST(
-            root=os.getcwd(), download=True, transform=transforms, train=True
-        )
-        labels = train_dataset.targets.tolist()
-        sampler = data.BalanceBatchSampler(labels=labels, p=10, k=256)
-        train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
-        )
+        
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_labels = train_data.targets.cpu().numpy().tolist()
+        train_sampler = data.BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
+        train_loader = DataLoader(train_data, batch_sampler=train_sampler)
 
         valid_dataset = datasets.MNIST(
             root=os.getcwd(), transform=transforms, train=False, download=True
@@ -88,7 +86,6 @@ def train_experiment(device, engine=None):
                 feature_key="embeddings",
                 target_key="targets",
                 train_loader="train",
-                concat_mode=True,
                 valid_loaders=["valid", "infer"],
                 model_fn=RandomForestClassifier,
                 predict_method="predict_proba",
@@ -130,3 +127,4 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+train_experiment("cuda:0")
