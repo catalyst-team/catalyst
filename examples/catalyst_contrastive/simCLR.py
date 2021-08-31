@@ -68,12 +68,24 @@ if __name__ == "__main__":
     # )
 
     encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
-    model = nn.Sequential(
+    projection_head = nn.Sequential(
         nn.Linear(2048, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, args.feature_dim, bias=True),
     )
 
+    class ContrastiveModel(torch.nn.Module):
+        def __init__(self, model, encoder):
+            super(ContrastiveModel, self).__init__()
+            self.model = model
+            self.encoder = encoder
+
+        def forward(self, x):
+            emb = self.encoder(x)
+            projection = self.model(emb)
+            return emb, projection
+
+    model = ContrastiveModel(projection_head, encoder)
     # 2. model and optimizer
     optimizer = Adam(
         [{"params": encoder.parameters()}, {"params": model.parameters()}], lr=args.learning_rate
@@ -93,7 +105,6 @@ if __name__ == "__main__":
 
     runner.train(
         model=model,
-        encoder=encoder,
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
