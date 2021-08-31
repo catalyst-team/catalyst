@@ -51,39 +51,39 @@ class IContrastiveRunner(IRunner):
         self,
         target_key: str = "targets",
         loss_key: str = "loss",
-        augemention_key: str = "aug",
-        projection_key: str = "projections",
-        embedding_key: str = "embeddings",
+        augemention_prefix: str = "aug",
+        projection_prefix: str = "projections",
+        embedding_prefix: str = "embeddings",
     ):
         """Init."""
         IRunner.__init__(self)
 
         self._target_key = target_key
         self._loss_key = loss_key
-        self._projection_key = projection_key
-        self._augemention_key = augemention_key
-        self._embedding_key = embedding_key
+        self._projection_prefix = projection_prefix
+        self._augemention_prefix = augemention_prefix
+        self._embedding_prefix = embedding_prefix
 
     def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 3
             batch = {
-                f"{self._augemention_key}_1": batch[0],
-                f"{self._augemention_key}_2": batch[1],
+                f"{self._augemention_prefix}_1": batch[0],
+                f"{self._augemention_prefix}_2": batch[1],
                 self._target_key: batch[2],
             }
         return batch
 
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
-        embedding1, projection1 = self.model(batch[f"{self._augemention_key}_1"], **kwargs)
-        embedding2, projection2 = self.model(batch[f"{self._augemention_key}_2"], **kwargs)
+        embedding1, projection1 = self.model(batch[f"{self._augemention_prefix}_left"], **kwargs)
+        embedding2, projection2 = self.model(batch[f"{self._augemention_prefix}_right"], **kwargs)
 
         batch = {
             **batch,
-            f"{self._projection_key}_1": projection1,
-            f"{self._projection_key}_2": projection2,
-            f"{self._embedding_key}_1": embedding1,
-            f"{self._embedding_key}_2": embedding2,
+            f"{self._projection_prefix}_left": projection1,
+            f"{self._projection_prefix}_right": projection2,
+            f"{self._embedding_prefix}_left": embedding1,
+            f"{self._embedding_prefix}_right": embedding2,
         }
         return batch
 
@@ -185,8 +185,8 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         )
         if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=f"{self._projection_key}_1",
-                target_key=f"{self._projection_key}_2",
+                input_key=f"{self._projection_prefix}_1",
+                target_key=f"{self._projection_prefix}_2",
                 metric_key=self._loss_key,
             )
         if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
