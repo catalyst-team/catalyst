@@ -288,6 +288,11 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
+            collected_size = self.storage.collected_batches
+            loader_len = runner.loader_sample_len
+            assert (
+                self.storage.collected_batches == runner.loader_sample_len
+            ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
             assert (
                 torch.isnan(data[self.feature_key]).sum() == 0
             ), "SklearnModelCallback - NaN after Accumulation!"
