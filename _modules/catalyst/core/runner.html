@@ -316,7 +316,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">ICallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
@@ -360,8 +360,21 @@
         <span class="k">return</span> <span class="n">batch_size</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
         <span class="s2">&quot;No `batch_size` found,&quot;</span>
-        <span class="s2">&quot;please specity it throught `loader.batch_size`, or `loader.batch_sampler.batch_size`&quot;</span>
+        <span class="s2">&quot;please specify it with `loader.batch_size`, or `loader.batch_sampler.batch_size`&quot;</span>
     <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_num_samples</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">_get_batch_size</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">BatchSampler</span><span class="p">):</span>
+        <span class="c1"># pytorch default item-based samplers</span>
+        <span class="k">if</span> <span class="n">loader</span><span class="o">.</span><span class="n">drop_last</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># pytorch batch-based samplers</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span>
 
 
 <div class="viewcode-block" id="RunnerException"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.RunnerException">[docs]</a><span class="k">class</span> <span class="nc">RunnerException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -970,7 +983,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_get_batch_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_get_num_samples</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
@@ -1004,7 +1017,7 @@
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="c1"># batch-metrics sync in ddp setup is too computation heavy</span>
+        <span class="c1"># batch-metrics sync under ddp setup is too computation heavy</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;batch&quot;</span><span class="p">)</span>
 
@@ -1014,7 +1027,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
-        <span class="c1"># self.epoch_metrics[self.loader_key] = self.loader_metrics</span>
 
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
@@ -1030,8 +1042,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">deinit_components</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;stage&quot;</span><span class="p">)</span>
 
-        <span class="c1"># due to multiprocessing setup we have to close current loggers</span>
-        <span class="c1"># to prevent EOF-like errors</span>
+        <span class="c1"># due to multiprocessing setup we have to close current loggers to prevent EOF-like errors</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">flush_log</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">()</span>
