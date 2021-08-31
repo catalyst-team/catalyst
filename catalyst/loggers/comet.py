@@ -25,10 +25,10 @@ class CometLogger(ILogger):
         project_name: Project to log the experiment.
         experiment_id: Experiment ID of a previously logged Experiment.
             Used to continue logging to an existing experiment (resume experiment).
-        comet_mode: Specifies whether to run an Online Experiment 
-            or Offline Experiment  
+        comet_mode: Specifies whether to run an Online Experiment
+            or Offline Experiment
         tags: A list of tags to add to the Experiment.
-        experiment_kwargs: Used to pass additional arguments to 
+        experiment_kwargs: Used to pass additional arguments to
             the Experiment object
 
     Python API examples:
@@ -66,25 +66,25 @@ class CometLogger(ILogger):
         runner = CustomRunner().run()
 
     Config API example:
-    
+
     .. code-block:: yaml
-    
+
         loggers:
             comet:
                 _target_: CometLogger
-                project_name: my_project
+                project_name: my_comet_project
         ...
-        
+
     Hydra API example:
-    
+
     .. code-block:: yaml
-    
+
         loggers:
             comet:
                 _target_: catalyst.dl.CometLogger
-                project_name: my_project
+                project_name: my_comet_project
         ...
-    
+
     """
 
     def __init__(
@@ -194,9 +194,9 @@ class CometLogger(ILogger):
     ) -> None:
         """Logs image to the logger."""
 
-        self.image_name = f"{scope}_{tag}"
+        image_name = f"{scope}_{tag}"
 
-        self.experiment.log_image(image, name=self.image_name, step=global_batch_step)
+        self.experiment.log_image(image, name=image_name, step=global_batch_step)
 
     def log_hparams(
         self,
