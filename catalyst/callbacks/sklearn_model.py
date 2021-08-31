@@ -43,10 +43,11 @@ class ConcatAccumulationMetric(AccumulationMetric):
             num_batches: expected number of batches
             num_samples: expected number of samples to accumulate
         """
+        self.num_batches = num_batches
         self.num_samples = num_samples
         self.collected_batches = 0
         self.collected_samples = 0
-        self.storage = defaultdict(lambda: list())
+        self.storage = defaultdict(lambda: [])
 
     def update(self, **kwargs) -> None:
         """
@@ -95,9 +96,9 @@ class SklearnModelCallback(Callback):
         model_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
-        concat_mode: label for robust solution for the accumulation but this implemention can be slow
+        concat_mode: label for robust solution for the accumulation but it can be slow
         model_kwargs: additional parameters for ``model_fn``
-        
+
     .. note::
         catalyst[ml] required for this callback
 

@@ -94,7 +94,7 @@ def train_experiment(device, engine=None):
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                n_estimators = 50
+                n_estimators=50,
             ),
             dl.ControlFlowCallback(
                 dl.AccuracyCallback(
