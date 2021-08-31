@@ -2,28 +2,17 @@ from typing import Any, Mapping
 from collections import OrderedDict
 
 import torch
-from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core import Callback, IEngine
 from catalyst.core.callback import Callback
-from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner, RunnerException
+from catalyst.core.misc import callback_isinstance
+from catalyst.core.runner import IRunner
 from catalyst.engines import IEngine
 from catalyst.runners.runner import Runner
-from catalyst.typing import (
-    Criterion,
-    Model,
-    Optimizer,
-    RunnerCriterion,
-    RunnerModel,
-    RunnerOptimizer,
-    RunnerScheduler,
-    Scheduler,
-)
+from catalyst.typing import Criterion, Optimizer, RunnerModel, Scheduler
 
 
 class IContrastiveRunner(IRunner):
@@ -143,6 +132,26 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
     def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
+
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
+        Args:
+            batch: dictionary with data batch from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        batch = self._process_batch(batch)
+        batch = self.engine.sync_device(tensor_or_module=batch)
+        output = self.forward(batch, **kwargs)
+        return output
+
+    def handle_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        """
+        Run model forward on specified data batch.
 
         .. warning::
             You should not override this method. If you need specific model
