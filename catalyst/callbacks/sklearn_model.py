@@ -70,7 +70,7 @@ class ConcatAccumulationMetric(AccumulationMetric):
             dict of accumulated data
         """
         for field in self.storage:
-            self.storage[field] = torch.concat(self.storage[field])
+            self.storage[field] = torch.cat(self.storage[field])
         return self.storage
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
@@ -372,13 +372,14 @@ class SklearnModelCallback(Callback):
             data = self.storage.compute_key_value()
             collected_size = self.storage.collected_samples
             loader_len = runner.loader_sample_len
-            assert (
-                collected_size == loader_len
-            ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
+            if not self.concat_mode:
+                assert (
+                    collected_size == loader_len
+                ), f"collected samples - {collected_size} != loader sample len - {loader_len}!"
 
-            assert (
-                torch.isnan(data[self.feature_key]).sum() == 0
-            ), "SklearnModelCallback - NaN after Accumulation!"
+                assert (
+                    torch.isnan(data[self.feature_key]).sum() == 0
+                ), "SklearnModelCallback - NaN after Accumulation!"
 
             self.model = self.model_fabric_fn()
             if self.target_key is None:
