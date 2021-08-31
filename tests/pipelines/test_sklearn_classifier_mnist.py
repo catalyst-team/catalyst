@@ -15,9 +15,9 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 2
+TRAIN_EPOCH = 5
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -43,7 +43,7 @@ def train_experiment(device, engine=None):
             root=os.getcwd(), download=True, transform=transforms, train=True
         )
         labels = train_dataset.targets.tolist()
-        sampler = data.BalanceBatchSampler(labels=labels, p=5, k=10)
+        sampler = data.BalanceBatchSampler(labels=labels, p=10, k=256)
         train_loader = DataLoader(
             dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
         )
@@ -90,11 +90,11 @@ def train_experiment(device, engine=None):
                 train_loader="train",
                 concat_mode=True,
                 valid_loaders=["valid", "infer"],
-                model_fn=LogisticRegression,
+                model_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                solver="saga",
+                n_estimators = 50
             ),
             dl.ControlFlowCallback(
                 dl.AccuracyCallback(
@@ -130,6 +130,3 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-
-
-train_experiment("cuda:0")
