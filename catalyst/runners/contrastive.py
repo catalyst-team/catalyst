@@ -1,6 +1,5 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
+from typing import Any, Mapping
 from collections import OrderedDict
-import os
 
 import torch
 from torch import nn, optim
@@ -25,9 +24,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.data import get_loaders_from_params
-from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import get_available_engine
 
 
 class IContrastiveRunner(IRunner):
