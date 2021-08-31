@@ -4,7 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [21.08] - YYYY-MM-DD
+
+## [YY.MM.R] - YYYY-MM-DD
+
+### Added
+
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.08] - 2021-08-31
 
 ### Added
 
@@ -35,6 +55,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
 - matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
+- sample counter for the loader ([#1285](https://github.com/catalyst-team/catalyst/pull/1285))
 
 
 ## [21.07] - 2021-07-29

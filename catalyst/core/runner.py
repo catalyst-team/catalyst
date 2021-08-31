@@ -5,12 +5,7 @@ from functools import lru_cache
 import logging
 
 import torch
-from torch.utils.data import (
-    BatchSampler,
-    DataLoader,
-    Dataset,
-    DistributedSampler,
-)
+from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
@@ -711,7 +706,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
-        # batch-metrics sync in ddp setup is too computation heavy
+        # batch-metrics sync under ddp setup is too computation heavy
         if not self.engine.is_ddp:
             self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
@@ -721,7 +716,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.epoch_metrics[self.loader_key] = {
             key: float(value) for key, value in self.loader_metrics.items()
         }
-        # self.epoch_metrics[self.loader_key] = self.loader_metrics
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
@@ -737,8 +731,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.engine.deinit_components(runner=self)
         self.close_log(scope="stage")
 
-        # due to multiprocessing setup we have to close current loggers
-        # to prevent EOF-like errors
+        # due to multiprocessing setup we have to close current loggers to prevent EOF-like errors
         if self.engine.is_ddp:
             self.flush_log()
             self.close_log()
