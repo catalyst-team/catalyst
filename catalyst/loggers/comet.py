@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 import pickle
 
 import numpy as np
@@ -160,7 +160,6 @@ class CometLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs the metrics to the logger."""
-
         if global_batch_step % self.logging_frequency == 0:
             self.experiment.log_metrics(
                 metrics,
@@ -193,7 +192,6 @@ class CometLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs image to the logger."""
-
         image_name = f"{scope}_{tag}"
 
         self.experiment.log_image(image, name=image_name, step=global_batch_step)
@@ -207,7 +205,6 @@ class CometLogger(ILogger):
         stage_key: str = None,
     ) -> None:
         """Logs hyperparameters to the logger."""
-
         self.experiment.log_parameters(hparams, prefix=scope)
 
     def log_artifact(
