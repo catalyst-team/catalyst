@@ -1612,6 +1612,7 @@ best practices for your deep learning research and development.
 - [Catalyst.RL - NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit) - starter kit
 - [Inria Segmentation Example](https://github.com/BloodAxe/Catalyst-Inria-Segmentation-Example) - An example of training segmentation model for Inria Sattelite Segmentation Challenge
 - [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
+- [Logging Catalyst Runs to Comet](https://colab.research.google.com/drive/1TaG27HcMh2jyRKBGsqRXLiGUfsHVyCq6?usp=sharing) - An example of how to log metrics, hyperparameters and more from Catalyst runs to [Comet](https://www.comet.ml/site/data-scientists/)
 
 #### Competitions
 - [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place
