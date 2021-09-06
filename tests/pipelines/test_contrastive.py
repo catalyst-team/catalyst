@@ -44,7 +44,7 @@ def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
         transforms = Compose(
-            [   
+            [
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
                 ToTensor(),
