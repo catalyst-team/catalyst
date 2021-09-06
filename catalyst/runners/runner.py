@@ -869,6 +869,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         self,
         model: RunnerModel = None,
         engine: IEngine = None,
+        input_key: str = "features",
         target_key: str = "target",
         loss_key: str = "loss",
         augemention_prefix: str = "aug",
@@ -878,6 +879,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         """Init."""
         IContrastiveRunner.__init__(
             self,
+            input_key=input_key,
             target_key=target_key,
             loss_key=loss_key,
             augemention_prefix=augemention_prefix,

@@ -120,6 +120,7 @@ class IContrastiveRunner(IRunner):
 
     def __init__(
         self,
+        input_key: str = "features",
         target_key: str = "target",
         loss_key: str = "loss",
         augemention_prefix: str = "aug",
@@ -134,12 +135,13 @@ class IContrastiveRunner(IRunner):
         self._projection_prefix = projection_prefix
         self._augemention_prefix = augemention_prefix
         self._embedding_prefix = embedding_prefix
+        self._input_key = input_key
 
     def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 4
             batch = {
-                f"origin": batch[0],
+                self._input_key: batch[0],
                 f"{self._augemention_prefix}_left": batch[1],
                 f"{self._augemention_prefix}_right": batch[2],
                 self._target_key: batch[3],
@@ -149,7 +151,7 @@ class IContrastiveRunner(IRunner):
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
         embedding1, projection1 = self.model(batch[f"{self._augemention_prefix}_left"], **kwargs)
         embedding2, projection2 = self.model(batch[f"{self._augemention_prefix}_right"], **kwargs)
-        origin_embeddings, projection_origin = self.model(batch["origin"], **kwargs)
+        origin_embeddings, projection_origin = self.model(batch[self._input_key], **kwargs)
         batch = {
             **batch,
             f"{self._projection_prefix}_left": projection1,
