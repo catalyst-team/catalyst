@@ -149,14 +149,15 @@ class IContrastiveRunner(IRunner):
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
         embedding1, projection1 = self.model(batch[f"{self._augemention_prefix}_left"], **kwargs)
         embedding2, projection2 = self.model(batch[f"{self._augemention_prefix}_right"], **kwargs)
-        origin_embeddings, _ = self.model(batch["origin"], **kwargs)
+        origin_embeddings, projection_origin = self.model(batch["origin"], **kwargs)
         batch = {
             **batch,
-            f"origin_embeddings": origin_embeddings,
             f"{self._projection_prefix}_left": projection1,
             f"{self._projection_prefix}_right": projection2,
+             f"{self._projection_prefix}_origin": projection_origin,
             f"{self._embedding_prefix}_left": embedding1,
             f"{self._embedding_prefix}_right": embedding2,
+             f"{self._embedding_prefix}_origin": origin_embeddings,
         }
 
         return batch
