@@ -5,7 +5,7 @@ from functools import lru_cache
 import logging
 
 import torch
-from torch.utils.data import DataLoader, Dataset, DistributedSampler
+from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
@@ -49,8 +49,21 @@ def _get_batch_size(loader: DataLoader):
         return batch_size
     raise NotImplementedError(
         "No `batch_size` found,"
-        "please specity it throught `loader.batch_size`, or `loader.batch_sampler.batch_size`"
+        "please specify it with `loader.batch_size`, or `loader.batch_sampler.batch_size`"
     )
+
+
+def _get_num_samples(loader: DataLoader):
+    batch_size = _get_batch_size(loader)
+    if isinstance(loader.batch_sampler, BatchSampler):
+        # pytorch default item-based samplers
+        if loader.drop_last:
+            return (len(loader.dataset) // batch_size) * batch_size
+        else:
+            return len(loader.dataset)
+    else:
+        # pytorch batch-based samplers
+        return len(loader) * batch_size
 
 
 class RunnerException(Exception):
@@ -659,7 +672,7 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
         self.loader_batch_size: int = _get_batch_size(self.loader)
         self.loader_batch_len: int = len(self.loader)
-        self.loader_sample_len: int = len(self.loader.dataset)
+        self.loader_sample_len: int = _get_num_samples(self.loader)
         self.loader_batch_step: int = 0
         self.loader_sample_step: int = 0
         self.loader_metrics: Dict = defaultdict(None)
@@ -693,7 +706,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
-        # batch-metrics sync in ddp setup is too computation heavy
+        # batch-metrics sync under ddp setup is too computation heavy
         if not self.engine.is_ddp:
             self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
@@ -703,7 +716,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.epoch_metrics[self.loader_key] = {
             key: float(value) for key, value in self.loader_metrics.items()
         }
-        # self.epoch_metrics[self.loader_key] = self.loader_metrics
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
@@ -719,8 +731,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.engine.deinit_components(runner=self)
         self.close_log(scope="stage")
 
-        # due to multiprocessing setup we have to close current loggers
-        # to prevent EOF-like errors
+        # due to multiprocessing setup we have to close current loggers to prevent EOF-like errors
         if self.engine.is_ddp:
             self.flush_log()
             self.close_log()

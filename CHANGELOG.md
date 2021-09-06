@@ -4,11 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [21.08] - YYYY-MM-DD
+
+## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
-- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.08] - 2021-08-31
+
+### Added
+
+- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `RocStarLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269), [#1282](https://github.com/catalyst-team/catalyst/pull/1282))
 - object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
 - SklearnModelCallback ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
 - Barlow Twins example ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
@@ -35,6 +55,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
 - matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
+- sample counter for the loader ([#1285](https://github.com/catalyst-team/catalyst/pull/1285))
 
 
 ## [21.07] - 2021-07-29

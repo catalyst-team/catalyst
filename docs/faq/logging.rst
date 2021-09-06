@@ -57,7 +57,7 @@ You could log any new metric in a straightforward way:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
