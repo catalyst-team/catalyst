@@ -862,7 +862,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         return callbacks
 
 
-class ContrastiveRunner(ISelfSupervisedRunner, Runner):
+class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
     """Runner for experiments with contrastive model."""
 
     def __init__(
@@ -940,4 +940,4 @@ class ContrastiveRunner(ISelfSupervisedRunner, Runner):
         return callbacks
 
 
-__all__ = ["Runner", "SupervisedRunner", "ContrastiveRunner"]
+__all__ = ["Runner", "SupervisedRunner", "SelfSupervisedRunner"]

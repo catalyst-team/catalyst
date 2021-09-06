@@ -118,7 +118,7 @@ def train_experiment(device, engine=None):
             ),
         ]
 
-        runner = dl.ContrastiveRunner()
+        runner = dl.SelfSupervisedRunner()
 
         logdir = "./logdir"
         runner.train(
