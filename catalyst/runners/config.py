@@ -458,12 +458,12 @@ class ContrastiveConfigRunner(IContrastiveRunner, ConfigRunner):
         """Init."""
         IContrastiveRunner.__init__(
             self,
-            input_key = input_key,
-            target_key = target_key,
-            loss_key = loss_key,
-            augemention_prefix = augemention_prefix,
-            projection_prefix = projection_prefix,
-            embedding_prefix = embedding_prefix,
+            input_key=input_key,
+            target_key=target_key,
+            loss_key=loss_key,
+            augemention_prefix=augemention_prefix,
+            projection_prefix=projection_prefix,
+            embedding_prefix=embedding_prefix,
         )
         ConfigRunner.__init__(self, config=config)
 
