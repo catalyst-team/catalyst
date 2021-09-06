@@ -23,6 +23,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners.contrastive import IContrastiveRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
@@ -849,6 +850,82 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
                 input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
+            )
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+            ISchedulerCallback
+        ):
+            callbacks["_scheduler"] = SchedulerCallback(
+                loader_key=self._valid_loader, metric_key=self._valid_metric
+            )
+        return callbacks
+
+
+class ContrastiveRunner(IContrastiveRunner, Runner):
+    """Runner for experiments with contrastive model."""
+
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        engine: IEngine = None,
+        target_key: str = "target",
+        loss_key: str = "loss",
+        augemention_prefix: str = "aug",
+        projection_prefix: str = "projection",
+        embedding_prefix: str = "embedding",
+    ):
+        """Init."""
+        IContrastiveRunner.__init__(
+            self,
+            target_key=target_key,
+            loss_key=loss_key,
+            augemention_prefix=augemention_prefix,
+            projection_prefix=projection_prefix,
+            embedding_prefix=embedding_prefix,
+        )
+        Runner.__init__(self, model=model, engine=engine)
+
+    @torch.no_grad()
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        """
+        Run model inference on specified data batch.
+
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
+        Args:
+            batch: dictionary with data batch from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        batch = self._process_batch(batch)
+        batch = self.engine.sync_device(tensor_or_module=batch)
+        output = self.forward(batch, **kwargs)
+        return output
+
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """Prepares the callbacks for selected stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            dictionary with stage callbacks
+        """
+        # I took it from supervised runner should be remade
+        callbacks = super().get_callbacks(stage=stage)
+        is_callback_exists = lambda callback_fn: any(
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
+        )
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+            callbacks["_criterion"] = CriterionCallback(
+                input_key=f"{self._projection_prefix}_1",
+                target_key=f"{self._projection_prefix}_2",
+                metric_key=self._loss_key,
             )
         if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
