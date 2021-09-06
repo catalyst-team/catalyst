@@ -62,7 +62,7 @@ def train_experiment(device, engine=None):
         )
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
-        mnist_valid = MNIST('./logdir', train=False, download=True, transform=None)
+        mnist_valid = MNIST("./logdir", train=False, download=True, transform=None)
         contrastive_valid = ContrastiveDataset(
             mnist_valid, transforms=transforms, transform_original=transform_original
         )
