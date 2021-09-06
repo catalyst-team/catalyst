@@ -23,7 +23,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.runners.contrastive import ISelfSupervisedRunner
+from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,

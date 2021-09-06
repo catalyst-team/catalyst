@@ -20,7 +20,7 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
-from catalyst.runners.contrastive import ISelfSupervisedRunner
+from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (

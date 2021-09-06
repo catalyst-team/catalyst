@@ -2,7 +2,7 @@
 
 
 from catalyst.runners.supervised import ISupervisedRunner
-from catalyst.runners.contrastive import ISelfSupervisedRunner
+from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.runner import Runner, SelfSupervisedRunner, SupervisedRunner
 from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner, SelfSupervisedConfigRunner
 
