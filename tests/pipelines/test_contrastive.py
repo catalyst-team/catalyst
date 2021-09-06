@@ -1,15 +1,20 @@
 import csv
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from sklearn.ensemble import RandomForestClassifier
+from pytest import mark
 import torch
-import torch.nn.functional as F
 from torch.optim import Adam
+import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.models import MnistSimpleNet
 from catalyst.contrib.nn.criterion import NTXentLoss
+from catalyst.data import Compose, Normalize, ToTensor
+from catalyst.data.dataset import ContrastiveDataset
+from catalyst.settings import SETTINGS
 
 
 def read_csv(csv_path: str):
@@ -22,120 +27,109 @@ def read_csv(csv_path: str):
                 yield {colname: val for colname, val in zip(colnames, row)}
 
 
-class ContrastiveRunner(dl.SupervisedRunner):
-    def handle_batch(self, batch):
-        # model train/valid step
-        # unpack the batch
-        emb1 = self.model(batch["aug1"])
-        emb2 = self.model(batch["aug2"])
-        self.batch = {"proj1": emb1, "proj2": emb2, "target": batch["target"]}
+BATCH_SIZE = 1024
+TRAIN_EPOCH = 5
+LR = 0.01
+RANDOM_STATE = 42
+
+if SETTINGS.ml_required:
+    from sklearn.ensemble import RandomForestClassifier
 
 
-batch_size = 1024
-aug_strength = 1.0
-from torchvision import transforms
-from catalyst.contrib.datasets import MNIST
+def train_experiment(device, engine=None):
 
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
+    with TemporaryDirectory() as logdir:
 
-transforms = transform = transforms.Compose(
-    [
-        transforms.RandomVerticalFlip(),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,)),
-    ]
-)
-mnist = MNIST("./logdir", train=True, download=True, transform=None)
-contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
-
-# Cifar10MLDataset has mistakes
-# cifar_train = Cifar10MLDataset(root="./data", download=True, transform=None)
-
-from torchvision.datasets import MNIST
-
-train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=batch_size, num_workers=2)
-
-# cifar_test = CifarQGDataset(root="./data", download=True)
-# valid_loader = torch.utils.data.DataLoader(
-#     simCLRDatasetWrapper(cifar_test, transforms=transforms), batch_size=batch_size, num_workers=5
-# )
-
-
-class Model(nn.Module):
-    def __init__(self, feature_dim=128, **resnet_kwargs):
-        super(Model, self).__init__()
-        # encoder
-        inner_size = 28 * 28
-        self.encoder = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(inner_size, inner_size),
-            nn.LeakyReLU(),
-            nn.Linear(inner_size, inner_size),
+        transforms = Compose(
+            [
+                ToTensor(),
+                Normalize((0.1307,), (0.3081,)),
+                torchvision.transforms.RandomCrop((28, 28)),
+                torchvision.transforms.RandomVerticalFlip(),
+                torchvision.transforms.RandomHorizontalFlip(),
+            ]
         )
-        # projection head
-        self.g = nn.Sequential(
-            nn.Linear(inner_size, inner_size, bias=False),
-            nn.ReLU(inplace=True),
-            nn.Linear(inner_size, feature_dim, bias=True),
+        mnist = MNIST("./logdir", train=True, download=True, transform=None)
+        contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
+
+        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
+
+        # 2. model and optimizer
+        encoder = MnistSimpleNet(out_features=16)
+        projection_head = nn.Sequential(
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
         )
 
-    def forward(self, x):
-        feature = self.encoder(x)
-        out = self.g(feature)
-        return F.normalize(out, dim=-1)
+        class ContrastiveModel(torch.nn.Module):
+            def __init__(self, model, encoder):
+                super(ContrastiveModel, self).__init__()
+                self.model = model
+                self.encoder = encoder
+
+            def forward(self, x):
+                emb = self.encoder(x)
+                projection = self.model(emb)
+                return emb, projection
+
+        model = ContrastiveModel(model=projection_head, encoder=encoder)
+
+        optimizer = Adam(model.parameters(), lr=LR)
+
+        # 3. criterion with triplets sampling
+        criterion = NTXentLoss(tau=0.1)
+
+        callbacks = [
+            dl.ControlFlowCallback(
+                dl.CriterionCallback(
+                    input_key="projection_left", target_key="projection_right", metric_key="loss"
+                ),
+                loaders="train",
+            ),
+            dl.SklearnModelCallback(
+                feature_key="embedding_left",
+                target_key="target",
+                train_loader="train",
+                valid_loaders="valid",
+                model_fn=RandomForestClassifier,
+                predict_method="predict_proba",
+                predict_key="sklearn_predict",
+                random_state=RANDOM_STATE,
+                n_estimators=10,
+            ),
+            dl.ControlFlowCallback(
+                dl.AccuracyCallback(
+                    target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+                ),
+                loaders="valid",
+            ),
+        ]
+
+        runner = dl.ContrastiveRunner()
+
+        logdir = "./logdir"
+        runner.train(
+            model=model,
+            engine=engine or dl.DeviceEngine(device),
+            criterion=criterion,
+            optimizer=optimizer,
+            callbacks=callbacks,
+            loaders={"train": train_loader, "valid": train_loader},
+            verbose=True,
+            logdir=logdir,
+            valid_loader="train",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            num_epochs=10,
+        )
+
+        valid_path = Path(logdir) / "logs/valid.csv"
+        best_accuracy = max(
+            float(row["accuracy"]) for row in read_csv(valid_path) if row["accuracy"] != "accuracy"
+        )
+
+        assert best_accuracy > 0.7
 
 
-model = Model(feature_dim=30, arch="resnet50", frozen=False,)
-
-# 2. model and optimizer
-optimizer = Adam(model.parameters(), lr=0.001)
-
-# 3. criterion with triplets sampling
-criterion = NTXentLoss(tau=0.1)
-
-callbacks = [
-    dl.ControlFlowCallback(
-        dl.CriterionCallback(input_key="proj1", target_key="proj2", metric_key="loss"),
-        loaders="train",
-    ),
-    dl.SklearnModelCallback(
-        feature_key="proj1",
-        target_key="target",
-        train_loader="train",
-        valid_loaders="valid",
-        model_fn=RandomForestClassifier,
-        predict_method="predict_proba",
-        predict_key="sklearn_predict",
-        random_state=4545,
-        n_estimators=10,
-    ),
-    dl.ControlFlowCallback(
-        dl.AccuracyCallback(target_key="target", input_key="sklearn_predict", topk_args=(1, 3)),
-        loaders="valid",
-    ),
-]
-
-runner = ContrastiveRunner()
-
-logdir = "./logdir"
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    callbacks=callbacks,
-    loaders={"train": train_loader, "valid": train_loader},
-    verbose=True,
-    logdir=logdir,
-    valid_loader="train",
-    valid_metric="loss",
-    minimize_valid_metric=True,
-    num_epochs=3,
-)
-
-valid_path = Path(logdir) / "logs/valid.csv"
-best_accuracy = max(
-    float(row["accuracy"]) for row in read_csv(valid_path) if row["accuracy"] != "accuracy"
-)
-
-assert best_accuracy > 0.7
+@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
+def test_on_cpu():
+    train_experiment("cpu")
