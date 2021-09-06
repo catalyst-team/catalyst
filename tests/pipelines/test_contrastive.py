@@ -13,7 +13,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.models import MnistSimpleNet
 from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data import Compose, Normalize, ToTensor
-from catalyst.data.dataset import ContrastiveDataset
+from catalyst.data.dataset import SelfSupervisedDatasetWrapper
 from catalyst.settings import SETTINGS
 
 
@@ -57,13 +57,13 @@ def train_experiment(device, engine=None):
         transform_original = transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
 
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
-        contrastive_mnist = ContrastiveDataset(
+        contrastive_mnist = SelfSupervisedDatasetWrapper(
             mnist, transforms=transforms, transform_original=transform_original
         )
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
         mnist_valid = MNIST("./logdir", train=False, download=True, transform=None)
-        contrastive_valid = ContrastiveDataset(
+        contrastive_valid = SelfSupervisedDatasetWrapper(
             mnist_valid, transforms=transforms, transform_original=transform_original
         )
         valid_loader = torch.utils.data.DataLoader(contrastive_valid, batch_size=BATCH_SIZE)

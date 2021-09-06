@@ -10,7 +10,7 @@ from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
-from catalyst.data.dataset.contrastive import ContrastiveDataset
+from catalyst.data.dataset.contrastive import SelfSupervisedDatasetWrapper
 from catalyst.runners.contrastive import ContrastiveRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     from torchvision.datasets import CIFAR10
 
     cifar_train = CIFAR10(root="./data", download=True, transform=None)
-    simCLR_train = ContrastiveDataset(cifar_train, transforms=transforms)
+    simCLR_train = SelfSupervisedDatasetWrapper(cifar_train, transforms=transforms)
     train_loader = torch.utils.data.DataLoader(
         simCLR_train, batch_size=batch_size, num_workers=args.num_workers
     )

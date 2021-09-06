@@ -3,8 +3,8 @@ from typing import Any, Callable, Dict
 from torch.utils.data import Dataset
 
 
-class ContrastiveDataset(Dataset):
-    """The Contrastive Dataset.
+class SelfSupervisedDatasetWrapper(Dataset):
+    """The Self Supervised Dataset.
 
     The class implemets contrastive logic (see Figure 2 from `A Simple Framework
     for Contrastive Learning of Visual Representations`_.)
@@ -16,7 +16,7 @@ class ContrastiveDataset(Dataset):
         import torchvision
         from torchvision.datasets import CIFAR10
 
-        from catalyst.contrib.data.datawrappers import ContrastiveDataset
+        from catalyst.contrib.data.datawrappers import SelfSupervisedDatasetWrapper
 
         transforms = torchvision.transforms.Compose(
             [
@@ -30,7 +30,7 @@ class ContrastiveDataset(Dataset):
         )
 
         cifar_dataset = CIFAR10(root="./data", download=True, transform=None)
-        cifar_contrastive = ContrastiveDataset(cifar_dataset, transforms=transforms)
+        cifar_contrastive = SelfSupervisedDatasetWrapper(cifar_dataset, transforms=transforms)
 
     .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
         https://arxiv.org/abs/2002.05709
