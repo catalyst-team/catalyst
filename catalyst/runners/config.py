@@ -20,6 +20,7 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
+from catalyst.runners.contrastive import IContrastiveRunner
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -419,6 +420,54 @@ class ConfigRunner(IRunner):
         return callbacks
 
 
+class ContrastiveConfigRunner(IContrastiveRunner, ConfigRunner):
+    """ConfigRunner for contrastive tasks
+
+    Args:
+        config: dictionary with parameters
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+        augemention_prefix: key for ``runner.batch`` to sample augumentions
+        projection_prefix: key for ``runner.batch`` to store model projection
+        embedding_prefix: key for `runner.batch`` to store model embeddings
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        dataset = SomeDataset()
+    """
+
+    def __init__(
+        self,
+        config: Dict = None,
+        input_key: str = "features",
+        target_key: str = "target",
+        loss_key: str = "loss",
+        augemention_prefix: str = "aug",
+        projection_prefix: str = "projection",
+        embedding_prefix: str = "embedding",
+    ):
+        """Init."""
+        IContrastiveRunner.__init__(
+            self,
+            input_key = input_key,
+            target_key = target_key,
+            loss_key = loss_key,
+            augemention_prefix = augemention_prefix,
+            projection_prefix = projection_prefix,
+            embedding_prefix = embedding_prefix,
+        )
+        ConfigRunner.__init__(self, config=config)
+
+
 class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
     """ConfigRunner for supervised tasks
 
@@ -492,4 +541,4 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         ConfigRunner.__init__(self, config=config)
 
 
-__all__ = ["ConfigRunner", "SupervisedConfigRunner"]
+__all__ = ["ConfigRunner", "SupervisedConfigRunner", "ContrastiveConfigRunner"]
