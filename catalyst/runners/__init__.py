@@ -15,6 +15,7 @@ if SETTINGS.hydra_required:
     __all__ = [
         "Runner",
         "ISupervisedRunner",
+        "IContrastiveRunner",
         "SupervisedRunner",
         "ConfigRunner",
         "SupervisedConfigRunner",
@@ -26,6 +27,7 @@ else:
     __all__ = [
         "Runner",
         "ISupervisedRunner",
+        "IContrastiveRunner",
         "SupervisedRunner",
         "ConfigRunner",
         "SupervisedConfigRunner",
