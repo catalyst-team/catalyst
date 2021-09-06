@@ -44,11 +44,11 @@ def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
         transforms = Compose(
-            [
-                ToTensor(),
-                Normalize((0.1307,), (0.3081,)),
+            [   
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
+                ToTensor(),
+                Normalize((0.1307,), (0.3081,)),
             ]
         )
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
