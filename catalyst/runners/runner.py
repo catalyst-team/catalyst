@@ -938,4 +938,4 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         return callbacks
 
 
-__all__ = ["Runner", "SupervisedRunner"]
+__all__ = ["Runner", "SupervisedRunner", "ContrastiveRunner"]
