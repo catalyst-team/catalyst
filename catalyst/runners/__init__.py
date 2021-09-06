@@ -16,7 +16,7 @@ if SETTINGS.hydra_required:
         "Runner",
         "ISupervisedRunner",
         "SupervisedRunner",
-        "ContrastiveRunner", 
+        "ContrastiveRunner",
         "ConfigRunner",
         "SupervisedConfigRunner",
         "HydraRunner",

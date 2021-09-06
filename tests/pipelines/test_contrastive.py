@@ -1,3 +1,4 @@
+# flake8: noqa
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -46,7 +47,6 @@ def train_experiment(device, engine=None):
             [
                 ToTensor(),
                 Normalize((0.1307,), (0.3081,)),
-                torchvision.transforms.RandomCrop((28, 28)),
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
             ]
@@ -135,3 +135,4 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required or not SETTINGS.cv_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+train_experiment("cpu")
