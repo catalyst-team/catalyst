@@ -420,7 +420,7 @@ class ConfigRunner(IRunner):
         return callbacks
 
 
-class ContrastiveConfigRunner(ISelfSupervisedRunner, ConfigRunner):
+class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
     """ConfigRunner for contrastive tasks
 
     Args:
@@ -541,4 +541,4 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         ConfigRunner.__init__(self, config=config)
 
 
-__all__ = ["ConfigRunner", "SupervisedConfigRunner", "ContrastiveConfigRunner"]
+__all__ = ["ConfigRunner", "SupervisedConfigRunner", "SelfSupervisedConfigRunner"]
