@@ -128,7 +128,7 @@ def train_experiment(device, engine=None):
             valid_loader="train",
             valid_metric="loss",
             minimize_valid_metric=True,
-            num_epochs=10,
+            num_epochs=TRAIN_EPOCH,
         )
 
         valid_path = Path(logdir) / "logs/valid.csv"
