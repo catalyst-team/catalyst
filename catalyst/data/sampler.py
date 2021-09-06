@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
-from catalyst.data.dataset.torch_datasets import DatasetFromSampler
+from catalyst.data.dataset.torch import DatasetFromSampler
 from catalyst.utils.misc import find_value_ids
 
 
