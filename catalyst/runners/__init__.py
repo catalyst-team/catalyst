@@ -22,6 +22,7 @@ if SETTINGS.hydra_required:
         "HydraRunner",
         "SupervisedHydraRunner",
         "ContrastiveRunner",
+        "ContrastiveConfigRunner",
     ]
 else:
     __all__ = [
@@ -32,4 +33,5 @@ else:
         "ConfigRunner",
         "SupervisedConfigRunner",
         "ContrastiveRunner",
+        "ContrastiveConfigRunner",
     ]
