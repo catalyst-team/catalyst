@@ -2,6 +2,7 @@ import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from pytest import mark
 import torch
 from torch.optim import Adam
 import torchvision
@@ -29,7 +30,7 @@ def read_csv(csv_path: str):
 
 BATCH_SIZE = 1024
 TRAIN_EPOCH = 5
-LR = 0.001
+LR = 0.01
 RANDOM_STATE = 42
 
 if SETTINGS.ml_required:
@@ -52,9 +53,7 @@ def train_experiment(device, engine=None):
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
         contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
 
-        train_loader = torch.utils.data.DataLoader(
-            contrastive_mnist, batch_size=BATCH_SIZE, num_workers=1
-        )
+        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
         # 2. model and optimizer
         encoder = MnistSimpleNet(out_features=16)

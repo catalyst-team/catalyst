@@ -10,5 +10,4 @@ from catalyst.data.dataset.metric_learning import (
     MetricLearningTrainDataset,
     QueryGalleryDataset,
 )
-
 from catalyst.data.dataset.contrastive import ContrastiveDataset
