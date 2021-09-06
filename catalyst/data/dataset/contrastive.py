@@ -42,6 +42,7 @@ class ContrastiveDataset(Dataset):
         transforms: Callable = None,
         transform_left: Callable = None,
         transform_right: Callable = None,
+        transform_original: Callable = None,
     ) -> None:
         """
         Args:
@@ -50,6 +51,7 @@ class ContrastiveDataset(Dataset):
             left and right output batch.
             transform_left: transform only for left batch
             transform_right: transform only for right batch
+            transform_original: transforms which will be applied to save original in batch
 
         """
         super().__init__()
@@ -64,6 +66,7 @@ class ContrastiveDataset(Dataset):
             raise ValueError(
                 "Specify transform_left and transform_right simultaneously or only transforms."
             )
+        self.transform_original = transform_original
         self.dataset = dataset
 
     def __len__(self) -> int:
@@ -78,8 +81,9 @@ class ContrastiveDataset(Dataset):
         Returns:
             Dict with left agumention (aug1), right agumention (aug2) and target
         """
-        sample, target = self.dataset.__getitem__(idx)
+        _sample, target = self.dataset.__getitem__(idx)
 
-        aug_1 = self.transform_left(sample)
-        aug_2 = self.transform_right(sample)
+        sample = self.transform_original(_sample)
+        aug_1 = self.transform_left(_sample)
+        aug_2 = self.transform_right(_sample)
         return sample, aug_1, aug_2, target
