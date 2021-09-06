@@ -1,5 +1,5 @@
 # flake8: noqa
-from catalyst.data.dataset.torch_datasets import (
+from catalyst.data.dataset.torch import (
     DatasetFromSampler,
     ListDataset,
     MergeDataset,
