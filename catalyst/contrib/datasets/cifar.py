@@ -8,7 +8,9 @@ import torch
 import torch.utils.data as data
 
 from catalyst.contrib.datasets.functional import _check_integrity, download_and_extract_archive
-from catalyst.data.dataset import metric_learning
+
+# from catalyst.data.dataset import metric_learning
+from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
 
 
 class StandardTransform(object):
@@ -238,7 +240,7 @@ class CIFAR10(VisionDataset):
         return "Split: {}".format("Train" if self.train is True else "Test")
 
 
-class Cifar10MLDataset(metric_learning.MetricLearningTrainDataset, CIFAR10):
+class Cifar10MLDataset(MetricLearningTrainDataset, CIFAR10):
     """
     Simple wrapper for CIFAR10 dataset for metric learning train stage.
     This dataset can be used only for training. For test stage
@@ -284,7 +286,7 @@ class Cifar10MLDataset(metric_learning.MetricLearningTrainDataset, CIFAR10):
         self.targets = np.array(self.targets)[mask].tolist()
 
 
-class CifarQGDataset(metric_learning.QueryGalleryDataset):
+class CifarQGDataset(QueryGalleryDataset):
     """
     CIFAR10 for metric learning with query and gallery split.
     CIFAR10QGDataset should be used for test stage.
