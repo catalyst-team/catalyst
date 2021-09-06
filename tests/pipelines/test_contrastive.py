@@ -1,12 +1,12 @@
+# flake8: noqa
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from pytest import mark
 import torch
 from torch.optim import Adam
-import torchvision
 
-from pytest import mark
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.datasets import MNIST
@@ -29,11 +29,14 @@ def read_csv(csv_path: str):
 
 BATCH_SIZE = 1024
 TRAIN_EPOCH = 5
-LR = 0.001
+LR = 0.01
 RANDOM_STATE = 42
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
+
+if SETTINGS.cv_required:
+    import torchvision
 
 
 def train_experiment(device, engine=None):
@@ -44,7 +47,6 @@ def train_experiment(device, engine=None):
             [
                 ToTensor(),
                 Normalize((0.1307,), (0.3081,)),
-                torchvision.transforms.RandomCrop((28, 28)),
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
             ]
@@ -52,9 +54,7 @@ def train_experiment(device, engine=None):
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
         contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
 
-        train_loader = torch.utils.data.DataLoader(
-            contrastive_mnist, batch_size=BATCH_SIZE, num_workers=1
-        )
+        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
         # 2. model and optimizer
         encoder = MnistSimpleNet(out_features=16)
@@ -132,6 +132,7 @@ def train_experiment(device, engine=None):
         assert best_accuracy > 0.7
 
 
-@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
+@mark.skipif(not SETTINGS.ml_required or not SETTINGS.cv_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+train_experiment("cpu")

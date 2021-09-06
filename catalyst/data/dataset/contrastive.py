@@ -62,8 +62,7 @@ class ContrastiveDataset(Dataset):
             self.transform_left = transforms
         else:
             raise ValueError(
-                """Specify transforms or 'transform_left' and 'transform_right'
-                simultaneously or only 'transforms'."""
+                "Specify transform_left and transform_right simultaneously or only transforms."
             )
         self.dataset = dataset
 

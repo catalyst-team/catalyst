@@ -2,8 +2,8 @@
 
 
 from catalyst.runners.supervised import ISupervisedRunner
-from catalyst.runners.runner import Runner, SupervisedRunner
 from catalyst.runners.contrastive import ContrastiveRunner
+from catalyst.runners.runner import Runner, SupervisedRunner
 from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner
 
 from catalyst.settings import SETTINGS
@@ -16,10 +16,12 @@ if SETTINGS.hydra_required:
         "Runner",
         "ISupervisedRunner",
         "SupervisedRunner",
-        "ContrastiveRunner" "ConfigRunner",
+        "ContrastiveRunner",
+        "ConfigRunner",
         "SupervisedConfigRunner",
         "HydraRunner",
         "SupervisedHydraRunner",
+        "ContrastiveRunner",
     ]
 else:
     __all__ = [
