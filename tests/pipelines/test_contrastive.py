@@ -45,10 +45,10 @@ def train_experiment(device, engine=None):
 
         transforms = Compose(
             [
-                ToTensor(),
-                Normalize((0.1307,), (0.3081,)),
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
+                ToTensor(),
+                Normalize((0.1307,), (0.3081,)),
             ]
         )
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
@@ -135,4 +135,3 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required or not SETTINGS.cv_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-train_experiment("cpu")
