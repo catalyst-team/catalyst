@@ -81,12 +81,8 @@ class ContrastiveDataset(Dataset):
         Returns:
             Dict with left agumention (aug1), right agumention (aug2) and target
         """
-        _sample, target = self.dataset.__getitem__(idx)
-
-        if self.transform_original is not None:
-            sample = self.transform_original(_sample)
-        else:
-            sample = _sample
-        aug_1 = self.transform_left(_sample)
-        aug_2 = self.transform_right(_sample)
-        return sample, aug_1, aug_2, target
+        sample, target = self.dataset.__getitem__(idx)
+        transformed_sample = self.transform_original(sample) if self.transform_original else sample
+        aug_1 = self.transform_left(sample)
+        aug_2 = self.transform_right(sample)
+        return transformed_sample, aug_1, aug_2, target
