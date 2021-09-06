@@ -128,3 +128,19 @@ DistributedDataParallelEngine
     :undoc-members:
     :show-inheritance:
 
+XLA
+----------------------
+
+DeviceEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.xla.XLAEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+DataParallelEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.xla.DistributedXLAEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
