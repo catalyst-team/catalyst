@@ -82,4 +82,4 @@ class ContrastiveDataset(Dataset):
 
         aug_1 = self.transform_left(sample)
         aug_2 = self.transform_right(sample)
-        return aug_1, aug_2, target
+        return sample, aug_1, aug_2, target
