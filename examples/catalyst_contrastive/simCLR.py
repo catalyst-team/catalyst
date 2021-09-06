@@ -1,7 +1,6 @@
 # flake8: noqa
 import argparse
 
-from common import ContrastiveRunner
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
@@ -9,9 +8,10 @@ import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
-from catalyst.contrib.data.datawrappers import ContrastiveDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
+from catalyst.data.dataset.contrastive import ContrastiveDataset
+from catalyst.runners.contrastive import ContrastiveRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
 parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
@@ -67,25 +67,25 @@ if __name__ == "__main__":
     #     simCLRDatasetWrapper(cifar_test, transforms=transforms), batch_size=batch_size, num_workers=5
     # )
 
-    class Model(nn.Module):
-        def __init__(self, feature_dim=128, **resnet_kwargs):
-            super(Model, self).__init__()
-            # encoder
-            self.encoder = nn.Sequential(ResnetEncoder(**resnet_kwargs), nn.Flatten())
-            # projection head
-            self.g = nn.Sequential(
-                nn.Linear(2048, 512, bias=False),
-                nn.ReLU(inplace=True),
-                nn.Linear(512, feature_dim, bias=True),
-            )
+    encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
+    projection_head = nn.Sequential(
+        nn.Linear(2048, 512, bias=False),
+        nn.ReLU(inplace=True),
+        nn.Linear(512, args.feature_dim, bias=True),
+    )
+
+    class ContrastiveModel(torch.nn.Module):
+        def __init__(self, model, encoder):
+            super(ContrastiveModel, self).__init__()
+            self.model = model
+            self.encoder = encoder
 
         def forward(self, x):
-            feature = self.encoder(x)
-            out = self.g(feature)
-            return F.normalize(out, dim=-1)
+            emb = self.encoder(x)
+            projection = self.model(emb)
+            return emb, projection
 
-    model = Model(feature_dim=args.feature_dim, arch="resnet50", frozen=False,)
-
+    model = ContrastiveModel(projection_head, encoder)
     # 2. model and optimizer
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
