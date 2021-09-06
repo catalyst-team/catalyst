@@ -1,18 +1,6 @@
 from typing import Any, Mapping
-from collections import OrderedDict
 
-import torch
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-
-from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core.callback import Callback
-from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
-from catalyst.engines import IEngine
-from catalyst.runners.runner import Runner
-from catalyst.typing import Criterion, Optimizer, RunnerModel, Scheduler
 
 
 class IContrastiveRunner(IRunner):
@@ -201,3 +189,6 @@ class IContrastiveRunner(IRunner):
             batch: dictionary with data batches from DataLoader.
         """
         self.batch = {**batch, **self.forward(batch)}
+
+
+__all__ = ["IContrastiveRunner"]
