@@ -154,10 +154,10 @@ class IContrastiveRunner(IRunner):
             **batch,
             f"{self._projection_prefix}_left": projection1,
             f"{self._projection_prefix}_right": projection2,
-             f"{self._projection_prefix}_origin": projection_origin,
+            f"{self._projection_prefix}_origin": projection_origin,
             f"{self._embedding_prefix}_left": embedding1,
             f"{self._embedding_prefix}_right": embedding2,
-             f"{self._embedding_prefix}_origin": origin_embeddings,
+            f"{self._embedding_prefix}_origin": origin_embeddings,
         }
 
         return batch
