@@ -43,6 +43,8 @@ def train_experiment(device, engine=None):
 
     with TemporaryDirectory() as logdir:
 
+        # 1. data and transforms
+
         transforms = Compose(
             [
                 ToTensor(),
