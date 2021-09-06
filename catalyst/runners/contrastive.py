@@ -23,7 +23,17 @@ class IContrastiveRunner(IRunner):
         IContrastiveRunner contains only the logic with batch handling.
 
 
-    ISupervisedRunner logic pseudocode:
+    IContrastiveRunner logic pseudocode:
+
+    .. code-block:: python
+
+        batch = {"aug1": tensor, "aug2": tensor, ...}
+        _, proj1 = model(batch["aug1"])
+        _, proj2 = model(batch["aug2"])
+        loss = criterion(proj1, proj2)
+        batch_metrics["loss_key"] = loss
+
+    Examples:
 
     .. code-block:: python
 
