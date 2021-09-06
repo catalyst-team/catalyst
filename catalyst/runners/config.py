@@ -20,7 +20,7 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
-from catalyst.runners.contrastive import IContrastiveRunner
+from catalyst.runners.contrastive import ISelfSupervisedRunner
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -420,7 +420,7 @@ class ConfigRunner(IRunner):
         return callbacks
 
 
-class ContrastiveConfigRunner(IContrastiveRunner, ConfigRunner):
+class ContrastiveConfigRunner(ISelfSupervisedRunner, ConfigRunner):
     """ConfigRunner for contrastive tasks
 
     Args:
@@ -456,7 +456,7 @@ class ContrastiveConfigRunner(IContrastiveRunner, ConfigRunner):
         embedding_prefix: str = "embedding",
     ):
         """Init."""
-        IContrastiveRunner.__init__(
+        ISelfSupervisedRunner.__init__(
             self,
             input_key=input_key,
             target_key=target_key,

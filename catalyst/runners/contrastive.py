@@ -3,7 +3,7 @@ from typing import Any, Mapping
 from catalyst.core.runner import IRunner
 
 
-class IContrastiveRunner(IRunner):
+class ISelfSupervisedRunner(IRunner):
     """IRunner for experiments with contrastive model.
 
     Args:
@@ -20,10 +20,10 @@ class IContrastiveRunner(IRunner):
         - :py:mod:`catalyst.runners.contrastive.ContrastiveRunner`
 
     .. note::
-        IContrastiveRunner contains only the logic with batch handling.
+        ISelfSupervisedRunner contains only the logic with batch handling.
 
 
-    IContrastiveRunner logic pseudocode:
+    ISelfSupervisedRunner logic pseudocode:
 
     .. code-block:: python
 
@@ -206,4 +206,4 @@ class IContrastiveRunner(IRunner):
         self.batch = {**batch, **self.forward(batch)}
 
 
-__all__ = ["IContrastiveRunner"]
+__all__ = ["ISelfSupervisedRunner"]

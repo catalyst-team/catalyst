@@ -23,7 +23,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.runners.contrastive import IContrastiveRunner
+from catalyst.runners.contrastive import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
@@ -862,7 +862,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         return callbacks
 
 
-class ContrastiveRunner(IContrastiveRunner, Runner):
+class ContrastiveRunner(ISelfSupervisedRunner, Runner):
     """Runner for experiments with contrastive model."""
 
     def __init__(
@@ -877,7 +877,7 @@ class ContrastiveRunner(IContrastiveRunner, Runner):
         embedding_prefix: str = "embedding",
     ):
         """Init."""
-        IContrastiveRunner.__init__(
+        ISelfSupervisedRunner.__init__(
             self,
             input_key=input_key,
             target_key=target_key,
