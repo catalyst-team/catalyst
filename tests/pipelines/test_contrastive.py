@@ -28,7 +28,7 @@ def read_csv(csv_path: str):
 
 
 BATCH_SIZE = 1024
-TRAIN_EPOCH = 5
+TRAIN_EPOCH = 3
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -69,7 +69,7 @@ def train_experiment(device, engine=None):
         valid_loader = torch.utils.data.DataLoader(contrastive_valid, batch_size=BATCH_SIZE)
 
         # 2. model and optimizer
-        encoder = MnistSimpleNet(out_features=16)
+        encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True))
         projection_head = nn.Sequential(
             nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
         )
