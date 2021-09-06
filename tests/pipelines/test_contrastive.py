@@ -60,8 +60,13 @@ def train_experiment(device, engine=None):
         contrastive_mnist = ContrastiveDataset(
             mnist, transforms=transforms, transform_original=transform_original
         )
-
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
+
+        mnist_valid = MNIST('./logdir', train=False, download=True, transform=None)
+        contrastive_valid = ContrastiveDataset(
+            mnist_valid, transforms=transforms, transform_original=transform_original
+        )
+        valid_loader = torch.utils.data.DataLoader(contrastive_valid, batch_size=BATCH_SIZE)
 
         # 2. model and optimizer
         encoder = MnistSimpleNet(out_features=16)
@@ -122,7 +127,7 @@ def train_experiment(device, engine=None):
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
-            loaders={"train": train_loader, "valid": train_loader},
+            loaders={"train": train_loader, "valid": valid_loader},
             verbose=True,
             logdir=logdir,
             valid_loader="train",
