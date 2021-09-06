@@ -5,7 +5,6 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 import torch
 from torch.optim import Adam
-import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
@@ -34,6 +33,9 @@ RANDOM_STATE = 42
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
+
+if SETTINGS.cv_required:
+    import torchvision
 
 
 def train_experiment(device, engine=None):
@@ -130,6 +132,6 @@ def train_experiment(device, engine=None):
         assert best_accuracy > 0.7
 
 
-@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
+@mark.skipif(not SETTINGS.ml_required or not SETTINGS.cv_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
