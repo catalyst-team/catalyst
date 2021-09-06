@@ -11,7 +11,7 @@ from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data.dataset.contrastive import SelfSupervisedDatasetWrapper
-from catalyst.runners.contrastive import ContrastiveRunner
+from catalyst.dl import SelfSupervisedRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
 parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
@@ -42,12 +42,19 @@ if __name__ == "__main__":
     aug_strength = args.aug_strength
     transforms = torchvision.transforms.Compose(
         [
-            torchvision.transforms.RandomResizedCrop(32),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+            torchvision.transforms.RandomResizedCrop(32),
             torchvision.transforms.ColorJitter(
                 aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.2
             ),
+        ]
+    )
+
+    transform_original = transforms = torchvision.transforms.Compose(
+        [
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
         ]
     )
 
@@ -57,7 +64,7 @@ if __name__ == "__main__":
     from torchvision.datasets import CIFAR10
 
     cifar_train = CIFAR10(root="./data", download=True, transform=None)
-    simCLR_train = SelfSupervisedDatasetWrapper(cifar_train, transforms=transforms)
+    simCLR_train = SelfSupervisedDatasetWrapper(cifar_train, transforms=transforms, transform_original=transform_original)
     train_loader = torch.utils.data.DataLoader(
         simCLR_train, batch_size=batch_size, num_workers=args.num_workers
     )
@@ -94,12 +101,12 @@ if __name__ == "__main__":
 
     callbacks = [
         dl.ControlFlowCallback(
-            dl.CriterionCallback(input_key="proj1", target_key="proj2", metric_key="loss"),
+            dl.CriterionCallback(input_key="projection_left", target_key="projection_right", metric_key="loss"),
             loaders="train",
         )
     ]
 
-    runner = ContrastiveRunner()
+    runner = SelfSupervisedRunner()
 
     runner.train(
         model=model,
