@@ -4,7 +4,7 @@
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.runners.contrastive import IContrastiveRunner
 from catalyst.runners.runner import Runner, ContrastiveRunner, SupervisedRunner
-from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner
+from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner, ContrastiveConfigRunner
 
 from catalyst.settings import SETTINGS
 
