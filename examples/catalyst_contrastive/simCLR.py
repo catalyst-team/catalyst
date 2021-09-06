@@ -64,7 +64,9 @@ if __name__ == "__main__":
     from torchvision.datasets import CIFAR10
 
     cifar_train = CIFAR10(root="./data", download=True, transform=None)
-    simCLR_train = SelfSupervisedDatasetWrapper(cifar_train, transforms=transforms, transform_original=transform_original)
+    simCLR_train = SelfSupervisedDatasetWrapper(
+        cifar_train, transforms=transforms, transform_original=transform_original
+    )
     train_loader = torch.utils.data.DataLoader(
         simCLR_train, batch_size=batch_size, num_workers=args.num_workers
     )
@@ -101,7 +103,9 @@ if __name__ == "__main__":
 
     callbacks = [
         dl.ControlFlowCallback(
-            dl.CriterionCallback(input_key="projection_left", target_key="projection_right", metric_key="loss"),
+            dl.CriterionCallback(
+                input_key="projection_left", target_key="projection_right", metric_key="loss"
+            ),
             loaders="train",
         )
     ]
