@@ -51,9 +51,13 @@ def train_experiment(device, engine=None):
                 torchvision.transforms.RandomHorizontalFlip(),
             ]
         )
-        
+
+        transform_original = transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
+
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
-        contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
+        contrastive_mnist = ContrastiveDataset(
+            mnist, transforms=transforms, transform_original=transform_original
+        )
 
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
