@@ -1,6 +1,5 @@
 # flake8: noqa
 
-from catalyst.callbacks import metrics
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
