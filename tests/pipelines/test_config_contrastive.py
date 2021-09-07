@@ -183,5 +183,5 @@ def train_experiment(engine):
     not SETTINGS.ml_required or not SETTINGS.cv_required,
     reason="catalyst[ml] and catalyst[cv] required",
 )
-def test_classification_on_cpu():
+def test_contrastive_on_cpu():
     train_experiment({"_target_": "DeviceEngine", "device": "cpu"})
