@@ -1,5 +1,7 @@
 # flake8: noqa
 
+import csv
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -9,6 +11,17 @@ from catalyst.data import Compose, Normalize, ToTensor
 from catalyst.dl import SelfSupervisedConfigRunner
 from catalyst.registry import Registry
 from catalyst.settings import SETTINGS
+
+
+def read_csv(csv_path: str):
+    with open(csv_path, "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        for line_count, row in enumerate(csv_reader):
+            if line_count == 0:
+                colnames = row
+            else:
+                yield {colname: val for colname, val in zip(colnames, row)}
+
 
 if SETTINGS.cv_required:
     import torchvision
@@ -90,7 +103,7 @@ def train_experiment(engine):
                 },
                 "stages": {
                     "stage1": {
-                        "num_epochs": 1,
+                        "num_epochs": 5,
                         "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
@@ -165,7 +178,15 @@ def train_experiment(engine):
                 },
             },
         )
+
         runner.run()
+
+        valid_path = Path(logdir) / "logs/valid.csv"
+        best_accuracy = max(
+            float(row["accuracy"]) for row in read_csv(valid_path) if row["accuracy"] != "accuracy"
+        )
+
+        assert best_accuracy > 0.7
 
 
 # Torch
