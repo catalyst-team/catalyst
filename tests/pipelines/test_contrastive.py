@@ -47,10 +47,10 @@ def train_experiment(device, engine=None):
 
         transforms = Compose(
             [
-                torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.ToPILImage(),
+                torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
-                ToTensor(),
+                torchvision.transforms.ToTensor(),
                 Normalize((0.1307,), (0.3081,)),
             ]
         )
