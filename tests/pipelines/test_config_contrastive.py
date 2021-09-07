@@ -171,7 +171,7 @@ def train_experiment(engine):
         runner.run()
 
         metrics_path = Path(logdir) / "_metrics.json"
-        with open(metrics_path, 'r') as file:
+        with open(metrics_path, "r") as file:
             metrics = json.load(file)
 
         assert metrics["best"]["valid"]["accuracy"] > 0.7
