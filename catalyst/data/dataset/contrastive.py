@@ -81,7 +81,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
         Returns:
             Dict with left agumention (aug1), right agumention (aug2) and target
         """
-        sample, target = self.dataset.__getitem__(idx)
+        sample, target = self.dataset[idx]
         transformed_sample = self.transform_original(sample) if self.transform_original else sample
         aug_1 = self.transform_left(sample)
         aug_2 = self.transform_right(sample)
