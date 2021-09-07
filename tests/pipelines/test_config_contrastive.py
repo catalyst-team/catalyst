@@ -176,7 +176,7 @@ def train_experiment(engine):
         with open(metrics_path, "r") as file:
             metrics = json.load(file)
 
-        assert metrics["best"]["valid"]["accuracy"] > 0.7
+        assert metrics["best"]["valid"]["accuracy"] > 0.6
 
 
 # Torch

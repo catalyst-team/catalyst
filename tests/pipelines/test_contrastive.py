@@ -142,7 +142,7 @@ def train_experiment(device, engine=None):
             float(row["accuracy"]) for row in read_csv(valid_path) if row["accuracy"] != "accuracy"
         )
 
-        assert best_accuracy > 0.7
+        assert best_accuracy > 0.6
 
 
 @mark.skipif(
