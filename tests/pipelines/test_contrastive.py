@@ -6,7 +6,6 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 import torch
 from torch.optim import Adam
-from torchvision.transforms.transforms import ToPILImage
 
 from catalyst import dl
 from catalyst.contrib import nn
