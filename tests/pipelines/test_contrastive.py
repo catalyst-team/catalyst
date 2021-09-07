@@ -47,6 +47,7 @@ def train_experiment(device, engine=None):
         transforms = Compose(
             [
                 torchvision.transforms.ToPILImage(),
+                torchvision.transforms.RandomCrop((28, 28)),
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
                 torchvision.transforms.ToTensor(),
@@ -108,7 +109,7 @@ def train_experiment(device, engine=None):
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                n_estimators=10,
+                n_estimators=50,
             ),
             dl.ControlFlowCallback(
                 dl.AccuracyCallback(
