@@ -35,7 +35,7 @@ if SETTINGS.cv_required:
         ]
     )
 
-    transform_original = transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
+    transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
 
 
 class ProjectionHead(nn.Module):
