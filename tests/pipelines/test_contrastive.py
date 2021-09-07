@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 import torch
 from torch.optim import Adam
+from torchvision.transforms.transforms import ToPILImage
 
 from catalyst import dl
 from catalyst.contrib import nn
@@ -46,10 +47,11 @@ def train_experiment(device, engine=None):
 
         transforms = Compose(
             [
+                torchvision.transforms.RandomVerticalFlip(),
+                torchvision.transforms.ToPILImage(),
+                torchvision.transforms.RandomHorizontalFlip(),
                 ToTensor(),
                 Normalize((0.1307,), (0.3081,)),
-                torchvision.transforms.RandomVerticalFlip(),
-                torchvision.transforms.RandomHorizontalFlip(),
             ]
         )
 

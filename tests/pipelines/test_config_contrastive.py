@@ -17,10 +17,11 @@ if SETTINGS.cv_required:
 
     transforms = Compose(
         [
+            torchvision.transforms.RandomVerticalFlip(),
+            torchvision.transforms.ToPILImage(),
+            torchvision.transforms.RandomHorizontalFlip(),
             ToTensor(),
             Normalize((0.1307,), (0.3081,)),
-            torchvision.transforms.RandomVerticalFlip(),
-            torchvision.transforms.RandomHorizontalFlip(),
         ]
     )
 
