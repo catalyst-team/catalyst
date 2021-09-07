@@ -88,7 +88,7 @@ def train_experiment(engine):
                     "valid_loader": "valid",
                     "valid_metric": "accuracy01",
                     "minimize_valid_metric": False,
-                    "verbose": True,
+                    "verbose": False,
                 },
                 "model": {
                     "_target_": "ContrastiveModel",
@@ -103,7 +103,7 @@ def train_experiment(engine):
                 },
                 "stages": {
                     "stage1": {
-                        "num_epochs": 5,
+                        "num_epochs": 10,
                         "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
