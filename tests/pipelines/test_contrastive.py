@@ -10,7 +10,6 @@ from torch.optim import Adam
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.models import MnistSimpleNet
 from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data import Compose, Normalize, ToTensor
 from catalyst.data.dataset import SelfSupervisedDatasetWrapper
@@ -144,6 +143,9 @@ def train_experiment(device, engine=None):
         assert best_accuracy > 0.7
 
 
-@mark.skipif(not SETTINGS.ml_required or not SETTINGS.cv_required, reason="catalyst[ml] required")
+@mark.skipif(
+    not SETTINGS.ml_required or not SETTINGS.cv_required,
+    reason="catalyst[ml] and catalyst[cv] required",
+)
 def test_on_cpu():
     train_experiment("cpu")
