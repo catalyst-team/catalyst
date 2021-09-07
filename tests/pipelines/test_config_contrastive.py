@@ -18,6 +18,7 @@ if SETTINGS.cv_required:
     transforms = Compose(
         [
             torchvision.transforms.ToPILImage(),
+            torchvision.transforms.RandomCrop((28, 28)),
             torchvision.transforms.RandomVerticalFlip(),
             torchvision.transforms.RandomHorizontalFlip(),
             torchvision.transforms.ToTensor(),
