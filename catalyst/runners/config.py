@@ -443,6 +443,38 @@ class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
     .. code-block:: python
 
         dataset = SomeDataset()
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "SomeContrastiveModel", ...},
+                "engine": {"_target_": "DeviceEngine", "device": device},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss"
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
     """
 
     def __init__(
@@ -498,7 +530,18 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
                         "num_epochs": 10,
                         "criterion": {"_target_": "MSELoss"},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
-                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "loaders": {
+                            "batch_size": 4,
+                            "num_workers": 0,
+                            "datasets": {
+                                "train": {
+                                    "_target_": "SelfSupervisedDatasetWrapper",
+                                    "dataset": dataset
+                                },
+                                "transforms": ...,
+                                "transform_original": ...,
+                            },
+                        },
                         "callbacks": {
                             "criterion": {
                                 "_target_": "CriterionCallback",
@@ -515,10 +558,6 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
                 },
             }
         )
-        runner.get_datasets = lambda *args, **kwargs: {
-            "train": dataset,
-            "valid": dataset,
-        }
         runner.run()
     """
 
