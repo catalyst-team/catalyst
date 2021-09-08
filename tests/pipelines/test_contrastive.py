@@ -13,7 +13,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data import Compose, Normalize, ToTensor
 from catalyst.data.dataset import SelfSupervisedDatasetWrapper
-from catalyst.settings import SETTINGS
+from catalyst.settings import IS_CUDA_AVAILABLE, SETTINGS
 
 
 def read_csv(csv_path: str):
@@ -151,3 +151,11 @@ def train_experiment(device, engine=None):
 )
 def test_on_cpu():
     train_experiment("cpu")
+
+
+@mark.skipif(
+    not all([SETTINGS.ml_required, IS_CUDA_AVAILABLE, SETTINGS.cv_required]),
+    reason="catalyst[ml], catalyst[cv] and CUDA device are required",
+)
+def test_on_torch_cuda0():
+    train_experiment("cuda:0")
