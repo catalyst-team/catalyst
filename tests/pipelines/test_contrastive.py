@@ -229,7 +229,7 @@ def test_on_apex():
     not all(
         [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
     ),
-    reason="No CUDA>=2 or Apex found",
+    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )
 def test_on_apex_dp():
     train_experiment(None, dl.DataParallelAPEXEngine())
@@ -239,7 +239,7 @@ def test_on_apex_dp():
     not all(
         [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
     ),
-    reason="No CUDA>=2 or Apex found",
+    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )
 def test_on_apex_ddp():
     train_experiment(None, dl.DistributedDataParallelAPEXEngine())
