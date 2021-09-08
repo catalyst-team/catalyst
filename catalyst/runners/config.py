@@ -426,7 +426,6 @@ class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
     Args:
         config: dictionary with parameters
         input_key: key in ``runner.batch`` dict mapping for model input
-        output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
         loss_key: key for ``runner.batch_metrics`` to store criterion loss output
         augemention_prefix: key for ``runner.batch`` to sample augumentions
