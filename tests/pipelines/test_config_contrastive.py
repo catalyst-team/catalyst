@@ -94,7 +94,7 @@ def train_experiment(engine):
                 },
                 "stages": {
                     "stage1": {
-                        "num_epochs": 10,
+                        "num_epochs": 2,
                         "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
