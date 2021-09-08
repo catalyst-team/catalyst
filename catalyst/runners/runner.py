@@ -872,7 +872,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         input_key: str = "features",
         target_key: str = "target",
         loss_key: str = "loss",
-        augemention_prefix: str = "aug",
+        augemention_prefix: str = "augment",
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
     ):
