@@ -16,7 +16,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
         import torchvision
         from torchvision.datasets import CIFAR10
 
-        from catalyst.contrib.data.datawrappers import SelfSupervisedDatasetWrapper
+        from catalyst.contrib.data.dataset import SelfSupervisedDatasetWrapper
 
         transforms = torchvision.transforms.Compose(
             [

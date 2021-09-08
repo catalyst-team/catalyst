@@ -76,7 +76,7 @@ if __name__ == "__main__":
     #     simCLRDatasetWrapper(cifar_test, transforms=transforms), batch_size=batch_size, num_workers=5
     # )
 
-    encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
+    encoder = nn.Sequential(ResnetEncoder(arch="resnet18", frozen=False), nn.Flatten())
     projection_head = nn.Sequential(
         nn.Linear(2048, 512, bias=False),
         nn.ReLU(inplace=True),
