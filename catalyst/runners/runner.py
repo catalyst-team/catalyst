@@ -863,7 +863,104 @@ class SupervisedRunner(ISupervisedRunner, Runner):
 
 
 class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
-    """Runner for experiments with contrastive model."""
+    """Runner for experiments with contrastive model.
+
+    Args:
+        input_key: key in ``runner.batch`` dict mapping for model input
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+        augemention_prefix: key for ``runner.batch`` to sample augumentions
+        projection_prefix: key for ``runner.batch`` to store model projection
+        embedding_prefix: key for `runner.batch`` to store model embeddings
+
+    Examples:
+
+    .. code-block:: python
+
+        # 1. loader and transforms
+
+        transforms = Compose(
+            [
+                ToTensor(),
+                Normalize((0.1307,), (0.3081,)),
+                torchvision.transforms.RandomCrop((28, 28)),
+                torchvision.transforms.RandomVerticalFlip(),
+                torchvision.transforms.RandomHorizontalFlip(),
+            ]
+        )
+        mnist = MNIST("./logdir", train=True, download=True, transform=None)
+        contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
+
+        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
+
+        # 2. model and optimizer
+        encoder = MnistSimpleNet(out_features=16)
+        projection_head = nn.Sequential(
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
+        )
+
+        class ContrastiveModel(torch.nn.Module):
+            def __init__(self, model, encoder):
+                super(ContrastiveModel, self).__init__()
+                self.model = model
+                self.encoder = encoder
+
+            def forward(self, x):
+                emb = self.encoder(x)
+                projection = self.model(emb)
+                return emb, projection
+
+        model = ContrastiveModel(model=projection_head, encoder=encoder)
+
+        optimizer = Adam(model.parameters(), lr=LR)
+
+        # 3. criterion with triplets sampling
+        criterion = NTXentLoss(tau=0.1)
+
+        callbacks = [
+            dl.ControlFlowCallback(
+                dl.CriterionCallback(
+                    input_key="projection_left", target_key="projection_right", metric_key="loss"
+                ),
+                loaders="train",
+            ),
+            dl.SklearnModelCallback(
+                feature_key="embedding_left",
+                target_key="target",
+                train_loader="train",
+                valid_loaders="valid",
+                model_fn=RandomForestClassifier,
+                predict_method="predict_proba",
+                predict_key="sklearn_predict",
+                random_state=RANDOM_STATE,
+                n_estimators=10,
+            ),
+            dl.ControlFlowCallback(
+                dl.AccuracyCallback(
+                    target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+                ),
+                loaders="valid",
+            ),
+        ]
+
+        runner = dl.ContrastiveRunner()
+
+        logdir = "./logdir"
+        runner.train(
+            model=model,
+            engine=engine or dl.DeviceEngine(device),
+            criterion=criterion,
+            optimizer=optimizer,
+            callbacks=callbacks,
+            loaders={"train": train_loader, "valid": train_loader},
+            verbose=True,
+            logdir=logdir,
+            valid_loader="train",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            num_epochs=10,
+        )
+    """
 
     def __init__(
         self,
