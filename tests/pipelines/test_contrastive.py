@@ -27,7 +27,7 @@ def read_csv(csv_path: str):
 
 
 BATCH_SIZE = 1024
-TRAIN_EPOCH = 3
+TRAIN_EPOCH = 2
 LR = 0.01
 RANDOM_STATE = 42
 
