@@ -45,3 +45,4 @@ from catalyst.contrib.nn.criterion.recsys import (
     RocStarLoss,
     WARPLoss,
 )
+from catalyst.contrib.nn.criterion.ntxent import NTXentLoss

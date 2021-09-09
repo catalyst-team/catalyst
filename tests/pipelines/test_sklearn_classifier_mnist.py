@@ -18,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 3
+TRAIN_EPOCH = 1
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -53,7 +53,7 @@ def train_experiment(device, engine=None):
         test_loader = DataLoader(dataset=test_dataset, batch_size=32)
 
         # 2. model and optimizer
-        model = models.MnistSimpleNet(out_features=16, normalize=True)
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True))
         optimizer = Adam(model.parameters(), lr=LR)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 

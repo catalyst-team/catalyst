@@ -5,8 +5,12 @@ import pytest
 import torch
 
 from catalyst.contrib.nn import criterion as module
-from catalyst.contrib.nn.criterion import CircleLoss, TripletMarginLossWithSampler
-from catalyst.contrib.nn.criterion.contrastive import BarlowTwinsLoss
+from catalyst.contrib.nn.criterion import (
+    BarlowTwinsLoss,
+    CircleLoss,
+    NTXentLoss,
+    TripletMarginLossWithSampler,
+)
 from catalyst.data import AllTripletsSampler
 
 
@@ -20,6 +24,8 @@ def test_criterion_init():
                 instance = module_class(margin=1.0, sampler_inbatch=AllTripletsSampler())
             elif module_class == BarlowTwinsLoss:
                 instance = module_class(offdiag_lambda=1, eps=1e-12)
+            elif module_class == NTXentLoss:
+                instance = module_class(tau=0.1)
             else:
                 # @TODO: very dirty trick
                 try:
@@ -235,4 +241,30 @@ def test_barlow_twins_loss(
     value = BarlowTwinsLoss(offdiag_lambda=offdiag_lambda, eps=eps)(
         embeddings_left, embeddings_right
     ).item()
+    assert np.isclose(value, true_value)
+
+
+@pytest.mark.parametrize(
+    "embeddings_left,embeddings_right,tau,true_value",
+    (
+        (
+            torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+            1,
+            0.90483244155,
+        ),
+    ),
+)
+def test_ntxent_loss(
+    embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, tau: float, true_value: float,
+):
+    """
+    Test NTXent Loss
+    Args:
+        embeddings_left: left objects embeddings [batch_size, features_dim]
+        embeddings_right: right objects embeddings [batch_size, features_dim]
+        tau: temperature 
+        true_value: expected loss value
+    """
+    value = NTXentLoss(tau=tau)(embeddings_left, embeddings_right).item()
     assert np.isclose(value, true_value)

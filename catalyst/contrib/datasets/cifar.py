@@ -1,5 +1,5 @@
 # flake8: noqa
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import os
 import pickle
 
@@ -8,6 +8,7 @@ import torch
 import torch.utils.data as data
 
 from catalyst.contrib.datasets.functional import _check_integrity, download_and_extract_archive
+from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
 
 
 class StandardTransform(object):
@@ -235,6 +236,142 @@ class CIFAR10(VisionDataset):
 
     def extra_repr(self) -> str:
         return "Split: {}".format("Train" if self.train is True else "Test")
+
+
+class Cifar10MLDataset(MetricLearningTrainDataset, CIFAR10):
+    """
+    Simple wrapper for CIFAR10 dataset for metric learning train stage.
+    This dataset can be used only for training. For test stage
+    use CIFAR10QGDataset.
+    For this dataset we use only training part of the CIFAR10 and only
+    those images that are labeled as 'airplane', 'automobile', 'bird', 'cat' and 'deer'
+    """
+
+    _split = 5
+    classes = [
+        "0 - airplane",
+        "1 - automobile",
+        "2 - bird",
+        "3 - cat",
+        "4 - deer",
+    ]
+
+    def __init__(self, **kwargs):
+        """
+        Raises:
+            ValueError: if train argument is False (CIFAR10MLDataset
+                should be used only for training)
+        """
+        if "train" in kwargs:
+            if kwargs["train"] is False:
+                raise ValueError("CIFAR10MLDataset can be used only for training stage.")
+        else:
+            kwargs["train"] = True
+        super(Cifar10MLDataset, self).__init__(**kwargs)
+        self._filter()
+
+    def get_labels(self) -> List[int]:
+        """
+        Returns:
+            labels of digits
+        """
+        return self.targets.tolist()
+
+    def _filter(self) -> None:
+        """Filter CIFAR dataset: select images of 0, 1, 2, 3, 4 classes."""
+        mask = np.array(self.targets) < self._split
+        self.data = self.data[mask]
+        self.targets = np.array(self.targets)[mask].tolist()
+
+
+class CifarQGDataset(QueryGalleryDataset):
+    """
+    CIFAR10 for metric learning with query and gallery split.
+    CIFAR10QGDataset should be used for test stage.
+    For this dataset we used only test part of the CIFAR10 and only
+    those images that are labeled as 'dog', 'frog', 'horse', 'ship', 'truck'.
+    """
+
+    _split = 5
+    classes = [
+        "5 - dog",
+        "6 - frog",
+        "7 - horse",
+        "8 - ship",
+        "9 - truck",
+    ]
+
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        gallery_fraq: Optional[float] = 0.2,
+        **kwargs
+    ) -> None:
+        """
+        Args:
+            root: root directory for storing dataset
+            transform: transform
+            gallery_fraq: gallery size
+        """
+        self._cifar = CIFAR10(root, train=False, download=True, transform=transform)
+        self._filter()
+
+        self._gallery_size = int(gallery_fraq * len(self._cifar))
+        self._query_size = len(self._cifar) - self._gallery_size
+
+        self._is_query = torch.zeros(len(self._cifar)).type(torch.bool)
+        self._is_query[: self._query_size] = True
+
+    def _filter(self) -> None:
+        """Filter CIFAR10 dataset: select images of 'dog', 'frog',
+        'horse', 'ship', 'truck' classes."""
+        mask = np.array(self._cifar.targets) >= self._split
+        self._cifar.data = self._cifar.data[mask]
+        self._cifar.targets = np.array(self._cifar.targets)[mask].tolist()
+
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
+        """
+        Get item method for dataset
+        Args:
+            idx: index of the object
+        Returns:
+            Dict with features, targets and is_query flag
+        """
+        image, label = self._cifar[idx]
+        return {
+            "features": image,
+            "targets": label,
+            "is_query": self._is_query[idx],
+        }
+
+    def __len__(self) -> int:
+        """Length"""
+        return len(self._cifar)
+
+    def __repr__(self) -> None:
+        """Print info about the dataset"""
+        return self._cifar.__repr__()
+
+    @property
+    def gallery_size(self) -> int:
+        """Query Gallery dataset should have gallery_size property"""
+        return self._gallery_size
+
+    @property
+    def query_size(self) -> int:
+        """Query Gallery dataset should have query_size property"""
+        return self._query_size
+
+    @property
+    def data(self) -> torch.Tensor:
+        """Images from CIFAR10"""
+        return self._cifar.data
+
+    @property
+    def targets(self) -> torch.Tensor:
+        """Labels of digits"""
+        return self._cifar.targets
 
 
 class CIFAR100(CIFAR10):
