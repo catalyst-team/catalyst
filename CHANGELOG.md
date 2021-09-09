@@ -9,7 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- NTXent loss function ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- Self supervised runners: SelfSupervisedConfigRunner, SelfSupervisedRunner ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- Self supervised dataset wrapper ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 
 ### Changed
 
