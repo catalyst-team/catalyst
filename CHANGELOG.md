@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Contarstive loss: `NTXentLoss`([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- Contarstive loss: `NTXentLoss` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 - Self supervised learning: `ISelfSupervisedRunner`, `SelfSupervisedConfigRunner`, `SelfSupervisedRunner`, `SelfSupervisedDatasetWrapper` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 - SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 
