@@ -150,13 +150,19 @@ class ISelfSupervisedRunner(IRunner):
         if isinstance(batch, (tuple, list)):
             assert len(batch) in [3, 4]
 
-            batch = {
-                self._input_key: batch[0],
-                f"{self._augemention_prefix}_left": batch[1],
-                f"{self._augemention_prefix}_right": batch[2],
-            }
             if len(batch) == 4:
-                batch[self._target_key] = batch[3]
+                batch = {
+                    self._input_key: batch[0],
+                    f"{self._augemention_prefix}_left": batch[1],
+                    f"{self._augemention_prefix}_right": batch[2],
+                    self._target_key: batch[3],
+                }
+            elif len(batch) == 3:
+                batch = {
+                    self._input_key: batch[0],
+                    f"{self._augemention_prefix}_left": batch[1],
+                    f"{self._augemention_prefix}_right": batch[2],
+                }
 
         return batch
 
