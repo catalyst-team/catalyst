@@ -10,7 +10,7 @@ from torch import nn
 from catalyst.data import Compose, Normalize, ToTensor
 from catalyst.dl import SelfSupervisedConfigRunner
 from catalyst.registry import Registry
-from catalyst.settings import SETTINGS
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 if SETTINGS.cv_required:
     import torchvision
@@ -94,7 +94,7 @@ def train_experiment(engine):
                 },
                 "stages": {
                     "stage1": {
-                        "num_epochs": 10,
+                        "num_epochs": 2,
                         "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
@@ -179,10 +179,101 @@ def train_experiment(engine):
         assert metrics["best"]["valid"]["accuracy"] > 0.6
 
 
+requirements_satisfied = SETTINGS.ml_required and SETTINGS.cv_required
+
 # Torch
 @mark.skipif(
-    not SETTINGS.ml_required or not SETTINGS.cv_required,
-    reason="catalyst[ml] and catalyst[cv] required",
+    not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required",
 )
 def test_contrastive_on_cpu():
     train_experiment({"_target_": "DeviceEngine", "device": "cpu"})
+
+
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE]),
+    reason="catalyst[ml], catalyst[cv] and CUDA device are required",
+)
+def test_classification_on_torch_cuda0():
+    train_experiment({"_target_": "DeviceEngine", "device": "cuda:0"})
+
+
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found or requriments are not satisfied",
+)
+def test_classification_on_torch_cuda1():
+    train_experiment({"_target_": "DeviceEngine", "device": "cuda:1"})
+
+
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found or requriments are not satisfied",
+)
+def test_classification_on_torch_dp():
+    train_experiment({"_target_": "DataParallelEngine"})
+
+
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found or requriments are not satisfied",
+)
+def test_classification_on_torch_ddp():
+    train_experiment({"_target_": "DistributedDataParallelEngine"})
+
+
+# AMP
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
+    reason="No CUDA or AMP found or requriments are not satisfied",
+)
+def test_classification_on_amp():
+    train_experiment({"_target_": "AMPEngine"})
+
+
+@mark.skipif(
+    not all(
+        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+    ),
+    reason="No CUDA>=2 or AMP found or requriments are not satisfied",
+)
+def test_classification_on_amp_dp():
+    train_experiment({"_target_": "DataParallelAMPEngine"})
+
+
+@mark.skipif(
+    not all(
+        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+    ),
+    reason="No CUDA>=2 or AMP found or requriments are not satisfied",
+)
+def test_classification_on_amp_ddp():
+    train_experiment({"_target_": "DistributedDataParallelAMPEngine"})
+
+
+# APEX
+@mark.skipif(
+    not all([requirements_satisfied, IS_CUDA_AVAILABLE, SETTINGS.apex_required]),
+    reason="No CUDA or Apex found or requriments are not satisfied",
+)
+def test_classification_on_apex():
+    train_experiment({"_target_": "APEXEngine"})
+
+
+@mark.skipif(
+    not all(
+        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+    ),
+    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
+)
+def test_classification_on_apex_dp():
+    train_experiment({"_target_": "DataParallelApexEngine"})
+
+
+@mark.skipif(
+    not all(
+        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+    ),
+    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
+)
+def test_classification_on_apex_ddp():
+    train_experiment({"_target_": "DistributedDataParallelApexEngine"})
