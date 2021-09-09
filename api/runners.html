@@ -1337,7 +1337,18 @@ Used for Catalyst Config API.</p>
                 <span class="s2">&quot;num_epochs&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
                 <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;_target_&quot;</span><span class="p">:</span> <span class="s2">&quot;MSELoss&quot;</span><span class="p">},</span>
                 <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;_target_&quot;</span><span class="p">:</span> <span class="s2">&quot;Adam&quot;</span><span class="p">,</span> <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span>
-                <span class="s2">&quot;loaders&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+                <span class="s2">&quot;loaders&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                    <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;datasets&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;_target_&quot;</span><span class="p">:</span> <span class="s2">&quot;SelfSupervisedDatasetWrapper&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">dataset</span>
+                        <span class="p">},</span>
+                        <span class="s2">&quot;transforms&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+                        <span class="s2">&quot;transform_original&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
                 <span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;_target_&quot;</span><span class="p">:</span> <span class="s2">&quot;CriterionCallback&quot;</span><span class="p">,</span>
@@ -1354,10 +1365,6 @@ Used for Catalyst Config API.</p>
         <span class="p">},</span>
     <span class="p">}</span>
 <span class="p">)</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_datasets</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
-    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
-<span class="p">}</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>

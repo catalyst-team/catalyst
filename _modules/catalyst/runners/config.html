@@ -332,6 +332,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.misc</span> <span class="kn">import</span> <span class="n">do_lr_linear_scaling</span><span class="p">,</span> <span class="n">get_model_parameters</span>
+<span class="kn">from</span> <span class="nn">catalyst.runners.self_supervised</span> <span class="kn">import</span> <span class="n">ISelfSupervisedRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">RunnerCriterion</span><span class="p">,</span>
@@ -730,6 +731,85 @@
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
+<span class="k">class</span> <span class="nc">SelfSupervisedConfigRunner</span><span class="p">(</span><span class="n">ISelfSupervisedRunner</span><span class="p">,</span> <span class="n">ConfigRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ConfigRunner for contrastive tasks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config: dictionary with parameters</span>
+<span class="sd">        input_key: key in ``runner.batch`` dict mapping for model input</span>
+<span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
+<span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+<span class="sd">        augemention_prefix: key for ``runner.batch`` to sample augumentions</span>
+<span class="sd">        projection_prefix: key for ``runner.batch`` to store model projection</span>
+<span class="sd">        embedding_prefix: key for `runner.batch`` to store model embeddings</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        dataset = SomeDataset()</span>
+<span class="sd">        runner = SupervisedConfigRunner(</span>
+<span class="sd">            config={</span>
+<span class="sd">                &quot;args&quot;: {&quot;logdir&quot;: logdir},</span>
+<span class="sd">                &quot;model&quot;: {&quot;_target_&quot;: &quot;SomeContrastiveModel&quot;, ...},</span>
+<span class="sd">                &quot;engine&quot;: {&quot;_target_&quot;: &quot;DeviceEngine&quot;, &quot;device&quot;: device},</span>
+<span class="sd">                &quot;stages&quot;: {</span>
+<span class="sd">                    &quot;stage1&quot;: {</span>
+<span class="sd">                        &quot;num_epochs&quot;: 10,</span>
+<span class="sd">                        &quot;criterion&quot;: {&quot;_target_&quot;: &quot;NTXentLoss&quot;, &quot;tau&quot;: 0.1},</span>
+<span class="sd">                        &quot;optimizer&quot;: {&quot;_target_&quot;: &quot;Adam&quot;, &quot;lr&quot;: 1e-3},</span>
+<span class="sd">                        &quot;loaders&quot;: {&quot;batch_size&quot;: 4, &quot;num_workers&quot;: 0},</span>
+<span class="sd">                        &quot;callbacks&quot;: {</span>
+<span class="sd">                            &quot;criterion&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;CriterionCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;,</span>
+<span class="sd">                                &quot;input_key&quot;: &quot;logits&quot;,</span>
+<span class="sd">                                &quot;target_key&quot;: &quot;targets&quot;,</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;optimizer&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;OptimizerCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                        },</span>
+<span class="sd">                    },</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.get_datasets = lambda *args, **kwargs: {</span>
+<span class="sd">            &quot;train&quot;: dataset,</span>
+<span class="sd">            &quot;valid&quot;: dataset,</span>
+<span class="sd">        }</span>
+<span class="sd">        runner.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span>
+        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">augemention_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;augment&quot;</span><span class="p">,</span>
+        <span class="n">projection_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;projection&quot;</span><span class="p">,</span>
+        <span class="n">embedding_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;embedding&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="n">ISelfSupervisedRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
+            <span class="n">augemention_prefix</span><span class="o">=</span><span class="n">augemention_prefix</span><span class="p">,</span>
+            <span class="n">projection_prefix</span><span class="o">=</span><span class="n">projection_prefix</span><span class="p">,</span>
+            <span class="n">embedding_prefix</span><span class="o">=</span><span class="n">embedding_prefix</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ConfigRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="SupervisedConfigRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.config.SupervisedConfigRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedConfigRunner</span><span class="p">(</span><span class="n">ISupervisedRunner</span><span class="p">,</span> <span class="n">ConfigRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;ConfigRunner for supervised tasks</span>
 
@@ -760,7 +840,18 @@
 <span class="sd">                        &quot;num_epochs&quot;: 10,</span>
 <span class="sd">                        &quot;criterion&quot;: {&quot;_target_&quot;: &quot;MSELoss&quot;},</span>
 <span class="sd">                        &quot;optimizer&quot;: {&quot;_target_&quot;: &quot;Adam&quot;, &quot;lr&quot;: 1e-3},</span>
-<span class="sd">                        &quot;loaders&quot;: {&quot;batch_size&quot;: 4, &quot;num_workers&quot;: 0},</span>
+<span class="sd">                        &quot;loaders&quot;: {</span>
+<span class="sd">                            &quot;batch_size&quot;: 4,</span>
+<span class="sd">                            &quot;num_workers&quot;: 0,</span>
+<span class="sd">                            &quot;datasets&quot;: {</span>
+<span class="sd">                                &quot;train&quot;: {</span>
+<span class="sd">                                    &quot;_target_&quot;: &quot;SelfSupervisedDatasetWrapper&quot;,</span>
+<span class="sd">                                    &quot;dataset&quot;: dataset</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &quot;transforms&quot;: ...,</span>
+<span class="sd">                                &quot;transform_original&quot;: ...,</span>
+<span class="sd">                            },</span>
+<span class="sd">                        },</span>
 <span class="sd">                        &quot;callbacks&quot;: {</span>
 <span class="sd">                            &quot;criterion&quot;: {</span>
 <span class="sd">                                &quot;_target_&quot;: &quot;CriterionCallback&quot;,</span>
@@ -777,10 +868,6 @@
 <span class="sd">                },</span>
 <span class="sd">            }</span>
 <span class="sd">        )</span>
-<span class="sd">        runner.get_datasets = lambda *args, **kwargs: {</span>
-<span class="sd">            &quot;train&quot;: dataset,</span>
-<span class="sd">            &quot;valid&quot;: dataset,</span>
-<span class="sd">        }</span>
 <span class="sd">        runner.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -803,7 +890,7 @@
         <span class="n">ConfigRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ConfigRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedConfigRunner&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ConfigRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedConfigRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SelfSupervisedConfigRunner&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

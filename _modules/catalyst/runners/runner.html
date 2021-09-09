@@ -334,6 +334,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.loggers.console</span> <span class="kn">import</span> <span class="n">ConsoleLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.csv</span> <span class="kn">import</span> <span class="n">CSVLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.runners.self_supervised</span> <span class="kn">import</span> <span class="n">ISelfSupervisedRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
@@ -1172,7 +1173,185 @@
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedRunner&quot;</span><span class="p">]</span>
+<span class="k">class</span> <span class="nc">SelfSupervisedRunner</span><span class="p">(</span><span class="n">ISelfSupervisedRunner</span><span class="p">,</span> <span class="n">Runner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runner for experiments with contrastive model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_key: key in ``runner.batch`` dict mapping for model input</span>
+<span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
+<span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+<span class="sd">        augemention_prefix: key for ``runner.batch`` to sample augumentions</span>
+<span class="sd">        projection_prefix: key for ``runner.batch`` to store model projection</span>
+<span class="sd">        embedding_prefix: key for `runner.batch`` to store model embeddings</span>
+<span class="sd">        loss_mode_prefix: selector key for loss calculation</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # 1. loader and transforms</span>
+
+<span class="sd">        transforms = Compose(</span>
+<span class="sd">            [</span>
+<span class="sd">                ToTensor(),</span>
+<span class="sd">                Normalize((0.1307,), (0.3081,)),</span>
+<span class="sd">                torchvision.transforms.RandomCrop((28, 28)),</span>
+<span class="sd">                torchvision.transforms.RandomVerticalFlip(),</span>
+<span class="sd">                torchvision.transforms.RandomHorizontalFlip(),</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+<span class="sd">        mnist = MNIST(&quot;./logdir&quot;, train=True, download=True, transform=None)</span>
+<span class="sd">        contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)</span>
+
+<span class="sd">        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)</span>
+
+<span class="sd">        # 2. model and optimizer</span>
+<span class="sd">        encoder = MnistSimpleNet(out_features=16)</span>
+<span class="sd">        projection_head = nn.Sequential(</span>
+<span class="sd">            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),</span>
+<span class="sd">        )</span>
+
+<span class="sd">        class ContrastiveModel(torch.nn.Module):</span>
+<span class="sd">            def __init__(self, model, encoder):</span>
+<span class="sd">                super(ContrastiveModel, self).__init__()</span>
+<span class="sd">                self.model = model</span>
+<span class="sd">                self.encoder = encoder</span>
+
+<span class="sd">            def forward(self, x):</span>
+<span class="sd">                emb = self.encoder(x)</span>
+<span class="sd">                projection = self.model(emb)</span>
+<span class="sd">                return emb, projection</span>
+
+<span class="sd">        model = ContrastiveModel(model=projection_head, encoder=encoder)</span>
+
+<span class="sd">        optimizer = Adam(model.parameters(), lr=LR)</span>
+
+<span class="sd">        # 3. criterion with triplets sampling</span>
+<span class="sd">        criterion = NTXentLoss(tau=0.1)</span>
+
+<span class="sd">        callbacks = [</span>
+<span class="sd">            dl.ControlFlowCallback(</span>
+<span class="sd">                dl.CriterionCallback(</span>
+<span class="sd">                    input_key=&quot;projection_left&quot;, target_key=&quot;projection_right&quot;, metric_key=&quot;loss&quot;</span>
+<span class="sd">                ),</span>
+<span class="sd">                loaders=&quot;train&quot;,</span>
+<span class="sd">            ),</span>
+<span class="sd">            dl.SklearnModelCallback(</span>
+<span class="sd">                feature_key=&quot;embedding_left&quot;,</span>
+<span class="sd">                target_key=&quot;target&quot;,</span>
+<span class="sd">                train_loader=&quot;train&quot;,</span>
+<span class="sd">                valid_loaders=&quot;valid&quot;,</span>
+<span class="sd">                model_fn=RandomForestClassifier,</span>
+<span class="sd">                predict_method=&quot;predict_proba&quot;,</span>
+<span class="sd">                predict_key=&quot;sklearn_predict&quot;,</span>
+<span class="sd">                random_state=RANDOM_STATE,</span>
+<span class="sd">                n_estimators=10,</span>
+<span class="sd">            ),</span>
+<span class="sd">            dl.ControlFlowCallback(</span>
+<span class="sd">                dl.AccuracyCallback(</span>
+<span class="sd">                    target_key=&quot;target&quot;, input_key=&quot;sklearn_predict&quot;, topk_args=(1, 3)</span>
+<span class="sd">                ),</span>
+<span class="sd">                loaders=&quot;valid&quot;,</span>
+<span class="sd">            ),</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        runner = dl.ContrastiveRunner()</span>
+
+<span class="sd">        logdir = &quot;./logdir&quot;</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            engine=engine or dl.DeviceEngine(device),</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            callbacks=callbacks,</span>
+<span class="sd">            loaders={&quot;train&quot;: train_loader, &quot;valid&quot;: train_loader},</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            logdir=logdir,</span>
+<span class="sd">            valid_loader=&quot;train&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            num_epochs=10,</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">IEngine</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span>
+        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">augemention_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;augment&quot;</span><span class="p">,</span>
+        <span class="n">projection_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;projection&quot;</span><span class="p">,</span>
+        <span class="n">embedding_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;embedding&quot;</span><span class="p">,</span>
+        <span class="n">loss_mode_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;projection&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="n">ISelfSupervisedRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
+            <span class="n">augemention_prefix</span><span class="o">=</span><span class="n">augemention_prefix</span><span class="p">,</span>
+            <span class="n">projection_prefix</span><span class="o">=</span><span class="n">projection_prefix</span><span class="p">,</span>
+            <span class="n">embedding_prefix</span><span class="o">=</span><span class="n">embedding_prefix</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">Runner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_mode_prefix</span> <span class="o">=</span> <span class="n">loss_mode_prefix</span>
+
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run model inference on specified data batch.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            You should not override this method. If you need specific model</span>
+<span class="sd">            call, override forward() method</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: dictionary with data batch from DataLoader.</span>
+<span class="sd">            **kwargs: additional kwargs to pass to the model</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapping[str, Any]: model output dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">tensor_or_module</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prepares the callbacks for selected stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dictionary with stage callbacks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># I took it from supervised runner should be remade</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
+        <span class="n">is_callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICriterionCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CriterionCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mode_prefix</span><span class="si">}</span><span class="s2">_left&quot;</span><span class="p">,</span>
+                <span class="n">target_key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mode_prefix</span><span class="si">}</span><span class="s2">_right&quot;</span><span class="p">,</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">IOptimizerCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span>
+            <span class="n">ISchedulerCallback</span>
+        <span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchedulerCallback</span><span class="p">(</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">callbacks</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SelfSupervisedRunner&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
