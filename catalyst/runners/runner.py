@@ -872,6 +872,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         augemention_prefix: key for ``runner.batch`` to sample augumentions
         projection_prefix: key for ``runner.batch`` to store model projection
         embedding_prefix: key for `runner.batch`` to store model embeddings
+        loss_mode_prefix: selector key for loss calculation
 
     Examples:
 
@@ -972,6 +973,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         augemention_prefix: str = "augment",
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
+        loss_mode_prefix: str = "projection",
     ):
         """Init."""
         ISelfSupervisedRunner.__init__(
@@ -984,6 +986,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
             embedding_prefix=embedding_prefix,
         )
         Runner.__init__(self, model=model, engine=engine)
+        self.loss_mode_prefix = loss_mode_prefix
 
     @torch.no_grad()
     def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
@@ -1022,8 +1025,8 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         )
         if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=f"{self._projection_prefix}_1",
-                target_key=f"{self._projection_prefix}_2",
+                input_key=f"{self.loss_mode_prefix}_left",
+                target_key=f"{self.loss_mode_prefix}_right",
                 metric_key=self._loss_key,
             )
         if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
