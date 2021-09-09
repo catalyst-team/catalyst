@@ -9,6 +9,15 @@ class SelfSupervisedDatasetWrapper(Dataset):
     The class implemets contrastive logic (see Figure 2 from `A Simple Framework
     for Contrastive Learning of Visual Representations`_.)
 
+    Args:
+        dataset: original dataset for augmentation
+        transforms: transforms which will be applied to original batch to get both
+        left and right output batch.
+        transform_left: transform only for left batch
+        transform_right: transform only for right batch
+        transform_original: transforms which will be applied to save original in batch
+        is_target: the flag for selection does dataset return (sample, target) or only sample
+
     Example:
 
     .. code-block:: python
@@ -43,6 +52,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
         transform_left: Callable = None,
         transform_right: Callable = None,
         transform_original: Callable = None,
+        is_target: bool = True,
     ) -> None:
         """
         Args:
@@ -52,6 +62,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
             transform_left: transform only for left batch
             transform_right: transform only for right batch
             transform_original: transforms which will be applied to save original in batch
+            is_target: the flag for selection does dataset return (sample, target) or only sample
 
         """
         super().__init__()
@@ -68,6 +79,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
             )
         self.transform_original = transform_original
         self.dataset = dataset
+        self.is_target = is_target
 
     def __len__(self) -> int:
         """Length"""
@@ -81,8 +93,15 @@ class SelfSupervisedDatasetWrapper(Dataset):
         Returns:
             Dict with left agumention (aug1), right agumention (aug2) and target
         """
-        sample, target = self.dataset[idx]
+        if self.is_target:
+            sample, target = self.dataset[idx]
+        else:
+            sample = self.dataset[idx]
+
         transformed_sample = self.transform_original(sample) if self.transform_original else sample
         aug_1 = self.transform_left(sample)
         aug_2 = self.transform_right(sample)
-        return transformed_sample, aug_1, aug_2, target
+
+        if self.is_target:
+            return transformed_sample, aug_1, aug_2, target
+        return transformed_sample, aug_1, aug_2
