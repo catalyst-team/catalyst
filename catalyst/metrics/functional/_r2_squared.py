@@ -3,29 +3,34 @@ from typing import Sequence
 import torch
 
 
-def r2_score(outputs: torch.Tensor, targets: torch.Tensor,) -> Sequence[torch.Tensor]:
+def r2_score(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.Tensor]:
     """
-    Computes regression r2 score.
+    Computes regression r2 squared.
+
     Args:
         outputs: model outputs
             with shape [bs; 1]
         targets: ground truth
             with shape [bs; 1]
+    
     Returns:
-        float of computed r2 score
+        float of computed r2 squared
+    
     Examples:
+    
     .. code-block:: python
         import torch
         from catalyst import metrics
-        metrics.r2_score(
+        metrics.r2_squared(
             outputs=torch.tensor([0, 1, 2]),
             targets=torch.tensor([0, 1, 2]),
         )
         # tensor([1.])
+    
     .. code-block:: python
         import torch
         from catalyst import metrics
-        metrics.r2_score(
+        metrics.r2_squared(
             outputs=torch.tensor([2.5, 0.0, 2, 8]),
             targets=torch.tensor([3, -0.5, 2, 7]),
         )
@@ -39,4 +44,4 @@ def r2_score(outputs: torch.Tensor, targets: torch.Tensor,) -> Sequence[torch.Te
     return output
 
 
-__all__ = ["r2_score"]
+__all__ = ["r2_squared"]

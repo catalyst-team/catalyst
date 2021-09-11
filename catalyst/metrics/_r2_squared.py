@@ -5,7 +5,7 @@ import torch
 from catalyst.metrics._metric import ICallbackLoaderMetric
 
 
-class R2Metric(ICallbackLoaderMetric):
+class R2Squared(ICallbackLoaderMetric):
     """This metric accumulates r2 score along loader
 
     Args:
@@ -20,7 +20,7 @@ class R2Metric(ICallbackLoaderMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ) -> None:
-        """Init R2Metric"""
+        """Init R2Squared"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.num_examples = 0
         self.delta_sum = 0
@@ -58,4 +58,4 @@ class R2Metric(ICallbackLoaderMetric):
         return self.compute()
 
 
-__all__ = ["R2Metric"]
+__all__ = ["R2Squared"]
