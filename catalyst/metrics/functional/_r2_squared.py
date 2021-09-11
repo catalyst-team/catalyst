@@ -3,7 +3,7 @@ from typing import Sequence
 import torch
 
 
-def r2_score(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.Tensor]:
+def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.Tensor]:
     """
     Computes regression r2 squared.
 
