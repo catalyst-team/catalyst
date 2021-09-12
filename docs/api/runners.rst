@@ -20,6 +20,15 @@ ISupervisedRunner
     :show-inheritance:
 
 
+ISelfSupervisedRunner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.runners.self_supervised.ISelfSupervisedRunner
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
+
 Python API
 ----------------------
 
@@ -41,6 +50,14 @@ SupervisedRunner
     :show-inheritance:
 
 
+SelfSupervisedRunner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.runners.runner.SelfSupervisedRunner
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
 Config API
 ----------------------
 
@@ -60,6 +77,14 @@ SupervisedConfigRunner
     :undoc-members:
     :show-inheritance:
 
+
+SelfSupervisedConfigRunner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.runners.config.SelfSupervisedConfigRunner
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
 
 Hydra API
 ----------------------
