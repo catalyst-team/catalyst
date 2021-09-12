@@ -922,6 +922,8 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.softmax.SoftMax.forward">(catalyst.contrib.nn.modules.softmax.SoftMax method)</a>
 </li>
+        <li><a href="api/runners.html#catalyst.runners.self_supervised.ISelfSupervisedRunner.forward">(catalyst.runners.self_supervised.ISelfSupervisedRunner method)</a>
+</li>
         <li><a href="api/runners.html#catalyst.runners.supervised.ISupervisedRunner.forward">(catalyst.runners.supervised.ISupervisedRunner method)</a>
 </li>
         <li><a href="api/tools.html#catalyst.tools.forward_wrapper.ModelForwardWrapper.forward">(catalyst.tools.forward_wrapper.ModelForwardWrapper method)</a>
@@ -983,6 +985,8 @@
         <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner.get_callbacks">(catalyst.runners.hydra.HydraRunner method)</a>
 </li>
         <li><a href="api/runners.html#catalyst.runners.runner.Runner.get_callbacks">(catalyst.runners.runner.Runner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.runner.SelfSupervisedRunner.get_callbacks">(catalyst.runners.runner.SelfSupervisedRunner method)</a>
 </li>
         <li><a href="api/runners.html#catalyst.runners.runner.SupervisedRunner.get_callbacks">(catalyst.runners.runner.SupervisedRunner method)</a>
 </li>
@@ -1174,6 +1178,8 @@
       <li><a href="api/core.html#catalyst.core.runner.IRunner.handle_batch">handle_batch() (catalyst.core.runner.IRunner method)</a>
 
       <ul>
+        <li><a href="api/runners.html#catalyst.runners.self_supervised.ISelfSupervisedRunner.handle_batch">(catalyst.runners.self_supervised.ISelfSupervisedRunner method)</a>
+</li>
         <li><a href="api/runners.html#catalyst.runners.supervised.ISupervisedRunner.handle_batch">(catalyst.runners.supervised.ISupervisedRunner method)</a>
 </li>
       </ul></li>
@@ -1187,10 +1193,10 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.image.has_image_extension">has_image_extension() (in module catalyst.contrib.utils.image)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss">HingeLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss">HingeLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">hitrate() (in module catalyst.metrics.functional._hitrate)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.HitrateCallback">HitrateCallback (class in catalyst.callbacks.metrics.recsys)</a>
@@ -1288,6 +1294,8 @@
       <li><a href="api/core.html#catalyst.core.engine.IEngine.is_master_process">is_master_process() (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.is_worker_process">is_worker_process() (catalyst.core.engine.IEngine property)</a>
+</li>
+      <li><a href="api/runners.html#catalyst.runners.self_supervised.ISelfSupervisedRunner">ISelfSupervisedRunner (class in catalyst.runners.self_supervised)</a>
 </li>
       <li><a href="api/runners.html#catalyst.runners.supervised.ISupervisedRunner">ISupervisedRunner (class in catalyst.runners.supervised)</a>
 </li>
@@ -1606,6 +1614,8 @@
       <li><a href="api/runners.html#catalyst.runners.runner.Runner.predict_batch">predict_batch() (catalyst.runners.runner.Runner method)</a>
 
       <ul>
+        <li><a href="api/runners.html#catalyst.runners.runner.SelfSupervisedRunner.predict_batch">(catalyst.runners.runner.SelfSupervisedRunner method)</a>
+</li>
         <li><a href="api/runners.html#catalyst.runners.runner.SupervisedRunner.predict_batch">(catalyst.runners.runner.SupervisedRunner method)</a>
 </li>
       </ul></li>
@@ -1745,6 +1755,10 @@
         <li><a href="api/runners.html#catalyst.runners.runner.Runner.seed">(catalyst.runners.runner.Runner property)</a>
 </li>
       </ul></li>
+      <li><a href="api/runners.html#catalyst.runners.config.SelfSupervisedConfigRunner">SelfSupervisedConfigRunner (class in catalyst.runners.config)</a>
+</li>
+      <li><a href="api/runners.html#catalyst.runners.runner.SelfSupervisedRunner">SelfSupervisedRunner (class in catalyst.runners.runner)</a>
+</li>
       <li><a href="api/utils.html#catalyst.contrib.utils.pandas.separate_tags">separate_tags() (in module catalyst.contrib.utils.pandas)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.serialization.serialize">serialize() (in module catalyst.contrib.utils.serialization)</a>
@@ -1765,10 +1779,10 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._focal.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.metrics.functional._focal)</a>
 </li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
+</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback">SklearnLoaderCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.sklearn_model.SklearnModelCallback">SklearnModelCallback (class in catalyst.callbacks.sklearn_model)</a>

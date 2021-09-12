@@ -1173,7 +1173,7 @@
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">SelfSupervisedRunner</span><span class="p">(</span><span class="n">ISelfSupervisedRunner</span><span class="p">,</span> <span class="n">Runner</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfSupervisedRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SelfSupervisedRunner">[docs]</a><span class="k">class</span> <span class="nc">SelfSupervisedRunner</span><span class="p">(</span><span class="n">ISelfSupervisedRunner</span><span class="p">,</span> <span class="n">Runner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runner for experiments with contrastive model.</span>
 
 <span class="sd">    Args:</span>
@@ -1299,7 +1299,7 @@
         <span class="n">Runner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_mode_prefix</span> <span class="o">=</span> <span class="n">loss_mode_prefix</span>
 
-    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="SelfSupervisedRunner.predict_batch"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SelfSupervisedRunner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run model inference on specified data batch.</span>
@@ -1318,9 +1318,9 @@
         <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">tensor_or_module</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">output</span>
+        <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="SelfSupervisedRunner.get_callbacks"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SelfSupervisedRunner.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Prepares the callbacks for selected stage.</span>
 
 <span class="sd">        Args:</span>
@@ -1348,7 +1348,7 @@
             <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchedulerCallback</span><span class="p">(</span>
                 <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">callbacks</span>
+        <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SelfSupervisedRunner&quot;</span><span class="p">]</span>
