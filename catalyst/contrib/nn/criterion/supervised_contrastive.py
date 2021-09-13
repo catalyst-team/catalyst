@@ -62,6 +62,11 @@ class SupervisedContrastiveLoss(nn.Module):
         # aggregation of postive pairs
 
         number_of_positives = pos_place.sum(dim=1) - 1
+
+        assert (
+            0 == number_of_positives
+        ).sum() > 0, "There must be at least one positive example for each sample!"
+
         if self.pos_aggregation == "in":
             pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - exp_self_similarity
             pos_loss = torch.log(pos_loss) - torch.log(number_of_positives.float())
