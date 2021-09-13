@@ -9,6 +9,7 @@ from catalyst.contrib.nn.criterion import (
     BarlowTwinsLoss,
     CircleLoss,
     NTXentLoss,
+    SupervisedContrastiveLoss,
     TripletMarginLossWithSampler,
 )
 from catalyst.data import AllTripletsSampler
@@ -26,6 +27,8 @@ def test_criterion_init():
                 instance = module_class(offdiag_lambda=1, eps=1e-12)
             elif module_class == NTXentLoss:
                 instance = module_class(tau=0.1)
+            elif module_class == SupervisedContrastiveLoss:
+                instance = module_class(tau=0.1, reduction="mean", pos_aggregation="in")
             else:
                 # @TODO: very dirty trick
                 try:
@@ -267,4 +270,63 @@ def test_ntxent_loss(
         true_value: expected loss value
     """
     value = NTXentLoss(tau=tau)(embeddings_left, embeddings_right).item()
+    assert np.isclose(value, true_value)
+
+
+@pytest.mark.parametrize(
+    "features,targets,tau,pos_aggregation,true_value",
+    (
+        (
+            torch.tensor(
+                [
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 0.0, 1.0],
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 0.0, 1.0],
+                ]
+            ),
+            torch.tensor([1, 2, 3, 1, 2, 3]),
+            1,
+            "in",
+            0.90483244155,
+        ),
+        (
+            torch.tensor(
+                [
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 0.0, 1.0],
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 0.0, 1.0],
+                ]
+            ),
+            torch.tensor([1, 2, 3, 1, 2, 3]),
+            1,
+            "out",
+            0.90483244155,
+        ),
+    ),
+)
+def test_supervised_contrastive_loss(
+    features: torch.Tensor,
+    targets: torch.Tensor,
+    tau: float,
+    pos_aggregation: str,
+    true_value: float,
+):
+    """
+    Test supervised contrastive loss
+    Args:
+        features: features of objects
+        targets: targets of objects
+        pos_aggregation: aggeragation of positive objects
+        tau: temperature
+        true_value: expected loss value
+    """
+    value = SupervisedContrastiveLoss(tau=tau, pos_aggregation=pos_aggregation)(
+        features, targets
+    ).item()
     assert np.isclose(value, true_value)
