@@ -11,7 +11,6 @@ from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
-from catalyst.dl import SelfSupervisedRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
 parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
@@ -116,7 +115,7 @@ if __name__ == "__main__":
         ),
     ]
 
-    runner = SelfSupervisedRunner()
+    runner = dl.SelfSupervisedRunner()
 
     runner.train(
         model=model,
