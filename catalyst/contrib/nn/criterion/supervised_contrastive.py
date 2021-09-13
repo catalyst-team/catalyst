@@ -64,7 +64,7 @@ class SupervisedContrastiveLoss(nn.Module):
         number_of_positives = pos_place.sum(dim=1) - 1
         if self.pos_aggregation == "in":
             pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - exp_self_similarity
-            pos_loss = torch.log(pos_loss) - torch.log(number_of_positives)
+            pos_loss = torch.log(pos_loss) - torch.log(number_of_positives.float())
         elif self.pos_aggregation == "out":
             pos_loss = (
                 (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - self_similarity
