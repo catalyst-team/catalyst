@@ -323,7 +323,7 @@ def test_supervised_contrastive_loss(
         features: features of objects
         targets: targets of objects
         pos_aggregation: aggeragation of positive objects
-        tau: temperature 
+        tau: temperature
         true_value: expected loss value
     """
     value = SupervisedContrastiveLoss(tau=tau, pos_aggregation=pos_aggregation)(
