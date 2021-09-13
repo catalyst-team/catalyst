@@ -373,6 +373,9 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
             More info here:
             https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel
@@ -439,19 +442,28 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
 
         stages:
             ...
+
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
         apex_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__(
-            address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
+            address=address,
+            port=port,
+            sync_bn=sync_bn,
+            ddp_kwargs=None,
+            process_group_kwargs=process_group_kwargs,
         )
         self.ddp_kwargs = ddp_kwargs or {}
         self.apex_kwargs = apex_kwargs or {}
@@ -492,6 +504,8 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
+        if self._sync_bn:
+            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)

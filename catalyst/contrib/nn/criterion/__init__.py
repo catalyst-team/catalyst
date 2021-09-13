@@ -37,3 +37,12 @@ from catalyst.contrib.nn.criterion.triplet import (
     TripletPairwiseEmbeddingLoss,
 )
 from catalyst.contrib.nn.criterion.wing import WingLoss
+from catalyst.contrib.nn.criterion.recsys import (
+    AdaptiveHingeLoss,
+    BPRLoss,
+    HingeLoss,
+    LogisticLoss,
+    RocStarLoss,
+    WARPLoss,
+)
+from catalyst.contrib.nn.criterion.ntxent import NTXentLoss

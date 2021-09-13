@@ -9,9 +9,9 @@
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
-[![Twitter](https://img.shields.io/badge/news-twitter-499feb)](https://twitter.com/catalyst_core)
+[![Twitter](https://img.shields.io/badge/news-twitter-499feb)](https://twitter.com/CatalystTeam)
 [![Telegram](https://img.shields.io/badge/channel-telegram-blue)](https://t.me/catalyst_team)
-[![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
+[![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-devs/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
 ![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
@@ -33,14 +33,10 @@ It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can create something new rather than write yet another train loop.
 <br/> Break the cycle – use the Catalyst!
 
-Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).
-Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).
-<br/> [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
-- [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
-- [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
-- [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning model serving
-
-[Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst)
+- [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md)
+- [Framework architecture](https://miro.com/app/board/o9J_lxBO-2k=/)
+- [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst)
+- Part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/)
 
 <details>
 <summary>Catalyst at PyTorch Ecosystem Day</summary>
@@ -233,7 +229,7 @@ class CustomRunner(dl.Runner):
     def on_loader_start(self, runner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["loss", "accuracy01", "accuracy03"]
         }
 
@@ -511,7 +507,7 @@ runner.train(
     callbacks=[
         dl.CriterionCallback(metric_key="loss1", input_key="logits1", target_key="targets1"),
         dl.CriterionCallback(metric_key="loss2", input_key="logits2", target_key="targets2"),
-        dl.MetricAggregationCallback(prefix="loss", metrics=["loss1", "loss2"], mode="mean"),
+        dl.MetricAggregationCallback(metric_key="loss", metrics=["loss1", "loss2"], mode="mean"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.AccuracyCallback(
@@ -777,7 +773,7 @@ callbacks = [
     dl.CriterionCallback(
         input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"
     ),
-    dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
+    dl.MetricAggregationCallback(metric_key="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
     dl.OptimizerCallback(metric_key="loss", model_key="student"),
     dl.CheckpointCallback(
         logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
@@ -1112,7 +1108,7 @@ class CustomRunner(dl.IRunner):
     def on_loader_start(self, runner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["loss_ae", "loss_kld", "loss"]
         }
 
@@ -1541,7 +1537,7 @@ runner.run()
 - Training stages support.
 - Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
 - Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, FairScale, DeepSpeed](./examples/engines)
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
 
 
 ### Tests
@@ -1612,6 +1608,7 @@ best practices for your deep learning research and development.
 - [Catalyst.RL - NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit) - starter kit
 - [Inria Segmentation Example](https://github.com/BloodAxe/Catalyst-Inria-Segmentation-Example) - An example of training segmentation model for Inria Sattelite Segmentation Challenge
 - [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
+- [Logging Catalyst Runs to Comet](https://colab.research.google.com/drive/1TaG27HcMh2jyRKBGsqRXLiGUfsHVyCq6?usp=sharing) - An example of how to log metrics, hyperparameters and more from Catalyst runs to [Comet](https://www.comet.ml/site/data-scientists/)
 
 #### Competitions
 - [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place

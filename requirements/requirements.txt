@@ -4,6 +4,7 @@ torch>=1.3.0
 
 # Config API
 PyYAML>=5.1
+hydra-slayer>=0.1.1
 
 # progress bar
 tqdm>=4.33.0

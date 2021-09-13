@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 import torch
 
-from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._additive import AdditiveMetric
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._average_precision import mean_average_precision
 
@@ -147,8 +147,8 @@ class MAPMetric(ICallbackBatchMetric):
         self.metric_name_mean = f"{self.prefix}map{self.suffix}"
         self.metric_name_std = f"{self.prefix}map{self.suffix}/std"
         self.topk_args: List[int] = topk_args or [1]
-        self.additive_metrics: List[AdditiveValueMetric] = [
-            AdditiveValueMetric() for _ in range(len(self.topk_args))
+        self.additive_metrics: List[AdditiveMetric] = [
+            AdditiveMetric() for _ in range(len(self.topk_args))
         ]
 
     def reset(self) -> None:
