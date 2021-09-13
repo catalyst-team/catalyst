@@ -13,21 +13,16 @@ It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can **create** something new rather than write yet another train loop.
 Break the cycle - use the Catalyst_!
 
-Read more about our vision in the `Project Manifest`_. Catalyst is a part of the `PyTorch Ecosystem`_.
-
-`Catalyst Ecosystem`_ consists of:
-    - Alchemy_ - experiments logging & visualization
-    - Catalyst_ - accelerated deep learning R&D
-    - Reaction_ - convenient deep learning models serving
-
-`Catalyst at AI Landscape`_.
+- `Project Manifest`_
+- `Framework architecture`_
+- `Catalyst at AI Landscape`_
+- Part of the `PyTorch Ecosystem`_
 
 .. _PyTorch Ecosystem: https://pytorch.org/ecosystem/
 .. _Catalyst Ecosystem: https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing
-.. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
-.. _Reaction: https://github.com/catalyst-team/reaction
 .. _`Project Manifest`: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _`Framework architecture`: https://miro.com/app/board/o9J_lxBO-2k=/
 .. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
 Getting started
