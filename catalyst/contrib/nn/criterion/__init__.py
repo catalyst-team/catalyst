@@ -1,6 +1,5 @@
 # flake8: noqa
 
-import catalyst
 import torch
 from torch.nn.modules.loss import *
 
