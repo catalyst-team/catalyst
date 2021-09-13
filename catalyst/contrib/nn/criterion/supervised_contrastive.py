@@ -32,6 +32,8 @@ class SupervisedContrastiveLoss(nn.Module):
         """
         super().__init__()
         self.tau = tau
+        self.self_similarity = 1 / self.tau
+        self.exp_self_similarity = e ** (1 / self.tau)
         self.reduction = reduction
         self.pos_aggregation = pos_aggregation
 
@@ -51,9 +53,6 @@ class SupervisedContrastiveLoss(nn.Module):
         Returns:
             computed loss
         """
-        # torch.exp(1/tau) self similarity
-        self_similarity = 1 / self.tau
-        exp_self_similarity = e ** (1 / self.tau)
         # if ||x|| = ||y|| = 1 then||x-y||^2 = 2 - 2<x,y>
         cosine_matrix = (2 - torch.cdist(features, features) ** 2) / 2
         exp_cosine_matrix = torch.exp(cosine_matrix / self.tau)
@@ -68,15 +67,15 @@ class SupervisedContrastiveLoss(nn.Module):
         ).sum().item() == 0, "There must be at least one positive example for each sample!"
 
         if self.pos_aggregation == "in":
-            pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - exp_self_similarity
+            pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - self.exp_self_similarity
             pos_loss = torch.log(pos_loss) - torch.log(number_of_positives.float())
         elif self.pos_aggregation == "out":
             pos_loss = (
-                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - self_similarity
+                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - self.self_similarity
             ) / number_of_positives
 
         # neg part of the loss
-        exp_sim_sum = exp_cosine_matrix.sum(dim=1) - exp_self_similarity
+        exp_sim_sum = exp_cosine_matrix.sum(dim=1) - self.exp_self_similarity
         neg_loss = torch.log(exp_sim_sum)
 
         # 2*poss_loss (i,j) and (j,i)
