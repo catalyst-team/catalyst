@@ -3,14 +3,24 @@ from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from functools import lru_cache
 import logging
+import warnings
 
 import torch
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
+from catalyst.callbacks.criterion import ICriterionCallback
+from catalyst.callbacks.optimizer import IOptimizerCallback
+from catalyst.callbacks.scheduler import ISchedulerCallback
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
+from catalyst.core.misc import (
+    callback_isinstance,
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
     Criterion,
@@ -604,12 +614,38 @@ class IRunner(ICallback, ILogger, ABC):
             scheduler_fn=self._get_scheduler,
         )
 
+    def _check_callbacks(self):
+        is_callback_exists = lambda callback_fn: any(
+            callback_isinstance(x, callback_fn) for x in self.callbacks.values()
+        )
+        if isinstance(self.criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+            warnings.warn(
+                "No ``ICriterionCallback/CriterionCallback`` were found "
+                "while runner.criterion is not None."
+                "Do you compute the loss during ``runner.handle_batch``?"
+            )
+        if isinstance(self.optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            warnings.warn(
+                "No ``IOptimizerCallback/OptimizerCallback`` were found "
+                "while runner.optimizer is not None."
+                "Do run backward pass during ``runner.handle_batch``?"
+            )
+        if isinstance(self.scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+            ISchedulerCallback
+        ):
+            warnings.warn(
+                "No ``ISchedulerCallback/SchedulerCallback`` were found "
+                "while runner.scheduler is not None."
+                "Do make scheduler step during ``runner.handle_batch``?"
+            )
+
     def _setup_callbacks(self):
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
         callbacks = self.get_callbacks(self.stage_key)
         callbacks = filter_callbacks_by_node(callbacks)
         callbacks = sort_callbacks_by_order(callbacks)
         self.callbacks = callbacks
+        self._check_callbacks()
 
     def on_experiment_start(self, runner: "IRunner"):
         """Event handler."""
@@ -724,6 +760,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
+        # @TODO: use only for FairScale setup?
         del self.callbacks
         self.callbacks = {}
         del self.loaders
