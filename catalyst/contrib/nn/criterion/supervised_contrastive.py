@@ -64,8 +64,8 @@ class SupervisedContrastiveLoss(nn.Module):
         number_of_positives = pos_place.sum(dim=1) - 1
 
         assert (
-            0 == number_of_positives
-        ).sum() > 0, "There must be at least one positive example for each sample!"
+            number_of_positives == 0
+        ).sum().item() == 0, "There must be at least one positive example for each sample!"
 
         if self.pos_aggregation == "in":
             pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - exp_self_similarity
