@@ -1,4 +1,4 @@
-from math import e, log
+from math import e
 
 import torch
 from torch import nn
@@ -33,11 +33,11 @@ class SupervisedContrastiveLoss(nn.Module):
         super().__init__()
         self.tau = tau
         self.reduction = reduction
-        self.positive_aggregation = pos_aggregation
+        self.pos_aggregation = pos_aggregation
 
         if self.reduction not in ["none", "mean", "sum"]:
             raise ValueError(f"Reduction should be: mean, sum, none. But got - {self.reduction}!")
-        if self.positive_aggregation in ["in", "out"]:
+        if self.pos_aggregation not in ["in", "out"]:
             raise ValueError(
                 f"Positive aggregation should be: in or out. But got - {self.pos_aggregation}!"
             )
@@ -63,12 +63,11 @@ class SupervisedContrastiveLoss(nn.Module):
 
         number_of_positives = pos_place.sum(dim=1) - 1
         if self.pos_aggregation == "in":
-            pos_loss = ((exp_cosine_matrix * pos_place).sum(dim=1) - self_similarity) - log(
-                number_of_positives
-            )
+            pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - exp_self_similarity
+            pos_loss = torch.log(pos_loss) - torch.log(number_of_positives)
         elif self.pos_aggregation == "out":
             pos_loss = (
-                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - 1 / self.tau
+                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - self_similarity
             ) / number_of_positives
 
         # neg part of the loss

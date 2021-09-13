@@ -1,5 +1,6 @@
 # flake8: noqa
 
+import catalyst
 import torch
 from torch.nn.modules.loss import *
 
@@ -46,3 +47,4 @@ from catalyst.contrib.nn.criterion.recsys import (
     WARPLoss,
 )
 from catalyst.contrib.nn.criterion.ntxent import NTXentLoss
+from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
