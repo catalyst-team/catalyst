@@ -8,6 +8,7 @@ from catalyst.data.dataset import (
     PathsDataset,
     MetricLearningTrainDataset,
     QueryGalleryDataset,
+    SelfSupervisedDatasetWrapper
 )
 from catalyst.data.loader import (
     ILoaderWrapper,

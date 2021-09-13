@@ -9,9 +9,8 @@ import torchvision
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
-from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
+from catalyst.data import SelfSupervisedDatasetWrapper
 from catalyst.dl import SelfSupervisedRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
