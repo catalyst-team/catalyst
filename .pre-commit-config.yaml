@@ -1,5 +1,11 @@
 repos:
 -   repo: https://github.com/catalyst-team/codestyle
-    rev: 'v21.06rc1'
+    rev: 'v21.09'
     hooks:
-    - id: catalyst-make-codestyle
+    -   id: catalyst-make-codestyle
+        args: [--line-length 99]
+-   repo: https://github.com/catalyst-team/codestyle
+    rev: 'v21.09'
+    hooks:
+    -   id: catalyst-check-codestyle
+        args: [--line-length 99]
