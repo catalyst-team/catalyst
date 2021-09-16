@@ -9,7 +9,7 @@ from catalyst.metrics.functional._misc import (
 
 
 def binary_average_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
+    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
 ) -> torch.Tensor:
     """Computes the binary average precision.
 
@@ -41,7 +41,7 @@ def binary_average_precision(
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
     outputs, targets, weights = process_multilabel_components(
-        outputs=outputs, targets=targets, weights=weights,
+        outputs=outputs, targets=targets, weights=weights
     )
     if outputs.numel() == 0:
         return torch.zeros(1)

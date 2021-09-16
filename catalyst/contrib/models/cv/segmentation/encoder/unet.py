@@ -6,10 +6,7 @@ import torch
 from torch import nn
 
 from catalyst.contrib.models.cv.segmentation.blocks.unet import EncoderDownsampleBlock
-from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS450, E501
-    _take,
-    EncoderSpec,
-)
+from catalyst.contrib.models.cv.segmentation.encoder.core import _take, EncoderSpec  # noqa: E501
 
 
 class UnetEncoder(EncoderSpec):

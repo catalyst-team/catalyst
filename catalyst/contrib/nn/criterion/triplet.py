@@ -112,9 +112,7 @@ class TripletLoss(nn.Module):
         # has shape (1, batch_size) and the 2nd (batch_size, 1)
         return ~(labels.unsqueeze(0) == labels.unsqueeze(1))
 
-    def _batch_hard_triplet_loss(
-        self, embeddings, labels, margin, squared=True,
-    ):
+    def _batch_hard_triplet_loss(self, embeddings, labels, margin, squared=True):
         """
         Build the triplet loss over a batch of embeddings.
         For each anchor, we get the hardest positive and
@@ -285,7 +283,7 @@ class TripletMarginLossWithSampler(nn.Module):
         )
 
         loss = self._triplet_margin_loss(
-            anchor=features_anchor, positive=features_positive, negative=features_negative,
+            anchor=features_anchor, positive=features_positive, negative=features_negative
         )
         return loss
 

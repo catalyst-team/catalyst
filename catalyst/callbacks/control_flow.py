@@ -129,7 +129,7 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
     if isinstance(filter_fn, str):
         # lambda function from string
         try:
-            filter_fn = eval(filter_fn)  # noqa: WPS400
+            filter_fn = eval(filter_fn)
         except (ValueError, SyntaxError):
             raise ValueError(
                 "'filter_fn' should be a valid "

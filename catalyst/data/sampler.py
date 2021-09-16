@@ -533,7 +533,7 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None,
+        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None
     ):
         """Sampler initialisation."""
         super().__init__(None)
@@ -675,8 +675,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-            "produced an inccorect number of batches. "
-            + "expected %i, but yielded %i" % (len(self), yielded)
+            "produced an inccorect number of batches."
+            f" expected {len(self)}, but yielded {yielded}"
         )
 
 
@@ -714,7 +714,7 @@ class DistributedSamplerWrapper(DistributedSampler):
               sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
-            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle,
+            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle
         )
         self.sampler = sampler
 

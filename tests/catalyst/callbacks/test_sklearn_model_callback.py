@@ -8,9 +8,7 @@ if SETTINGS.ml_required:
     from catalyst.callbacks import SklearnModelCallback
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.ml_required), reason="catalyst[ml] required",
-)
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="catalyst[ml] required")
 def test_init_from_str():
 
     pathes = [

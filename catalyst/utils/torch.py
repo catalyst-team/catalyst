@@ -29,7 +29,7 @@ if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
 
 # TODO: move to global registry with activation functions
-ACTIVATIONS = {  # noqa: WPS407
+ACTIVATIONS = {
     None: "sigmoid",
     nn.Sigmoid: "sigmoid",
     nn.Tanh: "tanh",
@@ -556,7 +556,7 @@ def pack_checkpoint(
         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2save is None:
             continue
@@ -595,11 +595,11 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
+            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"]
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2load is None:
             continue

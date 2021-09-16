@@ -82,7 +82,7 @@ def check_all_triplets_number(labels: List[int], num_selected_tri: int, max_tri:
 
 
 def check_triplets_consistency(
-    ids_anchor: List[int], ids_pos: List[int], ids_neg: List[int], labels: List[int],
+    ids_anchor: List[int], ids_pos: List[int], ids_neg: List[int], labels: List[int]
 ) -> None:
     """
     Args:
@@ -134,7 +134,7 @@ def check_triplets_are_hardest(
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
-def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
+def test_all_triplets_sampler(features_and_labels) -> None:
     """
     Args:
         features_and_labels: features and valid labels
@@ -142,18 +142,16 @@ def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
     max_tri = 512
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
 
-    for _, labels in features_and_labels:  # noqa: WPS437
-        ids_a, ids_p, ids_n = sampler._sample(labels=labels)  # noqa: WPS437
+    for _, labels in features_and_labels:
+        ids_a, ids_p, ids_n = sampler._sample(labels=labels)
 
-        check_all_triplets_number(
-            labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a),
-        )
+        check_all_triplets_number(labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a))
 
         check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
-def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS442
+def test_hard_sampler_from_features(features_and_labels) -> None:
     """
     Args:
         features_and_labels: features and valid labels
@@ -161,7 +159,7 @@ def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS44
     sampler = HardTripletsSampler(norm_required=True)
 
     for features, labels in features_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)  # noqa: WPS437
+        ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)
 
         check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
 
@@ -169,7 +167,7 @@ def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS44
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
-def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
+def test_hard_sampler_from_dist(distmats_and_labels) -> None:
     """
     Args:
         distmats_and_labels:
@@ -178,12 +176,10 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
     sampler = HardTripletsSampler(norm_required=True)
 
     for distmat, labels in distmats_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
-            distmat=distmat, labels=labels
-        )
+        ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=distmat, labels=labels)
 
         check_triplets_are_hardest(
-            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels, distmat=distmat,
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels, distmat=distmat
         )
 
         check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
@@ -206,9 +202,7 @@ def test_hard_sampler_manual() -> None:
 
     sampler = HardTripletsSampler(norm_required=True)
 
-    ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
-        distmat=dist_mat, labels=labels
-    )
+    ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=dist_mat, labels=labels)
     predict = set(zip(ids_a, ids_p, ids_n))
 
     check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
@@ -255,7 +249,7 @@ def test_cluster_get_labels_mask(labels: List[int], expected: torch.Tensor) -> N
         expected: correct answer for labels input
     """
     sampler = HardClusterSampler()
-    labels_mask = sampler._get_labels_mask(labels)  # noqa: WPS437
+    labels_mask = sampler._get_labels_mask(labels)
     assert (labels_mask == expected).all()
 
 
@@ -297,7 +291,7 @@ def test_cluster_count_intra_class_distances(
     """
     sampler = HardClusterSampler()
     mean_vectors = features.mean(1)
-    distances = sampler._count_intra_class_distances(features, mean_vectors)  # noqa: WPS437
+    distances = sampler._count_intra_class_distances(features, mean_vectors)
     assert (distances == expected).all()
 
 
@@ -311,7 +305,7 @@ def test_cluster_count_intra_class_distances(
         ],
         [
             torch.tensor(
-                [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]], dtype=torch.float,
+                [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]], dtype=torch.float
             ),
             torch.tensor(
                 [[0, 9, 16, 25], [9, 0, 25, 34], [16, 25, 0, 41], [25, 34, 41, 0]],
@@ -332,7 +326,7 @@ def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
         vectors of classes
     """
     sampler = HardClusterSampler()
-    distances = sampler._count_inter_class_distances(mean_vectors)  # noqa: WPS437
+    distances = sampler._count_inter_class_distances(mean_vectors)
     assert (distances == expected).all()
 
 

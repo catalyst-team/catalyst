@@ -7,7 +7,7 @@ from catalyst.metrics.functional import process_multilabel_components
 
 
 def accuracy(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (1,),
+    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (1,)
 ) -> Sequence[torch.Tensor]:
     """
     Computes multiclass accuracy@topk for the specified values of `topk`.
@@ -90,7 +90,7 @@ def accuracy(
         pred = outputs.t()
     else:
         # multiclass accuracy
-        _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
+        _, pred = outputs.topk(max_k, 1, True, True)
         pred = pred.t()
     correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
 
@@ -102,7 +102,7 @@ def accuracy(
 
 
 def multilabel_accuracy(
-    outputs: torch.Tensor, targets: torch.Tensor, threshold: Union[float, torch.Tensor],
+    outputs: torch.Tensor, targets: torch.Tensor, threshold: Union[float, torch.Tensor]
 ) -> torch.Tensor:
     """
     Computes multilabel accuracy for the specified activation and threshold.

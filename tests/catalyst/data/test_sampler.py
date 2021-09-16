@@ -32,7 +32,7 @@ def generate_valid_labels(num: int) -> TLabelsPK:
     """
     labels_pk = []
 
-    for _ in range(num):  # noqa: WPS122
+    for _ in range(num):
         p, k = randint(2, 12), randint(2, 12)
         labels_list = [[label] * randint(2, 12) for label in range(p)]
         labels = [el for sublist in labels_list for el in sublist]
@@ -160,7 +160,7 @@ def check_balance_batch_sampler_epoch(labels: List[int], p: int, k: int) -> None
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:  # noqa: WPS442
+def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
     """
     Args:
         input_for_balance_batch_sampler: list of (labels, p, k)
@@ -205,7 +205,7 @@ def check_dynamic_balance_class_sampler(labels: List, exp_l: float) -> None:
     labels_counter = Counter(labels)
     min_class_key, min_class_size = labels_counter.most_common(n_labels)[-1]
     current_d = {key: value / min_class_size for key, value in Counter(labels).items()}
-    for _ in range(10):  # noqa: WPS122
+    for _ in range(10):
         new_counter = Counter(labels[list(sampler.__iter__())])
         new_d = {key: value / min_class_size for key, value in new_counter.items()}
         for key, value in new_d.items():
@@ -214,9 +214,7 @@ def check_dynamic_balance_class_sampler(labels: List, exp_l: float) -> None:
         current_d = new_d
 
 
-def test_dynamic_balance_class_sampler(
-    input_for_dynamic_balance_class_sampler,  # noqa: WPS442
-) -> None:
+def test_dynamic_balance_class_sampler(input_for_dynamic_balance_class_sampler) -> None:
     """
     Tests for DynamicBalanceClassSampler
 

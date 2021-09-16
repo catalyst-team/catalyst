@@ -67,9 +67,7 @@ class MNIST(Dataset):
         "9 - nine",
     ]
 
-    def __init__(
-        self, root, train=True, transform=None, target_transform=None, download=False,
-    ):
+    def __init__(self, root, train=True, transform=None, target_transform=None, download=False):
         """
         Args:
             root: Root directory of dataset where
@@ -85,7 +83,7 @@ class MNIST(Dataset):
             target_transform (callable, optional): A function/transform
                 that takes in the target and transforms it.
         """
-        if isinstance(root, torch._six.string_classes):  # noqa: WPS437
+        if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
         self.root = root
         self.train = train  # training set or test set
@@ -262,7 +260,7 @@ class MnistQGDataset(QueryGalleryDataset):
     ]
 
     def __init__(
-        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2,
+        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2
     ) -> None:
         """
         Args:

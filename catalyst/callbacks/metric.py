@@ -301,7 +301,7 @@ class LoaderMetricCallback(MetricCallback):
             runner: current runner
         """
         self.metric.reset(
-            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
+            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len
         )
 
     def on_batch_end(self, runner: "IRunner") -> None:

@@ -174,7 +174,7 @@ class ProfilerCallback(Callback):
                 with open(artifact_path, "w") as f:
                     f.write(table_txt)
                 runner.log_artifact(
-                    tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path,
+                    tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path
                 )
 
             print(table_txt)

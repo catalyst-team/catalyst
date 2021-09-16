@@ -18,9 +18,7 @@ if SETTINGS.optuna_required:
     from catalyst.callbacks import OptunaPruningCallback
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.optuna_required), reason="No optuna required",
-)
+@pytest.mark.skipif(not (SETTINGS.optuna_required), reason="No optuna required")
 def test_optuna():
     trainset = MNIST("./data", train=False, download=True, transform=ToTensor())
     testset = MNIST("./data", train=False, download=True, transform=ToTensor())

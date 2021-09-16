@@ -96,7 +96,7 @@ def train_experiment(device, engine=None):
         #     nn.Linear(128, 1),
         # )
         latent_dim = 32
-        generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid(),)
+        generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid())
         discriminator = nn.Sequential(Flatten(), nn.Linear(28 * 28, 1))
 
         model = {"generator": generator, "discriminator": discriminator}
@@ -134,7 +134,7 @@ def train_experiment(device, engine=None):
                     criterion_key="generator",
                 ),
                 dl.OptimizerCallback(
-                    model_key="generator", optimizer_key="generator", metric_key="loss_generator",
+                    model_key="generator", optimizer_key="generator", metric_key="loss_generator"
                 ),
                 dl.OptimizerCallback(
                     model_key="discriminator",
@@ -163,31 +163,23 @@ def test_gan_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_gan_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_gan_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_gan_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
 # AMP
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
 def test_gan_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -209,9 +201,7 @@ def test_gan_on_amp_ddp():
 
 
 # APEX
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
 def test_gan_on_apex():
     train_experiment(None, dl.APEXEngine())
 

@@ -17,7 +17,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     """
 
     def __init__(
-        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
+        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None
     ):
         """
         Market1501 dataset for train stage of reid task.
@@ -76,7 +76,7 @@ class Market1501QGDataset(QueryGalleryDataset):
     """Market1501QGDataset is a dataset for test stage of reid pipeline"""
 
     def __init__(
-        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
+        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None
     ):
         """
         Market1501 dataset for testing stage of reid task.

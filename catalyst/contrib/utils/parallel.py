@@ -37,7 +37,7 @@ def parallel_imap(func, args, pool: Union[Pool, DumbPool]) -> List[T]:
 
 
 def tqdm_parallel_imap(
-    func, args, pool: Union[Pool, DumbPool], total: int = None, pbar=tqdm,
+    func, args, pool: Union[Pool, DumbPool], total: int = None, pbar=tqdm
 ) -> List[T]:
     """@TODO: Docs. Contribution is welcome."""
     if total is None and hasattr(args, "__len__"):

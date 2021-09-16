@@ -196,7 +196,7 @@ def _load_states_from_file_map(
 
 
 def _load_runner(
-    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,
+    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False
 ) -> None:
     """
     Selects a loading method based on type of mapping.
@@ -518,7 +518,7 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _truncate_checkpoints(self) -> None:
         self.top_best_metrics = sorted(
-            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
+            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
@@ -672,7 +672,7 @@ class CheckpointCallback(ICheckpointCallback):
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
             checkpoint_path = self._save_checkpoint(
-                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True,
+                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True
             )
             # add metrics to records
             metrics_record = (

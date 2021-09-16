@@ -20,7 +20,7 @@ def boolean_flag(
     parser: argparse.ArgumentParser,
     name: str,
     default: Optional[bool] = False,
-    help: str = None,  # noqa: WPS125
+    help: str = None,
     shorthand: str = None,
 ) -> None:
     """Add a boolean flag to a parser inplace.
@@ -95,7 +95,7 @@ def maybe_recursive_call(
             r_args = None if recursive_args is None else recursive_args[k]
             r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
             result[k] = maybe_recursive_call(
-                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs,
+                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs
             )
         return result
 

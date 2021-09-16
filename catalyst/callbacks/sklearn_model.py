@@ -256,7 +256,7 @@ class SklearnModelCallback(Callback):
         super().on_loader_start(runner)
         if runner.loader_key == self._train_loader:
             self.storage.reset(
-                num_samples=runner.loader_sample_len, num_batches=runner.loader_batch_len,
+                num_samples=runner.loader_sample_len, num_batches=runner.loader_batch_len
             )
         if runner.loader_key in self._valid_loaders:
             assert self.model is not None, "The train loader has to be processed first!"

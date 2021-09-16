@@ -159,9 +159,7 @@ def test_device_load_on_stage_start():
             runner.run()
 
 
-@pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE, reason="CUDA is not available",
-)
+@pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA is not available")
 def test_device_load_on_stage_start():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:

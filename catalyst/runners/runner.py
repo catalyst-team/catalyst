@@ -530,7 +530,7 @@ class Runner(IRunner):
             NotImplementedError: if not implemented yet
         """
         raise NotImplementedError("Please implement `runner.predict_batch` method")
-        return None  # noqa: WPS427
+        return None
 
     @torch.no_grad()
     def predict_loader(
@@ -849,7 +849,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         )
         if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
+                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key
             )
         if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
@@ -897,7 +897,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         # 2. model and optimizer
         encoder = MnistSimpleNet(out_features=16)
         projection_head = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
         )
 
         class ContrastiveModel(torch.nn.Module):

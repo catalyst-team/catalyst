@@ -712,8 +712,8 @@ def test_update(
             },
         ),
         (
-            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4]),],
-            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4]),],
+            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4])],
+            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4])],
             5,
             1,
             [

@@ -71,7 +71,7 @@ class MovieLens(Dataset):
             min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
         """
-        if isinstance(root, torch._six.string_classes):  # noqa: WPS437
+        if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
 
         self.root = root

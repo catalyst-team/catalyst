@@ -1,7 +1,7 @@
 from typing import List, Optional
 from abc import ABC, abstractmethod
 
-from torch.optim.lr_scheduler import _LRScheduler  # noqa: WPS450
+from torch.optim.lr_scheduler import _LRScheduler
 
 from catalyst.utils.torch import set_optimizer_momentum
 
@@ -11,8 +11,7 @@ class BaseScheduler(_LRScheduler, ABC):
 
     @abstractmethod
     def get_momentum(self) -> List[float]:
-        """Function that returns the new momentum for optimizer.
-        """
+        """Function that returns the new momentum for optimizer."""
         pass
 
     def step(self, epoch: Optional[int] = None) -> None:

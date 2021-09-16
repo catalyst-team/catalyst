@@ -46,7 +46,7 @@ class ListDataset(Dataset):
     """General purpose dataset class with several data sources `list_data`."""
 
     def __init__(
-        self, list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None,
+        self, list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None
     ):
         """
         Args:

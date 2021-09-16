@@ -160,7 +160,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
             wrapped function (if needed).
         """
         return torch.multiprocessing.spawn(
-            fn, args=(self._world_size,), nprocs=self._world_size, join=True,
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True
         )
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -204,7 +204,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         return ddp_reduce(tensor, mode, self.world_size)
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -220,7 +220,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         scheduler = self.sync_device(scheduler)
 
         model, optimizer, _, scheduler = deepspeed.initialize(
-            model=model, optimizer=optimizer, lr_scheduler=scheduler, **self.deepspeed_kwargs,
+            model=model, optimizer=optimizer, lr_scheduler=scheduler, **self.deepspeed_kwargs
         )
 
         return model, criterion, optimizer, scheduler

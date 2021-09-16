@@ -27,7 +27,7 @@ class DummyModel(nn.Module):
     def __init__(self, num_features: int, num_classes: int) -> None:
         super().__init__()
         self.model = nn.Sequential(
-            nn.Flatten(), nn.Linear(in_features=num_features, out_features=num_classes),
+            nn.Flatten(), nn.Linear(in_features=num_features, out_features=num_classes)
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -218,7 +218,7 @@ def test_metric_learning_pipeline():
         dataset_train = datasets.MnistMLDataset(root=tmp_dir, download=True)
         sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
         train_loader = DataLoader(
-            dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size,
+            dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
         )
         dataset_val = datasets.MnistQGDataset(root=tmp_dir, transform=None, gallery_fraq=0.2)
         val_loader = DataLoader(dataset=dataset_val, batch_size=1024)

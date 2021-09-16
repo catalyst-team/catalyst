@@ -48,7 +48,7 @@ def run_train_with_empty_loader() -> None:
     loader = DataLoader(dataset=dataset, batch_size=len(dataset) + 1, drop_last=True)
     runner = SupervisedRunner()
     runner.train(
-        loaders={"train": loader}, model=model, num_epochs=1, criterion=nn.BCEWithLogitsLoss(),
+        loaders={"train": loader}, model=model, num_epochs=1, criterion=nn.BCEWithLogitsLoss()
     )
 
 

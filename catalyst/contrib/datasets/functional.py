@@ -23,7 +23,7 @@ def _gen_bar_updater():
     return bar_update
 
 
-def _calculate_md5(fpath, chunk_size=1024 * 1024):  # noqa: WPS404
+def _calculate_md5(fpath, chunk_size=1024 * 1024):
     md5 = hashlib.md5()
     with open(fpath, "rb") as f:
         for chunk in iter(lambda: f.read(chunk_size), b""):
@@ -105,7 +105,7 @@ def _extract_archive(from_path, to_path=None, remove_finished=False):
     elif from_path.endswith(".gz"):
         root, _ = os.path.splitext(os.path.basename(from_path))
         to_path = os.path.join(to_path, root)
-        with open(to_path, "wb") as out_f, gzip.GzipFile(from_path) as zip_f:  # noqa: WPS316
+        with open(to_path, "wb") as out_f, gzip.GzipFile(from_path) as zip_f:
             out_f.write(zip_f.read())
     elif from_path.endswith(".zip"):
         with zipfile.ZipFile(from_path, "r") as z:
@@ -118,7 +118,7 @@ def _extract_archive(from_path, to_path=None, remove_finished=False):
 
 
 def download_and_extract_archive(
-    url, download_root, extract_root=None, filename=None, md5=None, remove_finished=False,
+    url, download_root, extract_root=None, filename=None, md5=None, remove_finished=False
 ):
     """@TODO: Docs. Contribution is welcome."""
     download_root = os.path.expanduser(download_root)
@@ -150,7 +150,7 @@ def _open_maybe_compressed_file(path):
     Returns:
         file
     """
-    if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
+    if not isinstance(path, torch._six.string_classes):
         return path
     if path.endswith(".gz"):
         return gzip.open(path, "rb")
@@ -175,7 +175,7 @@ def read_sn3_pascalvincent_tensor(path, strict=True):
     with _open_maybe_compressed_file(path) as f:
         data = f.read()
     # parse
-    magic = _get_int(data[0:4])  # noqa: WPS349
+    magic = _get_int(data[0:4])
     nd = magic % 256
     ty = magic // 256
     assert nd >= 1 and nd <= 3

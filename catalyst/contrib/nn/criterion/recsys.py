@@ -124,7 +124,7 @@ class LogisticLoss(PairwiseLoss):
         output.backward()
     """
 
-    def __init__(self,) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
@@ -164,7 +164,7 @@ class HingeLoss(PairwiseLoss):
         output.backward()
     """
 
-    def __init__(self,) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:

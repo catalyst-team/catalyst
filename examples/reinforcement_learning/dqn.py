@@ -112,7 +112,7 @@ def generate_sessions(
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
         r, t = generate_session(
-            env=env, network=network, t_max=t_max, epsilon=epsilon, replay_buffer=replay_buffer,
+            env=env, network=network, t_max=t_max, epsilon=epsilon, replay_buffer=replay_buffer
         )
         sessions_reward += r
         sessions_steps += t
@@ -322,7 +322,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(network.parameters(), lr=lr)
     loaders = {
         "train_game": DataLoader(
-            ReplayDataset(replay_buffer, epoch_size=epoch_size), batch_size=batch_size,
+            ReplayDataset(replay_buffer, epoch_size=epoch_size), batch_size=batch_size
         ),
     }
 

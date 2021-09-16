@@ -172,7 +172,7 @@ class AdditiveMetric(IMetric):
 
         if self.n == 1:
             # Force a copy in torch/numpy
-            self.mean = 0.0 + value  # noqa: WPS345
+            self.mean = 0.0 + value
             self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0

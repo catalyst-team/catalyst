@@ -19,7 +19,7 @@ def test_binary_average_precision_base():
     targets = torch.Tensor([0, 0, 1, 1])
 
     assert torch.isclose(
-        binary_average_precision(outputs, targets), torch.tensor(0.8333), atol=1e-3,
+        binary_average_precision(outputs, targets), torch.tensor(0.8333), atol=1e-3
     )
 
 
@@ -133,7 +133,7 @@ def test_average_precision():
     k = 4
 
     avg_precision = average_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]), k,
+        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]), k
     )
     assert torch.equal(avg_precision, torch.ones(3))
 
@@ -151,7 +151,7 @@ def test_average_precision():
     k = 4
 
     avg_precision = average_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]), k,
+        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]), k
     )
     assert torch.equal(avg_precision, torch.zeros(3))
 

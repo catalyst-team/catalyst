@@ -24,9 +24,7 @@ class BatchOverfitCallback(Callback):
 
     .. code-block:: python
 
-        from catalyst.dl import (
-            SupervisedRunner, BatchOverfitCallback,
-        )
+        from catalyst.dl import SupervisedRunner, BatchOverfitCallback
         runner = SupervisedRunner()
         runner.train(
             ...

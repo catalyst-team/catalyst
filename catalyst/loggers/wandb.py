@@ -73,7 +73,7 @@ class WandbLogger(ILogger):
     """
 
     def __init__(
-        self, project: str, name: Optional[str] = None, entity: Optional[str] = None,
+        self, project: str, name: Optional[str] = None, entity: Optional[str] = None
     ) -> None:
         self.project = project
         self.name = name
@@ -116,7 +116,7 @@ class WandbLogger(ILogger):
             )
         elif scope == "loader":
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="epoch",
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="epoch"
             )
         elif scope == "epoch":
             loader_key = "_epoch_"
