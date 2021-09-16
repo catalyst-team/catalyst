@@ -12,37 +12,7 @@ from torchvision import transforms
 from catalyst import dl
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
-
-
-class CifarPairTransform:
-    def __init__(self, train_transform=True, pair_transform=True):
-        if train_transform is True:
-            self.transform = transforms.Compose(
-                [
-                    transforms.RandomResizedCrop(32),
-                    transforms.RandomHorizontalFlip(p=0.5),
-                    transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
-                    transforms.RandomGrayscale(p=0.2),
-                    transforms.ToTensor(),
-                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-                ]
-            )
-        else:
-            self.transform = transforms.Compose(
-                [
-                    transforms.ToTensor(),
-                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-                ]
-            )
-        self.pair_transform = pair_transform
-
-    def __call__(self, x):
-        if self.pair_transform is True:
-            y1 = self.transform(x)
-            y2 = self.transform(x)
-            return y1, y2
-        else:
-            return self.transform(x)
+from catalyst.data import SelfSupervisedDatasetWrapper
 
 
 class Model(nn.Module):
@@ -62,24 +32,6 @@ class Model(nn.Module):
         feature = self.encoder(x)
         out = self.g(feature)
         return F.normalize(feature, dim=-1), F.normalize(out, dim=-1)
-
-
-class CustomRunner(dl.Runner):
-    def handle_batch(self, batch) -> None:
-        if self.is_train_loader:
-            (pos_1, pos_2), targets = batch
-            feature_1, out_1 = self.model(pos_1)
-            _, out_2 = self.model(pos_2)
-            self.batch = {
-                "embeddings": feature_1,
-                "out_1": out_1,
-                "out_2": out_2,
-                "targets": targets,
-            }
-        else:
-            images, targets = batch
-            features, _ = self.model(images)
-            self.batch = {"embeddings": features, "targets": targets}
 
 
 parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
@@ -114,14 +66,32 @@ if __name__ == "__main__":
     batch_size, epochs, num_workers = args.batch_size, args.epochs, args.num_workers
 
     # data
-    train_data = torchvision.datasets.CIFAR10(
-        root="data", train=True, transform=CifarPairTransform(train_transform=True), download=True
+
+    transforms = torchvision.transforms.Compose(
+        [
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+            torchvision.transforms.RandomResizedCrop(32),
+            torchvision.transforms.ColorJitter(0.8, 0.8, 0.8, 0.2),
+        ]
     )
-    test_data = torchvision.datasets.CIFAR10(
-        root="data",
-        train=False,
-        transform=CifarPairTransform(train_transform=False, pair_transform=False),
-        download=True,
+
+    transform_original = transforms = torchvision.transforms.Compose(
+        [
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+        ]
+    )
+
+    train_data = SelfSupervisedDatasetWrapper(
+        torchvision.datasets.CIFAR10(root="data", train=True, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
+    )
+    test_data = SelfSupervisedDatasetWrapper(
+        torchvision.datasets.CIFAR10(root="data", train=False, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
     )
 
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
@@ -129,32 +99,34 @@ if __name__ == "__main__":
 
     callbacks = [
         dl.ControlFlowCallback(
-            dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
+            dl.CriterionCallback(
+                input_key="projection_left", target_key="projection_right", metric_key="loss"
+            ),
             loaders="train",
         ),
         dl.SklearnModelCallback(
-            feature_key="embeddings",
-            target_key="targets",
+            feature_key="embedding_origin",
+            target_key="target",
             train_loader="train",
             valid_loaders="valid",
             model_fn=LogisticRegression,
             predict_key="sklearn_predict",
             predict_method="predict_proba",
         ),
-        dl.OptimizerCallback(metric_key="loss"),
-        dl.ControlFlowCallback(
-            dl.AccuracyCallback(
-                target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
-            ),
-            loaders="valid",
-        ),
+        # dl.OptimizerCallback(metric_key="loss"),
+        # dl.ControlFlowCallback(
+        #     dl.AccuracyCallback(
+        #         target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+        #     ),
+        #     loaders="valid",
+        # ),
     ]
 
     model = Model(feature_dim, arch="resnet50")
     criterion = BarlowTwinsLoss(offdiag_lambda=offdig_lambda)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
-    runner = CustomRunner()
+    runner = dl.SelfSupervisedRunner()
 
     runner.train(
         model=model,
