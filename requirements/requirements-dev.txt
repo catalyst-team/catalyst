@@ -3,7 +3,7 @@ sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme
 mock==3.0.5
-catalyst-codestyle==21.09
+catalyst-codestyle==21.09.1
 catalyst-sphinx-theme==1.1.2
 tomlkit==0.7.2
 pre-commit==2.13.0

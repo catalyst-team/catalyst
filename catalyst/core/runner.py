@@ -66,7 +66,7 @@ def _get_num_samples(loader: DataLoader):
         return len(loader) * batch_size
 
 
-class RunnerException(Exception):
+class RunnerError(Exception):
     """Exception class for all runner errors."""
 
     pass
@@ -658,7 +658,7 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+                raise RunnerError(f"DataLoader with name {loader_key} is empty.")
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
@@ -819,4 +819,4 @@ class IRunner(ICallback, ILogger, ABC):
         return self
 
 
-__all__ = ["IRunner", "RunnerException"]
+__all__ = ["IRunner", "RunnerError"]

@@ -467,10 +467,7 @@ class DynamicBalanceClassSampler(Sampler):
         self._update()
 
     def _update(self) -> None:
-        """
-        Update d coefficients
-        Returns: None
-        """
+        """Update d coefficients."""
         current_d = {
             key: min(value ** self._exp_scheduler(), self.max_d)
             for key, value in self.original_d.items()

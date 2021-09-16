@@ -102,6 +102,7 @@ class CarvanaOneCarDataset(Dataset):
         """
         Args:
             idx: Index
+
         Returns:
              Dict with 2 fields: ``image`` and ``mask``
         """

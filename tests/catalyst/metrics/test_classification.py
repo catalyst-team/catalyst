@@ -242,6 +242,7 @@ def test_multiclass_metrics(
 ) -> None:
     """
     Test multiclass metric
+
     Args:
         outputs: tensor of predictions
         targets: tensor of targets
@@ -453,6 +454,7 @@ def test_multilabel_metrics(
 ) -> None:
     """
     Test multilabel metric
+
     Args:
         outputs: tensor of predictions
         targets: tensor of targets
@@ -506,6 +508,7 @@ def test_binary_metrics(
 ) -> None:
     """
     Test binary metric
+
     Args:
         outputs: tensor of predictions
         targets: tensor of targets

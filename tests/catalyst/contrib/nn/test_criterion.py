@@ -235,6 +235,7 @@ def test_barlow_twins_loss(
 ):
     """
     Test Barlow Twins loss
+
     Args:
         embeddings_left: left objects embeddings [batch_size, features_dim]
         embeddings_right: right objects embeddings [batch_size, features_dim]
@@ -264,6 +265,7 @@ def test_ntxent_loss(
 ):
     """
     Test NTXent Loss
+
     Args:
         embeddings_left: left objects embeddings [batch_size, features_dim]
         embeddings_right: right objects embeddings [batch_size, features_dim]
@@ -320,6 +322,7 @@ def test_supervised_contrastive_loss(
 ):
     """
     Test supervised contrastive loss
+
     Args:
         features: features of objects
         targets: targets of objects

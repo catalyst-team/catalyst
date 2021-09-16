@@ -16,7 +16,7 @@ from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner, RunnerException
+from catalyst.core.runner import IRunner, RunnerError
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
@@ -696,13 +696,13 @@ class Runner(IRunner):
         if isinstance(callbacks, List):
             for callback in callbacks:
                 if isinstance(callback, CheckpointCallback):
-                    raise RunnerException(
+                    raise RunnerError(
                         "CheckpointCallback isn`t allowed for evaluation loader method"
                     )
         else:
             for callback in callbacks.values():
                 if isinstance(callback, CheckpointCallback):
-                    raise RunnerException(
+                    raise RunnerError(
                         "CheckpointCallback isn`t allowed for evaluation loader method"
                     )
 

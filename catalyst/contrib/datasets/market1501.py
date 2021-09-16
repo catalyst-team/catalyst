@@ -40,6 +40,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
 
         Args:
             data_dir: path to directory that contains training data
+
         Returns:
             images for training and their labels
         """
@@ -51,11 +52,11 @@ class Market1501MLDataset(MetricLearningTrainDataset):
         return data, targets
 
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
-        """
-        Get item from dataset.
+        """Get item from dataset.
 
         Args:
             index: index of the element
+
         Returns:
             dict of image and its pid
         """
@@ -125,12 +126,13 @@ class Market1501QGDataset(QueryGalleryDataset):
 
     @staticmethod
     def _load_data(data_dir: Path) -> Tuple[torch.Tensor, Iterable, Iterable]:
-        """
-        Load data from directory.
+        """Load data from directory.
+
         Parse names of images to get person ids as labels and camera ids.
 
         Args:
             data_dir: path to directory that contains data
+
         Returns:
             images, their labels and ids of the cameras that made the photos
         """
@@ -143,11 +145,11 @@ class Market1501QGDataset(QueryGalleryDataset):
         return data, pids, cids
 
     def __getitem__(self, index: int) -> Dict[str, Any]:
-        """
-        Get an item from dataset
+        """Get an item from dataset
 
         Args:
             index: index of the item to get
+
         Returns:
             dict of image, pid, cid and is_query flag that shows if the image should be used as
             query or gallery sample.
