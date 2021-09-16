@@ -121,6 +121,7 @@ def _is_cv_available():
         import cv2  # noqa: F401
         import imageio  # noqa: F401
         from skimage.color import label2rgb, rgb2gray  # noqa: F401
+
         import torchvision  # noqa: F401
 
         return True

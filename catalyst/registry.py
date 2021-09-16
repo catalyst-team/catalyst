@@ -1,8 +1,7 @@
 import logging
 
-import hydra_slayer
-
 from catalyst.settings import SETTINGS
+import hydra_slayer
 
 logger = logging.getLogger(__name__)
 

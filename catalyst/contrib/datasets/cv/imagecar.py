@@ -2,6 +2,7 @@ from typing import Callable, Optional
 from pathlib import Path
 
 import requests
+
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.functional import _extract_archive

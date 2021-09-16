@@ -4,10 +4,11 @@ import os
 
 from buffer import OffpolicyReplayBuffer
 from db import RedisDB
-import gym
 from misc import GameCallback, soft_update, Trajectory
 import numpy as np
 from sampler import ISampler
+
+import gym
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader

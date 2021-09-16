@@ -5,6 +5,7 @@ from random import randint
 
 import numpy as np
 import pytest
+
 import torch
 from torch import Tensor, tensor
 
@@ -16,7 +17,6 @@ from catalyst.data.sampler_inbatch import (
 )
 from catalyst.settings import SETTINGS
 from catalyst.utils.misc import find_value_ids
-
 from .test_sampler import generate_valid_labels
 
 if SETTINGS.ml_required:

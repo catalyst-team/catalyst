@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.contrib.nn import criterion as module

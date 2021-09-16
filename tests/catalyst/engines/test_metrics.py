@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 import time
 
 from pytest import mark
+
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, DistributedSampler, SequentialSampler
@@ -30,7 +31,6 @@ from catalyst.engines.torch import DataParallelEngine, DeviceEngine, Distributed
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
 from .misc import TwoBlobsDataset, TwoBlobsModel
 
 logger = logging.getLogger(__name__)

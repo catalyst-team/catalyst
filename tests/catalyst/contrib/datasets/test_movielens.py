@@ -2,6 +2,7 @@ import os
 import shutil
 
 import pytest
+
 import torch
 
 from catalyst.settings import SETTINGS

@@ -2,6 +2,7 @@ from typing import Any, Callable, Tuple, Union
 import functools
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics._metric import IMetric

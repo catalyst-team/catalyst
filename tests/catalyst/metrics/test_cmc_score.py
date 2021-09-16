@@ -2,6 +2,7 @@ from typing import Dict, Iterable, Tuple
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics._accumulative import AccumulativeMetric

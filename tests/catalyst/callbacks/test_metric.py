@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 import pytest
+
 import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset

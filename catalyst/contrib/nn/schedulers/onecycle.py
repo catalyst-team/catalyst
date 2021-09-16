@@ -1,6 +1,7 @@
 from typing import List
 
 import numpy as np
+
 from torch.optim import Optimizer
 
 from catalyst.contrib.nn.schedulers.base import BatchScheduler

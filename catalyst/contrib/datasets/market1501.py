@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 from pathlib import Path
 
 import numpy as np
+
 import torch
 
 from catalyst.contrib.utils import imread

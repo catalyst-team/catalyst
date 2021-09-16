@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch import nn
 
 from catalyst.data import Compose, Normalize, ToTensor

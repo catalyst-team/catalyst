@@ -9,6 +9,7 @@ import sys
 from tempfile import TemporaryDirectory
 
 import pytest
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 

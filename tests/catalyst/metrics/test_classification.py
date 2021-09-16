@@ -2,6 +2,7 @@
 from typing import Dict, Iterable
 
 import pytest
+
 import torch
 
 from catalyst.metrics import (

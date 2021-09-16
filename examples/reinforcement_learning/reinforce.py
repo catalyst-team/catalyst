@@ -2,8 +2,9 @@
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
-import gym
 import numpy as np
+
+import gym
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

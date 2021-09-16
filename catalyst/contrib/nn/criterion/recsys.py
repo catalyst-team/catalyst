@@ -2,6 +2,7 @@
 from typing import Optional
 
 import numpy as np
+
 import torch
 from torch import nn
 from torch.autograd import Function, Variable

@@ -3,6 +3,7 @@ from typing import Union
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy

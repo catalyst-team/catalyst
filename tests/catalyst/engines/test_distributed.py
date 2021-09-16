@@ -7,6 +7,7 @@ import random
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -16,7 +17,6 @@ from catalyst.engines import DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
 from .misc import (
     DistributedDataParallelTypeChecker,
     DummyDataset,

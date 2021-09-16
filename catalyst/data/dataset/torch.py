@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from pathlib import Path
 
 import numpy as np
+
 from torch.utils.data import Dataset, Sampler
 
 from catalyst.utils.misc import merge_dicts

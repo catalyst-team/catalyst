@@ -2,6 +2,7 @@
 import math
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics.functional._average_precision import (

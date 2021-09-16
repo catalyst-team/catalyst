@@ -4,6 +4,7 @@ from itertools import chain
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count, masked_cmc_score

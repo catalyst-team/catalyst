@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import pytest
+
 import torch
 from torch import nn, Tensor
 from torch.utils.data import DataLoader, Dataset

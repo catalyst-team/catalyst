@@ -6,6 +6,7 @@ from random import randint, shuffle
 
 import numpy as np
 import pytest
+
 from torch.utils.data import DataLoader
 
 from catalyst.contrib.datasets import MNIST

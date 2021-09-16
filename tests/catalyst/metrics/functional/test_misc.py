@@ -1,5 +1,6 @@
 # flake8: noqa
 import pytest
+
 import torch
 
 from catalyst.metrics.functional._misc import (

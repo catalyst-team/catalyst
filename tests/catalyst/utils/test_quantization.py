@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import pytest  # noqa: F401
+
 import torch
 
 from catalyst.callbacks import AccuracyCallback

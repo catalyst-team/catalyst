@@ -1,6 +1,7 @@
 from typing import Sequence, Union
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics.functional import process_multilabel_components

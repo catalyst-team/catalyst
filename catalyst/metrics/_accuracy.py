@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics._additive import AdditiveMetric
