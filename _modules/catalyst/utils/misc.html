@@ -321,6 +321,7 @@
 <span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="nb">int</span> <span class="k">as</span> <span class="n">tint</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">short</span><span class="p">,</span> <span class="n">Tensor</span>
 
@@ -331,7 +332,7 @@
     <span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">help</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># noqa: WPS125</span>
+    <span class="n">help</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">shorthand</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Add a boolean flag to a parser inplace.</span>
@@ -406,7 +407,7 @@
             <span class="n">r_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">r_kwargs</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
-                <span class="n">v</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">recursive_args</span><span class="o">=</span><span class="n">r_args</span><span class="p">,</span> <span class="n">recursive_kwargs</span><span class="o">=</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">recursive_args</span><span class="o">=</span><span class="n">r_args</span><span class="p">,</span> <span class="n">recursive_kwargs</span><span class="o">=</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 

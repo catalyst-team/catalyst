@@ -312,6 +312,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="n">get_multiclass_statistics</span>
@@ -439,7 +440,7 @@
 <span class="sd">        # )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span>
-        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
     <span class="p">)</span>
     <span class="c1"># @TODO: sync between metrics</span>
     <span class="c1"># precision_val = _precision(tp=tp, fp=fp, eps=eps, zero_division=zero_division)</span>

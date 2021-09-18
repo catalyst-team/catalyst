@@ -370,7 +370,7 @@
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
 <span class="sd">                return dl.PipelineParallelFairScaleEngine(</span>
-<span class="sd">                    pipe_kwargs={&quot;balance&quot;: [3, 1]},</span>
+<span class="sd">                    pipe_kwargs={&quot;balance&quot;: [3, 1]}</span>
 <span class="sd">                )</span>
 <span class="sd">            # ...</span>
 
@@ -404,7 +404,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_count</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
@@ -516,7 +516,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
@@ -752,7 +752,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>

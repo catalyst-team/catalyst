@@ -327,7 +327,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">callback_isinstance</span><span class="p">,</span> <span class="n">sort_callbacks_by_order</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">RunnerException</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">RunnerError</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.trial</span> <span class="kn">import</span> <span class="n">ITrial</span>
 <span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">ILoaderWrapper</span>
 <span class="kn">from</span> <span class="nn">catalyst.engines</span> <span class="kn">import</span> <span class="n">IEngine</span>
@@ -841,7 +841,7 @@
 <span class="sd">            NotImplementedError: if not implemented yet</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Please implement `runner.predict_batch` method&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># noqa: WPS427</span></div>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_loader</span><span class="p">(</span>
@@ -1007,13 +1007,13 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                    <span class="k">raise</span> <span class="n">RunnerError</span><span class="p">(</span>
                         <span class="s2">&quot;CheckpointCallback isn`t allowed for evaluation loader method&quot;</span>
                     <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                    <span class="k">raise</span> <span class="n">RunnerError</span><span class="p">(</span>
                         <span class="s2">&quot;CheckpointCallback isn`t allowed for evaluation loader method&quot;</span>
                     <span class="p">)</span>
 
@@ -1160,7 +1160,7 @@
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICriterionCallback</span><span class="p">):</span>
             <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CriterionCallback</span><span class="p">(</span>
-                <span class="n">input_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_key</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_key</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">,</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_key</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_key</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">IOptimizerCallback</span><span class="p">):</span>
             <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">)</span>
@@ -1208,7 +1208,7 @@
 <span class="sd">        # 2. model and optimizer</span>
 <span class="sd">        encoder = MnistSimpleNet(out_features=16)</span>
 <span class="sd">        projection_head = nn.Sequential(</span>
-<span class="sd">            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),</span>
+<span class="sd">            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)</span>
 <span class="sd">        )</span>
 
 <span class="sd">        class ContrastiveModel(torch.nn.Module):</span>

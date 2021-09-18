@@ -313,6 +313,7 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">IMetric</span>
@@ -483,7 +484,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Force a copy in torch/numpy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="n">value</span>  <span class="c1"># noqa: WPS345</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">=</span> <span class="mf">0.0</span>

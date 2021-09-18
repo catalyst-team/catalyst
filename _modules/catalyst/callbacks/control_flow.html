@@ -440,7 +440,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="c1"># lambda function from string</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">filter_fn</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">)</span>  <span class="c1"># noqa: WPS400</span>
+            <span class="n">filter_fn</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;&#39;filter_fn&#39; should be a valid &quot;</span>

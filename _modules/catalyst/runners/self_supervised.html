@@ -366,7 +366,7 @@
 <span class="sd">        # 2. model and optimizer</span>
 <span class="sd">        encoder = MnistSimpleNet(out_features=16)</span>
 <span class="sd">        projection_head = nn.Sequential(</span>
-<span class="sd">            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),</span>
+<span class="sd">            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)</span>
 <span class="sd">        )</span>
 
 <span class="sd">        class ContrastiveModel(torch.nn.Module):</span>

@@ -377,17 +377,13 @@
 <span class="c1"># taken form https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/components.py</span>
 <span class="k">def</span> <span class="nf">_patch_forward</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="n">input_caster_lambda</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-            <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;cast_model_type&quot;</span><span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># noqa: WPS437</span>
+        <span class="k">lambda</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;cast_model_type&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span>
         <span class="k">else</span> <span class="n">tensor</span>
     <span class="p">)</span>
     <span class="n">output_caster_lambda</span> <span class="o">=</span> <span class="p">(</span>
         <span class="k">lambda</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-            <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="s2">&quot;cast_model_outputs&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
-            <span class="p">)</span>  <span class="c1"># noqa: WPS437</span>
+            <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cast_model_outputs&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span>
         <span class="k">else</span> <span class="n">tensor</span>
@@ -400,10 +396,10 @@
         <span class="n">output_caster</span><span class="o">=</span><span class="n">output_caster_lambda</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">return</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+        <span class="k">return</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span>
             <span class="n">old_fwd</span><span class="p">(</span>
-                <span class="o">*</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">input_caster</span><span class="p">),</span>  <span class="c1"># noqa: WPS437</span>
-                <span class="o">**</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">input_caster</span><span class="p">),</span>  <span class="c1"># noqa: WPS437</span>
+                <span class="o">*</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">input_caster</span><span class="p">),</span>
+                <span class="o">**</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">input_caster</span><span class="p">),</span>
             <span class="p">),</span>
             <span class="n">output_caster</span><span class="p">,</span>
         <span class="p">)</span>
@@ -497,7 +493,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args_list</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="c1"># model</span>
@@ -528,7 +524,7 @@
             <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``</span>
@@ -654,7 +650,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
@@ -810,7 +806,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
@@ -837,7 +833,7 @@
             <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``</span>

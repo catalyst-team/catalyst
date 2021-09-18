@@ -394,9 +394,7 @@ By default we use <code class="docutils literal notranslate"><span class="pre">1
 <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> on first 2 batches,
 <code class="docutils literal notranslate"><span class="pre">valid</span></code> - on first 20% of batches
 and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> - on 50% batches:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">BatchOverfitCallback</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">BatchOverfitCallback</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
     <span class="o">...</span>
@@ -515,7 +513,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">BatchTransformCallback</span><span class="p">(</span>
-            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;scores&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s2">&quot;F.sigmoid&quot;</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;scores&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s2">&quot;F.sigmoid&quot;</span>
         <span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
             <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span>
@@ -1362,12 +1360,12 @@ default value is <code class="docutils literal notranslate"><span class="pre">1e
     <span class="n">callbacks</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;mixup&quot;</span><span class="p">:</span> <span class="n">MixupCallback</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;clf_targets_one_hot&quot;</span><span class="p">]),</span>
         <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
-            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;clf_logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;clf_targets_one_hot&quot;</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;clf_logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;clf_targets_one_hot&quot;</span>
         <span class="p">),</span>
         <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
         <span class="s2">&quot;classification&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ControlFlowCallback</span><span class="p">(</span>
             <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
-                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;clf_logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;clf_targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;clf_logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;clf_targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
             <span class="p">),</span>
             <span class="n">ignore_loaders</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
         <span class="p">),</span>
@@ -1604,7 +1602,7 @@ then will be raised an error).</p>
 use <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> every 2 epochs, <code class="docutils literal notranslate"><span class="pre">valid</span></code> - every
 3 epochs and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> - every 5 epochs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderCallback</span><span class="p">,</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderCallback</span>
 <span class="p">)</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>

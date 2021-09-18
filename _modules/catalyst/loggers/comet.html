@@ -432,7 +432,7 @@
                 <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">comet_ml</span><span class="o">.</span><span class="n">OfflineExperiment</span><span class="p">(</span>
-                <span class="n">workspace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workspace</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_kwargs</span><span class="p">,</span>
+                <span class="n">workspace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workspace</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_kwargs</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -445,7 +445,7 @@
                 <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">comet_ml</span><span class="o">.</span><span class="n">Experiment</span><span class="p">(</span>
-                <span class="n">workspace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workspace</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_kwargs</span><span class="p">,</span>
+                <span class="n">workspace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workspace</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_kwargs</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>

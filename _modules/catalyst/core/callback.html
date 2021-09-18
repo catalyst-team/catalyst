@@ -430,9 +430,9 @@
 <span class="sd">    - Worker (2) - use only in worker nodes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">All</span> <span class="o">=</span> <span class="nb">all</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Master</span> <span class="o">=</span> <span class="n">master</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Worker</span> <span class="o">=</span> <span class="n">worker</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># noqa: WPS115</span></div>
+    <span class="n">All</span> <span class="o">=</span> <span class="nb">all</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Master</span> <span class="o">=</span> <span class="n">master</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">Worker</span> <span class="o">=</span> <span class="n">worker</span> <span class="o">=</span> <span class="mi">2</span></div>
 
 
 <div class="viewcode-block" id="CallbackOrder"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.CallbackOrder">[docs]</a><span class="k">class</span> <span class="nc">CallbackOrder</span><span class="p">(</span><span class="n">IntFlag</span><span class="p">):</span>
@@ -467,13 +467,13 @@
 <span class="sd">        # but before all `MetricAggregation`-Callbacks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Internal</span> <span class="o">=</span> <span class="n">internal</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Metric</span> <span class="o">=</span> <span class="n">metric</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">MetricAggregation</span> <span class="o">=</span> <span class="n">metric_aggregation</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Scheduler</span> <span class="o">=</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">External</span> <span class="o">=</span> <span class="n">external</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">ExternalExtra</span> <span class="o">=</span> <span class="n">external_extra</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># noqa: WPS115</span></div>
+    <span class="n">Internal</span> <span class="o">=</span> <span class="n">internal</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Metric</span> <span class="o">=</span> <span class="n">metric</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">MetricAggregation</span> <span class="o">=</span> <span class="n">metric_aggregation</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">Scheduler</span> <span class="o">=</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="mi">80</span>
+    <span class="n">External</span> <span class="o">=</span> <span class="n">external</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">ExternalExtra</span> <span class="o">=</span> <span class="n">external_extra</span> <span class="o">=</span> <span class="mi">120</span></div>
 
 
 <div class="viewcode-block" id="CallbackScope"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.CallbackScope">[docs]</a><span class="k">class</span> <span class="nc">CallbackScope</span><span class="p">(</span><span class="n">IntFlag</span><span class="p">):</span>
@@ -483,8 +483,8 @@
 <span class="sd">    - Experiment (1) - use Callback during whole experiment run.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Stage</span> <span class="o">=</span> <span class="n">stage</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># noqa: WPS115</span>
-    <span class="n">Experiment</span> <span class="o">=</span> <span class="n">experiment</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># noqa: WPS115</span></div>
+    <span class="n">Stage</span> <span class="o">=</span> <span class="n">stage</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Experiment</span> <span class="o">=</span> <span class="n">experiment</span> <span class="o">=</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback">[docs]</a><span class="k">class</span> <span class="nc">Callback</span><span class="p">(</span><span class="n">ICallback</span><span class="p">):</span>
@@ -529,9 +529,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CallbackScope</span><span class="o">.</span><span class="n">stage</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CallbackScope</span><span class="o">.</span><span class="n">stage</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Callback initializer.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
@@ -553,7 +551,7 @@
         <span class="k">if</span> <span class="n">base_callback</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_callback</span><span class="p">,</span> <span class="n">Callback</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callback but got - </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">base_callback</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">order</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">scope</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">base_callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="n">enable_callback</span>

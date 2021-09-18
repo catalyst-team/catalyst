@@ -449,7 +449,7 @@
         <span class="k">return</span> <span class="n">lr_list</span><span class="p">,</span> <span class="n">momentum_list</span>
 
     <span class="k">def</span> <span class="nf">_update_lr_and_momentum_in_metrics_dict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">metrics_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">lr_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">momentum_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">metrics_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">lr_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">momentum_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update learning rate and momentum in metrics_dict</span>
 <span class="sd">        (consider only 0-th param group)</span>

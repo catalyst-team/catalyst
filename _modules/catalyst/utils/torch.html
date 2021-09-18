@@ -315,6 +315,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">Tensor</span>
 <span class="kn">import</span> <span class="nn">torch.backends</span>
@@ -340,7 +341,7 @@
     <span class="kn">import</span> <span class="nn">torch_xla.core.xla_model</span> <span class="k">as</span> <span class="nn">xm</span>
 
 <span class="c1"># TODO: move to global registry with activation functions</span>
-<span class="n">ACTIVATIONS</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># noqa: WPS407</span>
+<span class="n">ACTIVATIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
     <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">:</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
     <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">:</span> <span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
@@ -867,7 +868,7 @@
         <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model_module</span><span class="p">,</span> <span class="s2">&quot;state_dict&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">dict2save</span><span class="p">,</span> <span class="n">name2save</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">dict2save</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -906,11 +907,11 @@
     <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">maybe_recursive_call</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span> <span class="s2">&quot;load_state_dict&quot;</span><span class="p">,</span> <span class="n">recursive_args</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">],</span>
+            <span class="n">model</span><span class="p">,</span> <span class="s2">&quot;load_state_dict&quot;</span><span class="p">,</span> <span class="n">recursive_args</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">dict2load</span><span class="p">,</span> <span class="n">name2load</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">dict2load</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>

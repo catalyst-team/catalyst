@@ -559,7 +559,7 @@
     <span class="c1"># we pad the tensor because torch all_gather does not support</span>
     <span class="c1"># gathering tensors of different shapes</span>
     <span class="n">tensor_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">size_list</span><span class="p">:</span>  <span class="c1"># noqa: WPS122</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">size_list</span><span class="p">:</span>
         <span class="n">tensor_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">max_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">local_size</span> <span class="o">!=</span> <span class="n">max_size</span><span class="p">:</span>

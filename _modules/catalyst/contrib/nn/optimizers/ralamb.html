@@ -456,7 +456,7 @@
 
                 <span class="k">if</span> <span class="n">n_sma</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
                     <span class="n">p_data_fp32</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span>
-                        <span class="o">-</span><span class="n">radam_step_size</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">trust_ratio</span><span class="p">,</span> <span class="n">exp_avg</span><span class="p">,</span> <span class="n">denom</span><span class="p">,</span>
+                        <span class="o">-</span><span class="n">radam_step_size</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">trust_ratio</span><span class="p">,</span> <span class="n">exp_avg</span><span class="p">,</span> <span class="n">denom</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">p_data_fp32</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="o">-</span><span class="n">radam_step_size</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">trust_ratio</span><span class="p">,</span> <span class="n">exp_avg</span><span class="p">)</span>

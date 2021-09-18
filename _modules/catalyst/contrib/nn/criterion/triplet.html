@@ -423,9 +423,7 @@
         <span class="c1"># has shape (1, batch_size) and the 2nd (batch_size, 1)</span>
         <span class="k">return</span> <span class="o">~</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_batch_hard_triplet_loss</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_batch_hard_triplet_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build the triplet loss over a batch of embeddings.</span>
 <span class="sd">        For each anchor, we get the hardest positive and</span>
@@ -596,7 +594,7 @@
         <span class="p">)</span>
 
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span><span class="p">(</span>
-            <span class="n">anchor</span><span class="o">=</span><span class="n">features_anchor</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="n">features_positive</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="n">features_negative</span><span class="p">,</span>
+            <span class="n">anchor</span><span class="o">=</span><span class="n">features_anchor</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="n">features_positive</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="n">features_negative</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div>
 

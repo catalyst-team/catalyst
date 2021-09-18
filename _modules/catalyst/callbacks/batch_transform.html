@@ -379,7 +379,7 @@
 <span class="sd">                verbose=True,</span>
 <span class="sd">                callbacks=[</span>
 <span class="sd">                    dl.BatchTransformCallback(</span>
-<span class="sd">                        input_key=&quot;logits&quot;, output_key=&quot;scores&quot;, transform=&quot;F.sigmoid&quot;,</span>
+<span class="sd">                        input_key=&quot;logits&quot;, output_key=&quot;scores&quot;, transform=&quot;F.sigmoid&quot;</span>
 <span class="sd">                    ),</span>
 <span class="sd">                    dl.CriterionCallback(</span>
 <span class="sd">                        input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
