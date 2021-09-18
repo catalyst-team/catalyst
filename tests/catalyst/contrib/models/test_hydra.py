@@ -3,6 +3,7 @@ import copy
 from pathlib import Path
 
 import pytest
+
 import torch
 from torch import nn
 
@@ -352,9 +353,7 @@ def test_config2():
     with pytest.raises(KeyError):
         output_kv = hydra(input_, target2=torch.ones(1, 2).long())
     with pytest.raises(KeyError):
-        output_kv = hydra(
-            input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long(),
-        )
+        output_kv = hydra(input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long())
 
     output_tuple = hydra.forward_tuple(input_)
     assert len(output_tuple) == 5
@@ -635,9 +634,7 @@ def test_config4():
     with pytest.raises(KeyError):
         output_kv = hydra(input_, target2=torch.ones(1, 2).long())
     with pytest.raises(KeyError):
-        output_kv = hydra(
-            input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long(),
-        )
+        output_kv = hydra(input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long())
 
     output_tuple = hydra.forward_tuple(input_)
     assert len(output_tuple) == 5

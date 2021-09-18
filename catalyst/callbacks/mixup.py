@@ -90,12 +90,12 @@ class MixupCallback(Callback):
             callbacks={
                 "mixup": MixupCallback(keys=["image", "clf_targets_one_hot"]),
                 "criterion": dl.CriterionCallback(
-                    metric_key="loss", input_key="clf_logits", target_key="clf_targets_one_hot",
+                    metric_key="loss", input_key="clf_logits", target_key="clf_targets_one_hot"
                 ),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "classification": dl.ControlFlowCallback(
                     dl.PrecisionRecallF1SupportCallback(
-                        input_key="clf_logits", target_key="clf_targets", num_classes=10,
+                        input_key="clf_logits", target_key="clf_targets", num_classes=10
                     ),
                     ignore_loaders="train",
                 ),
@@ -108,7 +108,7 @@ class MixupCallback(Callback):
     """
 
     def __init__(
-        self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True, **kwargs,
+        self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True, **kwargs
     ):
         """
 

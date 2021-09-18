@@ -5,6 +5,7 @@ from copy import deepcopy
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import TensorDataset
 
@@ -23,7 +24,7 @@ class CustomConfigRunner(dl.SupervisedConfigRunner):
 
         # sample data
         X = torch.rand(num_samples, num_features)
-        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
+        y = (torch.rand(num_samples) * num_classes).to(torch.int64)
 
         # pytorch dataset
         dataset = TensorDataset(X, y)
@@ -120,31 +121,23 @@ def test_classification_on_torch_cuda0():
     train_experiment({"_target_": "DeviceEngine", "device": "cuda:0"})
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_classification_on_torch_cuda1():
     train_experiment({"_target_": "DeviceEngine", "device": "cuda:1"})
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_classification_on_torch_dp():
     train_experiment({"_target_": "DataParallelEngine"})
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
 def test_classification_on_torch_ddp():
     train_experiment({"_target_": "DistributedDataParallelEngine"})
 
 
 # AMP
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
 def test_classification_on_amp():
     train_experiment({"_target_": "AMPEngine"})
 
@@ -166,9 +159,7 @@ def test_classification_on_amp_ddp():
 
 
 # APEX
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
-)
+@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
 def test_classification_on_apex():
     train_experiment({"_target_": "APEXEngine"})
 

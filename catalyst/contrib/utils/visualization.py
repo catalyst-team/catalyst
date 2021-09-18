@@ -134,7 +134,7 @@ def plot_confusion_matrix(
 #
 #     figure.canvas.draw()
 #
-#     image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+#     image = np.array(figure.canvas.renderer._renderer)
 #     plt.close(figure)
 #     del figure
 #
@@ -147,7 +147,7 @@ def render_figure_to_array(figure):
 
     figure.canvas.draw()
 
-    image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+    image = np.array(figure.canvas.renderer._renderer)
     plt.close(figure)
     del figure
 

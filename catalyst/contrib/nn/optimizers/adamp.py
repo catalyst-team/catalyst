@@ -164,7 +164,7 @@ class AdamP(Optimizer):
                 wd_ratio = 1
                 if len(p.shape) > 1:
                     perturb, wd_ratio = self._projection(
-                        p, grad, perturb, group["delta"], group["wd_ratio"], group["eps"],
+                        p, grad, perturb, group["delta"], group["wd_ratio"], group["eps"]
                     )
 
                 # Weight decay

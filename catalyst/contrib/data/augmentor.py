@@ -71,9 +71,7 @@ class AugmentorCompose:
 class AugmentorKeys:
     """Augmentation abstraction to match input and augmentations keys."""
 
-    def __init__(
-        self, dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable,
-    ):
+    def __init__(self, dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable):
         """
         Args:
             dict2fn_dict (Dict[str, str]): keys matching dict

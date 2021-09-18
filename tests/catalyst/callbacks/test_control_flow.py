@@ -253,7 +253,7 @@ def test_control_flow_callback_filter_fn_multiple_epochs_ignore_loaders():
 
 def test_control_flow_callback_filter_fn_string_lambda():
     wraped = ControlFlowCallback(
-        DummyCallback(), filter_fn="lambda stage, epoch, loader: 'valid' in loader",
+        DummyCallback(), filter_fn="lambda stage, epoch, loader: 'valid' in loader"
     )
     expected = {
         "train": [False] * 5,
@@ -272,7 +272,7 @@ def test_control_flow_callback_filter_fn_string_lambda():
 
 def test_control_flow_callback_filter_fn_lambda():
     wraped = ControlFlowCallback(
-        DummyCallback(), filter_fn=lambda stage, epoch, loader: "valid" not in loader,
+        DummyCallback(), filter_fn=lambda stage, epoch, loader: "valid" not in loader
     )
     expected = {
         "train": [True] * 5,

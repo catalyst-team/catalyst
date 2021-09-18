@@ -13,7 +13,7 @@ from collections import namedtuple
 import locale
 import os
 import re
-import subprocess  # noqa: S404
+import subprocess
 import sys
 
 try:
@@ -85,9 +85,7 @@ def parse_args():
 
 def run(command):
     """Returns (return-code, stdout, stderr)"""
-    p = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,  # noqa: S602
-    )
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     rc = p.returncode
     enc = locale.getpreferredencoding()
@@ -178,7 +176,7 @@ def get_running_cuda_version(run_lambda):
 def get_cudnn_version(run_lambda):
     """This will return a list of libcudnn.so; it"s hard to tell which one is being used"""
     if get_platform() == "win32":
-        cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"  # noqa: WPS342
+        cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"
     elif get_platform() == "darwin":
         # CUDA libraries and drivers can be found in /usr/local/cuda/. See
         # https://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html#install
@@ -214,9 +212,7 @@ def get_nvidia_smi():
     # Note: nvidia-smi is currently available only on Windows and Linux
     smi = "nvidia-smi"
     if get_platform() == "win32":
-        smi = (
-            "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi  # noqa: WPS342, W505, E501
-        )
+        smi = "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi  # noqa: W505, E501
     return smi
 
 
@@ -410,7 +406,7 @@ def pretty_str(envinfo):  # noqa: C901
             return "\n{}\n".format(string)
         return string
 
-    mutable_dict = envinfo._asdict()  # noqa: WPS437
+    mutable_dict = envinfo._asdict()
 
     # If nvidia_gpu_models is multiline, start on the next line
     mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(envinfo.nvidia_gpu_models)

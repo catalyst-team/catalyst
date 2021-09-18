@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.contrib.nn import criterion as module
@@ -234,6 +235,7 @@ def test_barlow_twins_loss(
 ):
     """
     Test Barlow Twins loss
+
     Args:
         embeddings_left: left objects embeddings [batch_size, features_dim]
         embeddings_right: right objects embeddings [batch_size, features_dim]
@@ -259,14 +261,15 @@ def test_barlow_twins_loss(
     ),
 )
 def test_ntxent_loss(
-    embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, tau: float, true_value: float,
+    embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, tau: float, true_value: float
 ):
     """
     Test NTXent Loss
+
     Args:
         embeddings_left: left objects embeddings [batch_size, features_dim]
         embeddings_right: right objects embeddings [batch_size, features_dim]
-        tau: temperature 
+        tau: temperature
         true_value: expected loss value
     """
     value = NTXentLoss(tau=tau)(embeddings_left, embeddings_right).item()
@@ -319,6 +322,7 @@ def test_supervised_contrastive_loss(
 ):
     """
     Test supervised contrastive loss
+
     Args:
         features: features of objects
         targets: targets of objects

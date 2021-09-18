@@ -7,6 +7,7 @@ import threading
 import time
 
 import numpy as np
+
 import torch.nn as nn
 
 from catalyst import dl
@@ -69,9 +70,7 @@ def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
         target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
 
-def db2buffer_loop(
-    db_server: "IRLDatabase", buffer: "OffpolicyReplayBuffer",
-):
+def db2buffer_loop(db_server: "IRLDatabase", buffer: "OffpolicyReplayBuffer"):
     trajectory = None
     while True:
         try:

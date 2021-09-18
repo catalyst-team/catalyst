@@ -205,7 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator", "manual",),
+    (master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator", "manual"),
 ]
 
 # -- Options for manual page output ------------------------------------------

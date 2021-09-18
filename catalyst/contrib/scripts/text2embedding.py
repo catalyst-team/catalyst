@@ -50,11 +50,11 @@
 #     parser.add_argument(
 #         "--out-prefix", type=str, required=True,
 #     )
-#     parser.add_argument("--max-length", type=int, default=512)  # noqa: WPS432
+#     parser.add_argument("--max-length", type=int, default=512)
 #     boolean_flag(parser, "mask-for-max-length", default=False)
 #     boolean_flag(parser, "output-hidden-states", default=False)
 #     parser.add_argument(
-#         "--bert-level", type=int, help="BERT features level to use", default=None,  # noqa: WPS432
+#         "--bert-level", type=int, help="BERT features level to use", default=None,
 #     )
 #     boolean_flag(parser, "strip", default=True)
 #     boolean_flag(parser, "lowercase", default=True)
@@ -72,7 +72,7 @@
 #         type=int,
 #         dest="batch_size",
 #         help="Dataloader batch size",
-#         default=32,  # noqa: WPS432
+#         default=32,
 #     )
 #     parser.add_argument(
 #         "--verbose",
@@ -81,7 +81,7 @@
 #         default=False,
 #         help="Print additional information",
 #     )
-#     parser.add_argument("--seed", type=int, default=42)  # noqa: WPS432
+#     parser.add_argument("--seed", type=int, default=42)
 #     boolean_flag(
 #         parser,
 #         "deterministic",

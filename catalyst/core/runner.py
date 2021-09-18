@@ -66,7 +66,7 @@ def _get_num_samples(loader: DataLoader):
         return len(loader) * batch_size
 
 
-class RunnerException(Exception):
+class RunnerError(Exception):
     """Exception class for all runner errors."""
 
     pass
@@ -213,9 +213,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     """
 
-    def __init__(
-        self, model: RunnerModel = None, engine: IEngine = None,
-    ):
+    def __init__(self, model: RunnerModel = None, engine: IEngine = None):
         """Init."""
         # the core
         self.model: RunnerModel = model
@@ -364,12 +362,12 @@ class IRunner(ICallback, ILogger, ABC):
 
     def get_trial(self) -> Optional[ITrial]:
         """Returns the trial for the run."""
-        return None  # noqa: WPS324
+        return None
 
     @abstractmethod
     def get_engine(self) -> IEngine:
         """Returns the engine for the run."""
-        return None  # noqa: WPS324
+        return None
 
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the loggers for the run."""
@@ -422,7 +420,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod  # noqa: WPS463
+    @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
@@ -443,7 +441,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         pass
 
-    @abstractmethod  # noqa: WPS463
+    @abstractmethod
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage and epoch.
 
@@ -482,7 +480,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Criterion: criterion for a given stage.
         """
-        return None  # noqa: WPS324
+        return None
 
     def get_optimizer(self, stage: str, model: Model) -> Optional[Optimizer]:
         """Returns the optimizer for a given stage and model.
@@ -500,7 +498,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Optimizer: optimizer for a given stage and model.
         """
-        return None  # noqa: WPS324
+        return None
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
@@ -517,7 +515,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
-        return None  # noqa: WPS324
+        return None
 
     def _get_model(self) -> Model:
         self.model = self.get_model(stage=self.stage_key)
@@ -660,7 +658,7 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+                raise RunnerError(f"DataLoader with name {loader_key} is empty.")
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
@@ -821,4 +819,4 @@ class IRunner(ICallback, ILogger, ABC):
         return self
 
 
-__all__ = ["IRunner", "RunnerException"]
+__all__ = ["IRunner", "RunnerError"]

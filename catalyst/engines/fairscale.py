@@ -59,7 +59,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
             # ...
             def get_engine(self):
                 return dl.PipelineParallelFairScaleEngine(
-                    pipe_kwargs={"balance": [3, 1]},
+                    pipe_kwargs={"balance": [3, 1]}
                 )
             # ...
 
@@ -93,7 +93,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device_count={self.device_count})"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -205,7 +205,7 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
     """
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -441,7 +441,7 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
     """
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()

@@ -4,6 +4,7 @@ import os
 import pickle
 
 import numpy as np
+
 import torch
 import torch.utils.data as data
 
@@ -333,8 +334,10 @@ class CifarQGDataset(QueryGalleryDataset):
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         """
         Get item method for dataset
+
         Args:
             idx: index of the object
+
         Returns:
             Dict with features, targets and is_query flag
         """

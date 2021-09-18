@@ -30,9 +30,7 @@ if SETTINGS.apex_required:
     )
 
 if SETTINGS.deepspeed_required:
-    E2E.update(
-        {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
-    )
+    E2E.update({"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine})
 
 if SETTINGS.fairscale_required:
     E2E.update(

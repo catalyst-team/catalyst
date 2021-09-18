@@ -90,7 +90,7 @@ class HydraRunner(IRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _get_run_logdir(self) -> str:  # noqa: WPS112
+    def _get_run_logdir(self) -> str:
         output = None
         exclude_tag = "none"
 
@@ -175,7 +175,7 @@ class HydraRunner(IRunner):
             loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=self._logdir, use_logdir_postfix=True,
+                logdir=self._logdir, use_logdir_postfix=True
             )
 
         return loggers
@@ -262,7 +262,7 @@ class HydraRunner(IRunner):
         loaders_params.pop("datasets", None)
 
         loaders = get_loaders_from_params(
-            datasets=self.get_datasets(stage=stage), initial_seed=self.seed, **loaders_params,
+            datasets=self.get_datasets(stage=stage), initial_seed=self.seed, **loaders_params
         )
         return loaders
 
@@ -272,8 +272,7 @@ class HydraRunner(IRunner):
         is_key_value = params._key_value or False
         if is_key_value:
             model = {
-                key: HydraRunner._get_model_from_params(value)
-                for key, value in params.items()  # noqa: WPS437
+                key: HydraRunner._get_model_from_params(value) for key, value in params.items()
             }
             # model = nn.ModuleDict(model)
         else:
@@ -293,8 +292,7 @@ class HydraRunner(IRunner):
         is_key_value = params._key_value or False
         if is_key_value:
             criterion = {
-                key: HydraRunner._get_criterion_from_params(value)  # noqa: WPS437
-                for key, value in params.items()
+                key: HydraRunner._get_criterion_from_params(value) for key, value in params.items()
             }
         else:
             criterion: Criterion = hydra.utils.instantiate(params)
@@ -385,7 +383,7 @@ class HydraRunner(IRunner):
                 scheduler_params = deepcopy(scheduler_params)
                 optimizer_key = scheduler_params._optimizer or None
                 optim = optimizer[optimizer_key] if optimizer_key else optimizer
-                scheduler[key] = HydraRunner._get_scheduler_from_params(  # noqa: WPS437
+                scheduler[key] = HydraRunner._get_scheduler_from_params(
                     optimizer=optim, params=scheduler_params
                 )
         else:
@@ -413,7 +411,7 @@ class HydraRunner(IRunner):
         callback = callback_class(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            callback = HydraRunner._get_callback_from_params(**wrapper_params)  # noqa: WPS437
+            callback = HydraRunner._get_callback_from_params(**wrapper_params)
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
@@ -439,7 +437,7 @@ class HydraRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints"),
+                logdir=os.path.join(self._logdir, "checkpoints")
             )
 
         return callbacks

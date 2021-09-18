@@ -1,10 +1,10 @@
 from mean_average_precision import MetricBuilder
 import numpy as np
+
 import torch
 import torch.nn.functional as F
 
 from catalyst.core.callback import Callback, CallbackOrder
-
 from .utils import change_box_order, nms_filter
 
 

@@ -125,7 +125,7 @@ class ConfigRunner(IRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _get_run_logdir(self) -> str:  # noqa: WPS112
+    def _get_run_logdir(self) -> str:
         output = None
         exclude_tag = "none"
 
@@ -210,7 +210,7 @@ class ConfigRunner(IRunner):
             loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=self._logdir, use_logdir_postfix=True,
+                logdir=self._logdir, use_logdir_postfix=True
             )
 
         return loggers
@@ -280,7 +280,7 @@ class ConfigRunner(IRunner):
 
         if is_key_value:
             model = {
-                model_key: ConfigRunner._get_model_from_params(**model_params)  # noqa: WPS437
+                model_key: ConfigRunner._get_model_from_params(**model_params)
                 for model_key, model_params in params.items()
             }
             model = nn.ModuleDict(model)
@@ -380,7 +380,7 @@ class ConfigRunner(IRunner):
                 optim = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = ConfigRunner._get_scheduler_from_params(
                     **scheduler_params, optimizer=optim
-                )  # noqa: WPS437
+                )
         else:
             optimizer_key = params.pop("_optimizer", None)
             optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
@@ -414,7 +414,7 @@ class ConfigRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints"),
+                logdir=os.path.join(self._logdir, "checkpoints")
             )
 
         return callbacks

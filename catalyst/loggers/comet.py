@@ -121,7 +121,7 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.OfflineExperiment(
-                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs,
+                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs
             )
 
         else:
@@ -134,7 +134,7 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.Experiment(
-                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs,
+                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs
             )
 
     def log_metrics(

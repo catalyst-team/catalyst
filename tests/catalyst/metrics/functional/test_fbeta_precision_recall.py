@@ -1,5 +1,6 @@
 # flake8: noqa
 import pytest  # noqa: F401
+
 import torch
 
 from catalyst.metrics.functional import (
@@ -38,7 +39,7 @@ def test_precision_recall_f_binary_single_class() -> None:
     ],
 )
 def test_precision_recall_fbeta_support_binary(
-    outputs, targets, precision_true, recall_true, fbeta_true, support_true,
+    outputs, targets, precision_true, recall_true, fbeta_true, support_true
 ) -> None:
     """
     Test for precision_recall_fbeta_support.

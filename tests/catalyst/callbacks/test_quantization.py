@@ -15,10 +15,10 @@ def test_pruning_callback() -> None:
     """Quantize model"""
     loaders = {
         "train": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
         ),
     }
     model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))

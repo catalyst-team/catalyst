@@ -2,6 +2,7 @@
 import argparse
 
 from sklearn.linear_model import LogisticRegression
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -53,7 +54,7 @@ parser.add_argument(
     help="Lambda that controls the on- and off-diagonal terms",
 )
 parser.add_argument(
-    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)",
+    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
 )
 if __name__ == "__main__":
 

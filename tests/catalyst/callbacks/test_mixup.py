@@ -17,7 +17,7 @@ def test_mixup_1():
     utils.set_global_seed(42)
     num_samples, num_features, num_classes = int(1e4), int(1e1), 4
     X = torch.rand(num_samples, num_features)
-    y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
+    y = (torch.rand(num_samples) * num_classes).to(torch.int64)
     y = torch.nn.functional.one_hot(y, num_classes).double()
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)

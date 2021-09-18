@@ -25,7 +25,7 @@ class PeriodicLoaderCallback(Callback):
     .. code-block:: python
 
         from catalyst.dl import (
-            SupervisedRunner, PeriodicLoaderCallback,
+            SupervisedRunner, PeriodicLoaderCallback
         )
         runner = SupervisedRunner()
         runner.train(

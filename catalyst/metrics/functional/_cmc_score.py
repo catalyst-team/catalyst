@@ -2,7 +2,7 @@ import torch
 
 
 def cmc_score_count(
-    distances: torch.Tensor, conformity_matrix: torch.Tensor, topk: int = 1,
+    distances: torch.Tensor, conformity_matrix: torch.Tensor, topk: int = 1
 ) -> float:
     """
     Function to count CMC from distance matrix and conformity matrix.

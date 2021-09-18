@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import pytest  # noqa: F401
+
 import torch
 
 from catalyst.callbacks import AccuracyCallback
@@ -50,8 +51,7 @@ def _evaluate_loader_accuracy(runner, loader):
 
 @pytest.mark.skipif(IS_CUDA_AVAILABLE, reason="CUDA device is available")
 def test_accuracy():
-    """Test if accuracy drops too low.
-    """
+    """Test if accuracy drops too low."""
     model = torch.nn.Sequential(
         Flatten(),
         torch.nn.Linear(28 * 28, 128),

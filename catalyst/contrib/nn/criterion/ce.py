@@ -85,7 +85,7 @@ class MaskCrossEntropyLoss(nn.Module):
         self.ce_loss = nn.CrossEntropyLoss(*args, **kwargs, reduction="none")
 
     def forward(
-        self, logits: torch.Tensor, target: torch.Tensor, mask: torch.Tensor,
+        self, logits: torch.Tensor, target: torch.Tensor, mask: torch.Tensor
     ) -> torch.Tensor:
         """
         Calculates loss between ``logits`` and ``target`` tensors.

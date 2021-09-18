@@ -1,8 +1,7 @@
 import logging
 
-import hydra_slayer
-
 from catalyst.settings import SETTINGS
+import hydra_slayer
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +116,7 @@ def _runners_loader(r: hydra_slayer.Registry):
     r.add(IRunner)
     r.add(IRunner)
 
-    from catalyst import runners as m  # noqa: WPS347
+    from catalyst import runners as m
 
     r.add_from_module(m)
 
@@ -130,7 +129,7 @@ def _engines_loader(r: hydra_slayer.Registry):
 
     r.add(IEngine)
 
-    from catalyst import engines as m  # noqa: WPS347
+    from catalyst import engines as m
 
     r.add_from_module(m)
 
@@ -144,7 +143,7 @@ def _callbacks_loader(r: hydra_slayer.Registry):
     r.add(Callback)
     r.add(CallbackWrapper)
 
-    from catalyst import callbacks as m  # noqa: WPS347
+    from catalyst import callbacks as m
 
     r.add_from_module(m)
 
@@ -153,7 +152,7 @@ REGISTRY.late_add(_callbacks_loader)
 
 
 def _loggers_loader(r: hydra_slayer.Registry):
-    from catalyst import loggers as m  # noqa: WPS347
+    from catalyst import loggers as m
 
     r.add_from_module(m)
 
@@ -180,11 +179,11 @@ REGISTRY.late_add(_torch_loader)
 
 
 def _datasets_loader(r: hydra_slayer.Registry):
-    from catalyst.data import dataset as m  # noqa: WPS347
+    from catalyst.data import dataset as m
 
     r.add_from_module(m)
 
-    from catalyst.contrib import datasets as m_contrib  # noqa: WPS347
+    from catalyst.contrib import datasets as m_contrib
 
     r.add_from_module(m_contrib)
 
@@ -193,7 +192,7 @@ REGISTRY.late_add(_datasets_loader)
 
 
 def _dataloaders_loader(r: hydra_slayer.Registry):
-    from torch.utils.data import DataLoader  # noqa: WPS347
+    from torch.utils.data import DataLoader
 
     r.add(DataLoader)
 
