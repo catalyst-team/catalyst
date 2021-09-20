@@ -58,7 +58,7 @@ parser.add_argument(
     "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
 )
 parser.add_argument(
-    "--dataset", default="STL10", type=str, help="Dataset: CIFAR-10, CIFAR-100 or STL10"
+    "--dataset", default="STL10", type=str, choices=datasets.keys(), help="Dataset: CIFAR-10, CIFAR-100 or STL10"
 )
 
 if __name__ == "__main__":
