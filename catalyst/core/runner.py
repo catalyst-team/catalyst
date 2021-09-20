@@ -9,10 +9,13 @@ import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
-from catalyst.callbacks.criterion import ICriterionCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback
-from catalyst.core.callback import Callback, ICallback
+from catalyst.core.callback import (
+    Callback,
+    ICallback,
+    ICriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+)
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import (
@@ -758,11 +761,6 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        # @TODO: use only for FairScale setup?
-        del self.callbacks
-        self.callbacks = {}
-        del self.loaders
-        self.loaders = {}
         self.engine.deinit_components(runner=self)
         self.close_log(scope="stage")
 

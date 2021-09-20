@@ -4,19 +4,13 @@ from abc import ABC, abstractmethod
 import torch
 
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, ISchedulerCallback
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
-
-
-class ISchedulerCallback(Callback):
-    """Scheduler callback interface, abstraction over scheduler step."""
-
-    pass
 
 
 class SchedulerCallback(ISchedulerCallback):

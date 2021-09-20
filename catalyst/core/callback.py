@@ -225,6 +225,24 @@ class Callback(ICallback):
         self.scope = scope
 
 
+class ICriterionCallback(Callback):
+    """Criterion callback interface, abstraction over criterion step."""
+
+    pass
+
+
+class IOptimizerCallback(Callback):
+    """Optimizer callback interface, abstraction over optimizer step."""
+
+    pass
+
+
+class ISchedulerCallback(Callback):
+    """Scheduler callback interface, abstraction over scheduler step."""
+
+    pass
+
+
 class CallbackWrapper(Callback):
     """Enable/disable callback execution.
 
@@ -462,6 +480,9 @@ __all__ = [
     "CallbackNode",
     "CallbackOrder",
     "CallbackScope",
+    "ICriterionCallback",
+    "IOptimizerCallback",
+    "ISchedulerCallback",
     "CallbackWrapper",
     "CallbackList",
 ]
