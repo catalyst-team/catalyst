@@ -22,6 +22,7 @@ class R2Squared(ICallbackLoaderMetric):
     ) -> None:
         """Init R2Squared"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_name = f"{self.prefix}r2squared{self.suffix}"
         self.num_examples = 0
         self.delta_sum = 0
         self.y_sum = 0
@@ -53,9 +54,11 @@ class R2Squared(ICallbackLoaderMetric):
 
     def compute_key_value(self) -> torch.Tensor:
         """
-        Return accumulated metric
+        Return key-value
         """
-        return self.compute()
+        r2squared = self.compute()
+        output = {self.metric_name: r2squared}
+        return output
 
 
 __all__ = ["R2Squared"]
