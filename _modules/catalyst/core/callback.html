@@ -536,6 +536,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span></div>
 
 
+<span class="k">class</span> <span class="nc">ICriterionCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Criterion callback interface, abstraction over criterion step.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">IOptimizerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Optimizer callback interface, abstraction over optimizer step.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">ISchedulerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Scheduler callback interface, abstraction over scheduler step.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+
 <div class="viewcode-block" id="CallbackWrapper"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.CallbackWrapper">[docs]</a><span class="k">class</span> <span class="nc">CallbackWrapper</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enable/disable callback execution.</span>
 
@@ -773,6 +791,9 @@
     <span class="s2">&quot;CallbackNode&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CallbackOrder&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CallbackScope&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ICriterionCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IOptimizerCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ISchedulerCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CallbackWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CallbackList&quot;</span><span class="p">,</span>
 <span class="p">]</span>

@@ -400,6 +400,10 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss.__init__">(catalyst.contrib.nn.criterion.margin.MarginLoss method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__">(catalyst.contrib.nn.criterion.regression.HuberLossV0 method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__">(catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss.__init__">(catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.trevsky.TrevskyLoss.__init__">(catalyst.contrib.nn.criterion.trevsky.TrevskyLoss method)</a>
@@ -711,6 +715,8 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.tracing">catalyst.utils.tracing (module)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss">CategoricalRegressionLoss (class in catalyst.contrib.nn.criterion.regression)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._misc.check_consistent_length">check_consistent_length() (in module catalyst.metrics.functional._misc)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback">CheckpointCallback (class in catalyst.callbacks.checkpoint)</a>
@@ -907,6 +913,12 @@
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.RocStarLoss.forward">(catalyst.contrib.nn.criterion.recsys.RocStarLoss method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward">(catalyst.contrib.nn.criterion.recsys.WARPLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.forward">(catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.HuberLossV0.forward">(catalyst.contrib.nn.criterion.regression.HuberLossV0 method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.forward">(catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace.forward">(catalyst.contrib.nn.modules.arcface.ArcFace method)</a>
 </li>
@@ -1193,10 +1205,10 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.image.has_image_extension">has_image_extension() (in module catalyst.contrib.utils.image)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss">HingeLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">hitrate() (in module catalyst.metrics.functional._hitrate)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.HitrateCallback">HitrateCallback (class in catalyst.callbacks.metrics.recsys)</a>
@@ -1213,6 +1225,8 @@
         <li><a href="api/runners.html#catalyst.runners.runner.Runner.hparams">(catalyst.runners.runner.Runner property)</a>
 </li>
       </ul></li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.HuberLossV0">HuberLossV0 (class in catalyst.contrib.nn.criterion.regression)</a>
+</li>
       <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner">HydraRunner (class in catalyst.runners.hydra)</a>
 </li>
   </ul></td>
@@ -1643,12 +1657,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW">QHAdamW (class in catalyst.contrib.nn.optimizers.qhadamw)</a>
 </li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.quantization.QuantizationCallback">QuantizationCallback (class in catalyst.callbacks.quantization)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss">QuantileRegressionLoss (class in catalyst.contrib.nn.criterion.regression)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.utils.quantization.quantize_model">quantize_model() (in module catalyst.utils.quantization)</a>
+      <li><a href="api/callbacks.html#catalyst.callbacks.quantization.QuantizationCallback">QuantizationCallback (class in catalyst.callbacks.quantization)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#catalyst.utils.quantization.quantize_model">quantize_model() (in module catalyst.utils.quantization)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.onnx.quantize_onnx_model">quantize_onnx_model() (in module catalyst.utils.onnx)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.query_size">query_size() (catalyst.data.dataset.metric_learning.QueryGalleryDataset property)</a>

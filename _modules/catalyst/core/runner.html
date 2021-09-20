@@ -314,14 +314,27 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">ICallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callback</span><span class="p">,</span>
+    <span class="n">ICallback</span><span class="p">,</span>
+    <span class="n">ICriterionCallback</span><span class="p">,</span>
+    <span class="n">IOptimizerCallback</span><span class="p">,</span>
+    <span class="n">ISchedulerCallback</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">filter_callbacks_by_node</span><span class="p">,</span> <span class="n">sort_callbacks_by_order</span><span class="p">,</span> <span class="n">validate_loaders</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">callback_isinstance</span><span class="p">,</span>
+    <span class="n">filter_callbacks_by_node</span><span class="p">,</span>
+    <span class="n">sort_callbacks_by_order</span><span class="p">,</span>
+    <span class="n">validate_loaders</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.trial</span> <span class="kn">import</span> <span class="n">ITrial</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
@@ -913,12 +926,38 @@
             <span class="n">scheduler_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_scheduler</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_check_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">is_callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICriterionCallback</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No ``ICriterionCallback/CriterionCallback`` were found &quot;</span>
+                <span class="s2">&quot;while runner.criterion is not None.&quot;</span>
+                <span class="s2">&quot;Do you compute the loss during ``runner.handle_batch``?&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">IOptimizerCallback</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No ``IOptimizerCallback/OptimizerCallback`` were found &quot;</span>
+                <span class="s2">&quot;while runner.optimizer is not None.&quot;</span>
+                <span class="s2">&quot;Do run backward pass during ``runner.handle_batch``?&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span>
+            <span class="n">ISchedulerCallback</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No ``ISchedulerCallback/SchedulerCallback`` were found &quot;</span>
+                <span class="s2">&quot;while runner.scheduler is not None.&quot;</span>
+                <span class="s2">&quot;Do you make scheduler step during ``runner.handle_batch``?&quot;</span>
+            <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_setup_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch_step</span><span class="p">)</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_key</span><span class="p">)</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="n">filter_callbacks_by_node</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_callbacks</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
@@ -1033,10 +1072,6 @@
 
     <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">deinit_components</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;stage&quot;</span><span class="p">)</span>
 

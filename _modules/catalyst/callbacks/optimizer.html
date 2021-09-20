@@ -313,7 +313,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IOptimizerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">get_optimizer_momentum_list</span>
@@ -334,12 +334,6 @@
     <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="k">class</span> <span class="nc">IOptimizerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Optimizer callback interface, abstraction over optimizer step.&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="OptimizerCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.optimizer.OptimizerCallback">[docs]</a><span class="k">class</span> <span class="nc">OptimizerCallback</span><span class="p">(</span><span class="n">IOptimizerCallback</span><span class="p">):</span>

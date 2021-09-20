@@ -935,7 +935,7 @@ for <strong>notebook API</strong> need to wrap callback:</p>
 <dl class="class">
 <dt id="catalyst.callbacks.criterion.CriterionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">criterion_key: str = None</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback" title="catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.criterion.ICriterionCallback</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback" title="catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICriterionCallback</span></code></p>
 <p>Criterion callback, abstraction over criterion step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1452,7 +1452,7 @@ description of the trace being exported.</p></li>
 <dl class="class">
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str</em>, <em class="sig-param">model_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_fn: Union[str</em>, <em class="sig-param">Callable] = None</em>, <em class="sig-param">grad_clip_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.optimizer.IOptimizerCallback</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.IOptimizerCallback</span></code></p>
 <p>Optimizer callback, abstraction over optimizer step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1833,7 +1833,7 @@ Defaults to “qint8”.</p></li>
 <dl class="class">
 <dt id="catalyst.callbacks.scheduler.SchedulerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">metric_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.scheduler.ISchedulerCallback</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ISchedulerCallback</span></code></p>
 <p>Scheduler callback, abstraction over scheduler step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -432,6 +432,10 @@
     <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deinits the runs components. In distributed mode should destroy process group.&quot;&quot;&quot;</span>
         <span class="c1"># For some reasons FairScale requires to delete the Pipe model</span>
+        <span class="k">del</span> <span class="n">runner</span><span class="o">.</span><span class="n">callbacks</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">del</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">del</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span>
 
     <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
