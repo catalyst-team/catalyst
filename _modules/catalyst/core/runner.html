@@ -1161,6 +1161,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_experiment</span><span class="p">()</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">ex</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_experiment_end&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_exception&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
