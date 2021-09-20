@@ -163,6 +163,13 @@ RecSys – NDCGMetric
     :undoc-members:
     :show-inheritance:
 
+Regression – R2Squared
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._r2_squared.R2Squared
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 Segmentation – RegionBasedMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._segmentation.RegionBasedMetric
@@ -268,6 +275,13 @@ NDCG
 Precision
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.metrics.functional._precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+R2Squared
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.metrics.functional._r2_squared
     :members:
     :undoc-members:
     :show-inheritance:
