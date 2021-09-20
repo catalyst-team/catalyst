@@ -123,7 +123,7 @@ class CSVLogger(ILogger):
                     )
                     self._make_header(metrics=per_loader_metrics, loader_key=loader_key)
                 self._log_metrics(
-                    metrics=per_loader_metrics, step=stage_epoch_step, loader_key=loader_key,
+                    metrics=per_loader_metrics, step=stage_epoch_step, loader_key=loader_key
                 )
 
     def log_hparams(

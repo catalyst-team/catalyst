@@ -137,7 +137,7 @@ def neg_loss(pred, gt):
 
 class CenterNetCriterion(nn.Module):
     def __init__(
-        self, num_classes=1, mask_loss_weight=1.0, regr_loss_weight=1.0, size_average=True,
+        self, num_classes=1, mask_loss_weight=1.0, regr_loss_weight=1.0, size_average=True
     ):
         """
         Args:

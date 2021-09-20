@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from catalyst.contrib.models.cv.segmentation.abn import ABN
-from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: WPS450, E501
+from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: E501
     _get_block,
     _upsample,
     DecoderBlock,

@@ -3,6 +3,7 @@ from typing import Iterable, Union
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics._additive import AdditiveMetric

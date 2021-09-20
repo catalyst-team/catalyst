@@ -45,7 +45,7 @@ class CurricularFace(nn.Module):
     """  # noqa: RST215
 
     def __init__(  # noqa: D107
-        self, in_features: int, out_features: int, s: float = 64.0, m: float = 0.5,
+        self, in_features: int, out_features: int, s: float = 64.0, m: float = 0.5
     ):
         super(CurricularFace, self).__init__()
 

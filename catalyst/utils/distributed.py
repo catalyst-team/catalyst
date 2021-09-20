@@ -248,7 +248,7 @@ def all_gather(data: Any) -> List[Any]:
     # we pad the tensor because torch all_gather does not support
     # gathering tensors of different shapes
     tensor_list = []
-    for _ in size_list:  # noqa: WPS122
+    for _ in size_list:
         tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
 
     if local_size != max_size:

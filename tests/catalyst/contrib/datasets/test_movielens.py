@@ -2,6 +2,7 @@ import os
 import shutil
 
 import pytest
+
 import torch
 
 from catalyst.settings import SETTINGS
@@ -21,9 +22,7 @@ def setup_module():
         print("Error! Code: {c}, Message, {m}".format(c=type(e).__name__, m=str(e)))
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.ml_required), reason="No catalyst[ml] required",
-)
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_download():
     """
     Test movielense download
@@ -60,9 +59,7 @@ def test_download():
     assert os.path.getsize("./data/MovieLens/raw/{}/u.info".format(filename)) > 0
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.ml_required), reason="No catalyst[ml] required",
-)
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_reading():
     """
     Test reading of the movielens dataset
@@ -77,9 +74,7 @@ def test_reading():
     )
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.ml_required), reason="No catalyst[ml] required",
-)
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_minimal_ranking():
     """
     Tets retrieveing the minimal ranking

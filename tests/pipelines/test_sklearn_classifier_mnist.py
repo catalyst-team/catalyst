@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader

@@ -1,13 +1,7 @@
 from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
-from catalyst.core.callback import Callback
+from catalyst.core.callback import ICriterionCallback
 from catalyst.core.runner import IRunner
 from catalyst.utils.misc import get_attr
-
-
-class ICriterionCallback(Callback):
-    """Criterion callback interface, abstraction over criterion step."""
-
-    pass
 
 
 class CriterionCallback(FunctionalMetricCallback, ICriterionCallback):

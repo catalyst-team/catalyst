@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch import nn
 
 from catalyst.data import Compose, Normalize, ToTensor
@@ -26,14 +27,14 @@ if SETTINGS.cv_required:
         ]
     )
 
-    transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
+    transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
 
 class ProjectionHead(nn.Module):
     def __init__(self):
         super(ProjectionHead, self).__init__()
         self.seq = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
         )
 
     def forward(self, x):
@@ -154,7 +155,7 @@ def train_experiment(engine):
                                 },
                                 "loaders": "valid",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss",},
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
                             "scheduler": {"_target_": "SchedulerCallback"},
                             "checkpointer": {
                                 "_target_": "CheckpointCallback",
@@ -182,9 +183,7 @@ def train_experiment(engine):
 requirements_satisfied = SETTINGS.ml_required and SETTINGS.cv_required
 
 # Torch
-@mark.skipif(
-    not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required",
-)
+@mark.skipif(not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required")
 def test_contrastive_on_cpu():
     train_experiment({"_target_": "DeviceEngine", "device": "cpu"})
 

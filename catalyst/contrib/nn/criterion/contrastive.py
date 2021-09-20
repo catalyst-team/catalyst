@@ -24,7 +24,7 @@ class ContrastiveEmbeddingLoss(nn.Module):
         self.reduction = reduction or "none"
 
     def forward(
-        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, distance_true,
+        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, distance_true
     ) -> torch.Tensor:
         """Forward propagation method for the contrastive loss.
 
@@ -169,7 +169,7 @@ class BarlowTwinsLoss(nn.Module):
         self.eps = eps
 
     def forward(
-        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor,
+        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor
     ) -> torch.Tensor:
         """Forward propagation method for the contrastive loss.
 

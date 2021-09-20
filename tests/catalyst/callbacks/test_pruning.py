@@ -1,6 +1,7 @@
 # flake8: noqa
 import numpy as np
 import pytest
+
 import torch
 from torch import nn
 

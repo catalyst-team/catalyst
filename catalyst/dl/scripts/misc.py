@@ -51,7 +51,7 @@ def parse_config_args(*, config, args, unknown_args):
     if config_args is None:
         config["args"] = {}
 
-    for key, value in args._get_kwargs():  # noqa: WPS437
+    for key, value in args._get_kwargs():
         if value is not None:
             if key in ["logdir", "baselogdir"] and value == "":
                 continue

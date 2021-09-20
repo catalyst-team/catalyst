@@ -3,6 +3,7 @@ import copy
 import os
 
 import numpy as np
+
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -117,7 +118,7 @@ class DeviceEngine(IEngine):
         return metrics
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         # model
@@ -279,7 +280,7 @@ class DataParallelEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device_count={self.device_count})"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -456,7 +457,7 @@ class DistributedDataParallelEngine(DeviceEngine):
             wrapped function.
         """
         return torch.multiprocessing.spawn(
-            fn, args=(self._world_size,), nprocs=self._world_size, join=True,
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True
         )
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -509,7 +510,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         return metrics
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         if "device_ids" not in self.ddp_kwargs:

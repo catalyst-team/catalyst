@@ -2,6 +2,7 @@
 import os
 
 from pytest import mark
+
 from torch import nn, optim
 from torch.utils.data import DataLoader
 

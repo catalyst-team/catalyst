@@ -50,7 +50,7 @@ class IMetric(ABC):
         """
         pass
 
-    def __call__(self, *args, **kwargs) -> Any:  # noqa: CCE001
+    def __call__(self, *args, **kwargs) -> Any:
         """Computes the metric based on it's accumulated state.
 
         By default, this is called at the end of each batch

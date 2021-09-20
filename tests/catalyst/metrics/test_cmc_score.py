@@ -2,6 +2,7 @@ from typing import Dict, Iterable, Tuple
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics._accumulative import AccumulativeMetric
@@ -41,7 +42,7 @@ def generate_batched_data() -> COMPLEX_OUTPUT_TYPE:
             batch_data = {}
             for field_name in fields_names:
                 data = torch.randint(
-                    low=10, high=1000, size=(batch_size, *fields_shapes[field_name]),
+                    low=10, high=1000, size=(batch_size, *fields_shapes[field_name])
                 )
                 if true_values[field_name] is None:
                     true_values[field_name] = data
@@ -53,7 +54,7 @@ def generate_batched_data() -> COMPLEX_OUTPUT_TYPE:
     return batched_data
 
 
-def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
+def test_accumulation(generate_batched_data) -> None:
     """
     Check if AccumulativeMetric accumulates all the data correctly along one loader
     """
@@ -66,7 +67,7 @@ def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
             assert (true_values[field_name] == metric.storage[field_name]).all()
 
 
-def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
+def test_accumulation_reset(generate_batched_data):
     """Check if AccumulativeMetric accumulates all the data correctly with multiple resets"""
     for (fields_names, num_batches, num_samples, batches, true_values) in generate_batched_data:
         metric = AccumulativeMetric(keys=fields_names)
@@ -95,7 +96,7 @@ def test_accumulation_dtype():
 
 
 def _test_score(
-    metric: AccumulativeMetric, batch: Dict[str, torch.Tensor], true_values: Dict[str, float],
+    metric: AccumulativeMetric, batch: Dict[str, torch.Tensor], true_values: Dict[str, float]
 ) -> None:
     """Check if given metric works correctly"""
     metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
@@ -135,7 +136,7 @@ def test_cmc_score(
 ) -> None:
     """Check if CMCMetric works correctly"""
     metric = CMCMetric(
-        embeddings_key="embeddings", labels_key="labels", is_query_key="is_query", topk_args=topk,
+        embeddings_key="embeddings", labels_key="labels", is_query_key="is_query", topk_args=topk
     )
     _test_score(metric=metric, batch=batch, true_values=true_values)
 

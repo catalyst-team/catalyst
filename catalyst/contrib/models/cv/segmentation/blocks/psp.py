@@ -8,7 +8,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from catalyst.contrib.models.cv.segmentation.abn import ABN
-from catalyst.contrib.models.cv.segmentation.blocks.core import _get_block  # noqa: WPS450, E501
+from catalyst.contrib.models.cv.segmentation.blocks.core import _get_block  # noqa: E501
 
 
 class PyramidBlock(nn.Module):
@@ -47,7 +47,7 @@ class PyramidBlock(nn.Module):
         h, w = x.shape[-2:]
         x = self._block(x)
         x = F.interpolate(
-            x, size=(h, w), mode=self.interpolation_mode, align_corners=self.align_corners,
+            x, size=(h, w), mode=self.interpolation_mode, align_corners=self.align_corners
         )
         return x
 
@@ -56,7 +56,7 @@ class PSPBlock(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
-        self, in_channels: int, pool_sizes: Tuple[int] = (1, 2, 3, 6), use_batchnorm: bool = True,
+        self, in_channels: int, pool_sizes: Tuple[int] = (1, 2, 3, 6), use_batchnorm: bool = True
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()

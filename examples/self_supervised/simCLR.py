@@ -29,12 +29,10 @@ parser.add_argument(
     "--num-workers", default=8, type=float, help="Number of workers to process a dataloader"
 )
 parser.add_argument(
-    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)",
+    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
 )
 
-parser.add_argument(
-    "--aug-strength", default=1.0, type=float, help="Strength of augmentations",
-)
+parser.add_argument("--aug-strength", default=1.0, type=float, help="Strength of augmentations")
 
 if __name__ == "__main__":
     args = parser.parse_args()

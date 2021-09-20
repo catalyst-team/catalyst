@@ -3,6 +3,7 @@
 from tempfile import TemporaryDirectory
 
 import pytest
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -121,9 +122,7 @@ def test_dp_apex_arg():
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
 
 
-@pytest.mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs",
-)
+@pytest.mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs")
 def test_ddp_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()

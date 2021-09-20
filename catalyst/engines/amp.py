@@ -82,7 +82,7 @@ class AMPEngine(DeviceEngine):
         self.scaler.update()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -208,7 +208,7 @@ class DataParallelAMPEngine(AMPEngine):
         )
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -350,7 +350,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         self.scaler.update()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``

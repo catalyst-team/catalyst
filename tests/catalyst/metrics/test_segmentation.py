@@ -2,6 +2,7 @@
 from typing import Dict, List, Union
 
 import pytest
+
 import torch
 
 from catalyst.metrics import DiceMetric, IOUMetric, TrevskyMetric

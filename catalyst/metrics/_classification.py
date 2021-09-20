@@ -3,6 +3,7 @@ from collections import defaultdict
 from functools import partial
 
 import numpy as np
+
 import torch
 
 from catalyst import SETTINGS
@@ -104,9 +105,7 @@ class StatisticsMetric(ICallbackBatchMetric):
         Raises:
             ValueError: if mode is incorrect
         """
-        super().__init__(
-            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix,
-        )
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         if mode == "binary":
             self.statistics_fn = get_binary_statistics
         elif mode == "multiclass":
@@ -145,7 +144,7 @@ class StatisticsMetric(ICallbackBatchMetric):
                 negative, true positive and support statistics
         """
         tn, fp, fn, tp, support = self.statistics_fn(
-            outputs=outputs.cpu().detach(), targets=targets.cpu().detach(),
+            outputs=outputs.cpu().detach(), targets=targets.cpu().detach()
         )
 
         tn = tn.numpy()
@@ -268,7 +267,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             for metric_name, metric_value in zip(
                 ("precision", "recall", "f1", "support"), per_class
             )
-            for i in range(self.num_classes)  # noqa: WPS361
+            for i in range(self.num_classes)
         }
         kv_metrics.update(per_class_metrics)
         return kv_metrics
@@ -287,7 +286,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         """
         tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
         per_class, micro, macro, weighted = get_aggregated_metrics(
-            tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division,
+            tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division
         )
         return per_class, micro, macro, weighted
 
@@ -440,7 +439,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         """
         precision_value, recall_value, f1_value = self.update(outputs=outputs, targets=targets)
         kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value
         )
         return kv_metrics
 
@@ -478,7 +477,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         """
         precision_value, recall_value, f1_value = self.compute()
         kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value
         )
         return kv_metrics
 

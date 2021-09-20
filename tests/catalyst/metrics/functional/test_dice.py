@@ -33,13 +33,13 @@ def test_dice():
     top_left = torch.zeros(shape)
     top_left[:, :, :half_size, :half_size] = 1
     assert torch.isclose(
-        dice(top_left, left, class_dim=1, mode="per-class"), torch.Tensor([[0.6666666]]),
+        dice(top_left, left, class_dim=1, mode="per-class"), torch.Tensor([[0.6666666]])
     )
     assert torch.isclose(
-        dice(top_left, left, class_dim=1, mode="micro"), torch.Tensor([[0.6666666]]),
+        dice(top_left, left, class_dim=1, mode="micro"), torch.Tensor([[0.6666666]])
     )
     assert torch.isclose(
-        dice(top_left, left, class_dim=1, mode="macro"), torch.Tensor([[0.6666666]]),
+        dice(top_left, left, class_dim=1, mode="macro"), torch.Tensor([[0.6666666]])
     )
 
     # check multiclass: 0, 0, 1, 1, 1, 0.66667

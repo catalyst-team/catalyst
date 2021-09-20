@@ -1,6 +1,7 @@
 from typing import Any, List
 
 import numpy as np
+
 import torch
 
 from catalyst import SETTINGS
@@ -140,9 +141,7 @@ class ConfusionMatrixMetric(IMetric):
 
         # hack for bincounting 2 arrays together
         x = predictions + self.num_classes * targets
-        bincount_2d = np.bincount(
-            x.astype(np.int32), minlength=self.num_classes ** 2
-        )  # noqa: WPS114
+        bincount_2d = np.bincount(x.astype(np.int32), minlength=self.num_classes ** 2)
         assert bincount_2d.size == self.num_classes ** 2
         conf = bincount_2d.reshape((self.num_classes, self.num_classes))
 

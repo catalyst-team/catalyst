@@ -33,7 +33,7 @@ def build_parser() -> ArgumentParser:
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}",
+        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}"
     )
     subparsers.required = True
 

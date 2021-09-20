@@ -5,6 +5,7 @@ from operator import itemgetter
 import random
 
 import numpy as np
+
 import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
@@ -466,10 +467,7 @@ class DynamicBalanceClassSampler(Sampler):
         self._update()
 
     def _update(self) -> None:
-        """
-        Update d coefficients
-        Returns: None
-        """
+        """Update d coefficients."""
         current_d = {
             key: min(value ** self._exp_scheduler(), self.max_d)
             for key, value in self.original_d.items()
@@ -533,7 +531,7 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None,
+        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None
     ):
         """Sampler initialisation."""
         super().__init__(None)
@@ -675,8 +673,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-            "produced an inccorect number of batches. "
-            + "expected %i, but yielded %i" % (len(self), yielded)
+            "produced an inccorect number of batches."
+            f" expected {len(self)}, but yielded {yielded}"
         )
 
 
@@ -714,7 +712,7 @@ class DistributedSamplerWrapper(DistributedSampler):
               sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
-            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle,
+            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle
         )
         self.sampler = sampler
 
