@@ -37,7 +37,7 @@ class R2Squared(ICallbackLoaderMetric):
         self.y_sum = 0
         self.y_sq_sum = 0
 
-    def update(self, y_true, y_pred) -> None:
+    def update(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> None:
         """
         Update accumulated data with new batch
         """
