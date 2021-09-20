@@ -35,7 +35,7 @@ datasets = {
         ),
     },
     "CIFAR-100": {
-        "dataset": STL10,
+        "dataset": CIFAR100,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -65,7 +65,7 @@ datasets = {
         ),
     },
     "STL10": {
-        "dataset": CIFAR100,
+        "dataset": STL10,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
