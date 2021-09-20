@@ -850,6 +850,7 @@ class IRunner(ICallback, ILogger, ABC):
             self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:
             self.exception = ex
+            self._run_event("on_experiment_end")
             self._run_event("on_exception")
         return self
 

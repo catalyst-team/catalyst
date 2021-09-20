@@ -127,7 +127,7 @@ def main(args, unknown_args):
         runner._trial = trial
 
         if get_rank() <= 0:
-            dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+            dump_environment(logdir=runner.logdir, config=trial_config, configs_path=args.configs)
             dump_code(expdir=args.expdir, logdir=runner.logdir)
 
         runner.run()
