@@ -109,7 +109,6 @@ class OptunaPruningCallback(Callback):
 
         if self.trial.should_prune():
             message = "Trial was pruned at epoch {}.".format(runner.stage_epoch_step)
-            runner.close_log(scope="experiment")
             raise optuna.TrialPruned(message)
 
 
