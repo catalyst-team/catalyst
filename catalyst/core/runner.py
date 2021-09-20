@@ -637,7 +637,7 @@ class IRunner(ICallback, ILogger, ABC):
             warnings.warn(
                 "No ``ISchedulerCallback/SchedulerCallback`` were found "
                 "while runner.scheduler is not None."
-                "Do make scheduler step during ``runner.handle_batch``?"
+                "Do you make scheduler step during ``runner.handle_batch``?"
             )
 
     def _setup_callbacks(self):
