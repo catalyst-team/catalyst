@@ -1,6 +1,7 @@
 # flake8: noqa
 import argparse
 
+from datasets import datasets
 from sklearn.linear_model import LogisticRegression
 
 import torch.nn as nn
@@ -56,6 +57,10 @@ parser.add_argument(
 parser.add_argument(
     "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
 )
+parser.add_argument(
+    "--dataset", default="STL10", type=str, help="Dataset: CIFAR-10, CIFAR-100 or STL10"
+)
+
 if __name__ == "__main__":
 
     # args parse
@@ -65,32 +70,19 @@ if __name__ == "__main__":
     feature_dim, temperature = args.feature_dim, args.temperature
     offdig_lambda = args.offdig_lambda
     batch_size, epochs, num_workers = args.batch_size, args.epochs, args.num_workers
-
+    dataset = args.dataset
     # data
 
-    transforms = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-            torchvision.transforms.RandomResizedCrop(32),
-            torchvision.transforms.ColorJitter(0.8, 0.8, 0.8, 0.2),
-        ]
-    )
-
-    transform_original = transforms = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-        ]
-    )
+    transforms = datasets[dataset]["train_transform"]
+    transform_original = datasets[dataset]["valid_transform"]
 
     train_data = SelfSupervisedDatasetWrapper(
-        torchvision.datasets.CIFAR10(root="data", train=True, transform=None, download=True),
+        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
     test_data = SelfSupervisedDatasetWrapper(
-        torchvision.datasets.CIFAR10(root="data", train=False, transform=None, download=True),
+        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
@@ -114,13 +106,13 @@ if __name__ == "__main__":
             predict_key="sklearn_predict",
             predict_method="predict_proba",
         ),
-        # dl.OptimizerCallback(metric_key="loss"),
-        # dl.ControlFlowCallback(
-        #     dl.AccuracyCallback(
-        #         target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
-        #     ),
-        #     loaders="valid",
-        # ),
+        dl.OptimizerCallback(metric_key="loss"),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
+        ),
     ]
 
     model = Model(feature_dim, arch="resnet50")
@@ -141,5 +133,4 @@ if __name__ == "__main__":
         valid_metric="loss",
         logdir=args.logdir,
         minimize_valid_metric=True,
-        overfit=True,
     )
