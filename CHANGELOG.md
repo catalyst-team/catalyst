@@ -14,10 +14,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 - Superivised Contrastive example ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
 - extra warnings for runner-callbacks interaction ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `CategoricalRegressionLoss` and `QuantileRegressionLoss` to the `contrib` ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 
 ### Changed
 
 - full `Runner` cleanup, with callbacks and loaders destruction, moved to `PipelineParallelFairScaleEngine` only ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `HuberLoss` renamed to `HuberLossV0` for the PyTorch compatibility ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 
 ### Removed
 
