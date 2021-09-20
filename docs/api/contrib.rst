@@ -181,6 +181,30 @@ WingLoss
     :undoc-members:
     :show-inheritance:
 
+Regression
+""""""""""
+
+HuberLossV0
+*****************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.HuberLossV0
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CategoricalRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+QuantileRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 RecSys
 """"""
 

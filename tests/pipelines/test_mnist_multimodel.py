@@ -66,8 +66,7 @@ def train_experiment(device, engine=None):
         head = nn.Linear(128, 10)
         model = {"encoder": encoder, "head": head}
         optimizer = optim.Adam(
-            [{"params": encoder.parameters()}, {"params": head.parameters()}],
-            lr=0.02,
+            [{"params": encoder.parameters()}, {"params": head.parameters()}], lr=0.02
         )
         # <--- multi-model setup --->
         criterion = nn.CrossEntropyLoss()

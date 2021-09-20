@@ -121,6 +121,10 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
     def deinit_components(self, runner):
         """Deinits the runs components. In distributed mode should destroy process group."""
         # For some reasons FairScale requires to delete the Pipe model
+        del runner.callbacks
+        runner.callbacks = {}
+        del runner.loaders
+        runner.loaders = {}
         del runner.model
 
     def zero_grad(self, loss, model, optimizer) -> None:
