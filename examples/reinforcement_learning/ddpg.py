@@ -2,8 +2,9 @@
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
-import gym
 import numpy as np
+
+import gym
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -128,9 +129,7 @@ def generate_sessions(
 ) -> Tuple[float, int]:
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
-        r, t = generate_session(
-            env=env, network=network, sigma=sigma, replay_buffer=replay_buffer,
-        )
+        r, t = generate_session(env=env, network=network, sigma=sigma, replay_buffer=replay_buffer)
         sessions_reward += r
         sessions_steps += t
     return sessions_reward, sessions_steps
@@ -141,7 +140,7 @@ def get_network_actor(env):
     outer_fn = utils.outer_init
 
     network = torch.nn.Sequential(
-        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU(),
+        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU()
     )
     head = torch.nn.Sequential(nn.Linear(300, 1), nn.Tanh())
 
@@ -394,11 +393,11 @@ if __name__ == "__main__":
 
     loaders = {
         "train_game": DataLoader(
-            ReplayDataset(replay_buffer, epoch_size=epoch_size), batch_size=batch_size,
+            ReplayDataset(replay_buffer, epoch_size=epoch_size), batch_size=batch_size
         ),
     }
 
-    runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period,)
+    runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
 
     runner.train(
         engine=dl.DeviceEngine("cpu"),  # for simplicity reasons, let's run everything on cpu

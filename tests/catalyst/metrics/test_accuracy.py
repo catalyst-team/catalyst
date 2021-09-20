@@ -3,6 +3,7 @@ from typing import Dict, Iterable, List, Union
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric

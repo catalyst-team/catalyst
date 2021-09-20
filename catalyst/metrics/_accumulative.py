@@ -55,7 +55,7 @@ class AccumulativeMetric(ICallbackLoaderMetric):
         self.storage = defaultdict(torch.Tensor)
         for key in shape_type_dict:
             self.storage[key] = torch.empty(
-                size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"],
+                size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"]
             )
 
     def update(self, **kwargs) -> None:

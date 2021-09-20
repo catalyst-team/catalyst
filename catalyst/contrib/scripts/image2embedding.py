@@ -150,7 +150,7 @@
 #     set_global_seed(args.seed)
 #     prepare_cudnn(args.deterministic, args.benchmark)
 #
-#     IMG_SIZE = (args.img_size, args.img_size)  # noqa: WPS442
+#     IMG_SIZE = (args.img_size, args.img_size)
 #
 #     if args.traced_model is not None:
 #         device = get_device()

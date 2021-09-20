@@ -86,10 +86,11 @@ class SelfSupervisedDatasetWrapper(Dataset):
         return len(self.dataset)
 
     def __getitem__(self, idx) -> Dict[str, Any]:
-        """
-        Get item method for dataset
+        """Get item method for dataset
+
         Args:
             idx: index of the object
+
         Returns:
             Dict with left agumention (aug1), right agumention (aug2) and target
         """

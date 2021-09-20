@@ -55,7 +55,7 @@ class ISelfSupervisedRunner(IRunner):
         # 2. model and optimizer
         encoder = MnistSimpleNet(out_features=16)
         projection_head = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
         )
 
         class ContrastiveModel(torch.nn.Module):

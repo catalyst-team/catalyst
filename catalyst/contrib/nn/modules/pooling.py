@@ -74,7 +74,7 @@ class GlobalConcatPool2d(nn.Module):
         """Constructor method for the ``GlobalConcatPool2d`` class."""
         super().__init__()
         self.avg = GlobalAvgPool2d()
-        self.max = GlobalMaxPool2d()  # noqa: WPS125
+        self.max = GlobalMaxPool2d()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward call."""
@@ -158,7 +158,7 @@ class GlobalMaxAttnPool2d(nn.Module):
     def __init__(self, in_features, activation_fn="Sigmoid"):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
-        self.max = GlobalMaxPool2d()  # noqa: WPS125
+        self.max = GlobalMaxPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -185,7 +185,7 @@ class GlobalConcatAttnPool2d(nn.Module):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.avg = GlobalAvgPool2d()
-        self.max = GlobalMaxPool2d()  # noqa: WPS125
+        self.max = GlobalMaxPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

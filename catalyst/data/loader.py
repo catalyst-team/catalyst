@@ -5,6 +5,7 @@ import sys
 import threading
 
 import numpy as np
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -166,20 +167,20 @@ def _map_loop(
         for x in iterable:
             result = func(x)
             result_queue.put(result)
-    except BaseException:  # noqa: WPS424
+    except BaseException:
         error_queue.put(sys.exc_info())
     finally:
         done_event.set()
 
 
 def _prefetch_map(
-    func: Callable, iterable: Iterable, num_prefetches: int = 1, timeout: int = 2,
+    func: Callable, iterable: Iterable, num_prefetches: int = 1, timeout: int = 2
 ) -> Iterable:
     result_queue = queue.Queue(num_prefetches)
     error_queue = queue.Queue(1)
     done_event = threading.Event()
     map_thread = threading.Thread(
-        target=_map_loop, args=(func, iterable, result_queue, error_queue, done_event),
+        target=_map_loop, args=(func, iterable, result_queue, error_queue, done_event)
     )
     map_thread.daemon = True
     map_thread.start()

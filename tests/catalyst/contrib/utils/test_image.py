@@ -6,9 +6,7 @@ if SETTINGS.cv_required:
     from catalyst.contrib.utils.image import imread
 
 
-@pytest.mark.skipif(
-    not (SETTINGS.cv_required), reason="No catalyst[cv] required",
-)
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="No catalyst[cv] required")
 def test_imread():
     """Tests ``imread`` functionality."""
     jpg_rgb_uri = (

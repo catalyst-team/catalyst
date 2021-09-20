@@ -138,7 +138,7 @@ class SchedulerCallback(ISchedulerCallback):
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]],
+        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]]
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)

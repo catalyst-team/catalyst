@@ -62,7 +62,7 @@ def _upsample(
         x = F.interpolate(x, size=size, mode=interpolation_mode, align_corners=align_corners)
     else:
         x = F.interpolate(
-            x, scale_factor=scale, mode=interpolation_mode, align_corners=align_corners,
+            x, scale_factor=scale, mode=interpolation_mode, align_corners=align_corners
         )
     return x
 

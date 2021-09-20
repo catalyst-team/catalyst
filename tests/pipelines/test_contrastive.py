@@ -4,6 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.optim import Adam
 
@@ -55,7 +56,7 @@ def train_experiment(device, engine=None):
             ]
         )
 
-        transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,)),])
+        transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
         contrastive_mnist = SelfSupervisedDatasetWrapper(
@@ -72,7 +73,7 @@ def train_experiment(device, engine=None):
         # 2. model and optimizer
         encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True))
         projection_head = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True),
+            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
         )
 
         class ContrastiveModel(torch.nn.Module):
@@ -148,9 +149,7 @@ def train_experiment(device, engine=None):
 requirements_satisfied = SETTINGS.ml_required and SETTINGS.cv_required
 
 
-@mark.skipif(
-    not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required",
-)
+@mark.skipif(not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required")
 def test_on_cpu():
     train_experiment("cpu")
 

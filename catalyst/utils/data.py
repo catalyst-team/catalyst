@@ -128,7 +128,7 @@ def get_loaders_from_params(
     distributed = distributed_rank > -1
 
     loaders = OrderedDict()
-    for name, datasource in datasets.items():  # noqa: WPS426
+    for name, datasource in datasets.items():
         assert isinstance(
             datasource, (Dataset, dict)
         ), f"{datasource} should be Dataset or Dict. Got: {datasource}"

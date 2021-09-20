@@ -19,7 +19,7 @@ def build_args(parser):
         modified parser
     """
     parser.add_argument(
-        "--in-csv", type=Path, dest="in_csv", help="Path to the csv to split", required=True,
+        "--in-csv", type=Path, dest="in_csv", help="Path to the csv to split", required=True
     )
     parser.add_argument("-n", "--num-folds", type=int, default=5, help="Number of result folds")
     parser.add_argument(
@@ -48,11 +48,11 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "--out-csv", type=str, help="Output CSV path for train and valid parts", required=True,
+        "--out-csv", type=str, help="Output CSV path for train and valid parts", required=True
     )
 
     parser.add_argument(
-        "--tag2class", type=str, default=None, help="Path to YAML or JSON of label mappings",
+        "--tag2class", type=str, default=None, help="Path to YAML or JSON of label mappings"
     )
     parser.add_argument(
         "--tag-column",
@@ -62,12 +62,10 @@ def build_args(parser):
         help="Column of labels (works in pair with `--tag2class` flag)",
     )
     parser.add_argument(
-        "--class-column", type=str, default=None, dest="class_column", help="Column of classes",
+        "--class-column", type=str, default=None, dest="class_column", help="Column of classes"
     )
 
-    parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for split folds",  # noqa: WPS432
-    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for split folds")
 
     return parser
 

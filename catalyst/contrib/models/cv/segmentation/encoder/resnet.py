@@ -7,12 +7,9 @@ from torch import nn
 import torchvision
 
 from catalyst import utils
-from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS450, E501
-    _take,
-    EncoderSpec,
-)
+from catalyst.contrib.models.cv.segmentation.encoder.core import _take, EncoderSpec  # noqa: E501
 
-RESNET_PARAMS = {  # noqa: WPS407
+RESNET_PARAMS = {
     "resnet18": {"channels": [64, 64, 128, 256, 512], "strides": [2, 4, 8, 16, 32]},
     "resnet34": {"channels": [64, 64, 128, 256, 512], "strides": [2, 4, 8, 16, 32]},
     "resnet50": {"channels": [64, 256, 512, 1024, 2048], "strides": [2, 4, 8, 16, 32]},

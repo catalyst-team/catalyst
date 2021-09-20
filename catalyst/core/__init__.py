@@ -3,7 +3,7 @@
 # runner
 # callback
 
-from catalyst.core.runner import IRunner, RunnerException
+from catalyst.core.runner import IRunner, RunnerError
 from catalyst.core.callback import (
     ICallback,
     Callback,

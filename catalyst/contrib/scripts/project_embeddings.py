@@ -5,6 +5,7 @@ from os import path
 
 import numpy as np
 import pandas as pd
+
 from tensorboardX import SummaryWriter
 import torch
 
@@ -14,23 +15,23 @@ from catalyst.settings import SETTINGS
 def build_args(parser):
     """Constructs the command-line arguments."""
     parser.add_argument(
-        "--in-npy", type=str, help="path to npy with project embeddings", required=True,
+        "--in-npy", type=str, help="path to npy with project embeddings", required=True
     )
     parser.add_argument("--in-csv", type=str, help="path to csv with photos", required=True)
     parser.add_argument(
-        "--out-dir", type=str, default=None, help="directory to output files", required=True,
+        "--out-dir", type=str, default=None, help="directory to output files", required=True
     )
     parser.add_argument(
-        "--out-prefix", type=str, default=None, help="additional prefix to saved files",
+        "--out-prefix", type=str, default=None, help="additional prefix to saved files"
     )
     parser.add_argument(
-        "--img-col", type=str, default=None, help="column in the table that contains image paths",
+        "--img-col", type=str, default=None, help="column in the table that contains image paths"
     )
     parser.add_argument("--img-rootpath", type=str, help="path to photos directory")
     parser.add_argument(
         "--img-size",
         type=int,
-        default=16,  # noqa: WPS432
+        default=16,
         help="if --img-col is defined, "
         + "then images will be resized to (img-size, img-size, 3)",
     )
@@ -71,7 +72,7 @@ def _load_image_data(rootpath: str, paths: List, img_size: int):
 
         image_names = [path.join(rootpath, name) for name in paths]
         img_data = np.stack([_load_image(name, img_size) for name in image_names], axis=0)
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)  # noqa: WPS432
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
         img_data = torch.from_numpy(img_data)
 
     return img_data
@@ -98,7 +99,7 @@ def main(args, _=None):
 
     if args.img_col is not None:
         img_data = _load_image_data(
-            rootpath=args.img_rootpath, paths=df[args.img_col].values, img_size=args.img_size,
+            rootpath=args.img_rootpath, paths=df[args.img_col].values, img_size=args.img_size
         )
     else:
         img_data = None

@@ -66,17 +66,13 @@ def _initialize_apex(model, optimizer=None, **engine_params):
 # taken form https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/components.py
 def _patch_forward(model):
     input_caster_lambda = (
-        lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options["cast_model_type"]
-        )  # noqa: WPS437
+        lambda tensor: tensor.to(apex.amp._amp_state.opt_properties.options["cast_model_type"])
         if tensor.is_floating_point()
         else tensor
     )
     output_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options.get(
-                "cast_model_outputs", torch.float32
-            )  # noqa: WPS437
+            apex.amp._amp_state.opt_properties.options.get("cast_model_outputs", torch.float32)
         )
         if tensor.is_floating_point()
         else tensor
@@ -89,10 +85,10 @@ def _patch_forward(model):
         output_caster=output_caster_lambda,
         **kwargs,
     ):
-        return apex.amp._initialize.applier(  # noqa: WPS437
+        return apex.amp._initialize.applier(
             old_fwd(
-                *apex.amp._initialize.applier(args, input_caster),  # noqa: WPS437
-                **apex.amp._initialize.applier(kwargs, input_caster),  # noqa: WPS437
+                *apex.amp._initialize.applier(args, input_caster),
+                **apex.amp._initialize.applier(kwargs, input_caster),
             ),
             output_caster,
         )
@@ -186,7 +182,7 @@ class APEXEngine(DeviceEngine):
         return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         # model
@@ -217,7 +213,7 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -343,7 +339,7 @@ class DataParallelAPEXEngine(APEXEngine):
         )
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -499,7 +495,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         self._device = f"cuda:{int(self._rank)}"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -526,7 +522,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
