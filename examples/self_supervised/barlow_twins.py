@@ -1,7 +1,6 @@
 # flake8: noqa
 import argparse
 
-from datasets import datasets
 from sklearn.linear_model import LogisticRegression
 
 import torch.nn as nn
@@ -15,13 +14,16 @@ from catalyst import dl
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
+from examples.self_supervised.common import add_arguments, datasets
 
 
 class Model(nn.Module):
     def __init__(self, feature_dim=128, **resnet_kwargs):
         super(Model, self).__init__()
         # encoder
-        self.encoder = nn.Sequential(ResnetEncoder(**resnet_kwargs), nn.Flatten())
+        self.encoder = nn.Sequential(
+            ResnetEncoder(**resnet_kwargs), nn.Flatten()
+        )
         # projection head
         self.g = nn.Sequential(
             nn.Linear(2048, 512, bias=False),
@@ -37,29 +39,7 @@ class Model(nn.Module):
 
 
 parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
-parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
-parser.add_argument("--temperature", default=0.5, type=float, help="Temperature used in softmax")
-parser.add_argument(
-    "--batch_size", default=512, type=int, help="Number of images in each mini-batch"
-)
-parser.add_argument(
-    "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
-)
-parser.add_argument(
-    "--num_workers", default=8, type=float, help="Number of workers to process a dataloader"
-)
-parser.add_argument(
-    "--offdig_lambda",
-    default=0.005,
-    type=float,
-    help="Lambda that controls the on- and off-diagonal terms",
-)
-parser.add_argument(
-    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
-)
-parser.add_argument(
-    "--dataset", default="STL10", type=str, choices=datasets.keys(), help="Dataset: CIFAR-10, CIFAR-100 or STL10"
-)
+add_arguments(parser)
 
 if __name__ == "__main__":
 
@@ -69,7 +49,11 @@ if __name__ == "__main__":
     # hyperparams
     feature_dim, temperature = args.feature_dim, args.temperature
     offdig_lambda = args.offdig_lambda
-    batch_size, epochs, num_workers = args.batch_size, args.epochs, args.num_workers
+    batch_size, epochs, num_workers = (
+        args.batch_size,
+        args.epochs,
+        args.num_workers,
+    )
     dataset = args.dataset
     # data
 
@@ -77,23 +61,33 @@ if __name__ == "__main__":
     transform_original = datasets[dataset]["valid_transform"]
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        datasets[dataset]["dataset"](
+            root="data", train=True, transform=None, download=True
+        ),
         transforms=transforms,
         transform_original=transform_original,
     )
     test_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        datasets[dataset]["dataset"](
+            root="data", train=False, transform=None, download=True
+        ),
         transforms=transforms,
         transform_original=transform_original,
     )
 
-    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
-    valid_loader = DataLoader(test_data, batch_size=batch_size, pin_memory=True)
+    train_loader = DataLoader(
+        train_data, batch_size=batch_size, shuffle=True, pin_memory=True
+    )
+    valid_loader = DataLoader(
+        test_data, batch_size=batch_size, pin_memory=True
+    )
 
     callbacks = [
         dl.ControlFlowCallback(
             dl.CriterionCallback(
-                input_key="projection_left", target_key="projection_right", metric_key="loss"
+                input_key="projection_left",
+                target_key="projection_right",
+                metric_key="loss",
             ),
             loaders="train",
         ),
@@ -109,7 +103,9 @@ if __name__ == "__main__":
         dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
-                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+                target_key="target",
+                input_key="sklearn_predict",
+                topk_args=(1, 3),
             ),
             loaders="valid",
         ),
