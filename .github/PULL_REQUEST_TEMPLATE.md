@@ -10,6 +10,7 @@
 - [ ] Did you add your new functionality to the docs?
 - [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
 - [ ] Did you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` and `minimal` requirements?
+- [ ] Did you check XLA integration with [single](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_single_process.ipynb) and [multiple](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_multi_process.ipynb) processes?
 
 <!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->
 

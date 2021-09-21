@@ -3,16 +3,27 @@ from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from functools import lru_cache
 import logging
+import warnings
 
 import torch
-import torch.distributed
-import torch.multiprocessing
-from torch.utils.data import DataLoader, Dataset, DistributedSampler
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
-from catalyst.core.callback import Callback, ICallback
+from catalyst.core.callback import (
+    Callback,
+    ICallback,
+    ICriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+)
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
+from catalyst.core.misc import (
+    callback_isinstance,
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
     Criterion,
@@ -26,7 +37,6 @@ from catalyst.typing import (
     Sampler,
     Scheduler,
 )
-from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 LOGGER = logging.getLogger(__name__)
@@ -52,11 +62,24 @@ def _get_batch_size(loader: DataLoader):
         return batch_size
     raise NotImplementedError(
         "No `batch_size` found,"
-        "please specity it throught `loader.batch_size`, or `loader.batch_sampler.batch_size`"
+        "please specify it with `loader.batch_size`, or `loader.batch_sampler.batch_size`"
     )
 
 
-class RunnerException(Exception):
+def _get_num_samples(loader: DataLoader):
+    batch_size = _get_batch_size(loader)
+    if isinstance(loader.batch_sampler, BatchSampler):
+        # pytorch default item-based samplers
+        if loader.drop_last:
+            return (len(loader.dataset) // batch_size) * batch_size
+        else:
+            return len(loader.dataset)
+    else:
+        # pytorch batch-based samplers
+        return len(loader) * batch_size
+
+
+class RunnerError(Exception):
     """Exception class for all runner errors."""
 
     pass
@@ -203,9 +226,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     """
 
-    def __init__(
-        self, model: RunnerModel = None, engine: IEngine = None,
-    ):
+    def __init__(self, model: RunnerModel = None, engine: IEngine = None):
         """Init."""
         # the core
         self.model: RunnerModel = model
@@ -265,7 +286,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._stage_rank: int = -1
         self._stage_world_size: int = -1
 
-    # @TODO: remove hotfix
+    # @TODO: remove hotfix?
     @property
     def device(self) -> Device:
         """Returns the runner's device instance."""
@@ -303,6 +324,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def _log_defaults(self) -> Dict:
+        # TODO: add rank and other dist params here
         return {
             # experiment info
             "run_key": self.run_key,
@@ -353,12 +375,12 @@ class IRunner(ICallback, ILogger, ABC):
 
     def get_trial(self) -> Optional[ITrial]:
         """Returns the trial for the run."""
-        return None  # noqa: WPS324
+        return None
 
     @abstractmethod
     def get_engine(self) -> IEngine:
         """Returns the engine for the run."""
-        return None  # noqa: WPS324
+        return None
 
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the loggers for the run."""
@@ -411,26 +433,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         raise NotImplementedError
 
-    # def get_transforms(self, stage: str = None):
-    #     """Returns the data transforms for a given stage and dataset.
-    #
-    #     Args:
-    #         stage: stage name of interest,
-    #             like "pretrain" / "train" / "finetune" / etc
-    #         dataset: dataset name of interest,
-    #             like "train" / "valid" / "infer"
-    #
-    #     .. note::
-    #         For datasets/loaders naming please follow
-    #         :py:mod:`catalyst.core.runner` documentation.
-    #
-    #     Returns:  # noqa: DAR202
-    #         Data transformations to use for specified dataset.
-    #
-    #     """
-    #     raise NotImplementedError
-
-    @abstractmethod  # noqa: WPS463
+    @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
@@ -451,7 +454,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         pass
 
-    @abstractmethod  # noqa: WPS463
+    @abstractmethod
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage and epoch.
 
@@ -490,7 +493,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Criterion: criterion for a given stage.
         """
-        return None  # noqa: WPS324
+        return None
 
     def get_optimizer(self, stage: str, model: Model) -> Optional[Optimizer]:
         """Returns the optimizer for a given stage and model.
@@ -508,7 +511,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Optimizer: optimizer for a given stage and model.
         """
-        return None  # noqa: WPS324
+        return None
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
@@ -525,7 +528,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
-        return None  # noqa: WPS324
+        return None
 
     def _get_model(self) -> Model:
         self.model = self.get_model(stage=self.stage_key)
@@ -612,12 +615,38 @@ class IRunner(ICallback, ILogger, ABC):
             scheduler_fn=self._get_scheduler,
         )
 
+    def _check_callbacks(self):
+        is_callback_exists = lambda callback_fn: any(
+            callback_isinstance(x, callback_fn) for x in self.callbacks.values()
+        )
+        if isinstance(self.criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+            warnings.warn(
+                "No ``ICriterionCallback/CriterionCallback`` were found "
+                "while runner.criterion is not None."
+                "Do you compute the loss during ``runner.handle_batch``?"
+            )
+        if isinstance(self.optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            warnings.warn(
+                "No ``IOptimizerCallback/OptimizerCallback`` were found "
+                "while runner.optimizer is not None."
+                "Do run backward pass during ``runner.handle_batch``?"
+            )
+        if isinstance(self.scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+            ISchedulerCallback
+        ):
+            warnings.warn(
+                "No ``ISchedulerCallback/SchedulerCallback`` were found "
+                "while runner.scheduler is not None."
+                "Do you make scheduler step during ``runner.handle_batch``?"
+            )
+
     def _setup_callbacks(self):
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
         callbacks = self.get_callbacks(self.stage_key)
         callbacks = filter_callbacks_by_node(callbacks)
         callbacks = sort_callbacks_by_order(callbacks)
         self.callbacks = callbacks
+        self._check_callbacks()
 
     def on_experiment_start(self, runner: "IRunner"):
         """Event handler."""
@@ -635,6 +664,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler."""
+        # if self.engine.is_master_process and len(self.loggers) == 0:
+        #     self.loggers = self.get_loggers()
+        #     self.log_hparams(hparams=self.hparams, scope="experiment")
+
         assert self.stage_key is not None
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
         self.stage_epoch_len = self.get_stage_len(stage=self.stage_key)
@@ -648,7 +681,7 @@ class IRunner(ICallback, ILogger, ABC):
                 del self.loggers
                 self.loggers = {}
 
-        ddp_sync_run(self._setup_loaders)
+        self.engine.ddp_sync_run(self._setup_loaders)
         self._setup_components()
         self._setup_callbacks()
         self.log_hparams(hparams=self.hparams, scope="stage")
@@ -664,7 +697,7 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+                raise RunnerError(f"DataLoader with name {loader_key} is empty.")
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
@@ -676,7 +709,7 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
         self.loader_batch_size: int = _get_batch_size(self.loader)
         self.loader_batch_len: int = len(self.loader)
-        self.loader_sample_len: int = len(self.loader.dataset)
+        self.loader_sample_len: int = _get_num_samples(self.loader)
         self.loader_batch_step: int = 0
         self.loader_sample_step: int = 0
         self.loader_metrics: Dict = defaultdict(None)
@@ -688,6 +721,7 @@ class IRunner(ICallback, ILogger, ABC):
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
             self.loader.sampler.set_epoch(self.stage_epoch_step)
+        self.loader = self.engine.autocast_loader(self.loader)
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler."""
@@ -709,15 +743,9 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
-        # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
-        # they could not be synced before, so we have to sync them in the end of the batch
-        # @TODO: could be done better
-        if self.engine.is_ddp:
-            self.batch_metrics = {
-                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-                for k, v in self.batch_metrics.items()
-            }
-        self.log_metrics(metrics=self.batch_metrics, scope="batch")
+        # batch-metrics sync under ddp setup is too computation heavy
+        if not self.engine.is_ddp:
+            self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
@@ -733,15 +761,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        del self.callbacks
-        self.callbacks = {}
-        del self.loaders
-        self.loaders = {}
         self.engine.deinit_components(runner=self)
         self.close_log(scope="stage")
 
-        # due to multiprocessing setup we have to close current loggers
-        # to prevent EOF-like errors
+        # due to multiprocessing setup we have to close current loggers to prevent EOF-like errors
         if self.engine.is_ddp:
             self.flush_log()
             self.close_log()
@@ -814,15 +837,7 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if self.engine.is_ddp:
-                # ddp-device branch
-                world_size = self.engine.world_size
-                torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
-                )
-            else:
-                # single-device branch (cpu, gpu, dp)
-                self._run_stage()
+            self.engine.spawn(self._run_stage)
         self._run_event("on_experiment_end")
 
     def run(self) -> "IRunner":
@@ -835,8 +850,9 @@ class IRunner(ICallback, ILogger, ABC):
             self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:
             self.exception = ex
+            self._run_event("on_experiment_end")
             self._run_event("on_exception")
         return self
 
 
-__all__ = ["IRunner", "RunnerException"]
+__all__ = ["IRunner", "RunnerError"]

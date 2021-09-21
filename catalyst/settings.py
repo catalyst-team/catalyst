@@ -121,6 +121,7 @@ def _is_cv_available():
         import cv2  # noqa: F401
         import imageio  # noqa: F401
         from skimage.color import label2rgb, rgb2gray  # noqa: F401
+
         import torchvision  # noqa: F401
 
         return True
@@ -161,6 +162,15 @@ def _is_mlflow_available():
 def _is_wandb_available():
     try:
         import wandb  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+def _is_comet_available():
+    try:
+        import comet_ml  # noqa: F401
 
         return True
     except ImportError:
@@ -217,6 +227,7 @@ class Settings(FrozenClass):
         neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
         wandb_required: Optional[bool] = None,
+        comet_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -329,6 +340,12 @@ class Settings(FrozenClass):
             wandb_required,
             _is_wandb_available,
             "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
+        self.comet_required: bool = _get_optional_value(
+            comet_required,
+            _is_comet_available,
+            "comet is not available, to install, run 'pip install comet_ml'.",
         )
 
         # self.wandb_required: bool = wandb_required
@@ -491,7 +508,7 @@ class MergedConfigParser:
 
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = {"store_true", "store_false"}  # noqa: WPS115
+    GETBOOL_ACTIONS = {"store_true", "store_false"}
 
     def __init__(self, config_finder: ConfigFileFinder):
         """Initialize the MergedConfigParser instance.
@@ -505,7 +522,7 @@ class MergedConfigParser:
     def _normalize_value(self, option, value):
         final_value = option.normalize(value, self.config_finder.local_directory)
         logger.debug(
-            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'",
+            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'"
         )
         return final_value
 
@@ -545,7 +562,6 @@ class MergedConfigParser:
 SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-
 
 __all__ = [
     "SETTINGS",

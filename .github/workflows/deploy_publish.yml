@@ -6,27 +6,28 @@ on:
 
 jobs:
 
-  # build-pypi:
-  #   runs-on: ubuntu-latest
+  build-pypi:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6]
 
-  #   steps:
-  #     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-  #     - name: set up Python 3.6
-  #       uses: actions/setup-python@v1
-  #       with:
-  #         python-version: 3.6
-
-  #     - name: Generating distribution archives
-  #       run: |
-  #         pip install --upgrade setuptools wheel
-  #         python setup.py sdist bdist_wheel --universal
-
-  #     - name: Publish a Python distribution to PyPI
-  #       uses: pypa/gh-action-pypi-publish@master
-  #       with:
-  #         user: __token__
-  #         password: ${{ secrets.PYPI_PASSWORD }}
+      - name: Generating distribution archives
+        run: |
+          pip install --upgrade setuptools wheel
+          python setup.py sdist bdist_wheel --universal
+      - name: Publish a Python distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
 
   build-docs:
     name: build-docs
@@ -35,15 +36,11 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        os: [ubuntu-18.04] # , windows-2019, macOS-10.15]
-        python-version: [3.6] #, 3.7, 3.8]
-        requires: ['latest']
-#        exclude:
-#          # excludes node 4 on macOS
-#          - python-version: 3.8
-#            requires: 'minimal'
-    # Timeout: 4
+        os: [ubuntu-18.04]
+        python-version: [3.6]
+        requires: [latest]
     timeout-minutes: 30
+
     steps:
       - uses: actions/checkout@v2
 
@@ -115,7 +112,7 @@ jobs:
           # commit changes
           git config --local user.email "action@ithub.com"
           git config --local user.name "GitHub Action"
-          git add .
+          git add . ../versions.html
           git commit -m "${TAG:=update docs}" || true
 
       - name: push changes
@@ -129,7 +126,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        catalyst_requirements: ["base", "all"]
+        catalyst_requirements: [base, all]
         pytorch:
           # - "1.9.0-cuda11.1-cudnn8-runtime"
           - "1.9.0-cuda11.1-cudnn8-devel"
@@ -144,7 +141,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Publish Docker to Docker Hub (base)
-        if: matrix.catalyst_requirements == "base"
+        if: ${{ matrix.catalyst_requirements == 'base' }}
         uses: elgohr/Publish-Docker-Github-Action@master
         env:
           PYTORCH_TAG: "${{ matrix.pytorch }}"
@@ -156,7 +153,7 @@ jobs:
           tags: "${{ github.event.release.tag_name }}-pytorch-${{ matrix.pytorch }}"
 
       - name: Publish Docker to Docker Hub ([all])
-        if: matrix.catalyst_requirements == "all"
+        if: ${{ matrix.catalyst_requirements == 'all' }}
         uses: elgohr/Publish-Docker-Github-Action@master
         env:
           PYTORCH_TAG: "${{ matrix.pytorch }}"
@@ -166,4 +163,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: docker/Dockerfile
-          tags: "${{ github.event.release.tag_name }}-"${{ matrix.catalyst_requirements }}-pytorch-${{ matrix.pytorch }}"
+          tags: "${{ github.event.release.tag_name }}-${{ matrix.catalyst_requirements }}-pytorch-${{ matrix.pytorch }}"

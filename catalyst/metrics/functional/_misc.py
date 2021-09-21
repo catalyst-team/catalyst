@@ -2,6 +2,7 @@ from typing import Optional, Sequence, Tuple
 import logging
 
 import numpy as np
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
@@ -45,7 +46,7 @@ def process_multiclass_components(
         # as far as we expect the outputs/targets tensors to be int64
         # we could find number of classes as max available number
         num_classes = max(
-            int(outputs.max().detach().item() + 1), int(targets.max().detach().item() + 1),
+            int(outputs.max().detach().item() + 1), int(targets.max().detach().item() + 1)
         )
 
     if outputs.dim() == 1:
@@ -100,7 +101,7 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
 
 
 def process_multilabel_components(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
+    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """General preprocessing for multilabel-based metrics.
 
@@ -160,7 +161,7 @@ def process_multilabel_components(
 
 
 def get_binary_statistics(
-    outputs: Tensor, targets: Tensor, label: int = 1,
+    outputs: Tensor, targets: Tensor, label: int = 1
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
@@ -198,7 +199,7 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None,
+    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
@@ -235,7 +236,7 @@ def get_multiclass_statistics(
         # )
     """
     outputs, targets, num_classes = process_multiclass_components(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes
     )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
@@ -257,7 +258,7 @@ def get_multiclass_statistics(
 
 
 def get_multilabel_statistics(
-    outputs: Tensor, targets: Tensor,
+    outputs: Tensor, targets: Tensor
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,

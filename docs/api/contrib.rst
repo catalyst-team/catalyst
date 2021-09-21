@@ -181,6 +181,75 @@ WingLoss
     :undoc-members:
     :show-inheritance:
 
+Regression
+""""""""""
+
+HuberLossV0
+*****************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.HuberLossV0
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CategoricalRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+QuantileRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+RecSys
+""""""
+
+AdaptiveHingeLoss
+*****************
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+BPRLoss
+*******
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.BPRLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+HingeLoss
+*********
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.HingeLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+LogisticLoss
+************
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.LogisticLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+RocStarLoss
+***********
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.RocStarLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+WARPLoss
+********
+.. autoclass:: catalyst.contrib.nn.criterion.recsys.WARPLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Modules
 ~~~~~~~~~~~~~~~~

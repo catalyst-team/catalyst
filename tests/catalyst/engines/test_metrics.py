@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 import time
 
 from pytest import mark
+
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, DistributedSampler, SequentialSampler
@@ -30,7 +31,6 @@ from catalyst.engines.torch import DataParallelEngine, DeviceEngine, Distributed
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
 from .misc import TwoBlobsDataset, TwoBlobsModel
 
 logger = logging.getLogger(__name__)
@@ -120,7 +120,7 @@ class IRunnerMixin(IRunner):
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,)),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
             "classification": PrecisionRecallF1SupportCallback(
-                input_key="logits", target_key="targets", num_classes=4,
+                input_key="logits", target_key="targets", num_classes=4
             ),
             # "optimizer": OptimizerCallback(metric_key="loss"),
             # "checkpoint": CheckpointCallback(
@@ -245,7 +245,7 @@ def train_device_config_runner(logdir, device):
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2), reason="Number of CUDA devices is not 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2), reason="Number of CUDA devices is not 2"
 )
 def test_device_and_ddp_metrics():
     # we have to keep dataset_len, num_gpu and batch size synced

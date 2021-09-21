@@ -4,6 +4,7 @@ import os
 import re
 
 import numpy as np
+
 import torch
 from torch import nn, Tensor
 import torch.backends
@@ -25,8 +26,11 @@ from catalyst.utils.misc import maybe_recursive_call, merge_dicts
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine
 
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
+
 # TODO: move to global registry with activation functions
-ACTIVATIONS = {  # noqa: WPS407
+ACTIVATIONS = {
     None: "sigmoid",
     nn.Sigmoid: "sigmoid",
     nn.Tanh: "tanh",
@@ -172,15 +176,12 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 def get_device() -> torch.device:
     """Simple returning the best available device (TPU > GPU > CPU)."""
-    is_available_gpu = torch.cuda.is_available()
-    device = "cpu"
+    device = torch.device("cpu")
     if SETTINGS.xla_required:
-        import torch_xla.core.xla_model as xm
-
         device = xm.xla_device()
-    elif is_available_gpu:
-        device = "cuda"
-    return torch.device(device)
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    return device
 
 
 def get_available_engine(
@@ -556,7 +557,7 @@ def pack_checkpoint(
         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2save is None:
             continue
@@ -595,11 +596,11 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
+            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"]
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2load is None:
             continue

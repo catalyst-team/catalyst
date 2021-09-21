@@ -4,6 +4,7 @@ from itertools import chain
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count, masked_cmc_score
@@ -49,7 +50,7 @@ TEST_DATA_LESS_BIG = (
 def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk
     )
     assert np.isclose(out, expected)
 
@@ -61,18 +62,18 @@ def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
 def test_metric_less(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk
     )
     assert out - EPS <= expected
 
 
 @pytest.mark.parametrize(
-    "distance_matrix,conformity_matrix,topk,expected", chain(TEST_DATA_GREATER_SMALL),
+    "distance_matrix,conformity_matrix,topk,expected", chain(TEST_DATA_GREATER_SMALL)
 )
 def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk
     )
     assert out + EPS >= expected
 
@@ -133,7 +134,7 @@ def generate_samples_for_cmc_score() -> List[
         query_labels = torch.tensor(query_labels, dtype=torch.long)
         gallery_labels = torch.tensor(gallery_labels, dtype=torch.long)
 
-        data.append((error_rate, query_embs, query_labels, gallery_embs, gallery_labels,))
+        data.append((error_rate, query_embs, query_labels, gallery_embs, gallery_labels))
     return data
 
 
@@ -171,8 +172,8 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
     ),
     (
         (
-            torch.tensor([[1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],]).float(),
-            torch.tensor([[1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],]).float(),
+            torch.tensor([[1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1]]).float(),
+            torch.tensor([[1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0]]).float(),
             torch.tensor(
                 [
                     [True, False, False],
@@ -182,14 +183,14 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
                 ]
             ),
             torch.tensor(
-                [[False, True, True], [True, True, True], [True, False, True], [True, True, True],]
+                [[False, True, True], [True, True, True], [True, False, True], [True, True, True]]
             ),
             1,
             0.75,
         ),
         (
-            torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1],]).float(),
-            torch.tensor([[0, 1, 0], [0, 0, 1], [1, 0, 1],]).float(),
+            torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1]]).float(),
+            torch.tensor([[0, 1, 0], [0, 0, 1], [1, 0, 1]]).float(),
             torch.tensor(
                 [
                     [False, False, True],
@@ -199,12 +200,7 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
                 ]
             ),
             torch.tensor(
-                [
-                    [True, True, True],
-                    [False, True, True],
-                    [True, False, True],
-                    [True, True, False],
-                ]
+                [[True, True, True], [False, True, True], [True, False, True], [True, True, False]]
             ),
             1,
             0.25,
@@ -212,7 +208,7 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
     ),
 )
 def test_masked_cmc_score(
-    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk, expected,
+    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk, expected
 ):
     score = masked_cmc_score(
         query_embeddings=query_embeddings,
@@ -225,7 +221,7 @@ def test_masked_cmc_score(
 
 
 @pytest.mark.parametrize(
-    ("query_embeddings", "gallery_embeddings", "conformity_matrix", "available_samples", "topk",),
+    ("query_embeddings", "gallery_embeddings", "conformity_matrix", "available_samples", "topk"),
     (
         (
             torch.rand(size=(query_size, 32)).float(),
@@ -240,7 +236,7 @@ def test_masked_cmc_score(
     ),
 )
 def test_no_mask_cmc_score(
-    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk,
+    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk
 ) -> None:
     """
     In this test we just check that masked_cmc_score is equal to cmc_score

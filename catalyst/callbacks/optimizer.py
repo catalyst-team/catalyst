@@ -2,7 +2,7 @@ from typing import Callable, Dict, TYPE_CHECKING, Union
 from functools import partial
 import logging
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import CallbackNode, CallbackOrder, IOptimizerCallback
 from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
 from catalyst.utils import get_optimizer_momentum_list
@@ -23,12 +23,6 @@ def zero_grad(optimizer: Optimizer) -> None:
     for group in optimizer.param_groups:
         for p in group["params"]:
             p.grad = None
-
-
-class IOptimizerCallback(Callback):
-    """Optimizer callback interface, abstraction over optimizer step."""
-
-    pass
 
 
 class OptimizerCallback(IOptimizerCallback):

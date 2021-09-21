@@ -3,9 +3,10 @@ from typing import Iterable, Union
 
 import numpy as np
 import pytest
+
 import torch
 
-from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._additive import AdditiveMetric
 
 
 @pytest.mark.parametrize(
@@ -33,7 +34,7 @@ def test_additive_mean(
         num_samples_list: list of num_samples
         true_values_list: list of metric intermediate value
     """
-    metric = AdditiveValueMetric()
+    metric = AdditiveMetric()
     for value, num_samples, true_value in zip(values_list, num_samples_list, true_values_list):
         metric.update(value=value, num_samples=num_samples)
         mean, _ = metric.compute()
@@ -65,7 +66,7 @@ def test_additive_std(
         num_samples_list: list of num_samples
         true_values_list: list of metric intermediate value
     """
-    metric = AdditiveValueMetric()
+    metric = AdditiveMetric()
     for value, num_samples, true_value in zip(values_list, num_samples_list, true_values_list):
         metric.update(value=value, num_samples=num_samples)
         _, std = metric.compute()
@@ -102,9 +103,9 @@ def test_additive_mode(
         values_list: list of values to update metric
         num_samples_list: list of num_samples
         true_values_list: list of metric intermediate value
-        mode: `AdditiveValueMetric` mode
+        mode: `AdditiveMetric` mode
     """
-    metric = AdditiveValueMetric(mode=mode)
+    metric = AdditiveMetric(mode=mode)
     for value, num_samples, true_value in zip(values_list, num_samples_list, true_values_list):
         metric.update(value=value, num_samples=num_samples)
         mean, _ = metric.compute()

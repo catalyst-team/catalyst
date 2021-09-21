@@ -32,10 +32,10 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "--out-dataset", type=str, default=None, required=True, help="Path to output dataframe",
+        "--out-dataset", type=str, default=None, required=True, help="Path to output dataframe"
     )
     parser.add_argument(
-        "--out-labeling", type=str, default=None, required=True, help="Path to output JSON",
+        "--out-labeling", type=str, default=None, required=True, help="Path to output JSON"
     )
 
     parser.add_argument("--tag-column", type=str, default="tag", help="Target column name")
@@ -45,9 +45,7 @@ def build_args(parser):
         default=None,
         help="Separator if you want to use several target columns",
     )
-    boolean_flag(
-        parser, "recursive", default=False, help="Include subdirs in dataset",
-    )
+    boolean_flag(parser, "recursive", default=False, help="Include subdirs in dataset")
 
     return parser
 

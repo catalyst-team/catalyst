@@ -2,6 +2,7 @@ from typing import Any, Callable, Tuple, Union
 import functools
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics._metric import IMetric
@@ -19,7 +20,7 @@ def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
     return _wrapper
 
 
-class AdditiveValueMetric(IMetric):
+class AdditiveMetric(IMetric):
     """This metric computes mean and std values of input data.
 
     Args:
@@ -40,7 +41,7 @@ class AdditiveValueMetric(IMetric):
         num_samples_list = [1, 2, 3, 4, 5]
         true_values = [1, 1.666667, 2.333333, 3, 3.666667]
 
-        metric = metrics.AdditiveValueMetric()
+        metric = metrics.AdditiveMetric()
         for value, num_samples, true_value in zip(values, num_samples_list, true_values):
             metric.update(value=value, num_samples=num_samples)
             mean, _ = metric.compute()
@@ -78,7 +79,7 @@ class AdditiveValueMetric(IMetric):
             def on_loader_start(self, runner):
                 super().on_loader_start(runner)
                 self.meters = {
-                    key: metrics.AdditiveValueMetric(compute_on_call=False)
+                    key: metrics.AdditiveMetric(compute_on_call=False)
                     for key in ["loss", "accuracy01", "accuracy03"]
                 }
 
@@ -130,7 +131,7 @@ class AdditiveValueMetric(IMetric):
     """
 
     def __init__(self, compute_on_call: bool = True, mode: str = "numpy"):
-        """Init AdditiveValueMetric"""
+        """Init AdditiveMetric"""
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
         self.value = 0.0
@@ -172,7 +173,7 @@ class AdditiveValueMetric(IMetric):
 
         if self.n == 1:
             # Force a copy in torch/numpy
-            self.mean = 0.0 + value  # noqa: WPS345
+            self.mean = 0.0 + value
             self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0
@@ -195,4 +196,6 @@ class AdditiveValueMetric(IMetric):
         return self.mean, self.std
 
 
-__all__ = ["AdditiveValueMetric"]
+AdditiveValueMetric = AdditiveMetric
+
+__all__ = ["AdditiveMetric", "AdditiveValueMetric"]

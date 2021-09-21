@@ -2,8 +2,9 @@
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
-import gym
 import numpy as np
+
+import gym
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,7 +15,7 @@ from catalyst import dl, metrics, utils
 
 # On-policy common
 
-Rollout = namedtuple("Rollout", field_names=["states", "actions", "rewards",])
+Rollout = namedtuple("Rollout", field_names=["states", "actions", "rewards"])
 
 
 class RolloutBuffer:
@@ -63,7 +64,7 @@ def get_cumulative_rewards(rewards, gamma=0.99):
 
 
 def to_one_hot(y, n_dims=None):
-    """ Takes an integer vector and converts it to 1-hot matrix. """
+    """Takes an integer vector and converts it to 1-hot matrix."""
     y_tensor = y
     y_tensor = y_tensor.type(torch.LongTensor).view(-1, 1)
     n_dims = n_dims if n_dims is not None else int(torch.max(y_tensor)) + 1
@@ -80,7 +81,7 @@ def get_action(env, network: nn.Module, state: np.array) -> int:
 
 
 def generate_session(
-    env, network: nn.Module, t_max: int = 1000, rollout_buffer: Optional[RolloutBuffer] = None,
+    env, network: nn.Module, t_max: int = 1000, rollout_buffer: Optional[RolloutBuffer] = None
 ) -> Tuple[float, int]:
     total_reward = 0
     states, actions, rewards = [], [], []
@@ -115,7 +116,7 @@ def generate_sessions(
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
         r, t = generate_session(
-            env=env, network=network, t_max=t_max, rollout_buffer=rollout_buffer,
+            env=env, network=network, t_max=t_max, rollout_buffer=rollout_buffer
         )
         sessions_reward += r
         sessions_steps += t
@@ -188,16 +189,14 @@ class GameCallback(dl.Callback):
 
 
 class CustomRunner(dl.Runner):
-    def __init__(
-        self, *, gamma: float, entropy_coef: float = 0.1, **kwargs,
-    ):
+    def __init__(self, *, gamma: float, entropy_coef: float = 0.1, **kwargs):
         super().__init__(**kwargs)
         self.gamma: float = gamma
         self.entropy_coef: float = entropy_coef
 
     def on_loader_start(self, runner: dl.IRunner):
         super().on_loader_start(runner)
-        self.meters = {key: metrics.AdditiveValueMetric(compute_on_call=False) for key in ["loss"]}
+        self.meters = {key: metrics.AdditiveMetric(compute_on_call=False) for key in ["loss"]}
 
     def handle_batch(self, batch: Sequence[np.array]):
         # model train/valid step
@@ -249,9 +248,7 @@ if __name__ == "__main__":
 
     model = get_network(env)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loaders = {
-        "train_game": DataLoader(RolloutDataset(rollout_buffer), batch_size=batch_size,),
-    }
+    loaders = {"train_game": DataLoader(RolloutDataset(rollout_buffer), batch_size=batch_size)}
 
     runner = CustomRunner(gamma=gamma)
     runner.train(
@@ -266,7 +263,7 @@ if __name__ == "__main__":
         valid_metric="v_reward",
         minimize_valid_metric=False,
         load_best_on_end=True,
-        callbacks=[GameCallback(env=env, rollout_buffer=rollout_buffer,)],
+        callbacks=[GameCallback(env=env, rollout_buffer=rollout_buffer)],
     )
 
     env = gym.wrappers.Monitor(gym.make(env_name), directory="videos_reinforce", force=True)

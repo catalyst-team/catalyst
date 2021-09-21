@@ -1,9 +1,10 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+
 import torch
 
-from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._additive import AdditiveMetric
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional._misc import get_default_topk_args
@@ -131,8 +132,8 @@ class AccuracyMetric(ICallbackBatchMetric):
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
         self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
-        self.additive_metrics: List[AdditiveValueMetric] = [
-            AdditiveValueMetric() for _ in range(len(self.topk_args))
+        self.additive_metrics: List[AdditiveMetric] = [
+            AdditiveMetric() for _ in range(len(self.topk_args))
         ]
 
     def reset(self) -> None:
@@ -208,7 +209,7 @@ class AccuracyMetric(ICallbackBatchMetric):
         return {**output_mean, **output_std}
 
 
-class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
+class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
     """
     This metric computes accuracy for multilabel classification case.
     It computes mean value of accuracy and it's approximate std value

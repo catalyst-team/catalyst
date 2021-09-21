@@ -129,7 +129,5 @@ def margin_loss(
 
     margin_mask = _create_margin_mask(labels)
     skip_mask = _skip_labels_mask(labels, skip_labels).float()
-    loss = torch.mul(
-        skip_mask, F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta))),
-    )
+    loss = torch.mul(skip_mask, F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta))))
     return loss.sum() / (skip_mask.sum() + _EPS)

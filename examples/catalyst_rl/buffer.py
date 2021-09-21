@@ -2,9 +2,10 @@
 from typing import Tuple
 import multiprocessing as mp
 
-from gym import spaces
 from misc import structed2dict
 import numpy as np
+
+from gym import spaces
 from torch.utils.data.dataset import Dataset, IterableDataset
 
 

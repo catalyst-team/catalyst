@@ -2,6 +2,7 @@
 from typing import Any, Callable, Dict
 
 import pytest
+
 import torch
 
 from catalyst.metrics import FunctionalBatchMetric

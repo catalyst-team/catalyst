@@ -4,10 +4,11 @@ import os
 
 from buffer import OffpolicyReplayBuffer
 from db import RedisDB
-import gym
 from misc import GameCallback, soft_update, Trajectory
 import numpy as np
 from sampler import ISampler
+
+import gym
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -87,7 +88,7 @@ def get_network_actor(env):
     outer_fn = utils.outer_init
 
     network = torch.nn.Sequential(
-        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU(),
+        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU()
     )
     head = torch.nn.Sequential(nn.Linear(300, 1), nn.Tanh())
 
@@ -164,7 +165,7 @@ class CustomRunner(dl.Runner):
     def on_loader_start(self, runner: dl.IRunner):
         super().on_loader_start(runner)
         self.meters = {
-            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            key: metrics.AdditiveMetric(compute_on_call=False)
             for key in ["critic_loss", "actor_loss"]
         }
 
@@ -279,7 +280,7 @@ if __name__ == "__main__":
 
     loaders = {"train_game": DataLoader(replay_buffer, batch_size=batch_size)}
 
-    runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period,)
+    runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
 
     runner.train(
         # for simplicity reasons, let's run everything on single gpu

@@ -4,15 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
--
+- Contarstive loss functions: `NTXentLoss` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278)), `SupervisedContrastiveLoss` ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
+- Self supervised learning: `ISelfSupervisedRunner`, `SelfSupervisedConfigRunner`, `SelfSupervisedRunner`, `SelfSupervisedDatasetWrapper` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- Superivised Contrastive example ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
+- extra warnings for runner-callbacks interaction ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `CategoricalRegressionLoss` and `QuantileRegressionLoss` to the `contrib` ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 
 ### Changed
 
--
+- full `Runner` cleanup, with callbacks and loaders destruction, moved to `PipelineParallelFairScaleEngine` only ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `HuberLoss` renamed to `HuberLossV0` for the PyTorch compatibility ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 
 ### Removed
 
@@ -21,6 +28,40 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 -
+
+
+## [21.08] - 2021-08-31
+
+### Added
+
+- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `RocStarLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269), [#1282](https://github.com/catalyst-team/catalyst/pull/1282))
+- object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
+- SklearnModelCallback ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- Barlow Twins example ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - with updated [example](./examples/engines)
+- native `sync_bn` support for all available engines ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - Torch, AMP, Apex, FairScale
+
+### Changed
+
+- Registry moved to `hydra-slayer` ([#1264)](https://github.com/catalyst-team/catalyst/pull/1264))
+- ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - batch metrics sync removed from ddp-runs to speedup training process
+  - `AccumulationMetric` renamed to `AccumulativeMetric`
+    - moved from `catalyst.metrics._metric` to `catalyst.metrics._accumulative`
+    - `accululative_fields` renamed to `keys`
+
+
+### Removed
+
+-
+
+### Fixed
+
+- PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
+- matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
+- sample counter for the loader ([#1285](https://github.com/catalyst-team/catalyst/pull/1285))
 
 
 ## [21.07] - 2021-07-29

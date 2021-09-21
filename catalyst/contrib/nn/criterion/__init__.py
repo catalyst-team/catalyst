@@ -19,9 +19,6 @@ from catalyst.contrib.nn.criterion.dice import DiceLoss
 from catalyst.contrib.nn.criterion.focal import FocalLossBinary, FocalLossMultiClass
 from catalyst.contrib.nn.criterion.gan import GradientPenaltyLoss, MeanOutputLoss
 
-if torch.__version__ < "1.9":
-    from catalyst.contrib.nn.criterion.huber import HuberLoss
-
 from catalyst.contrib.nn.criterion.iou import IoULoss
 from catalyst.contrib.nn.criterion.lovasz import (
     LovaszLossBinary,
@@ -29,6 +26,21 @@ from catalyst.contrib.nn.criterion.lovasz import (
     LovaszLossMultiLabel,
 )
 from catalyst.contrib.nn.criterion.margin import MarginLoss
+from catalyst.contrib.nn.criterion.ntxent import NTXentLoss
+from catalyst.contrib.nn.criterion.recsys import (
+    AdaptiveHingeLoss,
+    BPRLoss,
+    HingeLoss,
+    LogisticLoss,
+    RocStarLoss,
+    WARPLoss,
+)
+from catalyst.contrib.nn.criterion.regression import (
+    HuberLossV0,
+    CategoricalRegressionLoss,
+    QuantileRegressionLoss,
+)
+from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.contrib.nn.criterion.trevsky import FocalTrevskyLoss, TrevskyLoss
 from catalyst.contrib.nn.criterion.triplet import (
     TripletLoss,

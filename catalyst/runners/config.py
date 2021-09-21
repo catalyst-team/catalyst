@@ -21,6 +21,7 @@ from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
+from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     RunnerCriterion,
@@ -124,7 +125,7 @@ class ConfigRunner(IRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _get_run_logdir(self) -> str:  # noqa: WPS112
+    def _get_run_logdir(self) -> str:
         output = None
         exclude_tag = "none"
 
@@ -209,7 +210,7 @@ class ConfigRunner(IRunner):
             loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=self._logdir, use_logdir_postfix=True,
+                logdir=self._logdir, use_logdir_postfix=True
             )
 
         return loggers
@@ -279,7 +280,7 @@ class ConfigRunner(IRunner):
 
         if is_key_value:
             model = {
-                model_key: ConfigRunner._get_model_from_params(**model_params)  # noqa: WPS437
+                model_key: ConfigRunner._get_model_from_params(**model_params)
                 for model_key, model_params in params.items()
             }
             model = nn.ModuleDict(model)
@@ -379,7 +380,7 @@ class ConfigRunner(IRunner):
                 optim = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = ConfigRunner._get_scheduler_from_params(
                     **scheduler_params, optimizer=optim
-                )  # noqa: WPS437
+                )
         else:
             optimizer_key = params.pop("_optimizer", None)
             optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
@@ -413,10 +414,89 @@ class ConfigRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints"),
+                logdir=os.path.join(self._logdir, "checkpoints")
             )
 
         return callbacks
+
+
+class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
+    """ConfigRunner for contrastive tasks
+
+    Args:
+        config: dictionary with parameters
+        input_key: key in ``runner.batch`` dict mapping for model input
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+        augemention_prefix: key for ``runner.batch`` to sample augumentions
+        projection_prefix: key for ``runner.batch`` to store model projection
+        embedding_prefix: key for `runner.batch`` to store model embeddings
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        dataset = SomeDataset()
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "SomeContrastiveModel", ...},
+                "engine": {"_target_": "DeviceEngine", "device": device},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "NTXentLoss", "tau": 0.1},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss"
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
+    """
+
+    def __init__(
+        self,
+        config: Dict = None,
+        input_key: str = "features",
+        target_key: str = "target",
+        loss_key: str = "loss",
+        augemention_prefix: str = "augment",
+        projection_prefix: str = "projection",
+        embedding_prefix: str = "embedding",
+    ):
+        """Init."""
+        ISelfSupervisedRunner.__init__(
+            self,
+            input_key=input_key,
+            target_key=target_key,
+            loss_key=loss_key,
+            augemention_prefix=augemention_prefix,
+            projection_prefix=projection_prefix,
+            embedding_prefix=embedding_prefix,
+        )
+        ConfigRunner.__init__(self, config=config)
 
 
 class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
@@ -449,7 +529,18 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
                         "num_epochs": 10,
                         "criterion": {"_target_": "MSELoss"},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
-                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "loaders": {
+                            "batch_size": 4,
+                            "num_workers": 0,
+                            "datasets": {
+                                "train": {
+                                    "_target_": "SelfSupervisedDatasetWrapper",
+                                    "dataset": dataset
+                                },
+                                "transforms": ...,
+                                "transform_original": ...,
+                            },
+                        },
                         "callbacks": {
                             "criterion": {
                                 "_target_": "CriterionCallback",
@@ -466,10 +557,6 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
                 },
             }
         )
-        runner.get_datasets = lambda *args, **kwargs: {
-            "train": dataset,
-            "valid": dataset,
-        }
         runner.run()
     """
 
@@ -492,4 +579,4 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         ConfigRunner.__init__(self, config=config)
 
 
-__all__ = ["ConfigRunner", "SupervisedConfigRunner"]
+__all__ = ["ConfigRunner", "SupervisedConfigRunner", "SelfSupervisedConfigRunner"]
