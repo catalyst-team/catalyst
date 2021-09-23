@@ -1,7 +1,19 @@
 from datasets import datasets
 
 
-def add_arguments(parser):
+def add_arguments(parser) -> None:
+    """Function to add common arguments to argparse:
+    feature_dim: Feature dim for latent vector
+    temperature: Temperature used in softmax
+    batch_size: Number of images in each mini-batch
+    epochs: Number of sweeps over the dataset to train
+    num_workers: Number of workers to process a dataloader
+    logdir: Logs directory (tensorboard, weights, etc)
+    dataset: Dataset: CIFAR-10, CIFAR-100 or STL10
+
+    Args:
+        parser: argparser like object
+    """
     parser.add_argument(
         "--feature_dim",
         default=128,
@@ -31,12 +43,6 @@ def add_arguments(parser):
         default=8,
         type=float,
         help="Number of workers to process a dataloader",
-    )
-    parser.add_argument(
-        "--offdig_lambda",
-        default=0.005,
-        type=float,
-        help="Lambda that controls the on- and off-diagonal terms",
     )
     parser.add_argument(
         "--logdir",

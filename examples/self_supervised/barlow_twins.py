@@ -1,6 +1,7 @@
 # flake8: noqa
 import argparse
 
+from common import add_arguments, datasets
 from sklearn.linear_model import LogisticRegression
 
 import torch.nn as nn
@@ -14,7 +15,6 @@ from catalyst import dl
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
-from .common import add_arguments, datasets
 
 
 class Model(nn.Module):
@@ -40,6 +40,12 @@ class Model(nn.Module):
 
 parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
 add_arguments(parser)
+parser.add_argument(
+    "--offdig_lambda",
+    default=0.005,
+    type=float,
+    help="Lambda that controls the on- and off-diagonal terms",
+)
 
 if __name__ == "__main__":
 
