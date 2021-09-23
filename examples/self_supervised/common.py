@@ -57,3 +57,6 @@ def add_arguments(parser) -> None:
         choices=datasets.keys(),
         help="Dataset: CIFAR-10, CIFAR-100 or STL10",
     )
+    parser.add_argument(
+        "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
+    )
