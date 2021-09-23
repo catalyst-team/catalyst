@@ -21,9 +21,7 @@ class Model(nn.Module):
     def __init__(self, feature_dim=128, **resnet_kwargs):
         super(Model, self).__init__()
         # encoder
-        self.encoder = nn.Sequential(
-            ResnetEncoder(**resnet_kwargs), nn.Flatten()
-        )
+        self.encoder = nn.Sequential(ResnetEncoder(**resnet_kwargs), nn.Flatten())
         # projection head
         self.g = nn.Sequential(
             nn.Linear(2048, 512, bias=False),
@@ -67,33 +65,23 @@ if __name__ == "__main__":
     transform_original = datasets[dataset]["valid_transform"]
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](
-            root="data", train=True, transform=None, download=True
-        ),
+        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
     test_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](
-            root="data", train=False, transform=None, download=True
-        ),
+        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
 
-    train_loader = DataLoader(
-        train_data, batch_size=batch_size, shuffle=True, pin_memory=True
-    )
-    valid_loader = DataLoader(
-        test_data, batch_size=batch_size, pin_memory=True
-    )
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
+    valid_loader = DataLoader(test_data, batch_size=batch_size, pin_memory=True)
 
     callbacks = [
         dl.ControlFlowCallback(
             dl.CriterionCallback(
-                input_key="projection_left",
-                target_key="projection_right",
-                metric_key="loss",
+                input_key="projection_left", target_key="projection_right", metric_key="loss",
             ),
             loaders="train",
         ),
@@ -109,9 +97,7 @@ if __name__ == "__main__":
         dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
-                target_key="target",
-                input_key="sklearn_predict",
-                topk_args=(1, 3),
+                target_key="target", input_key="sklearn_predict", topk_args=(1, 3),
             ),
             loaders="valid",
         ),
