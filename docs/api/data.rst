@@ -143,12 +143,6 @@ BatchPrefetchLoaderWrapper
 Samplers
 --------------------------------------
 
-BalanceBatchSampler
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.sampler.BalanceBatchSampler
-    :members: __init__
-    :undoc-members:
-    :special-members:
 
 BalanceClassSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.sampler import (
-    BalanceBatchSampler,
+    BatchBalanceClassSampler,
     BalanceClassSampler,
     BatchBalanceClassSampler,
     DynamicBalanceClassSampler,
@@ -121,7 +121,7 @@ def check_balance_batch_sampler_epoch(labels: List[int], p: int, k: int) -> None
         p: number of classes in a batch
         k: number of instances for each class in a batch
     """
-    sampler = BalanceBatchSampler(labels=labels, p=p, k=k)
+    sampler = BatchBalanceClassSampler(labels=labels, p=p, k=k)
     sampled_ids = list(sampler)
 
     sampled_classes = []
