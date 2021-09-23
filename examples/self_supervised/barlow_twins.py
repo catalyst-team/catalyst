@@ -14,7 +14,7 @@ from catalyst import dl
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
-from examples.self_supervised.common import add_arguments, datasets
+from .common import add_arguments, datasets
 
 
 class Model(nn.Module):
