@@ -14,12 +14,12 @@ def get_classification_report(
         y_true (np.ndarray): ground truth labels
         y_pred (np.ndarray): predicted model labels
         y_scores (np.ndarray): predicted model scores. Defaults to None.
-        beta (float, optional): Beta parameter for custom Fbeta score computation. 
+        beta (float, optional): Beta parameter for custom Fbeta score computation.
             Defaults to None.
 
     Returns:
         pd.DataFrame: pandas dataframe with main classification metrics.
-    
+
     Minimal example:
 
     .. code-block:: python
@@ -49,7 +49,7 @@ def get_classification_report(
         y_pred = clf.predict(X_test)
 
         utils.get_classification_report(
-            y_true=y_test, 
+            y_true=y_test,
             y_pred=y_pred,
             y_scores=y_scores,
             beta=0.5
@@ -78,7 +78,7 @@ def get_classification_report(
     )
 
     r_support = support / support.sum()
-    for i, average in enumerate(avg_names):
+    for average in avg_names:
         avg_precision, avg_recall, avg_f1, _ = precision_recall_fscore_support(
             y_true=y_true, y_pred=y_pred, average=average, labels=labels,
         )
