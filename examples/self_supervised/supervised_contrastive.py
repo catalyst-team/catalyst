@@ -1,6 +1,8 @@
 # flake8: noqa
 import argparse
 
+from common import add_arguments, datasets
+
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
@@ -12,24 +14,8 @@ from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
 
-parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
-parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
-parser.add_argument("--temperature", default=0.5, type=float, help="Temperature used in softmax")
-parser.add_argument(
-    "--batch-size", default=128, type=int, help="Number of images in each mini-batch"
-)
-parser.add_argument(
-    "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
-)
-parser.add_argument(
-    "--epochs", default=100, type=int, help="Number of sweeps over the dataset to train"
-)
-parser.add_argument(
-    "--num-workers", default=0, type=float, help="Number of workers to process a dataloader"
-)
-parser.add_argument(
-    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)"
-)
+parser = argparse.ArgumentParser(description="Train Supervised Contrastive on cifar-10")
+add_arguments(parser)
 
 parser.add_argument("--aug-strength", default=1.0, type=float, help="Strength of augmentations")
 
