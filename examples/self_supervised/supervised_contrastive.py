@@ -28,32 +28,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
     aug_strength = args.aug_strength
-    transforms = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-            torchvision.transforms.RandomResizedCrop(32),
-            torchvision.transforms.ColorJitter(
-                aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.2
-            ),
-        ]
-    )
 
-    transform_original = transforms = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-        ]
-    )
+    transforms = datasets[args.dataset]["train_transform"]
+    transform_original = datasets[args.dataset]["valid_transform"]
 
-    from torchvision.datasets import CIFAR10
-
-    cifar_train = CIFAR10(root="./data", download=True, transform=None)
-    simCLR_train = SelfSupervisedDatasetWrapper(
-        cifar_train, transforms=transforms, transform_original=transform_original
+    train_data = SelfSupervisedDatasetWrapper(
+        datasets[args.dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
     )
     train_loader = torch.utils.data.DataLoader(
-        simCLR_train, batch_size=batch_size, num_workers=args.num_workers
+        train_data, batch_size=batch_size, num_workers=args.num_workers
     )
 
     encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
