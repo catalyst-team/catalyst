@@ -81,7 +81,9 @@ if __name__ == "__main__":
     callbacks = [
         dl.ControlFlowCallback(
             dl.CriterionCallback(
-                input_key="projection_left", target_key="projection_right", metric_key="loss",
+                input_key="projection_left",
+                target_key="projection_right",
+                metric_key="loss",
             ),
             loaders="train",
         ),
@@ -97,7 +99,9 @@ if __name__ == "__main__":
         dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
-                target_key="target", input_key="sklearn_predict", topk_args=(1, 3),
+                target_key="target",
+                input_key="sklearn_predict",
+                topk_args=(1, 3),
             ),
             loaders="valid",
         ),
