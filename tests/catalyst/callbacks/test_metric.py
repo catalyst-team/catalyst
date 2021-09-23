@@ -217,7 +217,9 @@ def test_metric_learning_pipeline():
     """
     with TemporaryDirectory() as tmp_dir:
         dataset_train = datasets.MnistMLDataset(root=tmp_dir, download=True)
-        sampler = data.BatchBalanceClassSampler(labels=dataset_train.get_labels(), num_classes=5, num_samples=10)
+        sampler = data.BatchBalanceClassSampler(
+            labels=dataset_train.get_labels(), num_classes=5, num_samples=10
+        )
         train_loader = DataLoader(
             dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
         )
@@ -273,7 +275,9 @@ def test_reid_pipeline():
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
         train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
-        sampler = data.BatchBalanceClassSampler(labels=train_dataset.get_labels(), num_classes=5, num_samples=10)
+        sampler = data.BatchBalanceClassSampler(
+            labels=train_dataset.get_labels(), num_classes=5, num_samples=10
+        )
         train_loader = DataLoader(
             dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
         )
