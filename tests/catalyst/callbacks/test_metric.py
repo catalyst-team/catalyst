@@ -274,7 +274,7 @@ def test_reid_pipeline():
 
         train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
         sampler = data.BatchBalanceClassSampler(
-            labels=train_dataset.get_labels(), num_classes=3, num_samples=10, num_batches=20,
+            labels=train_dataset.get_labels(), num_classes=3, num_samples=10, num_batches=20
         )
         train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler, num_workers=0)
 
