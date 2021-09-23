@@ -74,13 +74,13 @@ def get_classification_report(
 
     accuracy = accuracy_score(y_true=y_true, y_pred=y_pred)
     precision, recall, f1, support = precision_recall_fscore_support(
-        y_true=y_true, y_pred=y_pred, average=None, labels=labels,
+        y_true=y_true, y_pred=y_pred, average=None, labels=labels
     )
 
     r_support = support / support.sum()
     for average in avg_names:
         avg_precision, avg_recall, avg_f1, _ = precision_recall_fscore_support(
-            y_true=y_true, y_pred=y_pred, average=average, labels=labels,
+            y_true=y_true, y_pred=y_pred, average=average, labels=labels
         )
 
         avg_metrics = avg_precision, avg_recall, avg_f1
@@ -88,17 +88,17 @@ def get_classification_report(
             metrics[k][average] = v
 
     report = pd.DataFrame(
-        [precision, recall, f1, auc, support, r_support], columns=labels, index=metrics_names,
+        [precision, recall, f1, auc, support, r_support], columns=labels, index=metrics_names
     ).T
 
     if beta is not None:
         _, _, fbeta, _ = precision_recall_fscore_support(
-            y_true=y_true, y_pred=y_pred, average=None, beta=beta, labels=labels,
+            y_true=y_true, y_pred=y_pred, average=None, beta=beta, labels=labels
         )
         avg_fbeta = np.zeros(len(avg_names))
         for i, average in enumerate(avg_names):
             _, _, avg_beta, _ = precision_recall_fscore_support(
-                y_true=y_true, y_pred=y_pred, average=average, beta=beta, labels=labels,
+                y_true=y_true, y_pred=y_pred, average=average, beta=beta, labels=labels
             )
             avg_fbeta[i] = avg_beta
         report.insert(3, "f-beta", fbeta, True)

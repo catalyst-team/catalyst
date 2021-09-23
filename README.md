@@ -812,8 +812,10 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
 train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
-sampler = data.BatchBalanceClassSampler(labels=train_dataset.get_labels(), num_classes=5, num_samples=10)
-train_loader = DataLoader(dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size)
+sampler = data.BatchBalanceClassSampler(
+    labels=train_dataset.get_labels(), num_classes=5, num_samples=10, num_batches=10
+)
+train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
 valid_dataset = datasets.MnistQGDataset(root=os.getcwd(), transform=transforms, gallery_fraq=0.2)
 valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
