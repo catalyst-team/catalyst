@@ -74,10 +74,10 @@ class CMCMetric(AccumulativeMetric):
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
         )
-        sampler = data.BatchBalanceClassSampler(labels=train_dataset.get_labels(), num_classes=5, num_samples=10)
-        train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
+        sampler = data.BatchBalanceClassSampler(
+            labels=train_dataset.get_labels(), num_classes=5, num_samples=10
         )
+        train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
         valid_dataset = datasets.MnistQGDataset(
             root=os.getcwd(), transform=transforms, gallery_fraq=0.2

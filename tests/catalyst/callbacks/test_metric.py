@@ -218,11 +218,9 @@ def test_metric_learning_pipeline():
     with TemporaryDirectory() as tmp_dir:
         dataset_train = datasets.MnistMLDataset(root=tmp_dir, download=True)
         sampler = data.BatchBalanceClassSampler(
-            labels=dataset_train.get_labels(), num_classes=5, num_samples=10
+            labels=dataset_train.get_labels(), num_classes=3, num_samples=10, num_batches=10
         )
-        train_loader = DataLoader(
-            dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
-        )
+        train_loader = DataLoader(dataset=dataset_train, batch_sampler=sampler, num_workers=0)
         dataset_val = datasets.MnistQGDataset(root=tmp_dir, transform=None, gallery_fraq=0.2)
         val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
@@ -276,11 +274,9 @@ def test_reid_pipeline():
 
         train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
         sampler = data.BatchBalanceClassSampler(
-            labels=train_dataset.get_labels(), num_classes=5, num_samples=10
+            labels=train_dataset.get_labels(), num_classes=3, num_samples=10, num_batches=20,
         )
-        train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
-        )
+        train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler, num_workers=0)
 
         valid_dataset = MnistReIDQGDataset(
             root=os.getcwd(), transform=transforms, gallery_fraq=0.2
@@ -330,7 +326,7 @@ def test_reid_pipeline():
             valid_loader="valid",
             valid_metric="cmc01",
             minimize_valid_metric=False,
-            num_epochs=6,
+            num_epochs=10,
         )
         assert "cmc01" in runner.loader_metrics
         assert runner.loader_metrics["cmc01"] > 0.7

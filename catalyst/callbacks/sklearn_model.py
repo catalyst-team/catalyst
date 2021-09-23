@@ -48,11 +48,10 @@ class SklearnModelCallback(Callback):
                 download=True,
                 transform=transforms
             )
-            sampler = data.BatchBalanceClassSampler(labels=train_dataset.get_labels(), num_classes=5, num_samples=10)
-            train_loader = DataLoader(
-                dataset=train_dataset,
-                sampler=sampler,
-                batch_size=sampler.batch_size)
+            sampler = data.BatchBalanceClassSampler(
+                labels=train_dataset.get_labels(), num_classes=5, num_samples=10
+            )
+            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
             valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)
             valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
@@ -137,11 +136,10 @@ class SklearnModelCallback(Callback):
                 download=True,
                 transform=transforms
             )
-            sampler = data.BatchBalanceClassSampler(labels=train_dataset.get_labels(), num_classes=5, num_samples=10)
-            train_loader = DataLoader(
-                dataset=train_dataset,
-                sampler=sampler,
-                batch_size=sampler.batch_size)
+            sampler = data.BatchBalanceClassSampler(
+                labels=train_dataset.get_labels(), num_classes=5, num_samples=10
+            )
+            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
             valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)
             valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
