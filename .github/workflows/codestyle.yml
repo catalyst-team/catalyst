@@ -83,7 +83,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          catalyst-codestyle-flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
+          LINE_LENGTH=99 catalyst-codestyle-flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
 
   build:
     name: codestyle-and-docs

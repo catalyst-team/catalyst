@@ -2,11 +2,11 @@
 
 - [ ] Was this discussed/approved via a Github issue? (no need for typos and docs improvements)
 - [ ] Did you read the [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)?
-- [ ] Did you check the code style? `catalyst-make-codestyle && catalyst-check-codestyle` (`pip install -U catalyst-codestyle`).
+- [ ] Did you check the code style? `catalyst-make-codestyle -l 99 && catalyst-check-codestyle -l 99 ` (`pip install -U catalyst-codestyle`).
 - [ ] Did you make sure to update the docs? We use Google format for all the methods and classes.
 - [ ] Did you check the docs with `make check-docs`?
 - [ ] Did you write any new necessary tests?
-- [ ] Did you check that your code passes the unit tests `pytest .` ? 
+- [ ] Did you check that your code passes the unit tests `pytest .` ?
 - [ ] Did you add your new functionality to the docs?
 - [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
 - [ ] Did you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` and `minimal` requirements?
