@@ -42,9 +42,9 @@ class R2Squared(ICallbackLoaderMetric):
         Update accumulated data with new batch
         """
         self.num_examples += len(y_true)
-        self.delta_sum += torch.sum(torch.square(y_pred - y_true))
+        self.delta_sum += torch.sum(torch.pow(y_pred - y_true, 2))
         self.y_sum += torch.sum(y_true)
-        self.y_sq_sum += torch.sum(torch.square(y_true))
+        self.y_sq_sum += torch.sum(torch.pow(y_true, 2))
 
     def compute(self) -> torch.Tensor:
         """

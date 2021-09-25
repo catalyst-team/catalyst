@@ -37,9 +37,9 @@ def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.T
         # tensor([0.9486])
     """
     total_sum_of_squares = torch.sum(
-        torch.square(targets.float() - torch.mean(targets.float()))
+        torch.pow(targets.float() - torch.mean(targets.float()), 2)
     ).view(-1)
-    residual_sum_of_squares = torch.sum(torch.square(targets.float() - outputs.float())).view(-1)
+    residual_sum_of_squares = torch.sum(torch.pow(targets.float() - outputs.float(), 2)).view(-1)
     output = 1 - residual_sum_of_squares / total_sum_of_squares
     return output
 
