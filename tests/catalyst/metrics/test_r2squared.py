@@ -2,6 +2,7 @@
 from typing import Dict, Iterable, Union
 
 import pytest
+
 import torch
 
 from catalyst.metrics._r2_squared import R2Squared

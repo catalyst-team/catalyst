@@ -1,5 +1,6 @@
 # flake8: noqa
 import numpy as np
+
 import torch
 
 from catalyst.metrics.functional._r2_squared import r2_squared
