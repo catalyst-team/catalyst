@@ -19,6 +19,7 @@ def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.T
     Examples:
 
     .. code-block:: python
+    
         import torch
         from catalyst import metrics
         metrics.r2_squared(
@@ -27,7 +28,9 @@ def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.T
         )
         # tensor([1.])
 
+
     .. code-block:: python
+
         import torch
         from catalyst import metrics
         metrics.r2_squared(
