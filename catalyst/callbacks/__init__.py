@@ -66,3 +66,4 @@ if SETTINGS.ml_required:
     from catalyst.callbacks.sklearn_model import SklearnModelCallback
 
 from catalyst.callbacks.tracing import TracingCallback
+from catalyst.callbacks.soft_update import SoftUpdateCallaback
