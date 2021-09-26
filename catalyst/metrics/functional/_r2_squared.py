@@ -12,12 +12,12 @@ def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.T
             with shape [bs; 1]
         targets: ground truth
             with shape [bs; 1]
-    
+ 
     Returns:
         float of computed r2 squared
-    
+ 
     Examples:
-    
+ 
     .. code-block:: python
         import torch
         from catalyst import metrics
@@ -26,7 +26,7 @@ def r2_squared(outputs: torch.Tensor, targets: torch.Tensor) -> Sequence[torch.T
             targets=torch.tensor([0, 1, 2]),
         )
         # tensor([1.])
-    
+ 
     .. code-block:: python
         import torch
         from catalyst import metrics

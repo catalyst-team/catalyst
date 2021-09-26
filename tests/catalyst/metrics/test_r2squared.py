@@ -14,12 +14,16 @@ from catalyst.metrics._r2_squared import R2Squared
         (
             torch.Tensor([2.5, 0.0, 2, 8]),
             torch.Tensor([3, -0.5, 2, 7]),
-            {"r2squared": torch.Tensor([0.9486]),},
+            {
+                "r2squared": torch.Tensor([0.9486]),
+            },
         ),
     ),
 )
 def test_r2_squared(
-    outputs: torch.Tensor, targets: torch.Tensor, true_values: Dict[str, torch.Tensor],
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    true_values: Dict[str, torch.Tensor],
 ) -> None:
     """
     Test r2 squared metric
@@ -52,7 +56,9 @@ def test_r2_squared(
                 torch.Tensor([3, -0.5, 2, 7]),
                 torch.Tensor([3, -0.5, 2, 7]),
             ),
-            {"r2squared": torch.Tensor([0.9486]),},
+            {
+                "r2squared": torch.Tensor([0.9486]),
+            },
         ),
     ),
 )
