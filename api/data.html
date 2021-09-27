@@ -722,7 +722,7 @@ subset of samples features inside the batch.)
 The batches must contain at least 2 samples for
 each class and at least 2 different classes,
 such behaviour can be garantee via using
-catalyst.data.sampler.BalanceBatchSampler</p>
+catalyst.data.sampler.BatchBalanceClassSampler</p>
 <p>But you are not limited to using it in any other way.</p>
 <dl class="method">
 <dt id="catalyst.data.InBatchTripletsSampler.sample">
@@ -994,6 +994,11 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceBatchSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: Union[List[int], numpy.ndarray], p: int, k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This kind of sampler can be used for both metric learning and
 classification task.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated realization, used for backward compatibility.
+Please use <cite>BatchBalanceClassSampler</cite> instead.</p>
+</div>
 <p>Sampler with the given strategy for the C unique classes dataset:
 - Selection P of C classes for the 1st batch
 - Selection K instances for each class for the 1st batch
@@ -1101,8 +1106,7 @@ Must be one of [downsampling, upsampling]</p></li>
 <dl class="class">
 <dt id="catalyst.data.sampler.BatchBalanceClassSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BatchBalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: Union[List[int], numpy.ndarray], num_classes: int, num_samples: int, num_batches: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BatchBalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BatchBalanceClassSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>BatchSampler version of BalanceBatchSampler.
-This kind of sampler can be used for both metric learning and classification task.</p>
+<dd><p>This kind of sampler can be used for both metric learning and classification task.</p>
 <p>BatchSampler with the given strategy for the C unique classes dataset:
 - Selection <cite>num_classes</cite> of C classes for each batch
 - Selection <cite>num_samples</cite> instances for each class in the batch

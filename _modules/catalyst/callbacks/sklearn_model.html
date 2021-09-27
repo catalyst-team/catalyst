@@ -359,11 +359,10 @@
 <span class="sd">                download=True,</span>
 <span class="sd">                transform=transforms</span>
 <span class="sd">            )</span>
-<span class="sd">            sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)</span>
-<span class="sd">            train_loader = DataLoader(</span>
-<span class="sd">                dataset=train_dataset,</span>
-<span class="sd">                sampler=sampler,</span>
-<span class="sd">                batch_size=sampler.batch_size)</span>
+<span class="sd">            sampler = data.BatchBalanceClassSampler(</span>
+<span class="sd">                labels=train_dataset.get_labels(), num_classes=5, num_samples=10</span>
+<span class="sd">            )</span>
+<span class="sd">            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)</span>
 
 <span class="sd">            valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)</span>
 <span class="sd">            valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)</span>
@@ -448,11 +447,10 @@
 <span class="sd">                download=True,</span>
 <span class="sd">                transform=transforms</span>
 <span class="sd">            )</span>
-<span class="sd">            sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)</span>
-<span class="sd">            train_loader = DataLoader(</span>
-<span class="sd">                dataset=train_dataset,</span>
-<span class="sd">                sampler=sampler,</span>
-<span class="sd">                batch_size=sampler.batch_size)</span>
+<span class="sd">            sampler = data.BatchBalanceClassSampler(</span>
+<span class="sd">                labels=train_dataset.get_labels(), num_classes=5, num_samples=10</span>
+<span class="sd">            )</span>
+<span class="sd">            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)</span>
 
 <span class="sd">            valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)</span>
 <span class="sd">            valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)</span>

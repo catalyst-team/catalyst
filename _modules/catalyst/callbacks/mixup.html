@@ -321,6 +321,18 @@
 <span class="sd">    Callback to do mixup augmentation. More details about mixin can be found in the paper</span>
 <span class="sd">    `mixup: Beyond Empirical Risk Minimization`: https://arxiv.org/abs/1710.09412 .</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        keys: batch keys to which you want to apply augmentation</span>
+<span class="sd">        alpha: beta distribution a=b parameters. Must be &gt;=0. The more alpha closer to zero the</span>
+<span class="sd">            less effect of the mixup.</span>
+<span class="sd">        mode: mode determines the method of use. Must be in [&quot;replace&quot;, &quot;add&quot;]. If &quot;replace&quot;</span>
+<span class="sd">            then replaces the batch with a mixed one, while the batch size is not changed</span>
+<span class="sd">            If &quot;add&quot;, concatenates mixed examples to the current ones, the batch size increases</span>
+<span class="sd">            by 2 times.</span>
+<span class="sd">        on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are</span>
+<span class="sd">            also proxy. We are not interested in them, are we? So, if ``on_train_only``</span>
+<span class="sd">            is ``True`` use a standard output/metric for validation.</span>
+
 <span class="sd">    Examples:</span>
 
 <span class="sd">    .. code-block:: python</span>
@@ -418,24 +430,8 @@
 <span class="sd">        use ControlFlowCallback in order to evaluate model(see example)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="n">on_train_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            keys: batch keys to which you want to apply augmentation</span>
-<span class="sd">            alpha: beta distribution a=b parameters. Must be &gt;=0. The more alpha closer to zero the</span>
-<span class="sd">                less effect of the mixup.</span>
-<span class="sd">            mode: mode determines the method of use. Must be in [&quot;replace&quot;, &quot;add&quot;]. If &quot;replace&quot;</span>
-<span class="sd">                then replaces the batch with a mixed one, while the batch size is not changed</span>
-<span class="sd">                If &quot;add&quot;, concatenates mixed examples to the current ones, the batch size increases</span>
-<span class="sd">                by 2 times.</span>
-<span class="sd">            on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are</span>
-<span class="sd">                also proxy. We are not interested in them, are we? So, if ``on_train_only``</span>
-<span class="sd">                is ``True`` use a standard output/metric for validation.</span>
-<span class="sd">            **kwargs:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="n">on_train_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)),</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;keys must be str of list[str],&quot;</span> <span class="sa">f</span><span class="s2">&quot; get: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>

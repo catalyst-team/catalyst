@@ -1279,10 +1279,26 @@ default value is <code class="docutils literal notranslate"><span class="pre">1e
 <h3><a class="toc-backref" href="#id33">MixUp Callback</a><a class="headerlink" href="#mixup-callback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.mixup.MixupCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.mixup.</code><code class="sig-name descname">MixupCallback</code><span class="sig-paren">(</span><em class="sig-param">keys: Union[str, List[str]], alpha=0.2, mode='replace', on_train_only=True, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/mixup.html#MixupCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.mixup.MixupCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.mixup.</code><code class="sig-name descname">MixupCallback</code><span class="sig-paren">(</span><em class="sig-param">keys: Union[str, List[str]], alpha=0.2, mode='replace', on_train_only=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/mixup.html#MixupCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.mixup.MixupCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Callback to do mixup augmentation. More details about mixin can be found in the paper
 <cite>mixup: Beyond Empirical Risk Minimization</cite>: <a class="reference external" href="https://arxiv.org/abs/1710.09412">https://arxiv.org/abs/1710.09412</a> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> – batch keys to which you want to apply augmentation</p></li>
+<li><p><strong>alpha</strong> – beta distribution a=b parameters. Must be &gt;=0. The more alpha closer to zero the
+less effect of the mixup.</p></li>
+<li><p><strong>mode</strong> – mode determines the method of use. Must be in [“replace”, “add”]. If “replace”
+then replaces the batch with a mixed one, while the batch size is not changed
+If “add”, concatenates mixed examples to the current ones, the batch size increases
+by 2 times.</p></li>
+<li><p><strong>on_train_only</strong> – apply to train only. As the mixup use the proxy inputs, the targets are
+also proxy. We are not interested in them, are we? So, if <code class="docutils literal notranslate"><span class="pre">on_train_only</span></code>
+is <code class="docutils literal notranslate"><span class="pre">True</span></code> use a standard output/metric for validation.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -2473,10 +2489,10 @@ Loaders should contain “is_query” and “label” key.</p>
 <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MnistMLDataset</span><span class="p">(</span>
     <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span>
     <span class="p">)</span>
-<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BalanceBatchSampler</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">batch_size</span>
-    <span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BatchBalanceClassSampler</span><span class="p">(</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
 
 <span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MnistQGDataset</span><span class="p">(</span>
     <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">gallery_fraq</span><span class="o">=</span><span class="mf">0.2</span>
@@ -3555,11 +3571,10 @@ to give predictions on the valid loader.</p>
     <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span>
 <span class="p">)</span>
-<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BalanceBatchSampler</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
-    <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BatchBalanceClassSampler</span><span class="p">(</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
 
 <span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
@@ -3643,11 +3658,10 @@ to give predictions on the valid loader.</p>
     <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span>
 <span class="p">)</span>
-<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BalanceBatchSampler</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
-    <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BatchBalanceClassSampler</span><span class="p">(</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
 
 <span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>

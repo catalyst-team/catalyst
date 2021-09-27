@@ -343,9 +343,10 @@
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.image" id="id17">Image</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id18">Pandas</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id19">Parallel</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id20">Serialization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id21">Thresholds</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id22">Visualization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.report" id="id20">Report</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id21">Serialization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id22">Thresholds</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id23">Visualization</a></p></li>
 </ul>
 </li>
 </ul>
@@ -2384,8 +2385,67 @@ using this as the class labels.</p>
 </dd></dl>
 
 </section>
+<section id="module-catalyst.contrib.utils.report">
+<span id="report"></span><h3><a class="toc-backref" href="#id20">Report</a><a class="headerlink" href="#module-catalyst.contrib.utils.report" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="catalyst.contrib.utils.report.get_classification_report">
+<code class="sig-prename descclassname">catalyst.contrib.utils.report.</code><code class="sig-name descname">get_classification_report</code><span class="sig-paren">(</span><em class="sig-param">y_true: numpy.ndarray</em>, <em class="sig-param">y_pred: numpy.ndarray</em>, <em class="sig-param">y_scores: numpy.ndarray = None</em>, <em class="sig-param">beta: float = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/contrib/utils/report.html#get_classification_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.report.get_classification_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates pandas-based per-class and aggregated classification metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em>) – ground truth labels</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – predicted model labels</p></li>
+<li><p><strong>y_scores</strong> (<em>np.ndarray</em>) – predicted model scores. Defaults to None.</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – Beta parameter for custom Fbeta score computation.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas dataframe with main classification metrics.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">linear_model</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">digits</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_digits</span><span class="p">()</span>
+
+<span class="c1"># flatten the images</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Create a classifier</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LogisticRegression</span><span class="p">(</span><span class="n">multi_class</span><span class="o">=</span><span class="s2">&quot;ovr&quot;</span><span class="p">)</span>
+
+<span class="c1"># Split data into 50% train and 50% test subsets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">digits</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Learn the digits on the train subset</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict the value of the digit on the test subset</span>
+<span class="n">y_scores</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">utils</span><span class="o">.</span><span class="n">get_classification_report</span><span class="p">(</span>
+    <span class="n">y_true</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span>
+    <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">,</span>
+    <span class="n">y_scores</span><span class="o">=</span><span class="n">y_scores</span><span class="p">,</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="module-catalyst.contrib.utils.serialization">
-<span id="serialization"></span><h3><a class="toc-backref" href="#id20">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
+<span id="serialization"></span><h3><a class="toc-backref" href="#id21">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.serialization.serialize">
 <code class="sig-prename descclassname">catalyst.contrib.utils.serialization.</code><code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
@@ -2416,7 +2476,7 @@ using this as the class labels.</p>
 
 </section>
 <section id="module-catalyst.contrib.utils.thresholds">
-<span id="thresholds"></span><h3><a class="toc-backref" href="#id21">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
+<span id="thresholds"></span><h3><a class="toc-backref" href="#id22">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.thresholds.get_baseline_thresholds">
 <code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_baseline_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_baseline_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_baseline_thresholds" title="Permalink to this definition">¶</a></dt>
@@ -2648,7 +2708,7 @@ numpy array with shape [num_examples, num_classes]</p></li>
 
 </section>
 <section id="module-catalyst.contrib.utils.visualization">
-<span id="visualization"></span><h3><a class="toc-backref" href="#id22">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
+<span id="visualization"></span><h3><a class="toc-backref" href="#id23">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.visualization.plot_confusion_matrix">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param">cm: numpy.ndarray</em>, <em class="sig-param">class_names=None</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">title='confusion matrix'</em>, <em class="sig-param">fname=None</em>, <em class="sig-param">show=True</em>, <em class="sig-param">figsize=12</em>, <em class="sig-param">fontsize=32</em>, <em class="sig-param">colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
@@ -2743,6 +2803,7 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.image">Image</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.pandas">Pandas</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.parallel">Parallel</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.report">Report</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.serialization">Serialization</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds">Thresholds</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.visualization">Visualization</a></li>
