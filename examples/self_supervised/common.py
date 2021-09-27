@@ -15,19 +15,19 @@ def add_arguments(parser) -> None:
         parser: argparser like object
     """
     parser.add_argument(
-        "--feature_dim", default=128, type=int, help="Feature dim for latent vector",
+        "--feature_dim", default=128, type=int, help="Feature dim for latent vector"
     )
     parser.add_argument(
-        "--temperature", default=0.5, type=float, help="Temperature used in softmax",
+        "--temperature", default=0.5, type=float, help="Temperature used in softmax"
     )
     parser.add_argument(
-        "--batch_size", default=512, type=int, help="Number of images in each mini-batch",
+        "--batch_size", default=512, type=int, help="Number of images in each mini-batch"
     )
     parser.add_argument(
-        "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train",
+        "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
     )
     parser.add_argument(
-        "--num_workers", default=8, type=float, help="Number of workers to process a dataloader",
+        "--num_workers", default=8, type=float, help="Number of workers to process a dataloader"
     )
     parser.add_argument(
         "--logdir",
