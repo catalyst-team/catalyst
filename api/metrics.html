@@ -351,28 +351,30 @@
 <li><p><a class="reference internal" href="#recsys-mapmetric" id="id35">RecSys – MAPMetric</a></p></li>
 <li><p><a class="reference internal" href="#recsys-mrrmetric" id="id36">RecSys – MRRMetric</a></p></li>
 <li><p><a class="reference internal" href="#recsys-ndcgmetric" id="id37">RecSys – NDCGMetric</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-regionbasedmetric" id="id38">Segmentation – RegionBasedMetric</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-dicemetric" id="id39">Segmentation – DiceMetric</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-ioumetric" id="id40">Segmentation – IOUMetric</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-trevskymetric" id="id41">Segmentation – TrevskyMetric</a></p></li>
+<li><p><a class="reference internal" href="#regression-r2squared" id="id38">Regression – R2Squared</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-regionbasedmetric" id="id39">Segmentation – RegionBasedMetric</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-dicemetric" id="id40">Segmentation – DiceMetric</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-ioumetric" id="id41">Segmentation – IOUMetric</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-trevskymetric" id="id42">Segmentation – TrevskyMetric</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#functional-api" id="id42">Functional API</a></p>
+<li><p><a class="reference internal" href="#functional-api" id="id43">Functional API</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._accuracy" id="id43">Accuracy</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._auc" id="id44">AUC</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._average_precision" id="id45">Average Precision</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._classification" id="id46">Classification</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._cmc_score" id="id47">CMC Score</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._f1_score" id="id48">F1 score</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._focal" id="id49">Focal</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._hitrate" id="id50">Hitrate</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._mrr" id="id51">MRR</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._ndcg" id="id52">NDCG</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._precision" id="id53">Precision</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._recall" id="id54">Recall</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._segmentation" id="id55">Segmentation</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._misc" id="id56">Misc</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._accuracy" id="id44">Accuracy</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._auc" id="id45">AUC</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._average_precision" id="id46">Average Precision</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._classification" id="id47">Classification</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._cmc_score" id="id48">CMC Score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._f1_score" id="id49">F1 score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._focal" id="id50">Focal</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._hitrate" id="id51">Hitrate</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._mrr" id="id52">MRR</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._ndcg" id="id53">NDCG</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._precision" id="id54">Precision</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._r2_squared" id="id55">R2Squared</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._recall" id="id56">Recall</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._segmentation" id="id57">Segmentation</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional._misc" id="id58">Misc</a></p></li>
 </ul>
 </li>
 </ul>
@@ -2356,8 +2358,27 @@ Computes mean value of NDCG and it’s approximate std value</p>
 </dd></dl>
 
 </section>
+<section id="regression-r2squared">
+<h3><a class="toc-backref" href="#id38">Regression – R2Squared</a><a class="headerlink" href="#regression-r2squared" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.metrics._r2_squared.R2Squared">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._r2_squared.</code><code class="sig-name descname">R2Squared</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_r2_squared.html#R2Squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._r2_squared.R2Squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.ICallbackLoaderMetric" title="catalyst.metrics._metric.ICallbackLoaderMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackLoaderMetric</span></code></a></p>
+<p>This metric accumulates r2 score along loader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compute_on_call</strong> – if True, allows compute metric’s value on call</p></li>
+<li><p><strong>prefix</strong> – metric prefix</p></li>
+<li><p><strong>suffix</strong> – metric suffix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="segmentation-regionbasedmetric">
-<h3><a class="toc-backref" href="#id38">Segmentation – RegionBasedMetric</a><a class="headerlink" href="#segmentation-regionbasedmetric" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id39">Segmentation – RegionBasedMetric</a><a class="headerlink" href="#segmentation-regionbasedmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.RegionBasedMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">RegionBasedMetric</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">metric_name: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = 0.5</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#RegionBasedMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="Permalink to this definition">¶</a></dt>
@@ -2392,7 +2413,7 @@ Used for per-batch logging. default: True</p></li>
 
 </section>
 <section id="segmentation-dicemetric">
-<h3><a class="toc-backref" href="#id39">Segmentation – DiceMetric</a><a class="headerlink" href="#segmentation-dicemetric" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id40">Segmentation – DiceMetric</a><a class="headerlink" href="#segmentation-dicemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.DiceMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">DiceMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#DiceMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.DiceMetric" title="Permalink to this definition">¶</a></dt>
@@ -2504,7 +2525,7 @@ Used for per-batch logging. default: True</p></li>
 
 </section>
 <section id="segmentation-ioumetric">
-<h3><a class="toc-backref" href="#id40">Segmentation – IOUMetric</a><a class="headerlink" href="#segmentation-ioumetric" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id41">Segmentation – IOUMetric</a><a class="headerlink" href="#segmentation-ioumetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.IOUMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">IOUMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#IOUMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.IOUMetric" title="Permalink to this definition">¶</a></dt>
@@ -2616,7 +2637,7 @@ Used for per-batch logging. default: True</p></li>
 
 </section>
 <section id="segmentation-trevskymetric">
-<h3><a class="toc-backref" href="#id41">Segmentation – TrevskyMetric</a><a class="headerlink" href="#segmentation-trevskymetric" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id42">Segmentation – TrevskyMetric</a><a class="headerlink" href="#segmentation-trevskymetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.TrevskyMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">TrevskyMetric</code><span class="sig-paren">(</span><em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#TrevskyMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.TrevskyMetric" title="Permalink to this definition">¶</a></dt>
@@ -2733,9 +2754,9 @@ Used for per-batch logging. default: True</p></li>
 </section>
 </section>
 <section id="functional-api">
-<h2><a class="toc-backref" href="#id42">Functional API</a><a class="headerlink" href="#functional-api" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id43">Functional API</a><a class="headerlink" href="#functional-api" title="Permalink to this headline">¶</a></h2>
 <section id="module-catalyst.metrics.functional._accuracy">
-<span id="accuracy"></span><h3><a class="toc-backref" href="#id43">Accuracy</a><a class="headerlink" href="#module-catalyst.metrics.functional._accuracy" title="Permalink to this headline">¶</a></h3>
+<span id="accuracy"></span><h3><a class="toc-backref" href="#id44">Accuracy</a><a class="headerlink" href="#module-catalyst.metrics.functional._accuracy" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._accuracy.accuracy">
 <code class="sig-prename descclassname">catalyst.metrics.functional._accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">topk: Sequence[int] = (1</em>, <em class="sig-param">)</em><span class="sig-paren">)</span> &#x2192; Sequence[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
@@ -2885,7 +2906,7 @@ associated with classes 2 and 4)</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._auc">
-<span id="auc"></span><h3><a class="toc-backref" href="#id44">AUC</a><a class="headerlink" href="#module-catalyst.metrics.functional._auc" title="Permalink to this headline">¶</a></h3>
+<span id="auc"></span><h3><a class="toc-backref" href="#id45">AUC</a><a class="headerlink" href="#module-catalyst.metrics.functional._auc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._auc.binary_auc">
 <code class="sig-prename descclassname">catalyst.metrics.functional._auc.</code><code class="sig-name descname">binary_auc</code><span class="sig-paren">(</span><em class="sig-param">scores: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[float, numpy.ndarray, numpy.ndarray]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_auc.html#binary_auc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._auc.binary_auc" title="Permalink to this definition">¶</a></dt>
@@ -3022,7 +3043,7 @@ associated with classes 2 and 4)</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._average_precision">
-<span id="average-precision"></span><h3><a class="toc-backref" href="#id45">Average Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._average_precision" title="Permalink to this headline">¶</a></h3>
+<span id="average-precision"></span><h3><a class="toc-backref" href="#id46">Average Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._average_precision" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._average_precision.binary_average_precision">
 <code class="sig-prename descclassname">catalyst.metrics.functional._average_precision.</code><code class="sig-name descname">binary_average_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional/_average_precision.html#binary_average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._average_precision.binary_average_precision" title="Permalink to this definition">¶</a></dt>
@@ -3166,7 +3187,7 @@ size: [batch_size, 1]</p>
 
 </section>
 <section id="module-catalyst.metrics.functional._classification">
-<span id="classification"></span><h3><a class="toc-backref" href="#id46">Classification</a><a class="headerlink" href="#module-catalyst.metrics.functional._classification" title="Permalink to this headline">¶</a></h3>
+<span id="classification"></span><h3><a class="toc-backref" href="#id47">Classification</a><a class="headerlink" href="#module-catalyst.metrics.functional._classification" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._classification.f1score">
 <code class="sig-prename descclassname">catalyst.metrics.functional._classification.</code><code class="sig-name descname">f1score</code><span class="sig-paren">(</span><em class="sig-param">precision_value</em>, <em class="sig-param">recall_value</em>, <em class="sig-param">eps=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional/_classification.html#f1score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._classification.f1score" title="Permalink to this definition">¶</a></dt>
@@ -3332,7 +3353,7 @@ used for precision and recall computation</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._cmc_score">
-<span id="cmc-score"></span><h3><a class="toc-backref" href="#id47">CMC Score</a><a class="headerlink" href="#module-catalyst.metrics.functional._cmc_score" title="Permalink to this headline">¶</a></h3>
+<span id="cmc-score"></span><h3><a class="toc-backref" href="#id48">CMC Score</a><a class="headerlink" href="#module-catalyst.metrics.functional._cmc_score" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._cmc_score.cmc_score_count">
 <code class="sig-prename descclassname">catalyst.metrics.functional._cmc_score.</code><code class="sig-name descname">cmc_score_count</code><span class="sig-paren">(</span><em class="sig-param">distances: torch.Tensor</em>, <em class="sig-param">conformity_matrix: torch.Tensor</em>, <em class="sig-param">topk: int = 1</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/metrics/functional/_cmc_score.html#cmc_score_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._cmc_score.cmc_score_count" title="Permalink to this definition">¶</a></dt>
@@ -3471,7 +3492,7 @@ should be used while scoring i-th query one</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._f1_score">
-<span id="f1-score"></span><h3><a class="toc-backref" href="#id48">F1 score</a><a class="headerlink" href="#module-catalyst.metrics.functional._f1_score" title="Permalink to this headline">¶</a></h3>
+<span id="f1-score"></span><h3><a class="toc-backref" href="#id49">F1 score</a><a class="headerlink" href="#module-catalyst.metrics.functional._f1_score" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._f1_score.f1_score">
 <code class="sig-prename descclassname">catalyst.metrics.functional._f1_score.</code><code class="sig-name descname">f1_score</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_f1_score.html#f1_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._f1_score.f1_score" title="Permalink to this definition">¶</a></dt>
@@ -3555,7 +3576,7 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 
 </section>
 <section id="module-catalyst.metrics.functional._focal">
-<span id="focal"></span><h3><a class="toc-backref" href="#id49">Focal</a><a class="headerlink" href="#module-catalyst.metrics.functional._focal" title="Permalink to this headline">¶</a></h3>
+<span id="focal"></span><h3><a class="toc-backref" href="#id50">Focal</a><a class="headerlink" href="#module-catalyst.metrics.functional._focal" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._focal.sigmoid_focal_loss">
 <code class="sig-prename descclassname">catalyst.metrics.functional._focal.</code><code class="sig-name descname">sigmoid_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional/_focal.html#sigmoid_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._focal.sigmoid_focal_loss" title="Permalink to this definition">¶</a></dt>
@@ -3621,7 +3642,7 @@ Default: “mean”</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._hitrate">
-<span id="hitrate"></span><h3><a class="toc-backref" href="#id50">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.functional._hitrate" title="Permalink to this headline">¶</a></h3>
+<span id="hitrate"></span><h3><a class="toc-backref" href="#id51">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.functional._hitrate" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._hitrate.hitrate">
 <code class="sig-prename descclassname">catalyst.metrics.functional._hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], zero_division: int = 0</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
@@ -3672,7 +3693,7 @@ should be one of 0 or 1</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._mrr">
-<span id="mrr"></span><h3><a class="toc-backref" href="#id51">MRR</a><a class="headerlink" href="#module-catalyst.metrics.functional._mrr" title="Permalink to this headline">¶</a></h3>
+<span id="mrr"></span><h3><a class="toc-backref" href="#id52">MRR</a><a class="headerlink" href="#module-catalyst.metrics.functional._mrr" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._mrr.reciprocal_rank">
 <code class="sig-prename descclassname">catalyst.metrics.functional._mrr.</code><code class="sig-name descname">reciprocal_rank</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k: int</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional/_mrr.html#reciprocal_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._mrr.reciprocal_rank" title="Permalink to this definition">¶</a></dt>
@@ -3781,7 +3802,7 @@ ground truth, labels</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._ndcg">
-<span id="ndcg"></span><h3><a class="toc-backref" href="#id52">NDCG</a><a class="headerlink" href="#module-catalyst.metrics.functional._ndcg" title="Permalink to this headline">¶</a></h3>
+<span id="ndcg"></span><h3><a class="toc-backref" href="#id53">NDCG</a><a class="headerlink" href="#module-catalyst.metrics.functional._ndcg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._ndcg.dcg">
 <code class="sig-prename descclassname">catalyst.metrics.functional._ndcg.</code><code class="sig-name descname">dcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gain_function='exp_rank'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional/_ndcg.html#dcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._ndcg.dcg" title="Permalink to this definition">¶</a></dt>
@@ -3938,7 +3959,7 @@ to emphasize on retrieving the relevant documents.</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._precision">
-<span id="precision"></span><h3><a class="toc-backref" href="#id53">Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._precision" title="Permalink to this headline">¶</a></h3>
+<span id="precision"></span><h3><a class="toc-backref" href="#id54">Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._precision" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._precision.precision">
 <code class="sig-prename descclassname">catalyst.metrics.functional._precision.</code><code class="sig-name descname">precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_precision.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._precision.precision" title="Permalink to this definition">¶</a></dt>
@@ -3989,8 +4010,49 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 </dd></dl>
 
 </section>
+<section id="module-catalyst.metrics.functional._r2_squared">
+<span id="r2squared"></span><h3><a class="toc-backref" href="#id55">R2Squared</a><a class="headerlink" href="#module-catalyst.metrics.functional._r2_squared" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="catalyst.metrics.functional._r2_squared.r2_squared">
+<code class="sig-prename descclassname">catalyst.metrics.functional._r2_squared.</code><code class="sig-name descname">r2_squared</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Sequence[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_r2_squared.html#r2_squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._r2_squared.r2_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes regression r2 squared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – model outputs
+with shape [bs; 1]</p></li>
+<li><p><strong>targets</strong> – ground truth
+with shape [bs; 1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>float of computed r2 squared</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">r2_squared</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1.])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">r2_squared</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.9486])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="module-catalyst.metrics.functional._recall">
-<span id="recall"></span><h3><a class="toc-backref" href="#id54">Recall</a><a class="headerlink" href="#module-catalyst.metrics.functional._recall" title="Permalink to this headline">¶</a></h3>
+<span id="recall"></span><h3><a class="toc-backref" href="#id56">Recall</a><a class="headerlink" href="#module-catalyst.metrics.functional._recall" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._recall.recall">
 <code class="sig-prename descclassname">catalyst.metrics.functional._recall.</code><code class="sig-name descname">recall</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_recall.html#recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._recall.recall" title="Permalink to this definition">¶</a></dt>
@@ -4042,7 +4104,7 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 
 </section>
 <section id="module-catalyst.metrics.functional._segmentation">
-<span id="segmentation"></span><h3><a class="toc-backref" href="#id55">Segmentation</a><a class="headerlink" href="#module-catalyst.metrics.functional._segmentation" title="Permalink to this headline">¶</a></h3>
+<span id="segmentation"></span><h3><a class="toc-backref" href="#id57">Segmentation</a><a class="headerlink" href="#module-catalyst.metrics.functional._segmentation" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._segmentation.iou">
 <code class="sig-prename descclassname">catalyst.metrics.functional._segmentation.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">mode: str = 'per-class'</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional/_segmentation.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._segmentation.iou" title="Permalink to this definition">¶</a></dt>
@@ -4345,7 +4407,7 @@ classes are associated with the N-th input</p></li>
 
 </section>
 <section id="module-catalyst.metrics.functional._misc">
-<span id="misc"></span><h3><a class="toc-backref" href="#id56">Misc</a><a class="headerlink" href="#module-catalyst.metrics.functional._misc" title="Permalink to this headline">¶</a></h3>
+<span id="misc"></span><h3><a class="toc-backref" href="#id58">Misc</a><a class="headerlink" href="#module-catalyst.metrics.functional._misc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._misc.check_consistent_length">
 <code class="sig-prename descclassname">catalyst.metrics.functional._misc.</code><code class="sig-name descname">check_consistent_length</code><span class="sig-paren">(</span><em class="sig-param">*tensors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional/_misc.html#check_consistent_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._misc.check_consistent_length" title="Permalink to this definition">¶</a></dt>
@@ -4652,6 +4714,7 @@ with shape [bs; …, 1]</p></li>
 <li><a class="reference internal" href="#recsys-mapmetric">RecSys – MAPMetric</a></li>
 <li><a class="reference internal" href="#recsys-mrrmetric">RecSys – MRRMetric</a></li>
 <li><a class="reference internal" href="#recsys-ndcgmetric">RecSys – NDCGMetric</a></li>
+<li><a class="reference internal" href="#regression-r2squared">Regression – R2Squared</a></li>
 <li><a class="reference internal" href="#segmentation-regionbasedmetric">Segmentation – RegionBasedMetric</a></li>
 <li><a class="reference internal" href="#segmentation-dicemetric">Segmentation – DiceMetric</a></li>
 <li><a class="reference internal" href="#segmentation-ioumetric">Segmentation – IOUMetric</a></li>
@@ -4670,6 +4733,7 @@ with shape [bs; …, 1]</p></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._mrr">MRR</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._ndcg">NDCG</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._precision">Precision</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.functional._r2_squared">R2Squared</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._recall">Recall</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._segmentation">Segmentation</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional._misc">Misc</a></li>
