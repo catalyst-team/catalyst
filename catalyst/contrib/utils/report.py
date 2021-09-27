@@ -20,7 +20,7 @@ def get_classification_report(
     Returns:
         pd.DataFrame: pandas dataframe with main classification metrics.
 
-    Minimal example:
+    Examples:
 
     .. code-block:: python
 
@@ -55,7 +55,6 @@ def get_classification_report(
             beta=0.5
         )
     """
-
     metrics = defaultdict(lambda: {})
     metrics_names = [
         "precision",

@@ -5,7 +5,6 @@
 - [changelog](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md) for main framework updates
 - [Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion
 
-
 ## Description
 
 <!-- Add a more detailed description of the changes if needed. -->
