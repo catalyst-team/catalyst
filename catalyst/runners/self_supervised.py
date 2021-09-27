@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any, List, Mapping, Optional
 
 from catalyst.core.runner import IRunner
 
@@ -13,6 +13,7 @@ class ISelfSupervisedRunner(IRunner):
         augemention_prefix: key for ``runner.batch`` to sample augumentions
         projection_prefix: key for ``runner.batch`` to store model projection
         embedding_prefix: key for `runner.batch`` to store model embeddings
+        encoders: encoder keys inside `model`
 
     Abstraction, please check out implementations for more details:
 
@@ -135,6 +136,7 @@ class ISelfSupervisedRunner(IRunner):
         augemention_prefix: str = "augment",
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
+        encoders: Optional[List[str]] = None,
     ):
         """Init."""
         IRunner.__init__(self)
@@ -145,6 +147,7 @@ class ISelfSupervisedRunner(IRunner):
         self._augemention_prefix = augemention_prefix
         self._embedding_prefix = embedding_prefix
         self._input_key = input_key
+        self.encoders = encoders
 
     def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
@@ -167,18 +170,35 @@ class ISelfSupervisedRunner(IRunner):
         return batch
 
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
-        embedding1, projection1 = self.model(batch[f"{self._augemention_prefix}_left"], **kwargs)
-        embedding2, projection2 = self.model(batch[f"{self._augemention_prefix}_right"], **kwargs)
-        origin_embeddings, projection_origin = self.model(batch[self._input_key], **kwargs)
-        batch = {
-            **batch,
-            f"{self._projection_prefix}_left": projection1,
-            f"{self._projection_prefix}_right": projection2,
-            f"{self._projection_prefix}_origin": projection_origin,
-            f"{self._embedding_prefix}_left": embedding1,
-            f"{self._embedding_prefix}_right": embedding2,
-            f"{self._embedding_prefix}_origin": origin_embeddings,
-        }
+        if self.encoders:
+            encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.encoders]
+        else:
+            encoders = [("", self.model)]
+
+        for (encoder_name, encoder) in encoders:
+            embedding1, projection1 = encoder(batch[f"{self._augemention_prefix}_left"], **kwargs)
+            embedding2, projection2 = encoder(batch[f"{self._augemention_prefix}_right"], **kwargs)
+            origin_embeddings, projection_origin = encoder(batch[self._input_key], **kwargs)
+            if encoder_name:
+                batch = {
+                    **batch,
+                    f"{encoder_name}_{self._projection_prefix}_left": projection1,
+                    f"{encoder_name}_{self._projection_prefix}_right": projection2,
+                    f"{encoder_name}_{self._projection_prefix}_origin": projection_origin,
+                    f"{encoder_name}_{self._embedding_prefix}_left": embedding1,
+                    f"{encoder_name}_{self._embedding_prefix}_right": embedding2,
+                    f"{encoder_name}_{self._embedding_prefix}_origin": origin_embeddings,
+                }
+            else:
+                batch = {
+                    **batch,
+                    f"{self._projection_prefix}_left": projection1,
+                    f"{self._projection_prefix}_right": projection2,
+                    f"{self._projection_prefix}_origin": projection_origin,
+                    f"{self._embedding_prefix}_left": embedding1,
+                    f"{self._embedding_prefix}_right": embedding2,
+                    f"{self._embedding_prefix}_origin": origin_embeddings,
+                }
 
         return batch
 
