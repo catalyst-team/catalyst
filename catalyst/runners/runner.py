@@ -974,6 +974,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
         loss_mode_prefix: str = "projection",
+        encoders: Optional[List[str]] = None
     ):
         """Init."""
         ISelfSupervisedRunner.__init__(
@@ -984,6 +985,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
             augemention_prefix=augemention_prefix,
             projection_prefix=projection_prefix,
             embedding_prefix=embedding_prefix,
+            encoders = encoders
         )
         Runner.__init__(self, model=model, engine=engine)
         self.loss_mode_prefix = loss_mode_prefix

@@ -485,6 +485,7 @@ class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
         augemention_prefix: str = "augment",
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
+        encoders: Optional[List[str]] = None
     ):
         """Init."""
         ISelfSupervisedRunner.__init__(
@@ -495,6 +496,7 @@ class SelfSupervisedConfigRunner(ISelfSupervisedRunner, ConfigRunner):
             augemention_prefix=augemention_prefix,
             projection_prefix=projection_prefix,
             embedding_prefix=embedding_prefix,
+            encoders = encoders
         )
         ConfigRunner.__init__(self, config=config)
 
