@@ -112,7 +112,7 @@ jobs:
           # commit changes
           git config --local user.email "action@ithub.com"
           git config --local user.name "GitHub Action"
-          git add . ../versions.html
+          git add .
           git commit -m "${TAG:=update docs}" || true
 
       - name: push changes
