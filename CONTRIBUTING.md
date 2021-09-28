@@ -60,7 +60,8 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ## Contribution best practices
 
-1. Install requirements
+0. Install Python v3.6.2+
+0. Install requirements
     ```bash
     # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
     brew install bash wget gnu-sed
@@ -91,13 +92,13 @@ If you are not familiar with creating a Pull Request, here are some guides:
       -r requirements/requirements-neptune.txt \
       -r requirements/requirements-albu.txt
     ```
-2. Break your work into small, single-purpose updates if possible.
+0. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
-3. Submit the update as a GitHub pull request against the `master` branch.
-4. Make sure that you provide docstrings for all your new methods and classes.
-5. Add new unit tests for your code ([PR examples](#pr-examples)).
-6. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to.
-7. Make sure that your code [passes the Github CI](#github-ci)
+0. Submit the update as a GitHub pull request against the `master` branch.
+0. Make sure that you provide docstrings for all your new methods and classes.
+0. Add new unit tests for your code ([PR examples](#pr-examples)).
+0. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to.
+0. Make sure that your code [passes the Github CI](#github-ci)
 
 
 ## Github CI

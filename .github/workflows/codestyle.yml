@@ -21,7 +21,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04]
-        python-version: [3.6]
+        python-version: [3.7]
     timeout-minutes: 30
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -93,7 +93,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04]
-        python-version: [3.6]
+        python-version: [3.7]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
