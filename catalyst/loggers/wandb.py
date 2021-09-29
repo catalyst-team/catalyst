@@ -197,7 +197,6 @@ class WandbLogger(ILogger):
         """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
         if artifact is None and path_to_artifact is None:
             ValueError("Both artifact and path_to_artifact cannot be None")
-        print("Logging", tag)
 
         artifact = wandb.Artifact(
             name=self.run.id + "_aritfacts",
