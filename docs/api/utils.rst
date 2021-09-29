@@ -141,6 +141,13 @@ Parallel
     :undoc-members:
     :show-inheritance:
 
+Report
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.report
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.serialization

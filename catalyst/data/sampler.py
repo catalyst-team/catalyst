@@ -14,106 +14,14 @@ from catalyst.data.dataset.torch import DatasetFromSampler
 from catalyst.utils.misc import find_value_ids
 
 
-class BalanceClassSampler(Sampler):
-    """Allows you to create stratified sample on unbalanced classes.
-
-    Args:
-        labels: list of class label for each elem in the dataset
-        mode: Strategy to balance classes.
-            Must be one of [downsampling, upsampling]
-
-    Python API examples:
-
-    .. code-block:: python
-
-        import os
-        from torch import nn, optim
-        from torch.utils.data import DataLoader
-        from catalyst import dl
-        from catalyst.data import ToTensor, BalanceClassSampler
-        from catalyst.contrib.datasets import MNIST
-
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
-        train_labels = train_data.targets.cpu().numpy().tolist()
-        train_sampler = BalanceClassSampler(train_labels, mode=5000)
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
-
-        loaders = {
-            "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
-            "valid": DataLoader(valid_data, batch_size=32),
-        }
-
-        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-        runner = dl.SupervisedRunner()
-        # model training
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            loaders=loaders,
-            num_epochs=1,
-            logdir="./logs",
-            valid_loader="valid",
-            valid_metric="loss",
-            minimize_valid_metric=True,
-            verbose=True,
-        )
-    """
-
-    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
-        """Sampler initialisation."""
-        super().__init__(labels)
-
-        labels = np.array(labels)
-        samples_per_class = {label: (labels == label).sum() for label in set(labels)}
-
-        self.lbl2idx = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
-        }
-
-        if isinstance(mode, str):
-            assert mode in ["downsampling", "upsampling"]
-
-        if isinstance(mode, int) or mode == "upsampling":
-            samples_per_class = mode if isinstance(mode, int) else max(samples_per_class.values())
-        else:
-            samples_per_class = min(samples_per_class.values())
-
-        self.labels = labels
-        self.samples_per_class = samples_per_class
-        self.length = self.samples_per_class * len(set(labels))
-
-    def __iter__(self) -> Iterator[int]:
-        """
-        Yields:
-            indices of stratified sample
-        """
-        indices = []
-        for key in sorted(self.lbl2idx):
-            replace_flag = self.samples_per_class > len(self.lbl2idx[key])
-            indices += np.random.choice(
-                self.lbl2idx[key], self.samples_per_class, replace=replace_flag
-            ).tolist()
-        assert len(indices) == self.length
-        np.random.shuffle(indices)
-
-        return iter(indices)
-
-    def __len__(self) -> int:
-        """
-        Returns:
-             length of result sample
-        """
-        return self.length
-
-
 class BalanceBatchSampler(Sampler):
     """
     This kind of sampler can be used for both metric learning and
     classification task.
+
+    .. warning::
+        Deprecated realization, used for backward compatibility.
+        Please use `BatchBalanceClassSampler` instead.
 
     Sampler with the given strategy for the C unique classes dataset:
     - Selection P of C classes for the 1st batch
@@ -224,9 +132,104 @@ class BalanceBatchSampler(Sampler):
         return iter(inds)
 
 
+class BalanceClassSampler(Sampler):
+    """Allows you to create stratified sample on unbalanced classes.
+
+    Args:
+        labels: list of class label for each elem in the dataset
+        mode: Strategy to balance classes.
+            Must be one of [downsampling, upsampling]
+
+    Python API examples:
+
+    .. code-block:: python
+
+        import os
+        from torch import nn, optim
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor, BalanceClassSampler
+        from catalyst.contrib.datasets import MNIST
+
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_labels = train_data.targets.cpu().numpy().tolist()
+        train_sampler = BalanceClassSampler(train_labels, mode=5000)
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+
+        loaders = {
+            "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
+        }
+
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+        runner = dl.SupervisedRunner()
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            logdir="./logs",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+    """
+
+    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
+        """Sampler initialisation."""
+        super().__init__(labels)
+
+        labels = np.array(labels)
+        samples_per_class = {label: (labels == label).sum() for label in set(labels)}
+
+        self.lbl2idx = {
+            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+        }
+
+        if isinstance(mode, str):
+            assert mode in ["downsampling", "upsampling"]
+
+        if isinstance(mode, int) or mode == "upsampling":
+            samples_per_class = mode if isinstance(mode, int) else max(samples_per_class.values())
+        else:
+            samples_per_class = min(samples_per_class.values())
+
+        self.labels = labels
+        self.samples_per_class = samples_per_class
+        self.length = self.samples_per_class * len(set(labels))
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Yields:
+            indices of stratified sample
+        """
+        indices = []
+        for key in sorted(self.lbl2idx):
+            replace_flag = self.samples_per_class > len(self.lbl2idx[key])
+            indices += np.random.choice(
+                self.lbl2idx[key], self.samples_per_class, replace=replace_flag
+            ).tolist()
+        assert len(indices) == self.length
+        np.random.shuffle(indices)
+
+        return iter(indices)
+
+    def __len__(self) -> int:
+        """
+        Returns:
+             length of result sample
+        """
+        return self.length
+
+
 class BatchBalanceClassSampler(Sampler):
     """
-    BatchSampler version of BalanceBatchSampler.
     This kind of sampler can be used for both metric learning and classification task.
 
     BatchSampler with the given strategy for the C unique classes dataset:
@@ -729,8 +732,8 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 
 __all__ = [
-    "BalanceClassSampler",
     "BalanceBatchSampler",
+    "BalanceClassSampler",
     "BatchBalanceClassSampler",
     "DistributedSamplerWrapper",
     "DynamicBalanceClassSampler",

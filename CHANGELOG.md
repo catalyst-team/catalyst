@@ -9,17 +9,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CometLogger support ([#1283](https://github.com/catalyst-team/catalyst/pull/1283))
+- CometLogger examples ([#1287](https://github.com/catalyst-team/catalyst/pull/1287))
+- XLA docs ([#1288](https://github.com/catalyst-team/catalyst/pull/1288))
 - Contarstive loss functions: `NTXentLoss` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278)), `SupervisedContrastiveLoss` ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
 - Self supervised learning: `ISelfSupervisedRunner`, `SelfSupervisedConfigRunner`, `SelfSupervisedRunner`, `SelfSupervisedDatasetWrapper` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 - SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
 - Superivised Contrastive example ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
 - extra warnings for runner-callbacks interaction ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 - `CategoricalRegressionLoss` and `QuantileRegressionLoss` to the `contrib` ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- R2 score metric ([#1274](https://github.com/catalyst-team/catalyst/pull/1274))
+
 
 ### Changed
 - Improved `WandbLogger` to support artifacts and fix logging steps ([#1309](https://github.com/catalyst-team/catalyst/pull/1309))
 - full `Runner` cleanup, with callbacks and loaders destruction, moved to `PipelineParallelFairScaleEngine` only ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 - `HuberLoss` renamed to `HuberLossV0` for the PyTorch compatibility ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- codestyle update ([#1298](https://github.com/catalyst-team/catalyst/pull/1298))
+- BalanceBatchSampler - deprecated ([#1303](https://github.com/catalyst-team/catalyst/pull/1303))
 
 ### Removed
 
@@ -27,8 +34,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
-
+- CI/CD ([#1292](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1299](https://github.com/catalyst-team/catalyst/pull/1299)), ([#1304](https://github.com/catalyst-team/catalyst/pull/1304)), ([#1306](https://github.com/catalyst-team/catalyst/pull/1306))
+- Optuna configs ([#1296](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1296](https://github.com/catalyst-team/catalyst/pull/1299))
 
 ## [21.08] - 2021-08-31
 
