@@ -1,4 +1,6 @@
 from typing import Any, Dict, Optional
+import os
+import pickle
 
 import numpy as np
 
@@ -112,18 +114,18 @@ class WandbLogger(ILogger):
         if scope == "batch":
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="batch"
+                metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="batch"
             )
         elif scope == "loader":
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="epoch"
+                metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="epoch"
             )
         elif scope == "epoch":
             loader_key = "_epoch_"
             per_loader_metrics = metrics[loader_key]
             self._log_metrics(
                 metrics=per_loader_metrics,
-                step=global_epoch_step,
+                step=global_sample_step,
                 loader_key=loader_key,
                 prefix="epoch",
             )
@@ -154,7 +156,7 @@ class WandbLogger(ILogger):
         """Logs image to the logger."""
         self.run.log(
             {f"{tag}_scope_{scope}_epoch_{global_epoch_step}.png": wandb.Image(image)},
-            step=global_epoch_step,
+            step=global_sample_step,
         )
 
     def log_hparams(
@@ -168,14 +170,69 @@ class WandbLogger(ILogger):
         """Logs hyperparameters to the logger."""
         self.run.config.update(hparams)
 
+    def log_artifact(
+        self,
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
+    ) -> None:
+        """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
+        if artifact is None and path_to_artifact is None:
+            ValueError("Both artifact and path_to_artifact cannot be None")
+        print("Logging", tag)
+
+        artifact = wandb.Artifact(
+            name=self.run.id + "_aritfacts",
+            type="artifact",
+            metadata={
+                "stage_key": stage_key,
+                "loader_key": loader_key,
+                "scope": scope,
+            },
+        )
+
+        if artifact:
+            art_file_dir = os.path.join("wandb", self.run.id, "artifact_dumps")
+            os.makedirs(art_file_dir, exist_ok=True)
+
+            art_file = open(os.path.join(art_file_dir, tag), "wb")
+            pickle.dump(artifact, art_file)
+            art_file.close()
+
+            artifact.add_file(str(os.path.join(art_file_dir, tag)))
+        else:
+            artifact.add_file(path_to_artifact)
+        self.run.log_artifact(artifact)
+
     def flush_log(self) -> None:
         """Flushes the logger."""
         pass
 
     def close_log(self, scope: str = None) -> None:
         """Closes the logger."""
+        # Artifacts can be logged after call to close_log()
+        """
         if scope is None or scope == "experiment":
             self.run.finish()
+        """
 
 
 __all__ = ["WandbLogger"]
