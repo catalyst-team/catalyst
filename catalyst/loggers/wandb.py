@@ -229,10 +229,8 @@ class WandbLogger(ILogger):
     def close_log(self, scope: str = None) -> None:
         """Closes the logger."""
         # Artifacts can be logged after call to close_log()
-        """
         if scope is None or scope == "experiment":
             self.run.finish()
-        """
 
 
 __all__ = ["WandbLogger"]
