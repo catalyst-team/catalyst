@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
 ### Changed
-
+- Improved `WandbLogger` to support artifacts and fix logging steps ([#1309](https://github.com/catalyst-team/catalyst/pull/1309))
 - full `Runner` cleanup, with callbacks and loaders destruction, moved to `PipelineParallelFairScaleEngine` only ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 - `HuberLoss` renamed to `HuberLossV0` for the PyTorch compatibility ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
 - codestyle update ([#1298](https://github.com/catalyst-team/catalyst/pull/1298))
