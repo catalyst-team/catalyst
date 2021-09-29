@@ -41,6 +41,7 @@ def train_experiment(device, engine=None):
             minimize_valid_metric=True,
             num_epochs=1,
             verbose=False,
+            callbacks=[dl.R2SquaredCallback(input_key="logits", target_key="targets")],
         )
 
 

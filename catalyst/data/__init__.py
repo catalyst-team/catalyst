@@ -16,8 +16,8 @@ from catalyst.data.loader import (
     BatchPrefetchLoaderWrapper,
 )
 from catalyst.data.sampler import (
-    BalanceClassSampler,
     BalanceBatchSampler,
+    BalanceClassSampler,
     BatchBalanceClassSampler,
     DistributedSamplerWrapper,
     DynamicLenBatchSampler,

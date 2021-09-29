@@ -1,19 +1,9 @@
-## Before submitting (checklist)
-
-- [ ] Was this discussed/approved via a Github issue? (no need for typos and docs improvements)
-- [ ] Did you read the [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)?
-- [ ] Did you check the code style? `catalyst-make-codestyle && catalyst-check-codestyle` (`pip install -U catalyst-codestyle`).
-- [ ] Did you make sure to update the docs? We use Google format for all the methods and classes.
-- [ ] Did you check the docs with `make check-docs`?
-- [ ] Did you write any new necessary tests?
-- [ ] Did you check that your code passes the unit tests `pytest .` ? 
-- [ ] Did you add your new functionality to the docs?
-- [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
-- [ ] Did you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` and `minimal` requirements?
-- [ ] Did you check XLA integration with [single](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_single_process.ipynb) and [multiple](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_multi_process.ipynb) processes?
-
-<!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->
-
+### Pull Request FAQ
+- [documentation](https://catalyst-team.github.io/catalyst/)
+- [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)
+- [minimal examples section](https://github.com/catalyst-team/catalyst#minimal-examples)
+- [changelog](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md) for main framework updates
+- [Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion
 
 ## Description
 
@@ -43,11 +33,11 @@ If we didn't discuss your PR in Github issues there's a high chance it will not 
 
 <!-- Thank you for your contribution! -->
 
+### Checklist
+- [ ] Have you updated tests for the new functionality?
+- [ ] Have you added your new classes/functions to the docs?
+- [ ] Have you updated the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
+- [ ] Have you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` and `minimal` requirements?
+- [ ] Have you checked XLA integration with [single](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_single_process.ipynb) and [multiple](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_multi_process.ipynb) processes?
 
-### FAQ
-Please review the FAQ before submitting an issue:
-- [ ] I have read the [documentation and FAQ](https://catalyst-team.github.io/catalyst/)
-- [ ] I have reviewed the [minimal examples section](https://github.com/catalyst-team/catalyst#minimal-examples)
-- [ ] I have checked the [changelog](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md) for main framework updates
-- [ ] I have read the [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)
-- [ ] I have joined [Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion
+<!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->

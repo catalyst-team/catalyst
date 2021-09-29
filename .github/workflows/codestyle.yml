@@ -21,7 +21,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04]
-        python-version: [3.6]
+        python-version: [3.7]
     timeout-minutes: 30
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -83,7 +83,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          catalyst-codestyle-flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
+          LINE_LENGTH=99 catalyst-codestyle-flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
 
   build:
     name: codestyle-and-docs
@@ -93,7 +93,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04]
-        python-version: [3.6]
+        python-version: [3.7]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
