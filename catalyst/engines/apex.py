@@ -439,7 +439,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         stages:
             ...
 
-    .. convert_syncbn_model:
+    .. _`convert_syncbn_model`:
         https://nvidia.github.io/apex/parallel.html#apex.parallel.convert_syncbn_model
     """
 
