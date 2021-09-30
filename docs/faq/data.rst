@@ -232,7 +232,7 @@ Suppose, you are using set of different metrics in your pipeline:
         def handle_batch(self, batch):
             # on this step we also have self.batch = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
-            self.output = {"logits": logits}
+            self.batch = {**{"logits": logits}, **self.batch}
             # this is useful for other components of the pipeline
 
     loaders = {"train": ..., "valid": ...}
@@ -261,7 +261,7 @@ For example, to use ``accuracy01`` metric as your model selection one you could 
         def handle_batch(self, batch):
             # on this step we also have self.batch = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
-            self.output = {"logits": logits}
+            self.batch = {**{"logits": logits}, **self.batch}
             # this is useful for other components of the pipeline
 
     loaders = {"train": ..., "valid": ...}
