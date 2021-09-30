@@ -126,8 +126,8 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 
 ### Step-by-step Guide
 1. Start with [Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef) introduction.
-1. Try [notebook tutorials](#notebooks) or check [minimal examples](#minimal-examples) for first deep dive.
-1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
+1. Try [notebook tutorials](#minimal-examples) or check [minimal examples](#minimal-examples) for first deep dive.
+1. Read [blog posts](https://catalyst-team.com/post/) with use-cases and guides.
 1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course).
 1. And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors.
 
@@ -232,6 +232,10 @@ best practices for your deep learning research and development.
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 ### Minimal Examples
+
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
 
 <details>
 <summary>CustomRunner – PyTorch for-loop decomposition</summary>
@@ -1562,21 +1566,13 @@ runner.run()
 </p>
 </details>
 
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
 - [More Catalyst examples](./examples/).
 - [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
-### Blog Posts
+### [Blog Posts](https://catalyst-team.com/post/)
 
-https://catalyst-team.com/post/
-
-
-### Talks
-
-https://catalyst-team.com/talk/
+### [Talks](https://catalyst-team.com/talk/)
 
 
 ## Community
