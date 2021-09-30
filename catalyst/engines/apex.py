@@ -370,7 +370,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         address: address to use for backend.
         port: port to use for backend.
         sync_bn: boolean flag for batchnorm synchonization during disributed training.
-            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            if True, applies Apex `convert_syncbn_model`_ to the model for native torch
             distributed only. Default, False.
         ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
             More info here:
@@ -439,9 +439,8 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         stages:
             ...
 
-    .. _convert_sync_batchnorm:
-        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
-        torch.nn.SyncBatchNorm.convert_sync_batchnorm
+    .. convert_syncbn_model:
+        https://nvidia.github.io/apex/parallel.html#apex.parallel.convert_syncbn_model
     """
 
     def __init__(
@@ -501,7 +500,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         model = model_fn()
         model = self.sync_device(model)
         if self._sync_bn:
-            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+            model = apex.parallel.convert_syncbn_model(model)
 
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)

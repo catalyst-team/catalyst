@@ -340,6 +340,7 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
         scaler_kwargs: Dict[str, Any] = None,
@@ -348,6 +349,7 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         super().__init__(
             address=address,
             port=port,
+            sync_bn=sync_bn,
             ddp_kwargs=ddp_kwargs,
             process_group_kwargs=process_group_kwargs,
         )
