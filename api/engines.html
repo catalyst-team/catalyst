@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engines &mdash; Catalyst 21.09rc1 documentation</title>
+  <title>Engines &mdash; Catalyst 21.09 documentation</title>
   
 
   
@@ -831,7 +831,7 @@ More info here:
 <h3><a class="toc-backref" href="#id20">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
