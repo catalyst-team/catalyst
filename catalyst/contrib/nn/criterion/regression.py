@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 
 def _ce_with_logits(logits, target):
@@ -99,4 +100,21 @@ class QuantileRegressionLoss(nn.Module):
         return loss
 
 
-__all__ = ["HuberLossV0", "CategoricalRegressionLoss", "QuantileRegressionLoss"]
+class RSquareLoss(nn.Module):
+    """RSquareLoss"""
+
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Compute the loss.
+
+        Args:
+            outputs (torch.Tensor): model outputs
+            targets (torch.Tensor): targets
+
+        Returns:
+            torch.Tensor: computed loss
+        """
+        var_y = torch.var(targets, unbiased=False)
+        return 1.0 - F.mse_loss(outputs, targets, reduction="mean") / var_y
+
+
+__all__ = ["HuberLossV0", "CategoricalRegressionLoss", "QuantileRegressionLoss", "RSquareLoss"]
