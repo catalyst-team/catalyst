@@ -205,6 +205,13 @@ QuantileRegressionLoss
     :undoc-members:
     :show-inheritance:
 
+RSquareLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.RSquareLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 RecSys
 """"""
 
