@@ -7,7 +7,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
-[![Docker](https://img.shields.io/badge/docker-hub-blue)](https://hub.docker.com/u/catalystteam)
+[![Docker](https://img.shields.io/badge/docker-hub-blue)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
 [![Twitter](https://img.shields.io/badge/news-twitter-499feb)](https://twitter.com/CatalystTeam)
@@ -138,25 +138,17 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 - [Table of Contents](#table-of-contents)
 - [Overview](#overview)
   - [Installation](#installation)
-  - [Minimal Examples](#minimal-examples)
   - [Features](#features)
   - [Tests](#tests)
 - [Catalyst](#catalyst)
   - [Documentation](#documentation)
-  - [Notebooks](#notebooks)
-  - [Notable Blog Posts](#notable-blog-posts)
+  - [Minimal Examples](#minimal-examples)
+  - [Blog Posts](#blog-posts)
   - [Talks](#talks)
-  - [Projects](#projects)
-    - [Examples, Notebooks, and Starter Kits](#examples-notebooks-and-starter-kits)
-    - [Competitions](#competitions)
-    - [Research Papers](#research-papers)
-    - [Toolkits](#toolkits)
 - [Community](#community)
   - [Contribution Guide](#contribution-guide)
   - [User Feedback](#user-feedback)
   - [Acknowledgments](#acknowledgments)
-    - [Catalyst.Team](#catalystteam)
-    - [Catalyst.Contributors](#catalystcontributors)
   - [Trusted by](#trusted-by)
   - [Citation](#citation)
 
@@ -193,6 +185,51 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
+
+### Features
+- Universal train/inference loop.
+- Configuration files for model and data hyperparameters.
+- Reproducibility – all source code and environment variables are saved.
+- Callbacks – reusable train/inference pipeline parts with easy customization.
+- Training stages support.
+- Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Workflow best practices: fp16 support, distributed training, slurm support.
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines).
+
+
+### Tests
+All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
+We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
+
+During testing, we train a variety of different models: image classification,
+image segmentation, text classification, GANs, and much more.
+We then compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+
+As a result, Catalyst provides fully tested and reproducible
+best practices for your deep learning research and development.
+
+
+## Catalyst
+
+### Documentation
+- [master](https://catalyst-team.github.io/catalyst/)
+- [21.09](https://catalyst-team.github.io/catalyst/v21.09/index.html)
+- [21.08](https://catalyst-team.github.io/catalyst/v21.08/index.html)
+- [21.07](https://catalyst-team.github.io/catalyst/v21.07/index.html)
+- [21.06](https://catalyst-team.github.io/catalyst/v21.06/index.html)
+- [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
+- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
+- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
+- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
+- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
+- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
+- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
+- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
+- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
+- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
+- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 ### Minimal Examples
 
@@ -1525,60 +1562,11 @@ runner.run()
 </p>
 </details>
 
-- [More Catalyst examples](./examples/).
-- [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
-
-
-### Features
-- Universal train/inference loop.
-- Configuration files for model and data hyperparameters.
-- Reproducibility – all source code and environment variables are saved.
-- Callbacks – reusable train/inference pipeline parts with easy customization.
-- Training stages support.
-- Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines).
-
-
-### Tests
-All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
-We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
-
-During testing, we train a variety of different models: image classification,
-image segmentation, text classification, GANs, and much more.
-We then compare their convergence metrics in order to verify
-the correctness of the training procedure and its reproducibility.
-
-As a result, Catalyst provides fully tested and reproducible
-best practices for your deep learning research and development.
-
-
-## Catalyst
-
-### Documentation
-- [master](https://catalyst-team.github.io/catalyst/)
-- [21.09](https://catalyst-team.github.io/catalyst/v21.07/index.html)
-- [21.08](https://catalyst-team.github.io/catalyst/v21.07/index.html)
-- [21.07](https://catalyst-team.github.io/catalyst/v21.07/index.html)
-- [21.06](https://catalyst-team.github.io/catalyst/v21.06/index.html)
-- [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
-- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
-- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
-- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
-- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
-- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
-- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
-- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
-- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
-- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
-- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
-- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
-
-
-### Examples
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
+- [More Catalyst examples](./examples/).
+- [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
 ### Blog Posts
