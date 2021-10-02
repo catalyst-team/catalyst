@@ -52,23 +52,20 @@ if __name__ == "__main__":
         nn.ReLU(inplace=True),
         nn.Linear(512, args.feature_dim, bias=True),
     )
-    model_online = ContrastiveModel(projection_head_online, encoder_online)
-
     encoder_target = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
     projection_head_target = nn.Sequential(
         nn.Linear(2048, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, args.feature_dim, bias=True),
     )
-    model_target = ContrastiveModel(projection_head_target, projection_head_target)
-
-    model = {
-        "online": model_online,
-        "target": model_target
-    }
+    
+    model = nn.ModuleDict({
+                'online': ContrastiveModel(projection_head_online, encoder_online),
+                'target': ContrastiveModel(projection_head_target, encoder_target)
+        })
 
     # 2. model and optimizer
-    optimizer = Adam(model_online.parameters(), lr=args.learning_rate)
+    optimizer = Adam(model["online"].parameters(), lr=args.learning_rate)
 
     # 3. criterion with triplets sampling
     criterion = NTXentLoss(tau=args.temperature)
@@ -76,8 +73,12 @@ if __name__ == "__main__":
     callbacks = [
         dl.ControlFlowCallback(
             dl.CriterionCallback(
-                input_key="projection_left", target_key="projection_right", metric_key="loss"
+                input_key="online_projection_left", target_key="target_projection_right", metric_key="loss"
             ),
+            loaders="train",
+        ),
+        dl.ControlFlowCallback(
+            dl.SoftUpdateCallaback(target_model_key="target", source_model_key="online", tau=0.1),
             loaders="train",
         )
     ]
@@ -99,4 +100,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         minimize_valid_metric=True,
         num_epochs=args.epochs,
+        engine=dl.DeviceEngine("cpu")
     )
