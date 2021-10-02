@@ -4,9 +4,7 @@ import argparse
 from common import add_arguments, datasets
 
 import torch
-import torch.nn.functional as F
 from torch.optim import Adam
-import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
@@ -64,18 +62,11 @@ if __name__ == "__main__":
     )
     model_target = ContrastiveModel(projection_head_target, projection_head_target)
 
-
-
     model = {
         "online": model_online,
         "target": model_target
     }
 
-    
-
-    
-
-    
     # 2. model and optimizer
     optimizer = Adam(model_online.parameters(), lr=args.learning_rate)
 
@@ -91,7 +82,7 @@ if __name__ == "__main__":
         )
     ]
 
-    runner = SelfSupervisedRunner()
+    runner = SelfSupervisedRunner(encoders = ["online", "target"])
 
     runner.train(
         model=model,
