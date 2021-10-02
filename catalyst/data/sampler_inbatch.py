@@ -65,7 +65,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
     The batches must contain at least 2 samples for
     each class and at least 2 different classes,
     such behaviour can be garantee via using
-    catalyst.data.sampler.BalanceBatchSampler
+    catalyst.data.sampler.BatchBalanceClassSampler
 
     But you are not limited to using it in any other way.
     """

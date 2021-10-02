@@ -10,6 +10,18 @@ class MixupCallback(Callback):
     Callback to do mixup augmentation. More details about mixin can be found in the paper
     `mixup: Beyond Empirical Risk Minimization`: https://arxiv.org/abs/1710.09412 .
 
+    Args:
+        keys: batch keys to which you want to apply augmentation
+        alpha: beta distribution a=b parameters. Must be >=0. The more alpha closer to zero the
+            less effect of the mixup.
+        mode: mode determines the method of use. Must be in ["replace", "add"]. If "replace"
+            then replaces the batch with a mixed one, while the batch size is not changed
+            If "add", concatenates mixed examples to the current ones, the batch size increases
+            by 2 times.
+        on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
+            also proxy. We are not interested in them, are we? So, if ``on_train_only``
+            is ``True`` use a standard output/metric for validation.
+
     Examples:
 
     .. code-block:: python
@@ -107,24 +119,8 @@ class MixupCallback(Callback):
         use ControlFlowCallback in order to evaluate model(see example)
     """
 
-    def __init__(
-        self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True, **kwargs
-    ):
-        """
-
-        Args:
-            keys: batch keys to which you want to apply augmentation
-            alpha: beta distribution a=b parameters. Must be >=0. The more alpha closer to zero the
-                less effect of the mixup.
-            mode: mode determines the method of use. Must be in ["replace", "add"]. If "replace"
-                then replaces the batch with a mixed one, while the batch size is not changed
-                If "add", concatenates mixed examples to the current ones, the batch size increases
-                by 2 times.
-            on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
-                also proxy. We are not interested in them, are we? So, if ``on_train_only``
-                is ``True`` use a standard output/metric for validation.
-            **kwargs:
-        """
+    def __init__(self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True):
+        """Init."""
         assert isinstance(keys, (str, list, tuple)), (
             f"keys must be str of list[str]," f" get: {type(keys)}"
         )

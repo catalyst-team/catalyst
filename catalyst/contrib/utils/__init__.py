@@ -43,6 +43,8 @@ from catalyst.contrib.utils.parallel import (
     get_pool,
 )
 
+if SETTINGS.ml_required:
+    from catalyst.contrib.utils.report import get_classification_report
 
 from catalyst.contrib.utils.serialization import deserialize, serialize
 

@@ -27,7 +27,7 @@ You can check these examples as good practices to follow.
 #### Contrib extensions
 - https://github.com/catalyst-team/catalyst/pull/862
 - https://github.com/catalyst-team/catalyst/pull/1151
- 
+
 
 ## Step-by-step guide
 
@@ -60,23 +60,24 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ## Contribution best practices
 
-1. Install requirements
+0. Install Python v3.6.2+
+0. Install requirements
     ```bash
     # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
     brew install bash wget gnu-sed
 
-    # It is often useful to have one or more Python environments 
-    # where you can experiment with different combinations 
-    # of packages without affecting your main installation. 
+    # It is often useful to have one or more Python environments
+    # where you can experiment with different combinations
+    # of packages without affecting your main installation.
     # Create the virtual conda environment
     conda create --name catalyst_dev
     conda activate catalyst_dev # or ``source activate catalyst_dev``
-    
+
     # Install the required dependencies
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
-    
+
     # for easy-to-go development, we suggest installing all extra dependencies
-    # that's why the independent conda environment is preferable 
+    # that's why the independent conda environment is preferable
     # Catalyst has a lot of extensions :)
     pip install \
       -r requirements/requirements.txt \
@@ -91,13 +92,13 @@ If you are not familiar with creating a Pull Request, here are some guides:
       -r requirements/requirements-neptune.txt \
       -r requirements/requirements-albu.txt
     ```
-2. Break your work into small, single-purpose updates if possible.
+0. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
-3. Submit the update as a GitHub pull request against the `master` branch.
-4. Make sure that you provide docstrings for all your new methods and classes.
-5. Add new unit tests for your code ([PR examples](#pr-examples)).
-6. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to. 
-7. Make sure that your code [passes the Github CI](#github-ci)
+0. Submit the update as a GitHub pull request against the `master` branch.
+0. Make sure that you provide docstrings for all your new methods and classes.
+0. Add new unit tests for your code ([PR examples](#pr-examples)).
+0. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to.
+0. Make sure that your code [passes the Github CI](#github-ci)
 
 
 ## Github CI
@@ -114,28 +115,37 @@ Please use it as a collaborative platform, if you have any issues during the PR.
 
 ### Codestyle
 
-We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) 
+We also have our own [catalyst code-style](https://github.com/catalyst-team/codestyle)
 package to help with code formatting issues, and a corresponding pre-commit hook installed.
 
-To set the hook, please run (this requires `pre-commit` package, pinned in the `requirements-dev.txt`):
-```bash
-pre-commit install
-```
-Once the installation is done, all the files that are changed will be formatted automatically (and commit halted if something goes wrong, e.g there is a syntactic error). You can also run the formatting manually:
-```bash
-pre-commit run
-```
+- You could check the codestyle for your PR with:
+    ```bash
+    # to make code compatible with `catalyst` code style
+    catalyst-make-codestyle -l 99
 
-If for some reason you'll want to turn the hook off temporarily, you can do that with:
-```bash
-SKIP=catalyst-make-codestyle git commit -m "foo"
-```
-Or you can uninstall it completely with:
-```bash
-pre-commit uninstall
-```
+    # to check that the code is `catalyst` code style compliant
+    catalyst-check-codestyle -l 99
+    ```
 
-Once again, make sure that your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle and pre-commit run clean:
+- or To set the hook, please run (this requires `pre-commit` package, pinned in the [requirements-dev.txt](./requirements/requirements-dev.txt)):
+    ```bash
+    pre-commit install
+    ```
+    Once the installation is done, all the files that are changed will be formatted automatically (and commit halted if something goes wrong, e.g there is a syntactic error). You can also run the formatting manually:
+    ```bash
+    pre-commit run
+    ```
+
+    If for some reason you'll want to turn the hook off temporarily, you can do that with:
+    ```bash
+    SKIP=catalyst-make-codestyle git commit -m "foo"
+    ```
+    Or you can uninstall it completely with:
+    ```bash
+    pre-commit uninstall
+    ```
+
+Once again, make sure that your python packages complied with [requirements/requirements.txt](./requirements/requirements.txt) and [requirements/requirements-dev.txt](requirements/requirements-dev.txt) to get codestyle and pre-commit run clean:
 ```bash
 pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 ```
@@ -175,8 +185,7 @@ Please follow [PR examples](#pr-examples) for best practices.
 
 ### Integrations
 
-If you have contributed a new functionality with extra dependencies, 
-please ensure you have submitted the required tests. 
-Please follow [PR examples](#pr-examples) for best practices 
+If you have contributed a new functionality with extra dependencies,
+please ensure you have submitted the required tests.
+Please follow [PR examples](#pr-examples) for best practices
 and review current [integrations tests](https://github.com/catalyst-team/catalyst/blob/master/.github/workflows/dl_cpu.yml#L114#L117).
-
