@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets, ContrastiveModel
+from common import add_arguments, ContrastiveModel, datasets
 
 import torch
 from torch.optim import Adam
@@ -18,9 +18,11 @@ add_arguments(parser)
 
 parser.add_argument("--aug-strength", default=1.0, type=float, help="Strength of augmentations")
 
+
 def set_requires_grad(model, val):
     for p in model.parameters():
         p.requires_grad = val
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -52,13 +54,13 @@ if __name__ == "__main__":
         nn.Linear(512, args.feature_dim, bias=True),
     )
 
-    
-    
-    model = nn.ModuleDict({
-                'online': ContrastiveModel(projection_head_online, encoder_online),
-                'target': ContrastiveModel(projection_head_target, encoder_target)
-        })
-    
+    model = nn.ModuleDict(
+        {
+            "online": ContrastiveModel(projection_head_online, encoder_online),
+            "target": ContrastiveModel(projection_head_target, encoder_target),
+        }
+    )
+
     set_requires_grad(model["target"], False)
 
     # 2. model and optimizer
@@ -70,17 +72,19 @@ if __name__ == "__main__":
     callbacks = [
         dl.ControlFlowCallback(
             dl.CriterionCallback(
-                input_key="online_projection_left", target_key="target_projection_right", metric_key="loss"
+                input_key="online_projection_left",
+                target_key="target_projection_right",
+                metric_key="loss",
             ),
             loaders="train",
         ),
         dl.ControlFlowCallback(
             dl.SoftUpdateCallaback(target_model_key="target", source_model_key="online", tau=0.1),
             loaders="train",
-        )
+        ),
     ]
 
-    runner = SelfSupervisedRunner(encoders = ["online", "target"])
+    runner = SelfSupervisedRunner(encoders=["online", "target"])
 
     runner.train(
         model=model,
@@ -97,5 +101,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         minimize_valid_metric=True,
         num_epochs=args.epochs,
-        engine=dl.DeviceEngine("cpu")
+        engine=dl.DeviceEngine("cpu"),
     )
