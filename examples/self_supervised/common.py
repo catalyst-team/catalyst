@@ -1,5 +1,5 @@
 from datasets import datasets
-
+import torch
 
 def add_arguments(parser) -> None:
     """Function to add common arguments to argparse:
@@ -45,3 +45,14 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
     )
+
+class ContrastiveModel(torch.nn.Module):
+        def __init__(self, model, encoder):
+            super(ContrastiveModel, self).__init__()
+            self.model = model
+            self.encoder = encoder
+
+        def forward(self, x):
+            emb = self.encoder(x)
+            projection = self.model(emb)
+            return emb, projection

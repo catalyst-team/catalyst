@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets
+from common import add_arguments, datasets, ContrastiveModel
 
 import torch
 from torch.optim import Adam
@@ -18,16 +18,9 @@ add_arguments(parser)
 
 parser.add_argument("--aug-strength", default=1.0, type=float, help="Strength of augmentations")
 
-class ContrastiveModel(torch.nn.Module):
-        def __init__(self, model, encoder):
-            super(ContrastiveModel, self).__init__()
-            self.model = model
-            self.encoder = encoder
-
-        def forward(self, x):
-            emb = self.encoder(x)
-            projection = self.model(emb)
-            return emb, projection
+def set_requires_grad(model, val):
+    for p in model.parameters():
+        p.requires_grad = val
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -58,11 +51,15 @@ if __name__ == "__main__":
         nn.ReLU(inplace=True),
         nn.Linear(512, args.feature_dim, bias=True),
     )
+
+    
     
     model = nn.ModuleDict({
                 'online': ContrastiveModel(projection_head_online, encoder_online),
                 'target': ContrastiveModel(projection_head_target, encoder_target)
         })
+    
+    set_requires_grad(model["target"], False)
 
     # 2. model and optimizer
     optimizer = Adam(model["online"].parameters(), lr=args.learning_rate)
