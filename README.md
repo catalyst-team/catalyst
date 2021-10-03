@@ -1538,7 +1538,7 @@ runner.run()
 - Callbacks – reusable train/inference pipeline parts with easy customization.
 - Training stages support.
 - Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Workflow best practices: fp16 support, distributed training, slurm support.
+- Workflow best practices: fp16 support, distributed training, slurm support, DALI loaders.
 - Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
 
 
