@@ -11,6 +11,15 @@ def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
 
 
 class SoftUpdateCallaback(Callback):
+    """Callback to update `target` data inside `runner.model` with the `source` data inside model
+    one smoothing by ``tau`` (inplace operation).
+
+    Args:
+        target_model_key: key to the data inside `runner.model` to update
+        source_model_key: key to the source data inside `runner.model`
+        tau: smoothing parameter: `target * (1.0 - tau) + source * tau`
+    """
+
     def __init__(self, target_model_key: str, source_model_key: str, tau: float) -> None:
         """Init."""
         super().__init__(order=CallbackOrder.Metric)
