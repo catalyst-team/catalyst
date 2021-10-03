@@ -11,8 +11,8 @@ def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
 
 
 class SoftUpdateCallaback(Callback):
-    """Callback to update `target` data inside `runner.model` with the `source` data inside `runner.model`
-    one smoothing by ``tau`` (inplace operation).
+    """Callback to update `target` data inside `runner.model` with the `source`
+    data inside `runner.model` one smoothing by ``tau`` (inplace operation).
 
     Args:
         target_model_key: key to the data inside `runner.model` to update
