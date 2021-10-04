@@ -37,7 +37,10 @@ class SoftUpdateCallaback(Callback):
         self.target_model_key = target_model_key
         self.source_model_key = source_model_key
         self.tau = tau
-        self.scope = scope
+        if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start", "on_epoch_end", "on_epoch_start"]:
+            self.scope = scope
+        else:
+            raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start", "on_epoch_end", "on_epoch_start"]')
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end action.
