@@ -88,7 +88,7 @@ from catalyst.utils.torch import (
     unpack_checkpoint,
     save_checkpoint,
     load_checkpoint,
-    soft_update
+    soft_update,
 )
 
 from catalyst.utils.tracing import trace_model
