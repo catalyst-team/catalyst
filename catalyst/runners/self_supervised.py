@@ -188,26 +188,17 @@ class ISelfSupervisedRunner(IRunner):
             embedding1, projection1 = encoder(batch[f"{self._augemention_prefix}_left"], **kwargs)
             embedding2, projection2 = encoder(batch[f"{self._augemention_prefix}_right"], **kwargs)
             origin_embeddings, projection_origin = encoder(batch[self._input_key], **kwargs)
-            if encoder_name:
-                batch = {
-                    **batch,
-                    f"{encoder_name}_{self._projection_prefix}_left": projection1,
-                    f"{encoder_name}_{self._projection_prefix}_right": projection2,
-                    f"{encoder_name}_{self._projection_prefix}_origin": projection_origin,
-                    f"{encoder_name}_{self._embedding_prefix}_left": embedding1,
-                    f"{encoder_name}_{self._embedding_prefix}_right": embedding2,
-                    f"{encoder_name}_{self._embedding_prefix}_origin": origin_embeddings,
-                }
-            else:
-                batch = {
-                    **batch,
-                    f"{self._projection_prefix}_left": projection1,
-                    f"{self._projection_prefix}_right": projection2,
-                    f"{self._projection_prefix}_origin": projection_origin,
-                    f"{self._embedding_prefix}_left": embedding1,
-                    f"{self._embedding_prefix}_right": embedding2,
-                    f"{self._embedding_prefix}_origin": origin_embeddings,
-                }
+            prefix = f"{encoder_name}_" if encoder_name else ""
+            batch = {
+                **batch,
+                f"{prefix}{self._projection_prefix}_left": projection1,
+                f"{prefix}{self._projection_prefix}_right": projection2,
+                f"{prefix}{self._projection_prefix}_origin": projection_origin,
+                f"{prefix}{self._embedding_prefix}_left": embedding1,
+                f"{prefix}{self._embedding_prefix}_right": embedding2,
+                f"{prefix}{self._embedding_prefix}_origin": origin_embeddings,
+            }
+            
 
         return batch
 
