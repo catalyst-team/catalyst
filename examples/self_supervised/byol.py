@@ -79,12 +79,12 @@ if __name__ == "__main__":
             loaders="train",
         ),
         dl.ControlFlowCallback(
-            dl.SoftUpdateCallaback(target_model_key="target", source_model_key="online", tau=0.1),
+            dl.SoftUpdateCallaback(target_model_key="target", source_model_key="online", tau=0.1, scope="on_batch_ned"),
             loaders="train",
         ),
     ]
 
-    runner = SelfSupervisedRunner(encoders=["online", "target"])
+    runner = SelfSupervisedRunner()
 
     runner.train(
         model=model,

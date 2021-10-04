@@ -1,7 +1,7 @@
 from typing import Any, List, Mapping, Optional
 
+import collections
 from catalyst.core.runner import IRunner
-from collections import Mapping
 from torch import nn
 
 class ISelfSupervisedRunner(IRunner):
@@ -170,7 +170,7 @@ class ISelfSupervisedRunner(IRunner):
 
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
         
-        if isinstance(self.model, (Mapping, nn.ModuleDict)):
+        if isinstance(self.model, (collections.Mapping, nn.ModuleDict)):
             encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.model]
         else:
             encoders = [("", self.model)]
