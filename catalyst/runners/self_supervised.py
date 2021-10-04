@@ -169,10 +169,16 @@ class ISelfSupervisedRunner(IRunner):
                 }
 
         return batch
-
+    
+    def on_stage_start(self, runner: "IRunner"):
+        super().on_stage_start(runner)
+        self.is_kv_model = False
+        if isinstance(self.model, (collections.Mapping, nn.ModuleDict)):
+            self.is_kv_model = True
+    
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
 
-        if isinstance(self.model, (collections.Mapping, nn.ModuleDict)):
+        if self.is_kv_model:
             encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.model]
         else:
             encoders = [("", self.model)]
