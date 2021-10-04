@@ -118,37 +118,6 @@ CircleLoss
     :undoc-members:
     :show-inheritance:
 
-Contrastive
-"""""""""""
-
-BarlowTwinsLoss
-***************
-.. autoclass:: catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss
-    :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
-ContrastiveDistanceLoss
-***********************
-.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss
-    :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
-ContrastiveEmbeddingLoss
-************************
-.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss
-    :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
-ContrastivePairwiseEmbeddingLoss
-********************************
-.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss
-    :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
 DiceLoss
 """""""""
 .. autoclass:: catalyst.contrib.nn.criterion.dice.DiceLoss
@@ -191,6 +160,13 @@ NTXentLoss
     :undoc-members:
     :show-inheritance:
 
+SupervisedContrastiveLoss
+"""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 TrevskyLoss
 """""""""""
 .. autoclass:: catalyst.contrib.nn.criterion.trevsky.TrevskyLoss
@@ -215,6 +191,37 @@ TripletMarginLossWithSampler
 WingLoss
 """""""""
 .. autoclass:: catalyst.contrib.nn.criterion.wing.WingLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Contrastive
+"""""""""""
+
+BarlowTwinsLoss
+***************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastiveDistanceLoss
+***********************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastiveEmbeddingLoss
+************************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastivePairwiseEmbeddingLoss
+********************************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss
     :members: __init__
     :undoc-members:
     :show-inheritance:
