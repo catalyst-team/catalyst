@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets, ContrastiveModel
+from common import add_arguments, ContrastiveModel, datasets
 
 import torch
 import torch.nn.functional as F
