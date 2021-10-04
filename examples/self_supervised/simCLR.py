@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets
+from common import add_arguments, datasets, ContrastiveModel
 
 import torch
 import torch.nn.functional as F
@@ -43,17 +43,6 @@ if __name__ == "__main__":
         nn.ReLU(inplace=True),
         nn.Linear(512, args.feature_dim, bias=True),
     )
-
-    class ContrastiveModel(torch.nn.Module):
-        def __init__(self, model, encoder):
-            super(ContrastiveModel, self).__init__()
-            self.model = model
-            self.encoder = encoder
-
-        def forward(self, x):
-            emb = self.encoder(x)
-            projection = self.model(emb)
-            return emb, projection
 
     model = ContrastiveModel(projection_head, encoder)
     # 2. model and optimizer
