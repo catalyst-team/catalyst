@@ -1,7 +1,8 @@
 from typing import Any, List, Mapping, Optional
 
 from catalyst.core.runner import IRunner
-
+from collections import Mapping
+from torch import nn
 
 class ISelfSupervisedRunner(IRunner):
     """IRunner for experiments with contrastive model.
@@ -136,7 +137,6 @@ class ISelfSupervisedRunner(IRunner):
         augemention_prefix: str = "augment",
         projection_prefix: str = "projection",
         embedding_prefix: str = "embedding",
-        encoders: Optional[List[str]] = None,
     ):
         """Init."""
         IRunner.__init__(self)
@@ -170,8 +170,9 @@ class ISelfSupervisedRunner(IRunner):
         return batch
 
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
-        if self.encoders:
-            encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.encoders]
+        
+        if isinstance(self.model, (Mapping, nn.ModuleDict)):
+            encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.model]
         else:
             encoders = [("", self.model)]
 
