@@ -47,7 +47,7 @@ class R2SquaredCallback(LoaderMetricCallback):
             num_epochs=8,
             verbose=True,
             callbacks=[
-                      dl.R2SquaredCallback(input_key="logits", target_key="targets")
+                dl.R2SquaredCallback(input_key="logits", target_key="targets")
             ]
         )
 
