@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 21.09 documentation</title>
+  <title>Index &mdash; Catalyst 21.10rc0 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.09</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
                 </div>
               
             
@@ -390,6 +390,14 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.circle.CircleLoss.__init__">(catalyst.contrib.nn.criterion.circle.CircleLoss method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss.__init__">(catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.__init__">(catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.__init__">(catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__">(catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.dice.DiceLoss.__init__">(catalyst.contrib.nn.criterion.dice.DiceLoss method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.focal.FocalLossBinary.__init__">(catalyst.contrib.nn.criterion.focal.FocalLossBinary method)</a>
@@ -400,9 +408,13 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss.__init__">(catalyst.contrib.nn.criterion.margin.MarginLoss method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.ntxent.NTXentLoss.__init__">(catalyst.contrib.nn.criterion.ntxent.NTXentLoss method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__">(catalyst.contrib.nn.criterion.regression.HuberLossV0 method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__">(catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss.__init__">(catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss.__init__">(catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss method)</a>
 </li>
@@ -559,6 +571,8 @@
 </li>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler">BalanceClassSampler (class in catalyst.data.sampler)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss">BarlowTwinsLoss (class in catalyst.contrib.nn.criterion.contrastive)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.barrier">barrier() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.sampler.BatchBalanceClassSampler">BatchBalanceClassSampler (class in catalyst.data.sampler)</a>
@@ -685,12 +699,12 @@
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._r2_squared">catalyst.metrics.functional._r2_squared (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">catalyst.metrics.functional._recall (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._segmentation">catalyst.metrics.functional._segmentation (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#module-catalyst.utils">catalyst.utils (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.config">catalyst.utils.config (module)</a>
@@ -768,6 +782,12 @@
       <li><a href="api/metrics.html#catalyst.metrics._confusion_matrix.ConfusionMatrixMetric">ConfusionMatrixMetric (class in catalyst.metrics._confusion_matrix)</a>
 </li>
       <li><a href="api/loggers.html#catalyst.loggers.console.ConsoleLogger">ConsoleLogger (class in catalyst.loggers.console)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss">ContrastiveDistanceLoss (class in catalyst.contrib.nn.criterion.contrastive)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">ContrastiveEmbeddingLoss (class in catalyst.contrib.nn.criterion.contrastive)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss">ContrastivePairwiseEmbeddingLoss (class in catalyst.contrib.nn.criterion.contrastive)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.control_flow.ControlFlowCallback">ControlFlowCallback (class in catalyst.callbacks.control_flow)</a>
 </li>
@@ -1495,6 +1515,8 @@
 </li>
       <li><a href="api/data.html#catalyst.data.transforms.Normalize">Normalize (class in catalyst.data.transforms)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.ntxent.NTXentLoss">NTXentLoss (class in catalyst.contrib.nn.criterion.ntxent)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.dataset.torch.NumpyDataset">NumpyDataset (class in catalyst.data.dataset.torch)</a>
 </li>
   </ul></td>
@@ -1689,6 +1711,8 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics._r2_squared.R2Squared">R2Squared (class in catalyst.metrics._r2_squared)</a>
 </li>
+      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.r2_squared.R2SquaredCallback">R2SquaredCallback (class in catalyst.callbacks.metrics.r2_squared)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.radam.RAdam">RAdam (class in catalyst.contrib.nn.optimizers.radam)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.ralamb.Ralamb">Ralamb (class in catalyst.contrib.nn.optimizers.ralamb)</a>
@@ -1711,10 +1735,10 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics._cmc_score.ReidCMCMetric">ReidCMCMetric (class in catalyst.metrics._cmc_score)</a>
 </li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">ReidCMCScoreCallback (class in catalyst.callbacks.metrics.cmc_score)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">ReidCMCScoreCallback (class in catalyst.callbacks.metrics.cmc_score)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.pruning.remove_reparametrization">remove_reparametrization() (in module catalyst.utils.pruning)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.visualization.render_figure_to_array">render_figure_to_array() (in module catalyst.contrib.utils.visualization)</a>
@@ -1809,10 +1833,10 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._focal.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.metrics.functional._focal)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback">SklearnLoaderCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.sklearn_model.SklearnModelCallback">SklearnModelCallback (class in catalyst.callbacks.sklearn_model)</a>
@@ -1858,6 +1882,8 @@
       <li><a href="api/utils.html#catalyst.utils.distributed.sum_reduce">sum_reduce() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/runners.html#catalyst.runners.config.SupervisedConfigRunner">SupervisedConfigRunner (class in catalyst.runners.config)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss">SupervisedContrastiveLoss (class in catalyst.contrib.nn.criterion.supervised_contrastive)</a>
 </li>
       <li><a href="api/runners.html#catalyst.runners.hydra.SupervisedHydraRunner">SupervisedHydraRunner (class in catalyst.runners.hydra)</a>
 </li>

@@ -99,20 +99,17 @@ Getting started
 
 Step by step guide
 ~~~~~~~~~~~~~~~~~~~~~~
-1. Start with `Catalyst 2021–Accelerated PyTorch 2.0`_ introduction.
-2. Check `minimal examples`_.
-3. Try `notebook tutorials with Google Colab`_.
-4. Read `blogposts`_ with use-cases and guides.
-5. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
-6. If you would like to contribute to the project, follow our `contribution guidelines`_.
-7. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
-8. And do not forget to `join our slack`_ for collaboration.
+1. Start with `Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D`_ introduction.
+2. Try `notebook tutorials`_ or check `minimal examples`_ for first deep dive.
+3. Read `blogposts`_ with use-cases and guides.
+4. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
+5. And do not forget to `join our slack`_ for collaboration.
 
-.. _`Catalyst 2021–Accelerated PyTorch 2.0`: https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762
+.. _`Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D`: https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef
 .. _`Kittylyst`: https://github.com/Scitator/kittylyst
 .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-.. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
-.. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
+.. _`notebook tutorials`: https://github.com/catalyst-team/catalyst#minimal-examples
+.. _`blogposts`: https://catalyst-team.com/post/
 .. _`"Deep Learning with Catalyst" course`: https://github.com/catalyst-team/dl-course
 .. _`classification`: https://github.com/catalyst-team/classification
 .. _`detection`: https://github.com/catalyst-team/detection

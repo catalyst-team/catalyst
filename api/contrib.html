@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 21.09 documentation</title>
+  <title>Contrib &mdash; Catalyst 21.10rc0 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.09</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
                 </div>
               
             
@@ -350,61 +350,71 @@
 <li><p><a class="reference internal" href="#focallossmulticlass" id="id33">FocalLossMultiClass</a></p></li>
 <li><p><a class="reference internal" href="#iouloss" id="id34">IoULoss</a></p></li>
 <li><p><a class="reference internal" href="#marginloss" id="id35">MarginLoss</a></p></li>
-<li><p><a class="reference internal" href="#trevskyloss" id="id36">TrevskyLoss</a></p></li>
-<li><p><a class="reference internal" href="#focaltrevskyloss" id="id37">FocalTrevskyLoss</a></p></li>
-<li><p><a class="reference internal" href="#tripletmarginlosswithsampler" id="id38">TripletMarginLossWithSampler</a></p></li>
-<li><p><a class="reference internal" href="#wingloss" id="id39">WingLoss</a></p></li>
-<li><p><a class="reference internal" href="#regression" id="id40">Regression</a></p>
+<li><p><a class="reference internal" href="#ntxentloss" id="id36">NTXentLoss</a></p></li>
+<li><p><a class="reference internal" href="#supervisedcontrastiveloss" id="id37">SupervisedContrastiveLoss</a></p></li>
+<li><p><a class="reference internal" href="#trevskyloss" id="id38">TrevskyLoss</a></p></li>
+<li><p><a class="reference internal" href="#focaltrevskyloss" id="id39">FocalTrevskyLoss</a></p></li>
+<li><p><a class="reference internal" href="#tripletmarginlosswithsampler" id="id40">TripletMarginLossWithSampler</a></p></li>
+<li><p><a class="reference internal" href="#wingloss" id="id41">WingLoss</a></p></li>
+<li><p><a class="reference internal" href="#contrastive" id="id42">Contrastive</a></p>
 <ul>
-<li><p><a class="reference internal" href="#huberlossv0" id="id41">HuberLossV0</a></p></li>
-<li><p><a class="reference internal" href="#categoricalregressionloss" id="id42">CategoricalRegressionLoss</a></p></li>
-<li><p><a class="reference internal" href="#quantileregressionloss" id="id43">QuantileRegressionLoss</a></p></li>
-<li><p><a class="reference internal" href="#rsquareloss" id="id44">RSquareLoss</a></p></li>
+<li><p><a class="reference internal" href="#barlowtwinsloss" id="id43">BarlowTwinsLoss</a></p></li>
+<li><p><a class="reference internal" href="#contrastivedistanceloss" id="id44">ContrastiveDistanceLoss</a></p></li>
+<li><p><a class="reference internal" href="#contrastiveembeddingloss" id="id45">ContrastiveEmbeddingLoss</a></p></li>
+<li><p><a class="reference internal" href="#contrastivepairwiseembeddingloss" id="id46">ContrastivePairwiseEmbeddingLoss</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#recsys" id="id45">RecSys</a></p>
+<li><p><a class="reference internal" href="#recsys" id="id47">RecSys</a></p>
 <ul>
-<li><p><a class="reference internal" href="#adaptivehingeloss" id="id46">AdaptiveHingeLoss</a></p></li>
-<li><p><a class="reference internal" href="#bprloss" id="id47">BPRLoss</a></p></li>
-<li><p><a class="reference internal" href="#hingeloss" id="id48">HingeLoss</a></p></li>
-<li><p><a class="reference internal" href="#logisticloss" id="id49">LogisticLoss</a></p></li>
-<li><p><a class="reference internal" href="#rocstarloss" id="id50">RocStarLoss</a></p></li>
-<li><p><a class="reference internal" href="#warploss" id="id51">WARPLoss</a></p></li>
+<li><p><a class="reference internal" href="#adaptivehingeloss" id="id48">AdaptiveHingeLoss</a></p></li>
+<li><p><a class="reference internal" href="#bprloss" id="id49">BPRLoss</a></p></li>
+<li><p><a class="reference internal" href="#hingeloss" id="id50">HingeLoss</a></p></li>
+<li><p><a class="reference internal" href="#logisticloss" id="id51">LogisticLoss</a></p></li>
+<li><p><a class="reference internal" href="#rocstarloss" id="id52">RocStarLoss</a></p></li>
+<li><p><a class="reference internal" href="#warploss" id="id53">WARPLoss</a></p></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#modules" id="id52">Modules</a></p>
+<li><p><a class="reference internal" href="#regression" id="id54">Regression</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id53">ArcFace and SubCenterArcFace</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id54">Arc Margin Product</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id55">CosFace and AdaCos</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface" id="id56">CurricularFace</a></p></li>
-<li><p><a class="reference internal" href="#sse" id="id57">sSE</a></p></li>
-<li><p><a class="reference internal" href="#cse" id="id58">cSE</a></p></li>
-<li><p><a class="reference internal" href="#scse" id="id59">scSE</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.softmax" id="id60">SoftMax</a></p></li>
+<li><p><a class="reference internal" href="#huberlossv0" id="id55">HuberLossV0</a></p></li>
+<li><p><a class="reference internal" href="#categoricalregressionloss" id="id56">CategoricalRegressionLoss</a></p></li>
+<li><p><a class="reference internal" href="#quantileregressionloss" id="id57">QuantileRegressionLoss</a></p></li>
+<li><p><a class="reference internal" href="#rsquareloss" id="id58">RSquareLoss</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#optimizers" id="id61">Optimizers</a></p>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#modules" id="id59">Modules</a></p>
 <ul>
-<li><p><a class="reference internal" href="#adamp" id="id62">AdamP</a></p></li>
-<li><p><a class="reference internal" href="#lamb" id="id63">Lamb</a></p></li>
-<li><p><a class="reference internal" href="#lookahead" id="id64">Lookahead</a></p></li>
-<li><p><a class="reference internal" href="#qhadamw" id="id65">QHAdamW</a></p></li>
-<li><p><a class="reference internal" href="#radam" id="id66">RAdam</a></p></li>
-<li><p><a class="reference internal" href="#ralamb" id="id67">Ralamb</a></p></li>
-<li><p><a class="reference internal" href="#sgdp" id="id68">SGDP</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id60">ArcFace and SubCenterArcFace</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id61">Arc Margin Product</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id62">CosFace and AdaCos</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface" id="id63">CurricularFace</a></p></li>
+<li><p><a class="reference internal" href="#sse" id="id64">sSE</a></p></li>
+<li><p><a class="reference internal" href="#cse" id="id65">cSE</a></p></li>
+<li><p><a class="reference internal" href="#scse" id="id66">scSE</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.softmax" id="id67">SoftMax</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers" id="id69">Schedulers</a></p>
+<li><p><a class="reference internal" href="#optimizers" id="id68">Optimizers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#onecyclelrwithwarmup" id="id70">OneCycleLRWithWarmup</a></p></li>
+<li><p><a class="reference internal" href="#adamp" id="id69">AdamP</a></p></li>
+<li><p><a class="reference internal" href="#lamb" id="id70">Lamb</a></p></li>
+<li><p><a class="reference internal" href="#lookahead" id="id71">Lookahead</a></p></li>
+<li><p><a class="reference internal" href="#qhadamw" id="id72">QHAdamW</a></p></li>
+<li><p><a class="reference internal" href="#radam" id="id73">RAdam</a></p></li>
+<li><p><a class="reference internal" href="#ralamb" id="id74">Ralamb</a></p></li>
+<li><p><a class="reference internal" href="#sgdp" id="id75">SGDP</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers" id="id76">Schedulers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#onecyclelrwithwarmup" id="id77">OneCycleLRWithWarmup</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#scripts" id="id71">Scripts</a></p></li>
+<li><p><a class="reference internal" href="#scripts" id="id78">Scripts</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.contrib"></span><section id="module-catalyst.contrib.datasets">
@@ -921,8 +931,88 @@ summed over all classes with weights.</p></li>
 </dd></dl>
 
 </section>
+<section id="ntxentloss">
+<h4><a class="toc-backref" href="#id36">NTXentLoss</a><a class="headerlink" href="#ntxentloss" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.ntxent.NTXentLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.ntxent.</code><code class="sig-name descname">NTXentLoss</code><span class="sig-paren">(</span><em class="sig-param">tau: float</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ntxent.html#NTXentLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ntxent.NTXentLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>A Contrastive embedding loss.</p>
+<p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/2002.05709">A Simple Framework
+for Contrastive Learning of Visual Representations</a>.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">NTXentLoss</span>
+
+<span class="n">embeddings_left</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">embeddings_right</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">NTXentLoss</span><span class="p">(</span><span class="n">tau</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">criterion</span><span class="p">(</span><span class="n">embeddings_left</span><span class="p">,</span> <span class="n">embeddings_right</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.ntxent.NTXentLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">tau: float</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ntxent.html#NTXentLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ntxent.NTXentLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tau</strong> – temperature</p></li>
+<li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the reduction to apply to the output:
+<code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>.
+<code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: no reduction will be applied,
+<code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>: the sum of the output will be divided by the number of
+positive pairs in the output,
+<code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>: the output will be summed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if reduction is not mean, sum or none</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="supervisedcontrastiveloss">
+<h4><a class="toc-backref" href="#id37">SupervisedContrastiveLoss</a><a class="headerlink" href="#supervisedcontrastiveloss" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.supervised_contrastive.</code><code class="sig-name descname">SupervisedContrastiveLoss</code><span class="sig-paren">(</span><em class="sig-param">tau: float</em>, <em class="sig-param">reduction: str = 'mean'</em>, <em class="sig-param">pos_aggregation='in'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/supervised_contrastive.html#SupervisedContrastiveLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>A Contrastive embedding loss that uses targets.</p>
+<p>It has been proposed in <a class="reference external" href="https://arxiv.org/pdf/2004.11362.pdf">Supervised Contrastive Learning</a>.</p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">tau: float</em>, <em class="sig-param">reduction: str = 'mean'</em>, <em class="sig-param">pos_aggregation='in'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/supervised_contrastive.html#SupervisedContrastiveLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.supervised_contrastive.SupervisedContrastiveLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tau</strong> – temperature</p></li>
+<li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the reduction to apply to the output:
+<code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>.
+<code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: no reduction will be applied,
+<code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>: the sum of the output will be divided by the number of
+positive pairs in the output,
+<code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>: the output will be summed.</p></li>
+<li><p><strong>pos_aggregation</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the place of positive pairs aggregation:
+<code class="docutils literal notranslate"><span class="pre">&quot;in&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;out&quot;</span></code>.
+<code class="docutils literal notranslate"><span class="pre">&quot;in&quot;</span></code>: maximization of log(average positive exponentiate similarity)
+<code class="docutils literal notranslate"><span class="pre">&quot;out&quot;</span></code>: maximization of average positive similarity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if reduction is not mean, sum or none</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="trevskyloss">
-<h4><a class="toc-backref" href="#id36">TrevskyLoss</a><a class="headerlink" href="#trevskyloss" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id38">TrevskyLoss</a><a class="headerlink" href="#trevskyloss" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.trevsky.TrevskyLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.trevsky.</code><code class="sig-name descname">TrevskyLoss</code><span class="sig-paren">(</span><em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">mode: str = 'macro'</em>, <em class="sig-param">weights: List[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/trevsky.html#TrevskyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.trevsky.TrevskyLoss" title="Permalink to this definition">¶</a></dt>
@@ -959,7 +1049,7 @@ summed over all classes with weights.</p></li>
 
 </section>
 <section id="focaltrevskyloss">
-<h4><a class="toc-backref" href="#id37">FocalTrevskyLoss</a><a class="headerlink" href="#focaltrevskyloss" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id39">FocalTrevskyLoss</a><a class="headerlink" href="#focaltrevskyloss" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.trevsky.</code><code class="sig-name descname">FocalTrevskyLoss</code><span class="sig-paren">(</span><em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">gamma: float = 1.3333333333333333</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">mode: str = 'macro'</em>, <em class="sig-param">weights: List[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/trevsky.html#FocalTrevskyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss" title="Permalink to this definition">¶</a></dt>
@@ -999,7 +1089,7 @@ summed over all classes with weights.</p></li>
 
 </section>
 <section id="tripletmarginlosswithsampler">
-<h4><a class="toc-backref" href="#id38">TripletMarginLossWithSampler</a><a class="headerlink" href="#tripletmarginlosswithsampler" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id40">TripletMarginLossWithSampler</a><a class="headerlink" href="#tripletmarginlosswithsampler" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletMarginLossWithSampler</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">sampler_inbatch: IInbatchTripletSampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletMarginLossWithSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler" title="Permalink to this definition">¶</a></dt>
@@ -1023,7 +1113,7 @@ default TripletMargingLoss from PyTorch.</p>
 
 </section>
 <section id="wingloss">
-<h4><a class="toc-backref" href="#id39">WingLoss</a><a class="headerlink" href="#wingloss" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id41">WingLoss</a><a class="headerlink" href="#wingloss" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.wing.WingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.wing.</code><code class="sig-name descname">WingLoss</code><span class="sig-paren">(</span><em class="sig-param">width: int = 5</em>, <em class="sig-param">curvature: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/wing.html#WingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.wing.WingLoss" title="Permalink to this definition">¶</a></dt>
@@ -1046,53 +1136,61 @@ with Convolutional Neural Networks</a>.</p>
 </dd></dl>
 
 </section>
-<section id="regression">
-<h4><a class="toc-backref" href="#id40">Regression</a><a class="headerlink" href="#regression" title="Permalink to this headline">¶</a></h4>
-<section id="huberlossv0">
-<h5><a class="toc-backref" href="#id41">HuberLossV0</a><a class="headerlink" href="#huberlossv0" title="Permalink to this headline">¶</a></h5>
+<section id="contrastive">
+<h4><a class="toc-backref" href="#id42">Contrastive</a><a class="headerlink" href="#contrastive" title="Permalink to this headline">¶</a></h4>
+<section id="barlowtwinsloss">
+<h5><a class="toc-backref" href="#id43">BarlowTwinsLoss</a><a class="headerlink" href="#barlowtwinsloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
-<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">HuberLossV0</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">BarlowTwinsLoss</code><span class="sig-paren">(</span><em class="sig-param">offdiag_lambda=1.0</em>, <em class="sig-param">eps=1e-12</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#BarlowTwinsLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The Contrastive embedding loss.</p>
+<p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/2103.03230">Barlow Twins:
+Self-Supervised Learning via Redundancy Reduction</a>.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">BarlowTwinsLoss</span>
+
+<span class="n">embeddings_left</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">embeddings_right</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">BarlowTwinsLoss</span><span class="p">(</span><span class="n">offdiag_lambda</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">criterion</span><span class="p">(</span><span class="n">embeddings_left</span><span class="p">,</span> <span class="n">embeddings_right</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">offdiag_lambda=1.0</em>, <em class="sig-param">eps=1e-12</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#BarlowTwinsLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offdiag_lambda</strong> – trade-off parameter</p></li>
+<li><p><strong>eps</strong> – shift for the varience (var + eps)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="contrastivedistanceloss">
+<h5><a class="toc-backref" href="#id44">ContrastiveDistanceLoss</a><a class="headerlink" href="#contrastivedistanceloss" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The Contrastive distance loss.</p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="categoricalregressionloss">
-<h5><a class="toc-backref" href="#id42">CategoricalRegressionLoss</a><a class="headerlink" href="#categoricalregressionloss" title="Permalink to this headline">¶</a></h5>
-<dl class="class">
-<dt id="catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">CategoricalRegressionLoss</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int</em>, <em class="sig-param">v_min: int</em>, <em class="sig-param">v_max: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#CategoricalRegressionLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">logits_t: torch.Tensor</em>, <em class="sig-param">logits_tp1: torch.Tensor</em>, <em class="sig-param">atoms_target_t: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#CategoricalRegressionLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the loss</p>
-<dl class="field-list simple">
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveDistanceLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>logits_t</strong> (<em>torch.Tensor</em>) – predicted atoms at step T, shape: [bs; num_atoms]</p></li>
-<li><p><strong>logits_tp1</strong> (<em>torch.Tensor</em>) – predicted atoms at step T+1, shape: [bs; num_atoms]</p></li>
-<li><p><strong>atoms_target_t</strong> (<em>torch.Tensor</em>) – target atoms at step T, shape: [bs; num_atoms]</p></li>
+<li><p><strong>margin</strong> – margin parameter</p></li>
+<li><p><strong>reduction</strong> – criterion reduction type</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>computed loss</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1100,34 +1198,24 @@ with Convolutional Neural Networks</a>.</p>
 </dd></dl>
 
 </section>
-<section id="quantileregressionloss">
-<h5><a class="toc-backref" href="#id43">QuantileRegressionLoss</a><a class="headerlink" href="#quantileregressionloss" title="Permalink to this headline">¶</a></h5>
+<section id="contrastiveembeddingloss">
+<h5><a class="toc-backref" href="#id45">ContrastiveEmbeddingLoss</a><a class="headerlink" href="#contrastiveembeddingloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
-<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">QuantileRegressionLoss</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int = 51</em>, <em class="sig-param">clip_delta: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The Contrastive embedding loss.</p>
+<p>It has been proposed in <a class="reference external" href="http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf">Dimensionality Reduction
+by Learning an Invariant Mapping</a>.</p>
 <dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int = 51</em>, <em class="sig-param">clip_delta: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Init.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the loss.</p>
-<dl class="field-list simple">
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveEmbeddingLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – predicted atoms, shape: [bs; num_atoms]</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – target atoms, shape: [bs; num_atoms]</p></li>
+<li><p><strong>margin</strong> – margin parameter</p></li>
+<li><p><strong>reduction</strong> – criterion reduction type</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>computed loss</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1135,28 +1223,24 @@ with Convolutional Neural Networks</a>.</p>
 </dd></dl>
 
 </section>
-<section id="rsquareloss">
-<h5><a class="toc-backref" href="#id44">RSquareLoss</a><a class="headerlink" href="#rsquareloss" title="Permalink to this headline">¶</a></h5>
+<section id="contrastivepairwiseembeddingloss">
+<h5><a class="toc-backref" href="#id46">ContrastivePairwiseEmbeddingLoss</a><a class="headerlink" href="#contrastivepairwiseembeddingloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
-<dt id="catalyst.contrib.nn.criterion.regression.RSquareLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">RSquareLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#RSquareLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.RSquareLoss" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">ContrastivePairwiseEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastivePairwiseEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>ContrastivePairwiseEmbeddingLoss – proof of concept criterion.</p>
+<p>Still work in progress.</p>
+<p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="method">
-<dt id="catalyst.contrib.nn.criterion.regression.RSquareLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#RSquareLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.RSquareLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the loss.</p>
-<dl class="field-list simple">
+<dt id="catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastivePairwiseEmbeddingLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – model outputs</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – targets</p></li>
+<li><p><strong>margin</strong> – margin parameter</p></li>
+<li><p><strong>reduction</strong> – criterion reduction type</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>computed loss</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1166,9 +1250,9 @@ with Convolutional Neural Networks</a>.</p>
 </section>
 </section>
 <section id="recsys">
-<h4><a class="toc-backref" href="#id45">RecSys</a><a class="headerlink" href="#recsys" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id47">RecSys</a><a class="headerlink" href="#recsys" title="Permalink to this headline">¶</a></h4>
 <section id="adaptivehingeloss">
-<h5><a class="toc-backref" href="#id46">AdaptiveHingeLoss</a><a class="headerlink" href="#adaptivehingeloss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id48">AdaptiveHingeLoss</a><a class="headerlink" href="#adaptivehingeloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">AdaptiveHingeLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#AdaptiveHingeLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss" title="Permalink to this definition">¶</a></dt>
@@ -1211,7 +1295,7 @@ but risk overfitting.</p></li>
 
 </section>
 <section id="bprloss">
-<h5><a class="toc-backref" href="#id47">BPRLoss</a><a class="headerlink" href="#bprloss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id49">BPRLoss</a><a class="headerlink" href="#bprloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.BPRLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">BPRLoss</code><span class="sig-paren">(</span><em class="sig-param">gamma=1e-10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#BPRLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.BPRLoss" title="Permalink to this definition">¶</a></dt>
@@ -1255,7 +1339,7 @@ but risk overfitting.</p></li>
 
 </section>
 <section id="hingeloss">
-<h5><a class="toc-backref" href="#id48">HingeLoss</a><a class="headerlink" href="#hingeloss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id50">HingeLoss</a><a class="headerlink" href="#hingeloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.HingeLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">HingeLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#HingeLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.HingeLoss" title="Permalink to this definition">¶</a></dt>
@@ -1293,7 +1377,7 @@ but risk overfitting.</p></li>
 
 </section>
 <section id="logisticloss">
-<h5><a class="toc-backref" href="#id49">LogisticLoss</a><a class="headerlink" href="#logisticloss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id51">LogisticLoss</a><a class="headerlink" href="#logisticloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.LogisticLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">LogisticLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#LogisticLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.LogisticLoss" title="Permalink to this definition">¶</a></dt>
@@ -1331,7 +1415,7 @@ but risk overfitting.</p></li>
 
 </section>
 <section id="rocstarloss">
-<h5><a class="toc-backref" href="#id50">RocStarLoss</a><a class="headerlink" href="#rocstarloss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id52">RocStarLoss</a><a class="headerlink" href="#rocstarloss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.RocStarLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">RocStarLoss</code><span class="sig-paren">(</span><em class="sig-param">delta: float = 1.0</em>, <em class="sig-param">sample_size: int = 100</em>, <em class="sig-param">sample_size_gamma: int = 1000</em>, <em class="sig-param">update_gamma_each: int = 50</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#RocStarLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.RocStarLoss" title="Permalink to this definition">¶</a></dt>
@@ -1385,7 +1469,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">50</span><
 
 </section>
 <section id="warploss">
-<h5><a class="toc-backref" href="#id51">WARPLoss</a><a class="headerlink" href="#warploss" title="Permalink to this headline">¶</a></h5>
+<h5><a class="toc-backref" href="#id53">WARPLoss</a><a class="headerlink" href="#warploss" title="Permalink to this headline">¶</a></h5>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.recsys.WARPLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.recsys.</code><code class="sig-name descname">WARPLoss</code><span class="sig-paren">(</span><em class="sig-param">max_num_trials: Optional[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/recsys.html#WARPLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.recsys.WARPLoss" title="Permalink to this definition">¶</a></dt>
@@ -1435,11 +1519,130 @@ In practice it means that we optimize for ranks 1 to max_num_trials-1.</p>
 
 </section>
 </section>
+<section id="regression">
+<h4><a class="toc-backref" href="#id54">Regression</a><a class="headerlink" href="#regression" title="Permalink to this headline">¶</a></h4>
+<section id="huberlossv0">
+<h5><a class="toc-backref" href="#id55">HuberLossV0</a><a class="headerlink" href="#huberlossv0" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">HuberLossV0</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.HuberLossV0.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#HuberLossV0.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.HuberLossV0.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="categoricalregressionloss">
+<h5><a class="toc-backref" href="#id56">CategoricalRegressionLoss</a><a class="headerlink" href="#categoricalregressionloss" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">CategoricalRegressionLoss</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int</em>, <em class="sig-param">v_min: int</em>, <em class="sig-param">v_max: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#CategoricalRegressionLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">logits_t: torch.Tensor</em>, <em class="sig-param">logits_tp1: torch.Tensor</em>, <em class="sig-param">atoms_target_t: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#CategoricalRegressionLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the loss</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logits_t</strong> (<em>torch.Tensor</em>) – predicted atoms at step T, shape: [bs; num_atoms]</p></li>
+<li><p><strong>logits_tp1</strong> (<em>torch.Tensor</em>) – predicted atoms at step T+1, shape: [bs; num_atoms]</p></li>
+<li><p><strong>atoms_target_t</strong> (<em>torch.Tensor</em>) – target atoms at step T, shape: [bs; num_atoms]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="quantileregressionloss">
+<h5><a class="toc-backref" href="#id57">QuantileRegressionLoss</a><a class="headerlink" href="#quantileregressionloss" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">QuantileRegressionLoss</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int = 51</em>, <em class="sig-param">clip_delta: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">num_atoms: int = 51</em>, <em class="sig-param">clip_delta: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#QuantileRegressionLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – predicted atoms, shape: [bs; num_atoms]</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – target atoms, shape: [bs; num_atoms]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="rsquareloss">
+<h5><a class="toc-backref" href="#id58">RSquareLoss</a><a class="headerlink" href="#rsquareloss" title="Permalink to this headline">¶</a></h5>
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.regression.RSquareLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.regression.</code><code class="sig-name descname">RSquareLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#RSquareLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.RSquareLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.regression.RSquareLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/regression.html#RSquareLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.regression.RSquareLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – model outputs</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – targets</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
 </section>
 <section id="modules">
-<h3><a class="toc-backref" href="#id52">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id59">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <section id="module-catalyst.contrib.nn.modules.arcface">
-<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id53">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
+<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id60">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcface.ArcFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcface.</code><code class="sig-name descname">ArcFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em>, <em class="sig-param">eps: float = 1e-06</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#ArcFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.ArcFace" title="Permalink to this definition">¶</a></dt>
@@ -1578,7 +1781,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.arcmargin">
-<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id54">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
+<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id61">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcmargin.</code><code class="sig-name descname">ArcMarginProduct</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcmargin.html#ArcMarginProduct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct" title="Permalink to this definition">¶</a></dt>
@@ -1633,7 +1836,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.cosface">
-<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id55">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
+<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id62">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.cosface.CosFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.cosface.</code><code class="sig-name descname">CosFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#CosFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.CosFace" title="Permalink to this definition">¶</a></dt>
@@ -1767,7 +1970,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.curricularface">
-<span id="curricularface"></span><h4><a class="toc-backref" href="#id56">CurricularFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.curricularface" title="Permalink to this headline">¶</a></h4>
+<span id="curricularface"></span><h4><a class="toc-backref" href="#id63">CurricularFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.curricularface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.curricularface.CurricularFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.curricularface.</code><code class="sig-name descname">CurricularFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace" title="Permalink to this definition">¶</a></dt>
@@ -1835,7 +2038,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </section>
 <section id="sse">
-<h4><a class="toc-backref" href="#id57">sSE</a><a class="headerlink" href="#sse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id64">sSE</a><a class="headerlink" href="#sse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.sSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">sSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE" title="Permalink to this definition">¶</a></dt>
@@ -1865,7 +2068,7 @@ in the feature map of the input.</p>
 
 </section>
 <section id="cse">
-<h4><a class="toc-backref" href="#id58">cSE</a><a class="headerlink" href="#cse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id65">cSE</a><a class="headerlink" href="#cse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.cSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">cSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#cSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.cSE" title="Permalink to this definition">¶</a></dt>
@@ -1900,7 +2103,7 @@ Default: 16.</p></li>
 
 </section>
 <section id="scse">
-<h4><a class="toc-backref" href="#id59">scSE</a><a class="headerlink" href="#scse" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id66">scSE</a><a class="headerlink" href="#scse" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.se.scSE">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">scSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#scSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.scSE" title="Permalink to this definition">¶</a></dt>
@@ -1934,7 +2137,7 @@ Default: 16.</p></li>
 
 </section>
 <section id="module-catalyst.contrib.nn.modules.softmax">
-<span id="softmax"></span><h4><a class="toc-backref" href="#id60">SoftMax</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.softmax" title="Permalink to this headline">¶</a></h4>
+<span id="softmax"></span><h4><a class="toc-backref" href="#id67">SoftMax</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.softmax" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.softmax.SoftMax">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.softmax.</code><code class="sig-name descname">SoftMax</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">num_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/softmax.html#SoftMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.softmax.SoftMax" title="Permalink to this definition">¶</a></dt>
@@ -1992,9 +2195,9 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 </section>
 </section>
 <section id="optimizers">
-<h3><a class="toc-backref" href="#id61">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id68">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
 <section id="adamp">
-<h4><a class="toc-backref" href="#id62">AdamP</a><a class="headerlink" href="#adamp" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id69">AdamP</a><a class="headerlink" href="#adamp" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.adamp.AdamP">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.adamp.</code><code class="sig-name descname">AdamP</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">delta=0.1</em>, <em class="sig-param">wd_ratio=0.1</em>, <em class="sig-param">nesterov=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/adamp.html#AdamP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.adamp.AdamP" title="Permalink to this definition">¶</a></dt>
@@ -2059,7 +2262,7 @@ parameters compared to that applied on scale-variant parameters
 
 </section>
 <section id="lamb">
-<h4><a class="toc-backref" href="#id63">Lamb</a><a class="headerlink" href="#lamb" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id70">Lamb</a><a class="headerlink" href="#lamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lamb.</code><code class="sig-name descname">Lamb</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr: Optional[float] = 0.001</em>, <em class="sig-param">betas: Optional[Tuple[float</em>, <em class="sig-param">float]] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: Optional[float] = 1e-06</em>, <em class="sig-param">weight_decay: Optional[float] = 0.0</em>, <em class="sig-param">adam: Optional[bool] = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb" title="Permalink to this definition">¶</a></dt>
@@ -2093,7 +2296,7 @@ this into Adam. Useful for comparison purposes.</p></li>
 
 </section>
 <section id="lookahead">
-<h4><a class="toc-backref" href="#id64">Lookahead</a><a class="headerlink" href="#lookahead" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id71">Lookahead</a><a class="headerlink" href="#lookahead" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lookahead.Lookahead">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lookahead.</code><code class="sig-name descname">Lookahead</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">k: int = 5</em>, <em class="sig-param">alpha: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lookahead.html#Lookahead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lookahead.Lookahead" title="Permalink to this definition">¶</a></dt>
@@ -2113,7 +2316,7 @@ this into Adam. Useful for comparison purposes.</p></li>
 
 </section>
 <section id="qhadamw">
-<h4><a class="toc-backref" href="#id65">QHAdamW</a><a class="headerlink" href="#qhadamw" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id72">QHAdamW</a><a class="headerlink" href="#qhadamw" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.qhadamw.QHAdamW">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.qhadamw.</code><code class="sig-name descname">QHAdamW</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.995</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">nus=(0.7</em>, <em class="sig-param">1.0)</em>, <em class="sig-param">weight_decay=0.0</em>, <em class="sig-param">eps=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/qhadamw.html#QHAdamW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW" title="Permalink to this definition">¶</a></dt>
@@ -2165,7 +2368,7 @@ numerical stability
 
 </section>
 <section id="radam">
-<h4><a class="toc-backref" href="#id66">RAdam</a><a class="headerlink" href="#radam" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id73">RAdam</a><a class="headerlink" href="#radam" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.radam.RAdam">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.radam.</code><code class="sig-name descname">RAdam</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">weight_decay=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/radam.html#RAdam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.radam.RAdam" title="Permalink to this definition">¶</a></dt>
@@ -2186,7 +2389,7 @@ and Beyond</a>.</p>
 
 </section>
 <section id="ralamb">
-<h4><a class="toc-backref" href="#id67">Ralamb</a><a class="headerlink" href="#ralamb" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id74">Ralamb</a><a class="headerlink" href="#ralamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.ralamb.Ralamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.ralamb.</code><code class="sig-name descname">Ralamb</code><span class="sig-paren">(</span><em class="sig-param">params: Iterable</em>, <em class="sig-param">lr: float = 0.001</em>, <em class="sig-param">betas: Tuple[float</em>, <em class="sig-param">float] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: float = 1e-08</em>, <em class="sig-param">weight_decay: float = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/ralamb.html#Ralamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.ralamb.Ralamb" title="Permalink to this definition">¶</a></dt>
@@ -2220,7 +2423,7 @@ numerical stability (default: 1e-8)</p></li>
 
 </section>
 <section id="sgdp">
-<h4><a class="toc-backref" href="#id68">SGDP</a><a class="headerlink" href="#sgdp" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id75">SGDP</a><a class="headerlink" href="#sgdp" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.sgdp.SGDP">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.sgdp.</code><code class="sig-name descname">SGDP</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=&lt;required parameter&gt;</em>, <em class="sig-param">momentum=0</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">dampening=0</em>, <em class="sig-param">nesterov=False</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">delta=0.1</em>, <em class="sig-param">wd_ratio=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/sgdp.html#SGDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.sgdp.SGDP" title="Permalink to this definition">¶</a></dt>
@@ -2280,9 +2483,9 @@ parameters compared to that applied on scale-variant parameters
 </section>
 </section>
 <section id="module-catalyst.contrib.nn.schedulers">
-<span id="schedulers"></span><h3><a class="toc-backref" href="#id69">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers" title="Permalink to this headline">¶</a></h3>
+<span id="schedulers"></span><h3><a class="toc-backref" href="#id76">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers" title="Permalink to this headline">¶</a></h3>
 <section id="onecyclelrwithwarmup">
-<h4><a class="toc-backref" href="#id70">OneCycleLRWithWarmup</a><a class="headerlink" href="#onecyclelrwithwarmup" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id77">OneCycleLRWithWarmup</a><a class="headerlink" href="#onecyclelrwithwarmup" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.schedulers.onecycle.</code><code class="sig-name descname">OneCycleLRWithWarmup</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">num_steps: int</em>, <em class="sig-param">lr_range=(1.0</em>, <em class="sig-param">0.005)</em>, <em class="sig-param">init_lr: float = None</em>, <em class="sig-param">warmup_steps: int = 0</em>, <em class="sig-param">warmup_fraction: float = None</em>, <em class="sig-param">decay_steps: int = 0</em>, <em class="sig-param">decay_fraction: float = None</em>, <em class="sig-param">momentum_range=(0.8</em>, <em class="sig-param">0.99</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">init_momentum: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/onecycle.html#OneCycleLRWithWarmup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup" title="Permalink to this definition">¶</a></dt>
@@ -2327,7 +2530,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </section>
 </section>
 <section id="scripts">
-<h2><a class="toc-backref" href="#id71">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id78">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
 <p>You can use contrib scripts with <cite>catalyst-contrib</cite> in your terminal.
 For example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib tag2label --help
@@ -2443,15 +2646,17 @@ preprocessed resized images</p>
 <li><a class="reference internal" href="#focallossmulticlass">FocalLossMultiClass</a></li>
 <li><a class="reference internal" href="#iouloss">IoULoss</a></li>
 <li><a class="reference internal" href="#marginloss">MarginLoss</a></li>
+<li><a class="reference internal" href="#ntxentloss">NTXentLoss</a></li>
+<li><a class="reference internal" href="#supervisedcontrastiveloss">SupervisedContrastiveLoss</a></li>
 <li><a class="reference internal" href="#trevskyloss">TrevskyLoss</a></li>
 <li><a class="reference internal" href="#focaltrevskyloss">FocalTrevskyLoss</a></li>
 <li><a class="reference internal" href="#tripletmarginlosswithsampler">TripletMarginLossWithSampler</a></li>
 <li><a class="reference internal" href="#wingloss">WingLoss</a></li>
-<li><a class="reference internal" href="#regression">Regression</a><ul>
-<li><a class="reference internal" href="#huberlossv0">HuberLossV0</a></li>
-<li><a class="reference internal" href="#categoricalregressionloss">CategoricalRegressionLoss</a></li>
-<li><a class="reference internal" href="#quantileregressionloss">QuantileRegressionLoss</a></li>
-<li><a class="reference internal" href="#rsquareloss">RSquareLoss</a></li>
+<li><a class="reference internal" href="#contrastive">Contrastive</a><ul>
+<li><a class="reference internal" href="#barlowtwinsloss">BarlowTwinsLoss</a></li>
+<li><a class="reference internal" href="#contrastivedistanceloss">ContrastiveDistanceLoss</a></li>
+<li><a class="reference internal" href="#contrastiveembeddingloss">ContrastiveEmbeddingLoss</a></li>
+<li><a class="reference internal" href="#contrastivepairwiseembeddingloss">ContrastivePairwiseEmbeddingLoss</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#recsys">RecSys</a><ul>
@@ -2461,6 +2666,13 @@ preprocessed resized images</p>
 <li><a class="reference internal" href="#logisticloss">LogisticLoss</a></li>
 <li><a class="reference internal" href="#rocstarloss">RocStarLoss</a></li>
 <li><a class="reference internal" href="#warploss">WARPLoss</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regression">Regression</a><ul>
+<li><a class="reference internal" href="#huberlossv0">HuberLossV0</a></li>
+<li><a class="reference internal" href="#categoricalregressionloss">CategoricalRegressionLoss</a></li>
+<li><a class="reference internal" href="#quantileregressionloss">QuantileRegressionLoss</a></li>
+<li><a class="reference internal" href="#rsquareloss">RSquareLoss</a></li>
 </ul>
 </li>
 </ul>

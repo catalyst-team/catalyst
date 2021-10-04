@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.margin &mdash; Catalyst 21.10rc0 documentation</title>
+  <title>catalyst.contrib.nn.criterion.ntxent &mdash; Catalyst 21.10rc0 documentation</title>
   
 
   
@@ -282,7 +282,7 @@
         
           <li><a href="../../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.contrib.nn.criterion.margin</li>
+      <li>catalyst.contrib.nn.criterion.ntxent</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -308,51 +308,96 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.contrib.nn.criterion.margin</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for catalyst.contrib.nn.criterion.ntxent</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">e</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion.functional</span> <span class="kn">import</span> <span class="n">margin_loss</span>
 
+<div class="viewcode-block" id="NTXentLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.ntxent.NTXentLoss">[docs]</a><span class="k">class</span> <span class="nc">NTXentLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Contrastive embedding loss.</span>
 
-<div class="viewcode-block" id="MarginLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss">[docs]</a><span class="k">class</span> <span class="nc">MarginLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Margin loss criterion&quot;&quot;&quot;</span>
+<span class="sd">    It has been proposed in `A Simple Framework</span>
+<span class="sd">    for Contrastive Learning of Visual Representations`_.</span>
 
-<div class="viewcode-block" id="MarginLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="p">):</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.nn import functional as F</span>
+<span class="sd">        from catalyst.contrib.nn import NTXentLoss</span>
+
+<span class="sd">        embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))</span>
+<span class="sd">        embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))</span>
+<span class="sd">        criterion = NTXentLoss(tau = 0.1)</span>
+<span class="sd">        criterion(embeddings_left, embeddings_right)</span>
+
+<span class="sd">    .. _`A Simple Framework for Contrastive Learning of Visual Representations`:</span>
+<span class="sd">        https://arxiv.org/abs/2002.05709</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NTXentLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.ntxent.NTXentLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Margin loss constructor.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            alpha: alpha</span>
-<span class="sd">            beta: beta</span>
-<span class="sd">            skip_labels (int or List[int]): labels to skip</span>
+<span class="sd">            tau: temperature</span>
+<span class="sd">            reduction (string, optional): specifies the reduction to apply to the output:</span>
+<span class="sd">                ``&quot;none&quot;`` | ``&quot;mean&quot;`` | ``&quot;sum&quot;``.</span>
+<span class="sd">                ``&quot;none&quot;``: no reduction will be applied,</span>
+<span class="sd">                ``&quot;mean&quot;``: the sum of the output will be divided by the number of</span>
+<span class="sd">                positive pairs in the output,</span>
+<span class="sd">                ``&quot;sum&quot;``: the output will be summed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if reduction is not mean, sum or none</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skip_labels</span> <span class="o">=</span> <span class="n">skip_labels</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reduction should be: mean, sum, none. But got - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">features2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward method for the margin loss.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            embeddings: tensor with embeddings</span>
-<span class="sd">            targets: tensor with target labels</span>
+<span class="sd">            features1: batch with samples features of shape</span>
+<span class="sd">                [bs; feature_len]</span>
+<span class="sd">            features2: batch with samples features of shape</span>
+<span class="sd">                [bs; feature_len]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            computed loss</span>
+<span class="sd">            torch.Tensor: NTXent loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">margin_loss</span><span class="p">(</span>
-            <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">skip_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_labels</span>
-        <span class="p">)</span></div>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">features1</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">features2</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid shape of input features: </span><span class="si">{</span><span class="n">features1</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">features2</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
 
+        <span class="n">feature_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">features1</span><span class="p">,</span> <span class="n">features2</span><span class="p">])</span>
+        <span class="n">feature_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">feature_matrix</span><span class="p">)</span>
+        <span class="c1"># if ||x|| = ||y|| = 1 then||x-y||^2 = 2 - 2&lt;x,y&gt;</span>
+        <span class="n">cosine_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">feature_matrix</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MarginLoss&quot;</span><span class="p">]</span>
+        <span class="c1"># todo try different places for temparature</span>
+        <span class="n">exp_cosine_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">cosine_matrix</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
+        <span class="c1"># neg part of the loss</span>
+        <span class="c1"># torch.exp(1) self similarity</span>
+        <span class="n">exp_sim_sum</span> <span class="o">=</span> <span class="n">exp_cosine_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">neg_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">exp_sim_sum</span><span class="p">)</span>
+        <span class="n">pos_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cosine_sim</span><span class="p">(</span><span class="n">features1</span><span class="p">,</span> <span class="n">features2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
+        <span class="n">pos_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_loss</span><span class="p">,</span> <span class="n">pos_loss</span><span class="p">])</span>
+
+        <span class="c1"># 2*poss_loss (i,j) and (j,i)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">pos_loss</span> <span class="o">+</span> <span class="n">neg_loss</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
 </pre></div>
 
              </article>

@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Catalyst &mdash; Catalyst 21.09 documentation</title>
+  <title>Catalyst &mdash; Catalyst 21.10rc0 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.09</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
                 </div>
               
             
@@ -401,13 +401,10 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <section id="step-by-step-guide">
 <h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li><p>Start with <a class="reference external" href="https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&amp;sk=865d3c472cfb10379864656fedcfe762">Catalyst 2021–Accelerated PyTorch 2.0</a> introduction.</p></li>
-<li><p>Check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a>.</p></li>
-<li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#tutorials">notebook tutorials with Google Colab</a>.</p></li>
-<li><p>Read <a class="reference external" href="https://github.com/catalyst-team/catalyst#blogposts">blogposts</a> with use-cases and guides.</p></li>
+<li><p>Start with <a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — A PyTorch Framework for Accelerated Deep Learning R&amp;D</a> introduction.</p></li>
+<li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">notebook tutorials</a> or check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> for first deep dive.</p></li>
+<li><p>Read <a class="reference external" href="https://catalyst-team.com/post/">blogposts</a> with use-cases and guides.</p></li>
 <li><p>Learn machine learning with our <a class="reference external" href="https://github.com/catalyst-team/dl-course">“Deep Learning with Catalyst” course</a>.</p></li>
-<li><p>If you would like to contribute to the project, follow our <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guidelines</a>.</p></li>
-<li><p>If you want to support the project, feel free to donate on <a class="reference external" href="https://patreon.com/catalyst_team">patreon page</a> or <a class="reference external" href="https://github.com/catalyst-team/catalyst#user-feedback">write us</a> with your proposals.</p></li>
 <li><p>And do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
 </ol>
 </section>
@@ -518,6 +515,7 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-mapcallback">RecSys – MAPCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-mrrcallback">RecSys – MRRCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-ndcgcallback">RecSys – NDCGCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#regression-r2squaredcallback">Regression – R2SquaredCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-dicecallback">Segmentation – DiceCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-ioucallback">Segmentation – IOUCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-trevskycallback">Segmentation – TrevskyCallback</a></li>
@@ -554,15 +552,17 @@ best practices for your deep learning research.</p>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#focallossmulticlass">FocalLossMultiClass</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#iouloss">IoULoss</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#marginloss">MarginLoss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#ntxentloss">NTXentLoss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#supervisedcontrastiveloss">SupervisedContrastiveLoss</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#trevskyloss">TrevskyLoss</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#focaltrevskyloss">FocalTrevskyLoss</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#tripletmarginlosswithsampler">TripletMarginLossWithSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#wingloss">WingLoss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#regression">Regression</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#huberlossv0">HuberLossV0</a></li>
-<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#categoricalregressionloss">CategoricalRegressionLoss</a></li>
-<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#quantileregressionloss">QuantileRegressionLoss</a></li>
-<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#rsquareloss">RSquareLoss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#contrastive">Contrastive</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#barlowtwinsloss">BarlowTwinsLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#contrastivedistanceloss">ContrastiveDistanceLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#contrastiveembeddingloss">ContrastiveEmbeddingLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#contrastivepairwiseembeddingloss">ContrastivePairwiseEmbeddingLoss</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#recsys">RecSys</a><ul>
@@ -572,6 +572,13 @@ best practices for your deep learning research.</p>
 <li class="toctree-l5"><a class="reference internal" href="api/contrib.html#logisticloss">LogisticLoss</a></li>
 <li class="toctree-l5"><a class="reference internal" href="api/contrib.html#rocstarloss">RocStarLoss</a></li>
 <li class="toctree-l5"><a class="reference internal" href="api/contrib.html#warploss">WARPLoss</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#regression">Regression</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#huberlossv0">HuberLossV0</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#categoricalregressionloss">CategoricalRegressionLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#quantileregressionloss">QuantileRegressionLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#rsquareloss">RSquareLoss</a></li>
 </ul>
 </li>
 </ul>
