@@ -147,7 +147,6 @@ class ISelfSupervisedRunner(IRunner):
         self._augemention_prefix = augemention_prefix
         self._embedding_prefix = embedding_prefix
         self._input_key = input_key
-        self.encoders = encoders
 
     def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
