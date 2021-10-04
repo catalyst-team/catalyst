@@ -118,6 +118,37 @@ CircleLoss
     :undoc-members:
     :show-inheritance:
 
+Contrastive
+"""""""""""
+
+BarlowTwinsLoss
+***************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.BarlowTwinsLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastiveDistanceLoss
+***********************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastiveEmbeddingLoss
+************************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ContrastivePairwiseEmbeddingLoss
+********************************
+.. autoclass:: catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 DiceLoss
 """""""""
 .. autoclass:: catalyst.contrib.nn.criterion.dice.DiceLoss
@@ -153,6 +184,13 @@ MarginLoss
     :undoc-members:
     :show-inheritance:
 
+NTXentLoss
+""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.ntxent.NTXentLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 TrevskyLoss
 """""""""""
 .. autoclass:: catalyst.contrib.nn.criterion.trevsky.TrevskyLoss
@@ -178,30 +216,6 @@ WingLoss
 """""""""
 .. autoclass:: catalyst.contrib.nn.criterion.wing.WingLoss
     :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
-Regression
-""""""""""
-
-HuberLossV0
-*****************
-.. autoclass:: catalyst.contrib.nn.criterion.regression.HuberLossV0
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-CategoricalRegressionLoss
-*************************
-.. autoclass:: catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-QuantileRegressionLoss
-*************************
-.. autoclass:: catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss
-    :members:
     :undoc-members:
     :show-inheritance:
 
@@ -250,6 +264,29 @@ WARPLoss
     :undoc-members:
     :show-inheritance:
 
+Regression
+""""""""""
+
+HuberLossV0
+*****************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.HuberLossV0
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CategoricalRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+QuantileRegressionLoss
+*************************
+.. autoclass:: catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Modules
 ~~~~~~~~~~~~~~~~
