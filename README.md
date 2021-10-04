@@ -7,6 +7,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
+[![Docker](https://img.shields.io/badge/docker-hub-blue)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
 [![Twitter](https://img.shields.io/badge/news-twitter-499feb)](https://twitter.com/CatalystTeam)
@@ -125,13 +126,10 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 
 ### Step-by-step Guide
 1. Start with [Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef) introduction.
-1. Check the [minimal examples](#minimal-examples).
-1. Try [notebook tutorials with Google Colab](#notebooks).
-1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
+1. Try [notebook tutorials](#minimal-examples) or check [minimal examples](#minimal-examples) for first deep dive.
+1. Read [blog posts](https://catalyst-team.com/post/) with use-cases and guides.
 1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course).
-1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md).
-1. If you are motivated by Catalyst vision, you could [support our initiative](https://opencollective.com/catalyst) or [write us](#user-feedback) for collaboration.
-1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors**.
+1. And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors.
 
 
 ## Table of Contents
@@ -140,25 +138,17 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 - [Table of Contents](#table-of-contents)
 - [Overview](#overview)
   - [Installation](#installation)
-  - [Minimal Examples](#minimal-examples)
   - [Features](#features)
   - [Tests](#tests)
 - [Catalyst](#catalyst)
   - [Documentation](#documentation)
-  - [Notebooks](#notebooks)
-  - [Notable Blog Posts](#notable-blog-posts)
+  - [Minimal Examples](#minimal-examples)
+  - [Blog Posts](#blog-posts)
   - [Talks](#talks)
-  - [Projects](#projects)
-    - [Examples, Notebooks, and Starter Kits](#examples-notebooks-and-starter-kits)
-    - [Competitions](#competitions)
-    - [Research Papers](#research-papers)
-    - [Toolkits](#toolkits)
 - [Community](#community)
   - [Contribution Guide](#contribution-guide)
   - [User Feedback](#user-feedback)
   - [Acknowledgments](#acknowledgments)
-    - [Catalyst.Team](#catalystteam)
-    - [Catalyst.Contributors](#catalystcontributors)
   - [Trusted by](#trusted-by)
   - [Citation](#citation)
 
@@ -186,8 +176,8 @@ pip install catalyst[ml]         # installs ML-based Catalyst
 pip install catalyst[cv]         # installs CV-based Catalyst
 # master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
-# all extensions are listed here:
-# https://github.com/catalyst-team/catalyst/blob/master/setup.py#L87#L99
+# all available extensions are listed here:
+# https://github.com/catalyst-team/catalyst/blob/master/setup.py
 ```
 </p>
 </details>
@@ -196,7 +186,56 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
 
+### Features
+- Universal train/inference loop.
+- Configuration files for model and data hyperparameters.
+- Reproducibility – all source code and environment variables are saved.
+- Callbacks – reusable train/inference pipeline parts with easy customization.
+- Training stages support.
+- Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Workflow best practices: fp16 support, distributed training, slurm support.
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines).
+
+
+### Tests
+All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
+We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
+
+During testing, we train a variety of different models: image classification,
+image segmentation, text classification, GANs, and much more.
+We then compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+
+As a result, Catalyst provides fully tested and reproducible
+best practices for your deep learning research and development.
+
+
+## Catalyst
+
+### Documentation
+- [master](https://catalyst-team.github.io/catalyst/)
+- [21.09](https://catalyst-team.github.io/catalyst/v21.09/index.html)
+- [21.08](https://catalyst-team.github.io/catalyst/v21.08/index.html)
+- [21.07](https://catalyst-team.github.io/catalyst/v21.07/index.html)
+- [21.06](https://catalyst-team.github.io/catalyst/v21.06/index.html)
+- [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
+- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
+- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
+- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
+- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
+- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
+- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
+- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
+- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
+- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
+- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
+
 ### Minimal Examples
+
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
 
 <details>
 <summary>CustomRunner – PyTorch for-loop decomposition</summary>
@@ -1531,88 +1570,45 @@ runner.run()
 - [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
-### Features
-- Universal train/inference loop.
-- Configuration files for model and data hyperparameters.
-- Reproducibility – all source code and environment variables are saved.
-- Callbacks – reusable train/inference pipeline parts with easy customization.
-- Training stages support.
-- Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
+### [Blog Posts](https://catalyst-team.com/post/)
+
+### [Talks](https://catalyst-team.com/talk/)
 
 
-### Tests
-All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
-We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
+## Community
 
-During testing, we train a variety of different models: image classification,
-image segmentation, text classification, GANs, and much more.
-We then compare their convergence metrics in order to verify
-the correctness of the training procedure and its reproducibility.
+### Accelerated with Catalyst
 
-As a result, Catalyst provides fully tested and reproducible
-best practices for your deep learning research and development.
+<details>
+<summary>Research Papers</summary>
+<p>
 
+- [Hierarchical Attention for Sentiment Classification with Visualization](https://github.com/neuromation/ml-recipe-hier-attention)
+- [Pediatric Bone Age Assessment](https://github.com/neuromation/ml-recipe-bone-age)
+- [Implementation of the paper "Tell Me Where to Look: Guided Attention Inference Network"](https://github.com/ngxbac/GAIN)
+- [Implementation of the paper "Filter Response Normalization Layer: Eliminating Batch Dependence in the Training of Deep Neural Networks"](https://github.com/yukkyo/PyTorch-FilterResponseNormalizationLayer)
+- [Implementation of the paper "Utterance-level Aggregation For Speaker Recognition In The Wild"](https://github.com/ptJexio/Speaker-Recognition)
+- [Implementation of the paper "Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation"](https://github.com/vitrioil/Speech-Separation)
+- [Implementation of the paper "ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks"](https://github.com/leverxgroup/esrgan)
 
-## Catalyst
+</p>
+</details>
 
-### Documentation
-- [master](https://catalyst-team.github.io/catalyst/)
-- [21.07](https://catalyst-team.github.io/catalyst/v21.07/index.html)
-- [21.06](https://catalyst-team.github.io/catalyst/v21.06/index.html)
-- [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
-- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
-- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
-- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
-- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
-- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
-- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
-- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
-- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
-- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
-- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
-- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
+<details>
+<summary>Blog Posts</summary>
+<p>
 
-### Notebooks
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
-
-### Notable Blog Posts
-- [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)
-- [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
-- [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
-- [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)
-- [Distributed training best practices](https://catalyst-team.github.io/catalyst/tutorials/ddp.html)
 - [Solving the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
 - [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
-### Talks
-- [Catalyst-team YouTube channel](https://www.youtube.com/channel/UC39Z1Cwr9n8DVpuXcsyi9FQ)
-- [Catalyst.RL – reproducible RL research framework](https://docs.google.com/presentation/d/1U6VWIwQnQDGtu6a1x61tt3AlxCJ1-A1EYKd8lR9tKos/edit?usp=sharing) at [Stachka](https://nastachku.ru/archive/2019_innopolis/index.php?dispatch=products.view&product_id=3650)
-- [Catalyst.DL – reproducible DL research framework (rus)](https://youtu.be/EfG8iwFNdWg) and [slides (eng)](https://docs.google.com/presentation/d/1TL7N_H31zDFShVbKzLfMC3DYw4e1psj6ScDN8spKQlk/edit?usp=sharing) at [RIF](http://rifvrn.ru/program/catalyst-dl-fast-reproducible-dl-4-html)
-- [Catalyst.DL – reproducible DL research framework (rus)](https://youtu.be/7xyMP_5eA8c?t=8964) and [slides (eng)](https://docs.google.com/presentation/d/1XGubfTWvpiJrMyKNx2G6GtAq68y2__sDmx30eSdSRZs/edit?usp=sharing) at [AI-Journey](https://ai-journey.ru/conference-moscow/broadcast?page=2&per-page=12)
-- [Catalyst.DL – fast & reproducible DL](https://docs.google.com/presentation/d/1fbF4PMl092kIdjJTw3olR3wI2cl_P2ttN3c9-WTh1gA/edit?usp=sharing) at [Datastart](https://datastart.ru/msk-autumn-2019/)
-- [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://www.youtube.com/watch?v=PprDcJHrFdg&feature=youtu.be&t=4020) and [slides (eng)](https://docs.google.com/presentation/d/1g4g_Rxp9M3xAHwpp_hNzC87L9Gvum3H09g2DIQn1Taw/edit?usp=sharing) at RL reading group Meetup
-- [Catalyst – accelerated DL & RL (rus)](https://youtu.be/Rmo2rx5V3v8?t=77) and [slides (eng)](https://docs.google.com/presentation/d/1xMZMjSwJfM5mZMK7pHp6hVI0FxPyZOpRtBZ0J2l1AaY/edit?fbclid=IwAR1q4XJVqYdD-a5oO2n68Y4xHvChIeOSjCSmlUYqrjIzneYpehzF8PiNdMc#slide=id.g75815b5293_0_202) at [Facebook Developer Circle: Moscow | ML & AI Meetup](https://www.facebook.com/groups/475428499888062/)
-- [Catalyst.RL - Learn to Move - Walk Around 2nd place solution](https://docs.google.com/presentation/d/14UzYAURBulLjuCbQRnNeROhZ74h51-o460DPTkKMrwo/edit?usp=sharing) at NeurIPS competition track
-- [Open Source ML 2019 edition](https://docs.google.com/presentation/d/1A-kwek7USA-j2Nn4n8PmLUQ1PdeUzkkViwXST7RyL-w/edit?usp=sharing) at [Datafest.elka](https://datafest.ru/elka/)
+</p>
+</details>
 
+<details>
+<summary>Competitions</summary>
+<p>
 
-### Projects
-
-#### Examples, Notebooks, and Starter Kits
-- [CamVid Segmentation Example](https://github.com/BloodAxe/Catalyst-CamVid-Segmentation-Example) - Example of semantic segmentation for CamVid dataset
-- [Notebook API tutorial for segmentation in Understanding Clouds from Satellite Images Competition](https://www.kaggle.com/artgor/segmentation-in-pytorch-using-convenient-tools/)
-- [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit) – starter kit
-- [Catalyst.RL - NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit) - starter kit
-- [Inria Segmentation Example](https://github.com/BloodAxe/Catalyst-Inria-Segmentation-Example) - An example of training segmentation model for Inria Sattelite Segmentation Challenge
-- [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
-- [Logging Catalyst Runs to Comet](https://colab.research.google.com/drive/1TaG27HcMh2jyRKBGsqRXLiGUfsHVyCq6?usp=sharing) - An example of how to log metrics, hyperparameters and more from Catalyst runs to [Comet](https://www.comet.ml/site/data-scientists/)
-
-#### Competitions
 - [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place
 - [Catalyst.RL - NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge) – 3rd place
 - [Kaggle Google Landmark 2019](https://github.com/ngxbac/Kaggle-Google-Landmark-2019) - 30th place
@@ -1628,16 +1624,14 @@ best practices for your deep learning research and development.
 - [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/run-skeleton-run-in-3d) – 2nd place
 - [xView2 Damage Assessment Challenge](https://github.com/BloodAxe/xView2-Solution) - 3rd place
 
-#### Research Papers
-- [Hierarchical Attention for Sentiment Classification with Visualization](https://github.com/neuromation/ml-recipe-hier-attention)
-- [Pediatric Bone Age Assessment](https://github.com/neuromation/ml-recipe-bone-age)
-- [Implementation of the paper "Tell Me Where to Look: Guided Attention Inference Network"](https://github.com/ngxbac/GAIN)
-- [Implementation of the paper "Filter Response Normalization Layer: Eliminating Batch Dependence in the Training of Deep Neural Networks"](https://github.com/yukkyo/PyTorch-FilterResponseNormalizationLayer)
-- [Implementation of the paper "Utterance-level Aggregation For Speaker Recognition In The Wild"](https://github.com/ptJexio/Speaker-Recognition)
-- [Implementation of the paper "Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation"](https://github.com/vitrioil/Speech-Separation)
-- [Implementation of the paper "ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks"](https://github.com/leverxgroup/esrgan)
 
-#### Toolkits
+</p>
+</details>
+
+<details>
+<summary>Toolkits</summary>
+<p>
+
 - [Catalyst.RL](https://github.com/Scitator/catalyst-rl-framework) – A Distributed Framework for Reproducible RL Research by [Scitator](https://github.com/Scitator)
 - [Catalyst.Classification](https://github.com/catalyst-team/classification) - Comprehensive classification pipeline with Pseudo-Labeling by [Bagxi](https://github.com/bagxi) and [Pdanilov](https://github.com/pdanilov)
 - [Catalyst.Segmentation](https://github.com/catalyst-team/segmentation) - Segmentation pipelines - binary, semantic and instance, by [Bagxi](https://github.com/bagxi)
@@ -1649,6 +1643,26 @@ best practices for your deep learning research and development.
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An assorted collection of helper functions by [Ternaus](https://github.com/ternaus)
 - [BERT Distillation with Catalyst](https://github.com/elephantmipt/bert-distillation) by [elephantmipt](https://github.com/elephantmipt)
 
+</p>
+</details>
+
+
+<details>
+<summary>Other</summary>
+<p>
+
+- [CamVid Segmentation Example](https://github.com/BloodAxe/Catalyst-CamVid-Segmentation-Example) - Example of semantic segmentation for CamVid dataset
+- [Notebook API tutorial for segmentation in Understanding Clouds from Satellite Images Competition](https://www.kaggle.com/artgor/segmentation-in-pytorch-using-convenient-tools/)
+- [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit) – starter kit
+- [Catalyst.RL - NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit) - starter kit
+- [Inria Segmentation Example](https://github.com/BloodAxe/Catalyst-Inria-Segmentation-Example) - An example of training segmentation model for Inria Sattelite Segmentation Challenge
+- [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
+- [Logging Catalyst Runs to Comet](https://colab.research.google.com/drive/1TaG27HcMh2jyRKBGsqRXLiGUfsHVyCq6?usp=sharing) - An example of how to log metrics, hyperparameters and more from Catalyst runs to [Comet](https://www.comet.ml/site/data-scientists/)
+
+</p>
+</details>
+
+
 See other projects at [the GitHub dependency graph](https://github.com/catalyst-team/catalyst/network/dependents).
 
 If your project implements a paper,
@@ -1656,8 +1670,6 @@ a notable use-case/tutorial, or a Kaggle competition solution, or
 if your code simply presents interesting results and uses Catalyst,
 we would be happy to add your project to the list above!
 Do not hesitate to send us a PR with a brief description of the project similar to the above.
-
-## Community
 
 ### Contribution Guide
 
@@ -1739,7 +1751,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Accelerated deep learning R&D},
+        title = {Catalyst - Accelerated deep learning R&D},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
