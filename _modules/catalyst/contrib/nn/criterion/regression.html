@@ -311,6 +311,7 @@
   <h1>Source code for catalyst.contrib.nn.criterion.regression</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
 
 
 <span class="k">def</span> <span class="nf">_ce_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -410,7 +411,24 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HuberLossV0&quot;</span><span class="p">,</span> <span class="s2">&quot;CategoricalRegressionLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;QuantileRegressionLoss&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="RSquareLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.regression.RSquareLoss">[docs]</a><span class="k">class</span> <span class="nc">RSquareLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;RSquareLoss&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RSquareLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.regression.RSquareLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Compute the loss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs (torch.Tensor): model outputs</span>
+<span class="sd">            targets (torch.Tensor): targets</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: computed loss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">var_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">var_y</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HuberLossV0&quot;</span><span class="p">,</span> <span class="s2">&quot;CategoricalRegressionLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;QuantileRegressionLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;RSquareLoss&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
