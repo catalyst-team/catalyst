@@ -197,7 +197,6 @@ class ISelfSupervisedRunner(IRunner):
                 f"{prefix}{self._embedding_prefix}_right": embedding2,
                 f"{prefix}{self._embedding_prefix}_origin": origin_embeddings,
             }
-            
 
         return batch
 
