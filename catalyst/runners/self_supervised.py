@@ -16,7 +16,6 @@ class ISelfSupervisedRunner(IRunner):
         augemention_prefix: key for ``runner.batch`` to sample augumentions
         projection_prefix: key for ``runner.batch`` to store model projection
         embedding_prefix: key for `runner.batch`` to store model embeddings
-        encoders: encoder keys inside `model`
 
     Abstraction, please check out implementations for more details:
 
