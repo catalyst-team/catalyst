@@ -1,4 +1,4 @@
-from typing import Any, List, Mapping, Optional
+from typing import Any, Mapping
 import collections
 
 from torch import nn
@@ -169,13 +169,14 @@ class ISelfSupervisedRunner(IRunner):
                 }
 
         return batch
-    
+
     def on_stage_start(self, runner: "IRunner"):
+        """on_stage_start event handler."""
         super().on_stage_start(runner)
         self.is_kv_model = False
         if isinstance(self.model, (collections.Mapping, nn.ModuleDict)):
             self.is_kv_model = True
-    
+
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
 
         if self.is_kv_model:

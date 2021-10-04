@@ -46,7 +46,11 @@ class SoftUpdateCallaback(Callback):
             self.scope = scope
         else:
             raise TypeError(
-                'Expected scope to be on of the ["on_batch_end", "on_batch_start", "on_epoch_end", "on_epoch_start"]'
+                """Expected scope to be on of the: [
+                    "on_batch_end",
+                    "on_batch_start",
+                    "on_epoch_end",
+                    "on_epoch_start"]"""
             )
 
     def on_batch_end(self, runner: "IRunner") -> None:
