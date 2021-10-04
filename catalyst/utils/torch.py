@@ -637,6 +637,10 @@ def load_checkpoint(path: str):
     checkpoint = torch.load(path, map_location=lambda storage, loc: storage)
     return checkpoint
 
+def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
+    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation)."""
+    for target_param, param in zip(target.parameters(), source.parameters()):
+        target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
 __all__ = [
     "get_optimizable_params",
@@ -661,4 +665,5 @@ __all__ = [
     "unpack_checkpoint",
     "save_checkpoint",
     "load_checkpoint",
+    "soft_update"
 ]

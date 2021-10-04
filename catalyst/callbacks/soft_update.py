@@ -2,12 +2,7 @@ from torch import nn
 
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
-
-
-def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
-    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation)."""
-    for target_param, param in zip(target.parameters(), source.parameters()):
-        target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
+from catalyst.utils import soft_update
 
 
 class SoftUpdateCallaback(Callback):
