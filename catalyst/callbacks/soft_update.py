@@ -1,5 +1,3 @@
-from torch import nn
-
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
 from catalyst.utils import soft_update
@@ -14,13 +12,15 @@ class SoftUpdateCallaback(Callback):
         source_model_key: key to the source data inside `runner.model`
         tau: smoothing parameter `target * (1.0 - tau) + source * tau`
         scope (str): when the `target` should be updated
-                ``"on_batch_end"`` 
+                ``"on_batch_end"``
                 ``"on_batch_start"``
                 ``"on_epoch_end"``
                 ``"on_epoch_start"``
     """
 
-    def __init__(self, target_model_key: str, source_model_key: str, tau: float, scope: str) -> None:
+    def __init__(
+        self, target_model_key: str, source_model_key: str, tau: float, scope: str
+    ) -> None:
         """Init.
 
         Args:
@@ -28,7 +28,7 @@ class SoftUpdateCallaback(Callback):
         source_model_key: key to the source data inside `runner.model`
         tau: smoothing parameter `target * (1.0 - tau) + source * tau`
         scope (str): when the `target` should be updated
-                ``"on_batch_end"`` 
+                ``"on_batch_end"``
                 ``"on_batch_start"``
                 ``"on_epoch_end"``
                 ``"on_epoch_start"``
@@ -49,7 +49,7 @@ class SoftUpdateCallaback(Callback):
             soft_update(
                 runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
             )
-    
+
     def on_batch_start(self, runner: "IRunner") -> None:
         """On batch start action.
 
@@ -60,7 +60,7 @@ class SoftUpdateCallaback(Callback):
             soft_update(
                 runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
             )
-    
+
     def on_epoch_end(self, runner: "IRunner") -> None:
         """On epoch end action.
 
