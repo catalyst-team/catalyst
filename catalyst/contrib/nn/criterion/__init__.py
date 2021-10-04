@@ -39,6 +39,7 @@ from catalyst.contrib.nn.criterion.regression import (
     HuberLossV0,
     CategoricalRegressionLoss,
     QuantileRegressionLoss,
+    RSquareLoss,
 )
 from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.contrib.nn.criterion.trevsky import FocalTrevskyLoss, TrevskyLoss

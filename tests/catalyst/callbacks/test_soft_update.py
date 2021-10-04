@@ -2,23 +2,26 @@
 from typing import Tuple
 
 import torch
+
 from catalyst import dl
 from catalyst.contrib import nn
+
 
 class DummyRunner(dl.Runner):
     def handle_batch(self, batch: Tuple[torch.Tensor]):
         pass
 
+
 def set_requires_grad(model, val):
     for p in model.parameters():
         p.requires_grad = val
 
+
 def test_soft_update():
-    
-    model = nn.ModuleDict({
-        "target": nn.Linear(10, 10, bias=False),
-        "source": nn.Linear(10, 10, bias=False)
-    })
+
+    model = nn.ModuleDict(
+        {"target": nn.Linear(10, 10, bias=False), "source": nn.Linear(10, 10, bias=False)}
+    )
     set_requires_grad(model, False)
     model["target"].weight.data.fill_(0)
     
@@ -28,7 +31,11 @@ def test_soft_update():
     soft_update = dl.SoftUpdateCallaback(target_model_key="target", source_model_key="source", tau=0.1, scope = "on_batch_end")
     soft_update.on_batch_end(runner)
 
-    checks = ((0.1 * runner.model["source"].weight.data) == runner.model["target"].weight.data).flatten().tolist()
+    checks = (
+        ((0.1 * runner.model["source"].weight.data) == runner.model["target"].weight.data)
+        .flatten()
+        .tolist()
+    )
 
     assert all(checks)
 

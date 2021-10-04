@@ -22,7 +22,7 @@ class SoftUpdateCallaback(Callback):
 
     def __init__(self, target_model_key: str, source_model_key: str, tau: float, scope: str) -> None:
         """Init.
-        
+
         Args:
         target_model_key: key to the data inside `runner.model` to update
         source_model_key: key to the source data inside `runner.model`
