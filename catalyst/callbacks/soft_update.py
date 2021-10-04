@@ -1,6 +1,6 @@
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
-from catalyst.utils import soft_update
+from catalyst.utils.torch import soft_update
 
 
 class SoftUpdateCallaback(Callback):
