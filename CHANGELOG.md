@@ -4,8 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-
 ## [YY.MM.R] - YYYY-MM-DD
+
+### Added
+
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.09] - 2021-09-30
 
 ### Added
 
@@ -36,6 +54,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - CI/CD ([#1292](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1299](https://github.com/catalyst-team/catalyst/pull/1299)), ([#1304](https://github.com/catalyst-team/catalyst/pull/1304)), ([#1306](https://github.com/catalyst-team/catalyst/pull/1306))
 - Optuna configs ([#1296](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1296](https://github.com/catalyst-team/catalyst/pull/1299))
+
 
 ## [21.08] - 2021-08-31
 
