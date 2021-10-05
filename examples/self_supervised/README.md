@@ -6,7 +6,7 @@ All traing files have common command line parametrs:
     --epochs - Number of sweeps over the dataset to train
     --num_workers - Number of workers to process a dataloader
     --logdir - Logs directory (tensorboard, weights, etc)
-    --dataset -  Dataset: CIFAR-10, CIFAR-100 or STL10
+    --dataset - Dataset: CIFAR-10, CIFAR-100 or STL10
     --learning_rate - Learning rate for optimizer
 
 You can start trainig with the command:
