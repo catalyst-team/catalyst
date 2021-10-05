@@ -1,3 +1,5 @@
+## Description
+
 All traing files have common command line parametrs:
 
     --feature_dim - Feature dim for latent vector
@@ -9,7 +11,8 @@ All traing files have common command line parametrs:
     --dataset -  Dataset: CIFAR-10, CIFAR-100 or STL10
     --learning_rate - Learning rate for optimizer
 
-You can start trainig with the command:
+## Usage
+
 ```
 docker run train-self-supervised python3 simCLR.py --batch_size 32
 ```
