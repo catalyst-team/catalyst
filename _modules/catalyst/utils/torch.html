@@ -949,6 +949,19 @@
     <span class="k">return</span> <span class="n">checkpoint</span></div>
 
 
+<div class="viewcode-block" id="soft_update"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.soft_update">[docs]</a><span class="k">def</span> <span class="nf">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target: nn.Module to update</span>
+<span class="sd">        source: nn.Module for updating</span>
+<span class="sd">        tau: smoothing parametr</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">target_param</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">source</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
+        <span class="n">target_param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">target_param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tau</span><span class="p">)</span> <span class="o">+</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
@@ -972,6 +985,7 @@
     <span class="s2">&quot;unpack_checkpoint&quot;</span><span class="p">,</span>
     <span class="s2">&quot;save_checkpoint&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_checkpoint&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;soft_update&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

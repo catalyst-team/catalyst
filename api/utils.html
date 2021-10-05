@@ -1754,6 +1754,21 @@ scheduler (if not None).</p>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="catalyst.utils.torch.soft_update">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">soft_update</code><span class="sig-paren">(</span><em class="sig-param">target: torch.nn.modules.module.Module</em>, <em class="sig-param">source: torch.nn.modules.module.Module</em>, <em class="sig-param">tau: float</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/torch.html#soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.soft_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the <cite>target</cite> data with the <cite>source</cite> one smoothing by <code class="docutils literal notranslate"><span class="pre">tau</span></code> (inplace operation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> – nn.Module to update</p></li>
+<li><p><strong>source</strong> – nn.Module for updating</p></li>
+<li><p><strong>tau</strong> – smoothing parametr</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-catalyst.utils.tracing">
 <span id="tracing"></span><h3><a class="toc-backref" href="#id14">Tracing</a><a class="headerlink" href="#module-catalyst.utils.tracing" title="Permalink to this headline">¶</a></h3>
