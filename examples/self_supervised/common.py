@@ -11,7 +11,8 @@ def add_arguments(parser) -> None:
     epochs: Number of sweeps over the dataset to train
     num_workers: Number of workers to process a dataloader
     logdir: Logs directory (tensorboard, weights, etc)
-    dataset: Dataset: CIFAR-10, CIFAR-100 or STL10
+    dataset: CIFAR-10, CIFAR-100 or STL10
+    learning-rate: Learning rate for optimizer
 
     Args:
         parser: argparser like object
