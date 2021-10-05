@@ -11,5 +11,6 @@ All traing files have common command line parametrs:
 
 You can start trainig with the command:
 ```
+docker build . -t train-self-supervised
 docker run train-self-supervised python3 simCLR.py --batch_size 32
 ```
