@@ -638,6 +638,19 @@ def load_checkpoint(path: str):
     return checkpoint
 
 
+def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
+    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation).
+
+    Args:
+        target: nn.Module to update
+        source: nn.Module for updating
+        tau: smoothing parametr
+
+    """
+    for target_param, param in zip(target.parameters(), source.parameters()):
+        target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -661,4 +674,5 @@ __all__ = [
     "unpack_checkpoint",
     "save_checkpoint",
     "load_checkpoint",
+    "soft_update",
 ]

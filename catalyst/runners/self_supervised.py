@@ -1,4 +1,7 @@
 from typing import Any, Mapping
+import collections
+
+from torch import nn
 
 from catalyst.core.runner import IRunner
 
@@ -166,19 +169,34 @@ class ISelfSupervisedRunner(IRunner):
 
         return batch
 
+    def on_stage_start(self, runner: "IRunner"):
+        """on_stage_start event handler."""
+        super().on_stage_start(runner)
+        self.is_kv_model = False
+        if isinstance(self.model, (collections.Mapping, nn.ModuleDict)):
+            self.is_kv_model = True
+
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
-        embedding1, projection1 = self.model(batch[f"{self._augemention_prefix}_left"], **kwargs)
-        embedding2, projection2 = self.model(batch[f"{self._augemention_prefix}_right"], **kwargs)
-        origin_embeddings, projection_origin = self.model(batch[self._input_key], **kwargs)
-        batch = {
-            **batch,
-            f"{self._projection_prefix}_left": projection1,
-            f"{self._projection_prefix}_right": projection2,
-            f"{self._projection_prefix}_origin": projection_origin,
-            f"{self._embedding_prefix}_left": embedding1,
-            f"{self._embedding_prefix}_right": embedding2,
-            f"{self._embedding_prefix}_origin": origin_embeddings,
-        }
+
+        if self.is_kv_model:
+            encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.model]
+        else:
+            encoders = [("", self.model)]
+
+        for (encoder_name, encoder) in encoders:
+            embedding1, projection1 = encoder(batch[f"{self._augemention_prefix}_left"], **kwargs)
+            embedding2, projection2 = encoder(batch[f"{self._augemention_prefix}_right"], **kwargs)
+            origin_embeddings, projection_origin = encoder(batch[self._input_key], **kwargs)
+            prefix = f"{encoder_name}_" if encoder_name else ""
+            batch = {
+                **batch,
+                f"{prefix}{self._projection_prefix}_left": projection1,
+                f"{prefix}{self._projection_prefix}_right": projection2,
+                f"{prefix}{self._projection_prefix}_origin": projection_origin,
+                f"{prefix}{self._embedding_prefix}_left": embedding1,
+                f"{prefix}{self._embedding_prefix}_right": embedding2,
+                f"{prefix}{self._embedding_prefix}_origin": origin_embeddings,
+            }
 
         return batch
 
