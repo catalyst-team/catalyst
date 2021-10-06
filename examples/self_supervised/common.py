@@ -1,6 +1,9 @@
+from typing import Dict
+
 from datasets import datasets
 
 import torch
+from torch.utils.data import DataLoader
 
 from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
@@ -81,8 +84,15 @@ class ContrastiveModel(torch.nn.Module):
         return emb, projection
 
 
-def get_loaders(args):
+def get_loaders(args) -> Dict[str, DataLoader]:
+    """Init loaders based on parsed parametrs.
 
+    Args:
+        args: argparse parametrs
+
+    Returns:
+        {"train":..., "valid":...}
+    """
     transforms = datasets[args.dataset]["train_transform"]
     transform_original = datasets[args.dataset]["valid_transform"]
 
@@ -97,18 +107,22 @@ def get_loaders(args):
         transform_original=transform_original,
     )
 
-    train_loader = torch.utils.data.DataLoader(
-        train_data, batch_size=args.batch_size, num_workers=args.num_workers
-    )
+    train_loader = DataLoader(train_data, batch_size=args.batch_size, num_workers=args.num_workers)
 
-    valid_loader = torch.utils.data.DataLoader(
-        valid_data, batch_size=args.batch_size, num_workers=args.num_workers
-    )
+    valid_loader = DataLoader(valid_data, batch_size=args.batch_size, num_workers=args.num_workers)
 
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(args):
+def get_contrastive_model(args) -> ContrastiveModel:
+    """Init contrastive model based on parsed parametrs.
+
+    Args:
+        args: argparse parametrs
+
+    Returns:
+        ContrstiveModel instance
+    """
     encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
     projection_head = nn.Sequential(
         nn.Linear(2048, 512, bias=False),

@@ -1,18 +1,13 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets, get_contrastive_model, get_loaders
+from common import add_arguments, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
-from torch import nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
-from torchvision import transforms
 
 from catalyst import dl
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
-from catalyst.data import SelfSupervisedDatasetWrapper
 
 parser = argparse.ArgumentParser(description="Train Barlow Twins")
 add_arguments(parser)
