@@ -13,6 +13,7 @@ from catalyst.dl import SelfSupervisedRunner
 parser = argparse.ArgumentParser(description="Train BYOL")
 add_arguments(parser)
 
+
 def set_requires_grad(model, val):
     for p in model.parameters():
         p.requires_grad = val
