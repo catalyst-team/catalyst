@@ -1,16 +1,14 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, ContrastiveModel, get_loaders
+from common import add_arguments, get_loaders, get_contrastive_model
 
 import torch
 from torch.optim import Adam
 
 from catalyst import dl
 from catalyst.contrib import nn
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
-from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
 from catalyst.dl import SelfSupervisedRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
@@ -31,29 +29,14 @@ if __name__ == "__main__":
     
     # 2. model and optimizer
 
-    encoder_online = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
-    projection_head_online = nn.Sequential(
-        nn.Linear(2048, 512, bias=False),
-        nn.ReLU(inplace=True),
-        nn.Linear(512, args.feature_dim, bias=True),
-    )
-    encoder_target = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
-    projection_head_target = nn.Sequential(
-        nn.Linear(2048, 512, bias=False),
-        nn.ReLU(inplace=True),
-        nn.Linear(512, args.feature_dim, bias=True),
-    )
-
     model = nn.ModuleDict(
         {
-            "online": ContrastiveModel(projection_head_online, encoder_online),
-            "target": ContrastiveModel(projection_head_target, encoder_target),
+            "online": get_contrastive_model(args),
+            "target": get_contrastive_model(args),
         }
     )
 
-    set_requires_grad(model["target"], False)
-
-    
+    set_requires_grad(model["target"], False)    
     optimizer = Adam(model["online"].parameters(), lr=args.learning_rate)
 
     # 3. criterion
