@@ -12,9 +12,14 @@ All traing files have common command line parametrs:
     --dataset - Dataset: CIFAR-10, CIFAR-100 or STL10
     --learning_rate - Learning rate for optimizer
 
+### Extra parametrs
+
+Barlow-twins (barlow_twins.py) has an extra parametr ``--offdig_lambda`` - lambda that controls the on- and off-diagonal terms from Barlow twins loss.
+
 ## Usage
 
 ```
 docker build . -t train-self-supervised
 docker run train-self-supervised python3 simCLR.py --batch_size 32
 ```
+
