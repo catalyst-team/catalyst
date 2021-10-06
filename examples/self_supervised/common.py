@@ -1,7 +1,7 @@
 from datasets import datasets
 
 import torch
-
+from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
 
 def add_arguments(parser) -> None:
     """Function to add common arguments to argparse:
@@ -75,3 +75,32 @@ class ContrastiveModel(torch.nn.Module):
         emb = self.encoder(x)
         projection = self.model(emb)
         return emb, projection
+
+def get_loaders(args):
+
+    transforms = datasets[args.dataset]["train_transform"]
+    transform_original = datasets[args.dataset]["valid_transform"]
+
+    train_data = SelfSupervisedDatasetWrapper(
+        datasets[args.dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
+    )
+    valid_data = SelfSupervisedDatasetWrapper(
+        datasets[args.dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
+    )
+
+    train_loader = torch.utils.data.DataLoader(
+        train_data, batch_size=args.batch_size, num_workers=args.num_workers
+    )
+
+    valid_loader = torch.utils.data.DataLoader(
+        valid_data, batch_size=args.batch_size, num_workers=args.num_workers
+    )
+
+    return {
+        "train" : train_loader,
+        "valid" : valid_loader
+    }
