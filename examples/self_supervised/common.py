@@ -1,9 +1,11 @@
 from datasets import datasets
 
 import torch
-from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
+
 from catalyst.contrib import nn
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
+from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
+
 
 def add_arguments(parser) -> None:
     """Function to add common arguments to argparse:
@@ -78,6 +80,7 @@ class ContrastiveModel(torch.nn.Module):
         projection = self.model(emb)
         return emb, projection
 
+
 def get_loaders(args):
 
     transforms = datasets[args.dataset]["train_transform"]
@@ -102,10 +105,8 @@ def get_loaders(args):
         valid_data, batch_size=args.batch_size, num_workers=args.num_workers
     )
 
-    return {
-        "train" : train_loader,
-        "valid" : valid_loader
-    }
+    return {"train": train_loader, "valid": valid_loader}
+
 
 def get_contrastive_model(args):
     encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())

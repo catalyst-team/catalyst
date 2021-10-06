@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, ContrastiveModel, get_loaders, get_contrastive_model
+from common import add_arguments, ContrastiveModel, get_contrastive_model, get_loaders
 
 import torch
 import torch.nn.functional as F
@@ -15,14 +15,14 @@ from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
 from catalyst.dl import SelfSupervisedRunner
 
-parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
+parser = argparse.ArgumentParser(description="Train SimCLR")
 add_arguments(parser)
 
 if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
     aug_strength = args.aug_strength
-    
+
     # 2. model and optimizer
     model = get_contrastive_model(args)
     optimizer = Adam(model.parameters(), lr=args.learning_rate)

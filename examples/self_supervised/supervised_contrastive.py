@@ -1,7 +1,7 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, ContrastiveModel, datasets, get_loaders, get_contrastive_model
+from common import add_arguments, ContrastiveModel, datasets, get_contrastive_model, get_loaders
 
 import torch
 import torch.nn.functional as F
@@ -17,6 +17,7 @@ from catalyst.data import SelfSupervisedDatasetWrapper
 parser = argparse.ArgumentParser(description="Train Supervised Contrastive")
 add_arguments(parser)
 
+
 def concat(*tensors):
     return torch.cat(tensors)
 
@@ -24,7 +25,7 @@ def concat(*tensors):
 if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
-    
+
     # 2. model and optimizer
     model = get_contrastive_model(args)
     optimizer = Adam(model.parameters(), lr=args.learning_rate)

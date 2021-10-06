@@ -1,9 +1,8 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, get_loaders, get_contrastive_model
+from common import add_arguments, get_contrastive_model, get_loaders
 
-import torch
 from torch.optim import Adam
 
 from catalyst import dl
@@ -11,11 +10,8 @@ from catalyst.contrib import nn
 from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.dl import SelfSupervisedRunner
 
-parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
+parser = argparse.ArgumentParser(description="Train BYOL")
 add_arguments(parser)
-
-parser.add_argument("--aug-strength", default=1.0, type=float, help="Strength of augmentations")
-
 
 def set_requires_grad(model, val):
     for p in model.parameters():
@@ -25,8 +21,7 @@ def set_requires_grad(model, val):
 if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
-    aug_strength = args.aug_strength
-    
+
     # 2. model and optimizer
 
     model = nn.ModuleDict(
@@ -36,7 +31,7 @@ if __name__ == "__main__":
         }
     )
 
-    set_requires_grad(model["target"], False)    
+    set_requires_grad(model["target"], False)
     optimizer = Adam(model["online"].parameters(), lr=args.learning_rate)
 
     # 3. criterion

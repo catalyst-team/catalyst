@@ -1,11 +1,11 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, datasets, get_loaders, get_contrastive_model
+from common import add_arguments, datasets, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
-import torch.optim as optim
 from torch import nn
+import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
@@ -14,7 +14,7 @@ from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
 
-parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
+parser = argparse.ArgumentParser(description="Train Barlow Twins")
 add_arguments(parser)
 parser.add_argument(
     "--offdig_lambda",
@@ -46,7 +46,6 @@ if __name__ == "__main__":
 
     criterion = BarlowTwinsLoss(offdiag_lambda=offdig_lambda)
 
-    
     callbacks = [
         dl.CriterionCallback(
             input_key="projection_left", target_key="projection_right", metric_key="loss"
