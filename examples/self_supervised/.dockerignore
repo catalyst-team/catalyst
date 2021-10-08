@@ -1,0 +1,9 @@
+# Exclude everything:
+*
+# Include useful:
+!barlow_twins.py
+!byol.py
+!common.py
+!datasets.py
+!simCLR.py
+!supervised_contrastive.py 

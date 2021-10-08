@@ -1,6 +1,13 @@
+from typing import Dict, Optional
+
 from datasets import datasets
 
 import torch
+from torch.utils.data import DataLoader
+
+from catalyst.contrib import nn
+from catalyst.contrib.models.cv.encoders import ResnetEncoder
+from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
 
 
 def add_arguments(parser) -> None:
@@ -11,7 +18,8 @@ def add_arguments(parser) -> None:
     epochs: Number of sweeps over the dataset to train
     num_workers: Number of workers to process a dataloader
     logdir: Logs directory (tensorboard, weights, etc)
-    dataset: Dataset: CIFAR-10, CIFAR-100 or STL10
+    dataset: CIFAR-10, CIFAR-100 or STL10
+    learning-rate: Learning rate for optimizer
 
     Args:
         parser: argparser like object
@@ -74,3 +82,56 @@ class ContrastiveModel(torch.nn.Module):
         emb = self.encoder(x)
         projection = self.model(emb)
         return emb, projection
+
+
+def get_loaders(
+    dataset: str, batch_size: int, num_workers: Optional[int]
+) -> Dict[str, DataLoader]:
+    """Init loaders based on parsed parametrs.
+
+    Args:
+        dataset: dataset for the experiment
+        batch_size: batch size for loaders
+        num_workers: number of workers to process loaders
+
+    Returns:
+        {"train":..., "valid":...}
+    """
+    transforms = datasets[dataset]["train_transform"]
+    transform_original = datasets[dataset]["valid_transform"]
+
+    train_data = SelfSupervisedDatasetWrapper(
+        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
+    )
+    valid_data = SelfSupervisedDatasetWrapper(
+        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        transforms=transforms,
+        transform_original=transform_original,
+    )
+
+    train_loader = DataLoader(train_data, batch_size=batch_size, num_workers=num_workers)
+
+    valid_loader = DataLoader(valid_data, batch_size=batch_size, num_workers=num_workers)
+
+    return {"train": train_loader, "valid": valid_loader}
+
+
+def get_contrastive_model(feature_dim: int) -> ContrastiveModel:
+    """Init contrastive model based on parsed parametrs.
+
+    Args:
+        feature_dim: dimensinality of contrative projection
+
+    Returns:
+        ContrstiveModel instance
+    """
+    encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
+    projection_head = nn.Sequential(
+        nn.Linear(2048, 512, bias=False),
+        nn.ReLU(inplace=True),
+        nn.Linear(512, feature_dim, bias=True),
+    )
+    model = ContrastiveModel(projection_head, encoder)
+    return model
