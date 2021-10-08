@@ -84,11 +84,15 @@ class ContrastiveModel(torch.nn.Module):
         return emb, projection
 
 
-def get_loaders(dataset: str, batch_size: int, num_workers: Optional[int]) -> Dict[str, DataLoader]:
+def get_loaders(
+    dataset: str, batch_size: int, num_workers: Optional[int]
+) -> Dict[str, DataLoader]:
     """Init loaders based on parsed parametrs.
 
     Args:
         dataset: dataset for the experiment
+        batch_size: batch size for loaders
+        num_workers: number of workers to process loaders
 
     Returns:
         {"train":..., "valid":...}
