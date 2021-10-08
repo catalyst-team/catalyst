@@ -70,7 +70,7 @@ if __name__ == "__main__":
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
-        loaders=get_loaders(args),
+        loaders=get_loaders(arargs.dataset, args.batch_size, args.num_workersgs),
         verbose=True,
         num_epochs=epochs,
         valid_loader="train",

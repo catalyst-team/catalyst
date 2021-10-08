@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from datasets import datasets
 
@@ -84,32 +84,32 @@ class ContrastiveModel(torch.nn.Module):
         return emb, projection
 
 
-def get_loaders(args) -> Dict[str, DataLoader]:
+def get_loaders(dataset: str, batch_size: int, num_workers: Optional[int]) -> Dict[str, DataLoader]:
     """Init loaders based on parsed parametrs.
 
     Args:
-        args: argparse parametrs
+        dataset: dataset for the experiment
 
     Returns:
         {"train":..., "valid":...}
     """
-    transforms = datasets[args.dataset]["train_transform"]
-    transform_original = datasets[args.dataset]["valid_transform"]
+    transforms = datasets[dataset]["train_transform"]
+    transform_original = datasets[dataset]["valid_transform"]
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[args.dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        datasets[args.dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
 
-    train_loader = DataLoader(train_data, batch_size=args.batch_size, num_workers=args.num_workers)
+    train_loader = DataLoader(train_data, batch_size=batch_size, num_workers=num_workers)
 
-    valid_loader = DataLoader(valid_data, batch_size=args.batch_size, num_workers=args.num_workers)
+    valid_loader = DataLoader(valid_data, batch_size=batch_size, num_workers=num_workers)
 
     return {"train": train_loader, "valid": valid_loader}
 

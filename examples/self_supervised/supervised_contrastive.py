@@ -58,7 +58,7 @@ if __name__ == "__main__":
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
-        loaders=get_loaders(args),
+        loaders=get_loaders(args.dataset, args.batch_size, args.num_workers),
         verbose=True,
         logdir=args.logdir,
         valid_loader="train",
