@@ -27,7 +27,7 @@ if __name__ == "__main__":
     batch_size = args.batch_size
 
     # 2. model and optimizer
-    model = get_contrastive_model(args)
+    model = get_contrastive_model(args.feature_dim)
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
     # 3. criterion with triplets sampling

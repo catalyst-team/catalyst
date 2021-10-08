@@ -114,11 +114,11 @@ def get_loaders(args) -> Dict[str, DataLoader]:
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(args) -> ContrastiveModel:
+def get_contrastive_model(feature_dim: int) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
-        args: argparse parametrs
+        feature_dim: dimensinality of contrative projection
 
     Returns:
         ContrstiveModel instance
@@ -127,7 +127,7 @@ def get_contrastive_model(args) -> ContrastiveModel:
     projection_head = nn.Sequential(
         nn.Linear(2048, 512, bias=False),
         nn.ReLU(inplace=True),
-        nn.Linear(512, args.feature_dim, bias=True),
+        nn.Linear(512, feature_dim, bias=True),
     )
     model = ContrastiveModel(projection_head, encoder)
     return model

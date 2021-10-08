@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     # model and optimizer
 
-    model = get_contrastive_model(args)
+    model = get_contrastive_model(args.feature_dim)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
     # criterion

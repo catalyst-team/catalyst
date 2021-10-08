@@ -27,8 +27,8 @@ if __name__ == "__main__":
 
     model = nn.ModuleDict(
         {
-            "online": get_contrastive_model(args),
-            "target": get_contrastive_model(args),
+            "online": get_contrastive_model(args.feature_dim),
+            "target": get_contrastive_model(args.feature_dim),
         }
     )
 
