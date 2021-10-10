@@ -1,8 +1,12 @@
 # flake8: noqa
 
+import logging
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+logger = logging.getLogger("criterions")
 
 
 class SSDCriterion(nn.Module):
