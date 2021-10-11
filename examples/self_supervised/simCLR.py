@@ -2,6 +2,7 @@
 import argparse
 
 from common import add_arguments, get_contrastive_model, get_loaders
+from sklearn.linear_model import LogisticRegression
 
 from torch.optim import Adam
 
@@ -26,7 +27,23 @@ if __name__ == "__main__":
     callbacks = [
         dl.CriterionCallback(
             input_key="projection_left", target_key="projection_right", metric_key="loss"
-        )
+        ),
+        dl.SklearnModelCallback(
+            feature_key="embedding_origin",
+            target_key="target",
+            train_loader="train",
+            valid_loaders="valid",
+            model_fn=LogisticRegression,
+            predict_key="sklearn_predict",
+            predict_method="predict_proba",
+        ),
+        dl.OptimizerCallback(metric_key="loss"),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
+        ),
     ]
 
     runner = SelfSupervisedRunner()
@@ -43,4 +60,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         minimize_valid_metric=True,
         num_epochs=args.epochs,
+        engine=dl.DeviceEngine("cpu")
     )
