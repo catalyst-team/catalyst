@@ -318,38 +318,80 @@
   <section id="distributed-training-tutorial">
 <h1>Distributed training tutorial<a class="headerlink" href="#distributed-training-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>If you have multiple GPUs,
-the most reliable way to use all of them for training is to use the distributed package from pytorch.
-To help you, there is a distributed helpers in Catalyst to make it really easy.</p>
-<p>Note, that current distributed implementation requires you
-to run only training procedure in your python scripts.</p>
+the most reliable way to utilize their full potential during training is to use the distributed package from PyTorch.
+For such a case, there are many distributed helpers in Catalyst to make this engineering stuff a bit more user-friendly.</p>
+<p>Please note that due to PyTorch multiprocessing realization,
+GPU-based distributed training doesn’t work in a notebook,
+so prepare a script to run the training.
+Nevertheless, XLA-based training could be run directly in the notebook.</p>
 <section id="prepare-your-script">
 <h2>Prepare your script<a class="headerlink" href="#prepare-your-script" title="Permalink to this headline">¶</a></h2>
-<p>Distributed training doesn’t work in a notebook, so prepare a script to run the training.
-For instance, here is a minimal script that trains a linear regression model.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+<p>Let’s start with a simple script for ResNet9 model training on CIFAR10:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">ResidualBlock</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">transforms</span>
+
+<span class="k">def</span> <span class="nf">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span> <span class="o">=</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">sz</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">))),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">))),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># experiment setup</span>
     <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir1&quot;</span>
-    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="c1"># data</span>
-    <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="p">])</span>
+    <span class="n">train_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+    <span class="p">)</span>
+    <span class="n">valid_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+    <span class="p">)</span>
+    <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+    <span class="p">}</span>
 
     <span class="c1"># model, criterion, optimizer, scheduler</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
     <span class="c1"># model training</span>
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
@@ -365,35 +407,80 @@ For instance, here is a minimal script that trains a linear regression model.</p
     <span class="p">)</span>
 </pre></div>
 </div>
+<p>By default, without any additional specifications, Catalyst will utilize all available resources in
+- <code class="docutils literal notranslate"><span class="pre">DataParallel</span></code> setup if there are several GPUs available,
+- <code class="docutils literal notranslate"><span class="pre">GPU`</span></code> setup if there is only one GPU available,
+- <code class="docutils literal notranslate"><span class="pre">CPU</span></code> setup if there is no GPU available.</p>
 </section>
-<section id="stage-1-1-line-ddp">
-<h2>Stage 1 - 1 line ddp<a class="headerlink" href="#stage-1-1-line-ddp" title="Permalink to this headline">¶</a></h2>
-<p>In case you want to run it fast and ugly, with minimal changes,
-you can just pass <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code> to <code class="docutils literal notranslate"><span class="pre">.train</span></code> call</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+<section id="fast-ddp">
+<h2>Fast DDP<a class="headerlink" href="#fast-ddp" title="Permalink to this headline">¶</a></h2>
+<p>Tranks to Catalyst Python API,
+you could run the same code without any change and get the distributed setup with only one line of code.
+Just pass <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code> flag during <code class="docutils literal notranslate"><span class="pre">.train</span></code> call:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">ResidualBlock</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">transforms</span>
+
+<span class="k">def</span> <span class="nf">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span> <span class="o">=</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">sz</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">))),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">))),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># experiment setup</span>
     <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir2&quot;</span>
-    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="c1"># data</span>
-    <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="p">])</span>
+    <span class="n">train_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+    <span class="p">)</span>
+    <span class="n">valid_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+    <span class="p">)</span>
+    <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+    <span class="p">}</span>
 
     <span class="c1"># model, criterion, optimizer, scheduler</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
     <span class="c1"># model training</span>
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
@@ -406,199 +493,328 @@ you can just pass <code class="docutils literal notranslate"><span class="pre">d
         <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
         <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># &lt;-- here is the trick,</span>
+        <span class="n">amp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># &lt;-- here is another trick ;)</span>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p>In this way Catalyst
-will try to automatically make your loaders work in distributed setup
-and will run experiment training.</p>
+<p>Please note that you could also specify automatic mixed-precision usage with the <code class="docutils literal notranslate"><span class="pre">amp</span></code> flag in the same way.</p>
+<p>In this way,
+Catalyst will automatically try to make your loaders work in a distributed setup and run experiment training.</p>
 <dl class="simple">
-<dt>Nevertheless it has several disadvantages,</dt><dd><ul class="simple">
-<li><p>you create your loader again and again with each distributed worker,
-+1 for master scripts with all processes joined.</p></li>
-<li><p>you can’t understand what is going under the hood of <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code></p></li>
-<li><p>we can’t always transfer your loaders to distributed mode correctly</p></li>
+<dt>Nevertheless, it has several disadvantages,</dt><dd><ul class="simple">
+<li><p>without proper specification, loaders will be created again and again for each distributed worker,</p></li>
+<li><p>you can’t understand what is going under the hood of <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code>,</p></li>
+<li><p>we can’t always transfer your loaders to distributed mode correctly due to a large variety of data processing pipelines available.</p></li>
 </ul>
 </dd>
 </dl>
+<p>For such a reason,
+Catalyst API also provides a proper “low-level” API for your data preparation for the distributed setup.</p>
 </section>
-<section id="case-2-we-are-going-deeper">
-<h2>Case 2 - We are going deeper<a class="headerlink" href="#case-2-we-are-going-deeper" title="Permalink to this headline">¶</a></h2>
-<p>Let’s make it more reusable:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+<section id="ddp-under-the-hood">
+<h2>DDP under the hood<a class="headerlink" href="#ddp-under-the-hood" title="Permalink to this headline">¶</a></h2>
+<p>Let’s create our <code class="docutils literal notranslate"><span class="pre">CustomSupervisedRunner</span></code>
+and pass the data preparation under <code class="docutils literal notranslate"><span class="pre">CustomSupervisedRunner.get_loaders</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="k">def</span> <span class="nf">datasets_fn</span><span class="p">(</span><span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.distributed</span> <span class="kn">import</span> <span class="n">DistributedSampler</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="c1"># experiment setup</span>
-    <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir3&quot;</span>
-    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">ResidualBlock</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">transforms</span>
 
-    <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-    <span class="c1"># model, criterion, optimizer, scheduler</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
 
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-        <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-        <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-        <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-        <span class="n">loaders</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-            <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;datasets_fn&quot;</span><span class="p">:</span> <span class="n">datasets_fn</span><span class="p">,</span>
-            <span class="s2">&quot;num_features&quot;</span><span class="p">:</span> <span class="n">num_features</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
-        <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
-        <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-        <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span> <span class="o">=</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">sz</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">))),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">))),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-</pre></div>
-</div>
-<dl class="simple">
-<dt>Advantages,</dt><dd><ul class="simple">
-<li><p>you don’t duplicate the data - it calls when it really needed</p></li>
-<li><p>we still can easily transfer them to distributed mode,
-thanks to <code class="docutils literal notranslate"><span class="pre">Datasets</span></code> usage</p></li>
-</ul>
-</dd>
-<dt>Disadvantages,</dt><dd><ul class="simple">
-<li><p>everything works thanks to Catalyst <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/catalyst/runners/runner.py#L147">internal logic</a>,
-which could be complicated to understand</p></li>
-</ul>
-</dd>
-</dl>
-<p>Could we make everything precisely clear?</p>
-</section>
-<section id="case-3-best-practices-for-distributed-training">
-<h2>Case 3 - Best practices for distributed training<a class="headerlink" href="#case-3-best-practices-for-distributed-training" title="Permalink to this headline">¶</a></h2>
-<p>Yup, check this one, distributed training like a pro:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
 
 <span class="k">class</span> <span class="nc">CustomSupervisedRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_features</span> <span class="o">=</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span>
-
+    <span class="c1"># here is the trick:</span>
     <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">is_ddp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="p">])</span>
+        <span class="n">train_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+        <span class="p">)</span>
+        <span class="n">valid_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span><span class="p">:</span>
+            <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
+                <span class="n">train_data</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">valid_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
+                <span class="n">valid_data</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">valid_sampler</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_ddp</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+        <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">valid_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">}</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># experiment setup</span>
-    <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir4&quot;</span>
-    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir2&quot;</span>
+    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">10</span>
 
-    <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
     <span class="c1"># model, criterion, optimizer, scheduler</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="o">=</span><span class="n">num_features</span><span class="p">)</span>
+    <span class="c1"># model training</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">()</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
         <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-        <span class="n">loaders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># as far as we have rewrite the loader logic already</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># &lt;-- here is the trick</span>
         <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
         <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># &lt;-- now it works like a charm</span>
+        <span class="n">amp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># &lt;-- you can still use this trick here ;)</span>
     <span class="p">)</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>Advantages,</dt><dd><ul class="simple">
-<li><p>you don’t duplicate the data - it calls when it really needed</p></li>
-<li><p>we still can easily transfer them to distributed mode, thanks to <code class="docutils literal notranslate"><span class="pre">Datasets</span></code> usage</p></li>
-<li><p>the code is easily readable thanks to pure PyTorch way of working with datasets</p></li>
-</ul>
-</dd>
-</dl>
+<p>As you can see, we have the same code,
+except that the <code class="docutils literal notranslate"><span class="pre">CustomSupervisedRunner</span></code> now knows all the details about data preprocessing under distributed setup.
+And thanks to the pure PyTorch, the code is easily readable and straightforward.</p>
+</section>
+<section id="runner-under-the-hood">
+<h2>Runner under the hood<a class="headerlink" href="#runner-under-the-hood" title="Permalink to this headline">¶</a></h2>
+<p>As an extra point, you could also specify the whole experiment within <code class="docutils literal notranslate"><span class="pre">Runner</span></code> methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.distributed</span> <span class="kn">import</span> <span class="n">DistributedSampler</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">ResidualBlock</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">transforms</span>
+
+<span class="k">def</span> <span class="nf">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span> <span class="o">=</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">sz</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span> <span class="n">sz2</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz2</span><span class="p">))),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz2</span><span class="p">,</span> <span class="n">sz4</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">conv_block</span><span class="p">(</span><span class="n">sz4</span><span class="p">,</span> <span class="n">sz8</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">),</span> <span class="n">conv_block</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">sz8</span><span class="p">))),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sz8</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+            <span class="s2">&quot;tensorboard&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_stage_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">10</span>
+
+    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="p">])</span>
+        <span class="n">train_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+        <span class="p">)</span>
+        <span class="n">valid_data</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span><span class="p">:</span>
+            <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
+                <span class="n">train_data</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">valid_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
+                <span class="n">valid_data</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">valid_sampler</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">valid_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">resnet9</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">SchedulerCallback</span><span class="p">(</span><span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
+                <span class="n">minimize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">save_n_best</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="c1"># &quot;tqdm&quot;: dl.TqdmCallback(),</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+            <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span>
+        <span class="p">}</span>
+
+ <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># experiment setup</span>
+    <span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir3&quot;</span>
+
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>With such low-level runner specification, you could customize every detail you want:
+- hardware acceleration setup with <code class="docutils literal notranslate"><span class="pre">get_engine</span></code>,
+- data preparation with <code class="docutils literal notranslate"><span class="pre">get_loaders</span></code>,
+- experiment components with <code class="docutils literal notranslate"><span class="pre">get_model</span></code>, <code class="docutils literal notranslate"><span class="pre">get_optimizer</span></code>, <code class="docutils literal notranslate"><span class="pre">get_criterion</span></code>, <code class="docutils literal notranslate"><span class="pre">get_schduler</span></code>,
+- you main training/evaluating logic withing <code class="docutils literal notranslate"><span class="pre">handle_batch</span></code>,
+- all extra components with <code class="docutils literal notranslate"><span class="pre">get_callbacks</span></code>.</p>
 </section>
 <section id="launch-your-training">
 <h2>Launch your training<a class="headerlink" href="#launch-your-training" title="Permalink to this headline">¶</a></h2>
-<p>In your terminal,
-type the following line (adapt <cite>script_name</cite> to your script name ending with .py).</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python <span class="o">{</span>script_name<span class="o">}</span>
+<p>In your terminal, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python <span class="o">{</span>script_name<span class="o">}</span>.py
 </pre></div>
 </div>
 <p>You can vary available GPUs with <code class="docutils literal notranslate"><span class="pre">CUDA_VIBIBLE_DEVICES</span></code> option, for example,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 1st and 2nd GPUs</span>
-<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;1,2&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;1,2&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>.py
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 0, 1st and 3rd GPUs</span>
-<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0,1,3&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0,1,3&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>.py
 </pre></div>
 </div>
-<p>What will happen is that the same model will be copied on all your available GPUs.
-During training, the full dataset will randomly be split between the GPUs
-(that will change at each epoch).
-Each GPU will grab a batch (on that fractioned dataset),
-pass it through the model, compute the loss then back-propagate the gradients.
-Then they will share their results and average them,
-which means like your training is the equivalent of a training
-with a batch size of <code class="docutils literal notranslate"><span class="pre">`batch_size</span> <span class="pre">x</span> <span class="pre">num_gpus</span></code>
+<p>What is going under the hood?
+- the same model will be copied on all your available GPUs,
+- then, during training, the full dataset will randomly be split between available GPUs (that will change at each epoch),
+- each GPU will grab a batch (on that fractioned dataset),
+- and pass it through the model, compute the loss, then back-propagate the gradients,
+- then they will share their results and average them,
+- since they all have the same gradients at this stage, they will all perform the same update, so the models will still be the same after the gradient step.
+- then training continues with the next batch until the number of desired iterations is done.</p>
+<p>With such specification, the distributed training is “equivalent” to training with a batch size of <code class="docutils literal notranslate"><span class="pre">`batch_size</span> <span class="pre">x</span> <span class="pre">num_gpus</span></code>
 (where <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> is what you used in your script).</p>
-<p>Since they all have the same gradients at this stage,
-they will al perform the same update,
-so the models will still be the same after this step.
-Then training continues with the next batch,
-until the number of desired iterations is done.</p>
 <p>During training Catalyst will automatically average all metrics
-and log them on <code class="docutils literal notranslate"><span class="pre">Master</span></code> node only. Same logic used for model checkpointing.</p>
+and log them on <code class="docutils literal notranslate"><span class="pre">rank-zero</span></code> node only. Same logic used for model checkpointing.</p>
 </section>
-<section id="slurm-support">
-<h2>Slurm support<a class="headerlink" href="#slurm-support" title="Permalink to this headline">¶</a></h2>
-<p>Catalyst supports distributed training of neural networks on HPC under slurm control.
-Catalyst automatically allocates roles between nodes and syncs them.
-This allows to run experiments without any changes in the configuration file or model code.
-We recommend using nodes with the same number and type of GPU.
-You can run the experiment with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Catalyst Notebook API</span>
-srun -N <span class="m">2</span> --gres<span class="o">=</span>gpu:3 --exclusive --mem<span class="o">=</span>256G python run.py
-<span class="c1"># Catalyst Config API</span>
-srun -N <span class="m">2</span> --gres<span class="o">=</span>gpu:3 --exclusive --mem<span class="o">=</span>256G catalyst-dl run -C config.yml
-</pre></div>
-</div>
-<p>In this command,
-we request two nodes with 3 GPUs on each node in exclusive mode,
-i.e. we request all available CPUs on the nodes.
-Each node will be allocated 256G.
-Note that specific startup parameters using <code class="docutils literal notranslate"><span class="pre">srun</span></code>
-may change depending on the specific cluster and slurm settings.
-For more fine-tuning, we recommend reading the slurm documentation.</p>
+<section id="resume">
+<h2>Resume<a class="headerlink" href="#resume" title="Permalink to this headline">¶</a></h2>
+<p>During this tutorial, we have:
+- review how to run distributed training with Catalyst into one single line,
+- how to adapt your custom data preprocessing for the distributed training,
+- and even specify the whole custom <code class="docutils literal notranslate"><span class="pre">Runner</span></code> if it’s required.</p>
+<p>Finally, we have reviewed the internals or distributed training and understood its “magic” under the hood.</p>
 </section>
 </section>
 
@@ -643,11 +859,11 @@ For more fine-tuning, we recommend reading the slurm documentation.</p>
               <ul>
 <li><a class="reference internal" href="#">Distributed training tutorial</a><ul>
 <li><a class="reference internal" href="#prepare-your-script">Prepare your script</a></li>
-<li><a class="reference internal" href="#stage-1-1-line-ddp">Stage 1 - 1 line ddp</a></li>
-<li><a class="reference internal" href="#case-2-we-are-going-deeper">Case 2 - We are going deeper</a></li>
-<li><a class="reference internal" href="#case-3-best-practices-for-distributed-training">Case 3 - Best practices for distributed training</a></li>
+<li><a class="reference internal" href="#fast-ddp">Fast DDP</a></li>
+<li><a class="reference internal" href="#ddp-under-the-hood">DDP under the hood</a></li>
+<li><a class="reference internal" href="#runner-under-the-hood">Runner under the hood</a></li>
 <li><a class="reference internal" href="#launch-your-training">Launch your training</a></li>
-<li><a class="reference internal" href="#slurm-support">Slurm support</a></li>
+<li><a class="reference internal" href="#resume">Resume</a></li>
 </ul>
 </li>
 </ul>
