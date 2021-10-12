@@ -1,52 +1,18 @@
 #!/usr/bin/env python
 # flake8: noqa
 from argparse import ArgumentParser, RawTextHelpFormatter
-from functools import partial
 import os
+
+from common import E2E
 
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from catalyst import dl, SETTINGS, utils
+from catalyst import dl, utils
 from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.nn import ResidualBlock
 from catalyst.data import transforms
-
-E2E = {
-    "de": dl.DeviceEngine,
-    "dp": dl.DataParallelEngine,
-    "ddp": dl.DistributedDataParallelEngine,
-}
-
-if SETTINGS.amp_required:
-    E2E.update(
-        {"amp-dp": dl.DataParallelAMPEngine, "amp-ddp": dl.DistributedDataParallelAMPEngine}
-    )
-
-if SETTINGS.apex_required:
-    E2E.update(
-        {"apex-dp": dl.DataParallelAPEXEngine, "apex-ddp": dl.DistributedDataParallelAPEXEngine}
-    )
-
-if SETTINGS.deepspeed_required:
-    E2E.update({"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine})
-
-if SETTINGS.fairscale_required:
-    E2E.update(
-        {
-            "fs-pp": dl.PipelineParallelFairScaleEngine,
-            "fs-ddp": dl.SharedDataParallelFairScaleEngine,
-            "fs-ddp-amp": dl.SharedDataParallelFairScaleAMPEngine,
-            # for some reason we could catch a bug with FairScale flatten wrapper here, so...
-            "fs-fddp": partial(
-                dl.FullySharedDataParallelFairScaleEngine, ddp_kwargs={"flatten_parameters": False}
-            ),
-        }
-    )
-
-if SETTINGS.xla_required:
-    E2E.update({"xla": dl.XLAEngine, "xla-ddp": dl.DistributedXLAEngine})
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -154,6 +120,7 @@ class CustomRunner(dl.IRunner):
                 minimize=False,
                 save_n_best=1,
             ),
+            # "tqdm": dl.TqdmCallback(),
         }
 
     def handle_batch(self, batch):
@@ -172,6 +139,8 @@ if __name__ == "__main__":
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
     utils.boolean_flag(parser, "sync-bn", default=False)
     args, _ = parser.parse_known_args()
-    args.logdir = args.logdir or f"logs_{args.engine}_sbn{int(args.sync_bn)}".replace("-", "_")
+    args.logdir = args.logdir or f"logs_resnet_{args.engine}_sbn{int(args.sync_bn)}".replace(
+        "-", "_"
+    )
     runner = CustomRunner(args.logdir, args.engine, args.sync_bn)
     runner.run()
