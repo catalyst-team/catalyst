@@ -17,7 +17,6 @@ class TopKMetric(ICallbackBatchMetric):
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
-
     """
 
     def __init__(

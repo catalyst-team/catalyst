@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, Union, Iterable
+from typing import Dict, Optional, Union, Iterable
 
 import numpy as np
 
@@ -50,8 +50,6 @@ class AccuracyMetric(TopKMetric):
 
         metric.compute_key_value()
         # {
-        #     'accuracy': 0.5,
-        #     'accuracy/std': 0.0,
         #     'accuracy01': 0.5,
         #     'accuracy01/std': 0.0,
         #     'accuracy03': 1.0,

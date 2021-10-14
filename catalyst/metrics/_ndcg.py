@@ -46,10 +46,8 @@ class NDCGMetric(TopKMetric):
         # {
         #     'ndcg01': 1.0,
         #     'ndcg02': 0.6131471991539001,
-        #     'ndcg': 1.0,
         #     'ndcg01/std': 0.0,
-        #     'ndcg02/std': 0.0,
-        #     'ndcg/std': 0.0
+        #     'ndcg02/std': 0.0
         # }
 
         metric.reset()

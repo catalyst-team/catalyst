@@ -46,8 +46,6 @@ class MAPMetric(TopKMetric):
 
         metric.compute_key_value()
         # {
-        #     'map': 0.5,
-        #     'map/std': 0.0,
         #     'map01': 0.5,
         #     'map01/std': 0.0,
         #     'map03': 0.6666666865348816,

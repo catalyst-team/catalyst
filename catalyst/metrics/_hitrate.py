@@ -36,8 +36,6 @@ class HitrateMetric(TopKMetric):
 
         metric.compute_key_value()
         # {
-        #     'hitrate': 0.0,
-        #     'hitrate/std': 0.0,
         #     'hitrate01': 0.0,
         #     'hitrate01/std': 0.0,
         #     'hitrate02': 0.25,

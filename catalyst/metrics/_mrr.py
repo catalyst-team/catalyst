@@ -43,10 +43,8 @@ class MRRMetric(TopKMetric):
         # {
         #     'mrr01': 0.5,
         #     'mrr03': 0.75,
-        #     'mrr': 0.5,
         #     'mrr01/std': 0.0,
-        #     'mrr03/std': 0.0,
-        #     'mrr/std': 0.0
+        #     'mrr03/std': 0.0
         # }
 
         metric.reset()
