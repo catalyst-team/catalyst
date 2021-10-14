@@ -173,8 +173,8 @@ def test_classification_pipeline():
                 }
             ),
         )
-        assert "accuracy" in runner.batch_metrics
-        assert "accuracy" in runner.loader_metrics
+        assert "accuracy01" in runner.batch_metrics
+        assert "accuracy01" in runner.loader_metrics
 
 
 class CustomRunner(dl.SupervisedRunner):
