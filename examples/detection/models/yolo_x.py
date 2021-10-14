@@ -835,9 +835,11 @@ class YOLOXHead(nn.Module):
                     )
                 except RuntimeError:
                     logger.error(
-                        "OOM RuntimeError is raised due to the huge memory cost during label assignment. \
-                           CPU mode is applied in this batch. If you want to avoid this issue, \
-                           try to reduce the batch size or image size."
+                        "OOM RuntimeError is raised due to the huge "
+                        "memory cost during label assignment. "
+                        "CPU mode is applied in this batch. "
+                        "If you want to avoid this issue, "
+                        "try to reduce the batch size or image size."
                     )
                     torch.cuda.empty_cache()
                     (
