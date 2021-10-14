@@ -1034,12 +1034,18 @@ class YOLOXHead(nn.Module):
         expanded_strides_per_image = expanded_strides[0]
         x_shifts_per_image = x_shifts[0] * expanded_strides_per_image
         y_shifts_per_image = y_shifts[0] * expanded_strides_per_image
+        # fmt: off
         x_centers_per_image = (
-            (x_shifts_per_image + 0.5 * expanded_strides_per_image).unsqueeze(0).repeat(num_gt, 1)
+            (x_shifts_per_image + 0.5 * expanded_strides_per_image)
+            .unsqueeze(0)
+            .repeat(num_gt, 1)
         )  # [n_anchor] -> [n_gt, n_anchor]
         y_centers_per_image = (
-            (y_shifts_per_image + 0.5 * expanded_strides_per_image).unsqueeze(0).repeat(num_gt, 1)
+            (y_shifts_per_image + 0.5 * expanded_strides_per_image)
+            .unsqueeze(0)
+            .repeat(num_gt, 1)
         )
+        # fmt: on
 
         gt_bboxes_per_image_l = (
             (gt_bboxes_per_image[:, 0] - 0.5 * gt_bboxes_per_image[:, 2])
