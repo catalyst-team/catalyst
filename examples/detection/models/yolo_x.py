@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+logger = logging.getLogger("yolo-x")
+
 
 def get_activation(name="silu", inplace=True):
     if name == "silu":
