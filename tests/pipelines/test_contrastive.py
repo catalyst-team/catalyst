@@ -140,7 +140,9 @@ def train_experiment(device, engine=None):
 
         valid_path = Path(logdir) / "logs/valid.csv"
         best_accuracy = max(
-            float(row["accuracy01"]) for row in read_csv(valid_path) if row["accuracy01"] != "accuracy01"
+            float(row["accuracy01"])
+            for row in read_csv(valid_path)
+            if row["accuracy01"] != "accuracy01"
         )
 
         assert best_accuracy > 0.6
