@@ -127,7 +127,7 @@ class HitrateMetric(TopKMetric):
     ):
         """Init HitrateMetric"""
         super().__init__(
-            metric_name='hitrate',
+            metric_name="hitrate",
             metric_function=hitrate,
             topk_args=topk_args,
             compute_on_call=compute_on_call,

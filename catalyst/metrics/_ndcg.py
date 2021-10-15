@@ -132,7 +132,7 @@ class NDCGMetric(TopKMetric):
     ):
         """Init NDCGMetric"""
         super().__init__(
-            metric_name='ndcg',
+            metric_name="ndcg",
             metric_function=ndcg,
             topk_args=topk_args,
             compute_on_call=compute_on_call,

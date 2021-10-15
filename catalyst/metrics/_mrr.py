@@ -125,7 +125,7 @@ class MRRMetric(TopKMetric):
     ):
         """Init MRRMetric"""
         super().__init__(
-            metric_name='mrr',
+            metric_name="mrr",
             metric_function=mrr,
             topk_args=topk_args,
             compute_on_call=compute_on_call,

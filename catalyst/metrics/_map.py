@@ -139,7 +139,7 @@ class MAPMetric(TopKMetric):
     ):
         """Init MAPMetric"""
         super().__init__(
-            metric_name='map',
+            metric_name="map",
             metric_function=mean_average_precision,
             topk_args=topk_args,
             compute_on_call=compute_on_call,

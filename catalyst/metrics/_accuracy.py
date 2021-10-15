@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union, Iterable
+from typing import Dict, Iterable, Optional, Union
 
 import numpy as np
 
@@ -129,7 +129,7 @@ class AccuracyMetric(TopKMetric):
         """Init AccuracyMetric"""
         self.topk_args = topk_args or get_default_topk_args(num_classes)
         super().__init__(
-            metric_name='accuracy',
+            metric_name="accuracy",
             metric_function=accuracy,
             topk_args=self.topk_args,
             compute_on_call=compute_on_call,

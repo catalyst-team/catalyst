@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Iterable, Callable
+from typing import Any, Callable, Dict, Iterable, List
 
 import torch
 
@@ -33,9 +33,7 @@ class TopKMetric(ICallbackBatchMetric):
         self.metric_name = metric_name
         self.metric_function = metric_function
         self.topk_args = topk_args or (1,)
-        self.metrics: List[AdditiveMetric] = [
-            AdditiveMetric() for _ in range(len(self.topk_args))
-        ]
+        self.metrics: List[AdditiveMetric] = [AdditiveMetric() for _ in range(len(self.topk_args))]
 
     def reset(self) -> None:
         """Reset all fields"""
