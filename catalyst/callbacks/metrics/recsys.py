@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics._hitrate import HitrateMetric
@@ -93,7 +93,7 @@ class HitrateCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -194,7 +194,7 @@ class MAPCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -295,7 +295,7 @@ class MRRCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -396,7 +396,7 @@ class NDCGCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,

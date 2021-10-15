@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
@@ -134,7 +134,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -177,7 +177,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):

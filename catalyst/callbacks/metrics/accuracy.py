@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Iterable, Union
 
 import torch
 
@@ -83,7 +83,7 @@ class AccuracyCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         num_classes: int = None,
         log_on_batch: bool = True,
         prefix: str = None,
