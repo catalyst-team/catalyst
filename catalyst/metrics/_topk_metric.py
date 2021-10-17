@@ -8,12 +8,12 @@ from catalyst.metrics._metric import ICallbackBatchMetric
 
 class TopKMetric(ICallbackBatchMetric):
     """
-    Base class for 'top_k' metrics.
+    Base class for `topk` metrics.
 
     Args:
         metric_name: name of the metric
         metric_function: metric calculation function
-        topk_args: list of `topk` for ndcg@topk computing
+        topk_args: list of `topk` for metric@topk computing
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
