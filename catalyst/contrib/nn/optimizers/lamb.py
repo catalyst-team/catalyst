@@ -51,6 +51,9 @@ class Lamb(Optimizer):
                 (default: 0)
             adam (bool, optional): always use trust ratio = 1, which turns
                 this into Adam. Useful for comparison purposes.
+
+        Raises:
+            ValueError: if invalid learning rate, epsilon value or betas.
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")

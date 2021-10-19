@@ -138,7 +138,8 @@ class AllTripletsSampler(InBatchTripletsSampler):
             labels: labels of the samples in the batch
             *_: note, that we ignore features argument
 
-        Returns: indices of triplets
+        Returns:
+            indices of triplets
         """
         num_labels = len(labels)
 

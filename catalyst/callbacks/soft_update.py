@@ -24,14 +24,17 @@ class SoftUpdateCallaback(Callback):
         """Init.
 
         Args:
-        target_model_key: key to the data inside `runner.model` to update
-        source_model_key: key to the source data inside `runner.model`
-        tau: smoothing parameter `target * (1.0 - tau) + source * tau`
-        scope (str): when the `target` should be updated
+            target_model_key: key to the data inside `runner.model` to update
+            source_model_key: key to the source data inside `runner.model`
+            tau: smoothing parameter `target * (1.0 - tau) + source * tau`
+            scope (str): when the `target` should be updated
                 ``"on_batch_end"``
                 ``"on_batch_start"``
                 ``"on_epoch_end"``
                 ``"on_epoch_start"``
+
+        Raises:
+            TypeError: if invalid scope
         """
         super().__init__(order=CallbackOrder.Metric)
         self.target_model_key = target_model_key

@@ -51,6 +51,10 @@ class QHAdamW(Optimizer):
             weight_decay (float, optional): weight decay
                 (L2 regularization coefficient, times two)
                 (default: 0.0)
+
+        Raises:
+            ValueError: if invalid learning rate, epsilon value, betas or
+                weight_decay value.
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")

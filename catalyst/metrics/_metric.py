@@ -57,6 +57,10 @@ class IMetric(ABC):
         (`on_batch_end` event).
         Returns computed value if `compute_on_call=True`.
 
+        Args:
+            *args: Arguments passed to update method.
+            **kwargs: Keyword-arguments passed to update method.
+
         Returns:
             Any: computed value, it's better to return key-value.
         """
