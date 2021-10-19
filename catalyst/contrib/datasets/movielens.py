@@ -71,6 +71,8 @@ class MovieLens(Dataset):
                 is already downloaded, it is not downloaded again.
             min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
+        Raises:
+            RuntimeError: If ``download is False`` and the dataset not found.
         """
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
@@ -196,7 +198,7 @@ class MovieLens(Dataset):
         Args:
             data: raw data of the dataset
 
-        Returns:
+        Yields:
             Generator iterator for parsed data
         """
         for line in data:
