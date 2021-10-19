@@ -19,6 +19,7 @@ def _get_or_start_run(run_name: Optional[str]) -> ActiveRun:
 
     Args:
         run_name: Name of the run
+
     Returns:
         ActiveRun
     """
