@@ -219,7 +219,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     def __init__(self, **kwargs):
         """
         Args:
-            **kwargs: Keyword-arguments passed to super().__init__ method.
+            **kwargs: Keyword-arguments passed to ``super().__init__`` method.
 
         Raises:
             ValueError: if train argument is False (MnistMLDataset
