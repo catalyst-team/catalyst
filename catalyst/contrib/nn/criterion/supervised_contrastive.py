@@ -27,8 +27,10 @@ class SupervisedContrastiveLoss(nn.Module):
                 ``"in"`` | ``"out"``.
                 ``"in"``: maximization of log(average positive exponentiate similarity)
                 ``"out"``: maximization of average positive similarity
+
         Raises:
             ValueError: if reduction is not mean, sum or none
+            ValueError: if positive aggregation is not in or out
         """
         super().__init__()
         self.tau = tau

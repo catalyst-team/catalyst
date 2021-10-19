@@ -3,6 +3,8 @@ import re
 
 import numpy as np
 
+from mlflow.tracking.fluent import ActiveRun
+
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 from catalyst.typing import Directory, File, Union
@@ -11,9 +13,15 @@ if SETTINGS.mlflow_required:
     import mlflow
 
 
-def _get_or_start_run(run_name):
+def _get_or_start_run(run_name: Optional[str]) -> ActiveRun:
     """The function of MLflow. Gets the active run and gives it a name.
     If active run does not exist, starts a new one.
+
+    Args:
+        run_name: Name of the run
+
+    Returns:
+        ActiveRun
     """
     active_run = mlflow.active_run()
     if active_run:

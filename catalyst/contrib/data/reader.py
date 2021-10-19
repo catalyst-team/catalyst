@@ -35,7 +35,10 @@ class IReader:
             element: elem in your dataset
 
         Returns:
-            Data object used for your neural network
+            Data object used for your neural network  # noqa: DAR202
+
+        Raises:
+            NotImplementedError: you should implement it
         """
         raise NotImplementedError("You cannot apply a transformation using `BaseReader`")
 
@@ -145,7 +148,6 @@ class ReaderCompose(object):
         """
         Args:
             transforms: list of reader to compose
-            mixins: list of mixins to use
         """
         self.transforms = transforms
 

@@ -64,6 +64,9 @@ class SelfSupervisedDatasetWrapper(Dataset):
             transform_original: transforms which will be applied to save original in batch
             is_target: the flag for selection does dataset return (sample, target) or only sample
 
+        Raises:
+            ValueError: should be specified transform_left and transform_right simultaneously
+                or only transforms
         """
         super().__init__()
 

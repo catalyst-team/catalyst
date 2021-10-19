@@ -206,8 +206,8 @@ class BalanceClassSampler(Sampler):
 
     def __iter__(self) -> Iterator[int]:
         """
-        Yields:
-            indices of stratified sample
+        Returns:
+            iterator of indices of stratified sample
         """
         indices = []
         for key in sorted(self.lbl2idx):
@@ -487,8 +487,8 @@ class DynamicBalanceClassSampler(Sampler):
 
     def __iter__(self) -> Iterator[int]:
         """
-        Yields:
-            indices of stratified sample
+        Returns:
+            iterator of indices of stratified sample
         """
         indices = []
         for key in sorted(self.label2idxes):
@@ -708,11 +708,11 @@ class DistributedSamplerWrapper(DistributedSampler):
         Args:
             sampler: Sampler used for subsampling
             num_replicas (int, optional): Number of processes participating in
-              distributed training
+                distributed training
             rank (int, optional): Rank of the current process
-              within ``num_replicas``
+                within ``num_replicas``
             shuffle (bool, optional): If true (default),
-              sampler will shuffle the indices
+                sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle
