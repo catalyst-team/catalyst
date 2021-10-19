@@ -314,6 +314,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">mlflow.tracking.fluent</span> <span class="kn">import</span> <span class="n">ActiveRun</span>
+
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Union</span>
@@ -322,9 +324,15 @@
     <span class="kn">import</span> <span class="nn">mlflow</span>
 
 
-<span class="k">def</span> <span class="nf">_get_or_start_run</span><span class="p">(</span><span class="n">run_name</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_or_start_run</span><span class="p">(</span><span class="n">run_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActiveRun</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;The function of MLflow. Gets the active run and gives it a name.</span>
 <span class="sd">    If active run does not exist, starts a new one.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        run_name: Name of the run</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ActiveRun</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">active_run</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">active_run</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">active_run</span><span class="p">:</span>

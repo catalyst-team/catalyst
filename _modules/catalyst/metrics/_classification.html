@@ -346,6 +346,9 @@
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if mode is incorrect</span>
+
 <span class="sd">    Examples:</span>
 
 <span class="sd">    .. code-block:: python</span>
@@ -411,11 +414,7 @@
         <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init params</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError: if mode is incorrect</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Init params&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">statistics_fn</span> <span class="o">=</span> <span class="n">get_binary_statistics</span>

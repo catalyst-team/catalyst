@@ -442,6 +442,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            next batch</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            StopIteration: if iteration_index &gt;= len(origin)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span>

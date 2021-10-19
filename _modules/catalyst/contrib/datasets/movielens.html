@@ -382,6 +382,9 @@
 <span class="sd">                is already downloaded, it is not downloaded again.</span>
 <span class="sd">            min_rating (float, optional): Minimum rating to include in</span>
 <span class="sd">                the interaction matrix</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If ``download is False`` and the dataset not found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">_six</span><span class="o">.</span><span class="n">string_classes</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -507,7 +510,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            data: raw data of the dataset</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Yields:</span>
 <span class="sd">            Generator iterator for parsed data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>

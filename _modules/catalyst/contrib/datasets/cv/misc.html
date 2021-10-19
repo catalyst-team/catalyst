@@ -366,7 +366,7 @@
 <span class="sd">            download: if ``True``, downloads the dataset from</span>
 <span class="sd">                the internet and puts it in root directory. If dataset</span>
 <span class="sd">                is already downloaded, it is not downloaded again</span>
-<span class="sd">            **kwargs:</span>
+<span class="sd">            **kwargs: Keyword-arguments passed to ``super().__init__`` method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># downlad dataset if needed</span>
         <span class="k">if</span> <span class="n">download</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)):</span>

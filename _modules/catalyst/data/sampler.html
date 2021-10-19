@@ -517,8 +517,8 @@
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Yields:</span>
-<span class="sd">            indices of stratified sample</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            iterator of indices of stratified sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">):</span>
@@ -798,8 +798,8 @@
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Yields:</span>
-<span class="sd">            indices of stratified sample</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            iterator of indices of stratified sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">):</span>
@@ -1019,11 +1019,11 @@
 <span class="sd">        Args:</span>
 <span class="sd">            sampler: Sampler used for subsampling</span>
 <span class="sd">            num_replicas (int, optional): Number of processes participating in</span>
-<span class="sd">              distributed training</span>
+<span class="sd">                distributed training</span>
 <span class="sd">            rank (int, optional): Rank of the current process</span>
-<span class="sd">              within ``num_replicas``</span>
+<span class="sd">                within ``num_replicas``</span>
 <span class="sd">            shuffle (bool, optional): If true (default),</span>
-<span class="sd">              sampler will shuffle the indices</span>
+<span class="sd">                sampler will shuffle the indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DistributedSamplerWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">DatasetFromSampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">),</span> <span class="n">num_replicas</span><span class="o">=</span><span class="n">num_replicas</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span>

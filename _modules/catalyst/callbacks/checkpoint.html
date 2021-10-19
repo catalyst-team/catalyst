@@ -469,6 +469,7 @@
 <span class="sd">    from files specified in ``load_map``.</span>
 
 <span class="sd">    Arguments:</span>
+<span class="sd">        logdir: directory with logs</span>
 <span class="sd">        runner: current runner</span>
 <span class="sd">        load_map (Dict[str, str]): dict with mappings to load.</span>
 <span class="sd">            Expected keys - ``&#39;model&#39;``, ``&#39;criterion&#39;``</span>
@@ -796,6 +797,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves checkpoints: full with model/criterion/optimizer/scheduler</span>
 <span class="sd">        and truncated with model only.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner.</span>
+<span class="sd">            checkpoint: data to save.</span>
+<span class="sd">            is_best: if ``True`` then also will be generated best checkpoint file.</span>
+<span class="sd">            is_last: if ``True`` then also will be generated last checkpoint file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            path to saved checkpoint</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="si">}</span><span class="s2">&quot;</span>

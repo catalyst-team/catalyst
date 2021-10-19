@@ -338,8 +338,10 @@
 <span class="sd">                ``&quot;in&quot;`` | ``&quot;out&quot;``.</span>
 <span class="sd">                ``&quot;in&quot;``: maximization of log(average positive exponentiate similarity)</span>
 <span class="sd">                ``&quot;out&quot;``: maximization of average positive similarity</span>
+
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: if reduction is not mean, sum or none</span>
+<span class="sd">            ValueError: if positive aggregation is not in or out</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>

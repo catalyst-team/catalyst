@@ -362,6 +362,9 @@
 <span class="sd">                (default: 0)</span>
 <span class="sd">            adam (bool, optional): always use trust ratio = 1, which turns</span>
 <span class="sd">                this into Adam. Useful for comparison purposes.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if invalid learning rate, epsilon value or betas.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">lr</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid learning rate: </span><span class="si">{</span><span class="n">lr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

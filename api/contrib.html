@@ -446,6 +446,9 @@ takes in an image and returns a transformed version.</p></li>
 that takes in the target and transforms it.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">is</span> <span class="pre">False</span></code> and the dataset not found.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -508,6 +511,9 @@ is already downloaded, it is not downloaded again.</p></li>
 the interaction matrix</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">is</span> <span class="pre">False</span></code> and the dataset not found.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -536,7 +542,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -566,7 +572,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -596,7 +602,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -625,7 +631,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -655,7 +661,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -685,7 +691,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -724,7 +730,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -754,7 +760,7 @@ subfolder, otherwise from <code class="docutils literal notranslate"><span class
 <li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code> method.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1003,7 +1009,10 @@ positive pairs in the output,
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if reduction is not mean, sum or none</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – if reduction is not mean, sum or none</p></li>
+<li><p><strong>ValueError</strong> – if positive aggregation is not in or out</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -2289,6 +2298,9 @@ numerical stability (default: 1e-8)</p></li>
 this into Adam. Useful for comparison purposes.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if invalid learning rate, epsilon value or betas.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2360,6 +2372,10 @@ numerical stability
 (L2 regularization coefficient, times two)
 (default: 0.0)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if invalid learning rate, epsilon value, betas or
+    weight_decay value.</p>
 </dd>
 </dl>
 </dd></dl>
