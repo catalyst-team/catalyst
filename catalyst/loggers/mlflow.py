@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 import re
 
 import numpy as np
+
 from mlflow.tracking.fluent import ActiveRun
 
 from catalyst.core.logger import ILogger
