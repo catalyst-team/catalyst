@@ -82,6 +82,9 @@ class MNIST(Dataset):
                 takes in an image and returns a transformed version.
             target_transform (callable, optional): A function/transform
                 that takes in the target and transforms it.
+
+        Raises:
+            RuntimeError: If ``download is False`` and the dataset not found.
         """
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
@@ -215,6 +218,9 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
 
     def __init__(self, **kwargs):
         """
+        Args:
+            **kwargs: Keyword-arguments passed to super().__init__ method.
+
         Raises:
             ValueError: if train argument is False (MnistMLDataset
                 should be used only for training)
