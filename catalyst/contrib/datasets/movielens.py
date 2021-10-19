@@ -71,6 +71,7 @@ class MovieLens(Dataset):
                 is already downloaded, it is not downloaded again.
             min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
+
         Raises:
             RuntimeError: If ``download is False`` and the dataset not found.
         """
