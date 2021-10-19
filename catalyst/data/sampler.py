@@ -206,8 +206,8 @@ class BalanceClassSampler(Sampler):
 
     def __iter__(self) -> Iterator[int]:
         """
-        Yields:
-            indices of stratified sample
+        Returns:
+            iterator of indices of stratified sample
         """
         indices = []
         for key in sorted(self.lbl2idx):
@@ -487,8 +487,8 @@ class DynamicBalanceClassSampler(Sampler):
 
     def __iter__(self) -> Iterator[int]:
         """
-        Yields:
-            indices of stratified sample
+        Returns:
+            iterator of indices of stratified sample
         """
         indices = []
         for key in sorted(self.label2idxes):

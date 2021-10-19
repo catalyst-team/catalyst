@@ -12,6 +12,7 @@ class MnistSimpleNet(nn.Module):
         """
         Args:
             out_features: size of the output tensor
+            normalize: boolean flag to add normalize layer
         """
         super().__init__()
         layers = [

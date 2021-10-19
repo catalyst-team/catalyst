@@ -368,6 +368,9 @@ class LRFinder(ILRUpdater):
             scale: learning rate increasing scale ("log" or "linear")
             num_steps:  number of batches to try, if None - whole loader would be used.
             optimizer_key: which optimizer key to use for learning rate scheduling
+
+        Raises:
+            NotImplementedError: if invalid scale value.
         """
         super().__init__(optimizer_key=optimizer_key)
 

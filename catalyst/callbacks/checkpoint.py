@@ -158,6 +158,7 @@ def _load_states_from_file_map(
     from files specified in ``load_map``.
 
     Arguments:
+        logdir: directory with logs
         runner: current runner
         load_map (Dict[str, str]): dict with mappings to load.
             Expected keys - ``'model'``, ``'criterion'``
@@ -485,6 +486,15 @@ class CheckpointCallback(ICheckpointCallback):
         """
         Saves checkpoints: full with model/criterion/optimizer/scheduler
         and truncated with model only.
+
+        Args:
+            runner: current runner.
+            checkpoint: data to save.
+            is_best: if ``True`` then also will be generated best checkpoint file.
+            is_last: if ``True`` then also will be generated last checkpoint file.
+
+        Returns:
+            path to saved checkpoint
         """
         logdir = Path(f"{self.logdir}/")
         suffix = f"{runner.stage_key}.{runner.stage_epoch_step}"

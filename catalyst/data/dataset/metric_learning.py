@@ -39,6 +39,9 @@ class QueryGalleryDataset(Dataset, ABC):
         be boolean and indicate whether current object
         is in query or in gallery.
 
+        Args:
+            item: Item
+
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
         """
