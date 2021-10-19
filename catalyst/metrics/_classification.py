@@ -35,6 +35,9 @@ class StatisticsMetric(ICallbackBatchMetric):
         prefix: metric prefix
         suffix: metric suffix
 
+    Raises:
+        ValueError: if mode is incorrect
+
     Examples:
 
     .. code-block:: python
@@ -100,11 +103,7 @@ class StatisticsMetric(ICallbackBatchMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """Init params
-
-        Raises:
-            ValueError: if mode is incorrect
-        """
+        """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         if mode == "binary":
             self.statistics_fn = get_binary_statistics
