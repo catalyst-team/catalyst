@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._map &mdash; Catalyst 21.10rc0 documentation</title>
+  <title>catalyst.metrics._topk_metric &mdash; Catalyst 21.10rc0 documentation</title>
   
 
   
@@ -282,7 +282,7 @@
         
           <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.metrics._map</li>
+      <li>catalyst.metrics._topk_metric</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -308,158 +308,115 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.metrics._map</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+  <h1>Source code for catalyst.metrics._topk_metric</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.metrics._topk_metric</span> <span class="kn">import</span> <span class="n">TopKMetric</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics.functional._average_precision</span> <span class="kn">import</span> <span class="n">mean_average_precision</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
 
 
-<div class="viewcode-block" id="MAPMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._map.MAPMetric">[docs]</a><span class="k">class</span> <span class="nc">MAPMetric</span><span class="p">(</span><span class="n">TopKMetric</span><span class="p">):</span>
+<div class="viewcode-block" id="TopKMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._topk_metric.TopKMetric">[docs]</a><span class="k">class</span> <span class="nc">TopKMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the Mean Average Precision (MAP) for RecSys.</span>
-<span class="sd">    The precision metric summarizes the fraction of relevant items</span>
-<span class="sd">    out of the whole the recommendation list.</span>
-<span class="sd">    Computes mean value of MAP and it&#39;s approximate std value</span>
+<span class="sd">    Base class for `topk` metrics.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        topk_args: list of `topk` for map@topk computing</span>
+<span class="sd">        metric_name: name of the metric</span>
+<span class="sd">        metric_function: metric calculation function</span>
+<span class="sd">        topk_args: list of `topk` for metric@topk computing</span>
 <span class="sd">        compute_on_call: if True, computes and returns metric value during metric call</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from catalyst import metrics</span>
-
-<span class="sd">        outputs = torch.tensor([</span>
-<span class="sd">            [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">            [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">        ])</span>
-<span class="sd">        targets = torch.tensor([</span>
-<span class="sd">            [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
-<span class="sd">            [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
-<span class="sd">        ])</span>
-<span class="sd">        metric = metrics.MAPMetric(topk_args=[1, 3, 5, 10])</span>
-<span class="sd">        metric.reset()</span>
-
-<span class="sd">        metric.update(outputs, targets)</span>
-<span class="sd">        metric.compute()</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # mean for @01, @03, @05, @10</span>
-<span class="sd">        #     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),</span>
-<span class="sd">        #     # std for @01, @03, @05, @10</span>
-<span class="sd">        #     (0.0, 0.0, 0.0, 0.0)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">        metric.compute_key_value()</span>
-<span class="sd">        # {</span>
-<span class="sd">        #     &#39;map01&#39;: 0.5,</span>
-<span class="sd">        #     &#39;map01/std&#39;: 0.0,</span>
-<span class="sd">        #     &#39;map03&#39;: 0.6666666865348816,</span>
-<span class="sd">        #     &#39;map03/std&#39;: 0.0,</span>
-<span class="sd">        #     &#39;map05&#39;: 0.6416666507720947,</span>
-<span class="sd">        #     &#39;map05/std&#39;: 0.0,</span>
-<span class="sd">        #     &#39;map10&#39;: 0.5325397253036499,</span>
-<span class="sd">        #     &#39;map10/std&#39;: 0.0</span>
-<span class="sd">        # }</span>
-
-<span class="sd">        metric.reset()</span>
-<span class="sd">        metric(outputs, targets)</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # mean for @01, @03, @05, @10</span>
-<span class="sd">        #     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),</span>
-<span class="sd">        #     # std for @01, @03, @05, @10</span>
-<span class="sd">        #     (0.0, 0.0, 0.0, 0.0)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        # sample data</span>
-<span class="sd">        num_users, num_features, num_items = int(1e4), int(1e1), 10</span>
-<span class="sd">        X = torch.rand(num_users, num_features)</span>
-<span class="sd">        y = (torch.rand(num_users, num_items) &gt; 0.5).to(torch.float32)</span>
-
-<span class="sd">        # pytorch loaders</span>
-<span class="sd">        dataset = TensorDataset(X, y)</span>
-<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
-<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
-
-<span class="sd">        # model, criterion, optimizer, scheduler</span>
-<span class="sd">        model = torch.nn.Linear(num_features, num_items)</span>
-<span class="sd">        criterion = torch.nn.BCEWithLogitsLoss()</span>
-<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
-<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
-
-<span class="sd">        # model training</span>
-<span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
-<span class="sd">        )</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            criterion=criterion,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            scheduler=scheduler,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            num_epochs=3,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            callbacks=[</span>
-<span class="sd">                dl.BatchTransformCallback(</span>
-<span class="sd">                    transform=torch.sigmoid,</span>
-<span class="sd">                    scope=&quot;on_batch_end&quot;,</span>
-<span class="sd">                    input_key=&quot;logits&quot;,</span>
-<span class="sd">                    output_key=&quot;scores&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.CriterionCallback(</span>
-<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.AUCCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
-<span class="sd">                dl.HitrateCallback(</span>
-<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.MRRCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.NDCGCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
-<span class="sd">                dl.SchedulerCallback(),</span>
-<span class="sd">                dl.CheckpointCallback(</span>
-<span class="sd">                    logdir=&quot;./logs&quot;, loader_key=&quot;valid&quot;, metric_key=&quot;loss&quot;, minimize=True</span>
-<span class="sd">                ),</span>
-<span class="sd">            ]</span>
-<span class="sd">        )</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
-
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init MAPMetric&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">metric_name</span><span class="o">=</span><span class="s2">&quot;map&quot;</span><span class="p">,</span>
-            <span class="n">metric_function</span><span class="o">=</span><span class="n">mean_average_precision</span><span class="p">,</span>
-            <span class="n">topk_args</span><span class="o">=</span><span class="n">topk_args</span><span class="p">,</span>
-            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;Init TopKMetric&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="n">metric_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_function</span> <span class="o">=</span> <span class="n">metric_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span> <span class="o">=</span> <span class="n">topk_args</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AdditiveMetric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">AdditiveMetric</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">))]</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset all fields&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update metric value with value for new data and return intermediate metrics values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            logits (torch.Tensor): tensor of logits</span>
+<span class="sd">            targets (torch.Tensor): tensor of targets</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of metric@k values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_function</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">):</span>
+            <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update metric value with value for new data and return intermediate metrics</span>
+<span class="sd">        values in key-value format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            logits (torch.Tensor): tensor of logits</span>
+<span class="sd">            targets (torch.Tensor): tensor of targets</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of metric@k values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute metric for all data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of mean values, list of std values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">means</span><span class="p">,</span> <span class="n">stds</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">means</span><span class="p">,</span> <span class="n">stds</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute metric for all data and return results in key-value format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of metrics</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">means</span><span class="p">,</span> <span class="n">stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="n">output_mean</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">means</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">output_std</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/std&quot;</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">stds</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">output_mean</span><span class="p">,</span> <span class="o">**</span><span class="n">output_std</span><span class="p">}</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MAPMetric&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TopKMetric&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

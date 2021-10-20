@@ -75,6 +75,12 @@ FunctionalLoaderMetric
     :undoc-members:
     :show-inheritance:
 
+TopKMetric
+~~~~~~~~~~
+.. autoclass:: catalyst.metrics._topk_metric.TopKMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
 
 Runner Metrics
 ----------------------

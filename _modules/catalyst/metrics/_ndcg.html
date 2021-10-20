@@ -309,16 +309,13 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.metrics._ndcg</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
-
-<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveMetric</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._topk_metric</span> <span class="kn">import</span> <span class="n">TopKMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._ndcg</span> <span class="kn">import</span> <span class="n">ndcg</span>
 
 
-<div class="viewcode-block" id="NDCGMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._ndcg.NDCGMetric">[docs]</a><span class="k">class</span> <span class="nc">NDCGMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
+<div class="viewcode-block" id="NDCGMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._ndcg.NDCGMetric">[docs]</a><span class="k">class</span> <span class="nc">NDCGMetric</span><span class="p">(</span><span class="n">TopKMetric</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the Normalized discounted cumulative gain (NDCG)</span>
 <span class="sd">    score given model outputs and targets</span>
@@ -360,10 +357,8 @@
 <span class="sd">        # {</span>
 <span class="sd">        #     &#39;ndcg01&#39;: 1.0,</span>
 <span class="sd">        #     &#39;ndcg02&#39;: 0.6131471991539001,</span>
-<span class="sd">        #     &#39;ndcg&#39;: 1.0,</span>
 <span class="sd">        #     &#39;ndcg01/std&#39;: 0.0,</span>
-<span class="sd">        #     &#39;ndcg02/std&#39;: 0.0,</span>
-<span class="sd">        #     &#39;ndcg/std&#39;: 0.0</span>
+<span class="sd">        #     &#39;ndcg02/std&#39;: 0.0</span>
 <span class="sd">        # }</span>
 
 <span class="sd">        metric.reset()</span>
@@ -441,91 +436,20 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">topk_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init NDCGMetric&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name_std</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/std&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">topk_args</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AdditiveMetric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">AdditiveMetric</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">))</span>
-        <span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Reset all fields&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">:</span>
-            <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update metric value with ndcg for new data and return intermediate metrics values.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            logits (torch.Tensor): tensor of logits</span>
-<span class="sd">            targets (torch.Tensor): tensor of targets</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list of ndcg@k values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="n">ndcg</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">)</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">):</span>
-            <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">values</span>
-
-    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update metric value with ndcg for new data and return intermediate metrics</span>
-<span class="sd">        values in key-value format.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            logits (torch.Tensor): tensor of logits</span>
-<span class="sd">            targets (torch.Tensor): tensor of targets</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict of ndcg@k values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name_mean</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg01</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">output</span>
-
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute ndcg for all data</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list of mean values, list of std values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">means</span><span class="p">,</span> <span class="n">stds</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">additive_metrics</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">means</span><span class="p">,</span> <span class="n">stds</span>
-
-    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute ndcg for all data and return results in key-value format</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict of metrics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">means</span><span class="p">,</span> <span class="n">stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-        <span class="n">output_mean</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">means</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="n">output_std</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">02d</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/std&quot;</span><span class="p">:</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">stds</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="n">output_mean</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name_mean</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_mean</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg01</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="n">output_std</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name_std</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_std</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">ndcg01</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/std&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">output_mean</span><span class="p">,</span> <span class="o">**</span><span class="n">output_std</span><span class="p">}</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">metric_name</span><span class="o">=</span><span class="s2">&quot;ndcg&quot;</span><span class="p">,</span>
+            <span class="n">metric_function</span><span class="o">=</span><span class="n">ndcg</span><span class="p">,</span>
+            <span class="n">topk_args</span><span class="o">=</span><span class="n">topk_args</span><span class="p">,</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NDCGMetric&quot;</span><span class="p">]</span>
