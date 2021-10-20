@@ -105,14 +105,14 @@ def train_experiment(device, engine=None):
             loaders={"train": loader, "valid": loader},
             verbose=False,
             valid_loader="valid",
-            valid_metric="accuracy",
+            valid_metric="accuracy01",
             minimize_valid_metric=False,
             num_epochs=TRAIN_EPOCH,
             logdir=logdir,
         )
 
         valid_path = Path(logdir) / "logs/valid.csv"
-        best_accuracy = max(float(row["accuracy"]) for row in read_csv(valid_path))
+        best_accuracy = max(float(row["accuracy01"]) for row in read_csv(valid_path))
 
         assert best_accuracy > 0.9
 

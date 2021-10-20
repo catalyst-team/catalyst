@@ -173,7 +173,6 @@ class CMCMetric(AccumulativeMetric):
         self.labels_key = labels_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -227,7 +226,8 @@ class CMCMetric(AccumulativeMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 
@@ -310,7 +310,6 @@ class ReidCMCMetric(AccumulativeMetric):
         self.cids_key = cids_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -384,7 +383,8 @@ class ReidCMCMetric(AccumulativeMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 

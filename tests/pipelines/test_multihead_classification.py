@@ -81,7 +81,7 @@ def train_experiment(device, engine=None):
             dl.CheckpointCallback(
                 "./logs/one",
                 loader_key="valid",
-                metric_key="one_accuracy",
+                metric_key="one_accuracy01",
                 minimize=False,
                 save_n_best=1,
             ),

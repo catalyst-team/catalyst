@@ -90,7 +90,7 @@ def train_experiment(device, engine=None):
                 dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))
             ],
         )
-        assert "accuracy" in metrics.keys()
+        assert "accuracy01" in metrics.keys()
 
         # model inference
         for prediction in runner.predict_loader(loader=loaders["valid"]):

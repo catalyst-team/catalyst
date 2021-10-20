@@ -27,8 +27,6 @@ from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
             {
                 "accuracy01": 0.5,
                 "accuracy02": 1.0,
-                "accuracy": 0.5,
-                "accuracy/std": 0.0,
                 "accuracy01/std": 0.0,
                 "accuracy02/std": 0.0,
             },
@@ -41,8 +39,6 @@ from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
             {
                 "accuracy01": 0.333333,
                 "accuracy03": 0.666667,
-                "accuracy": 0.333333,
-                "accuracy/std": 0.0,
                 "accuracy01/std": 0.0,
                 "accuracy03/std": 0.0,
             },
@@ -88,17 +84,13 @@ def test_accuracy(
             2,
             [1],
             [
-                {"accuracy01": 0.5, "accuracy": 0.5, "accuracy/std": 0.0, "accuracy01/std": 0.0},
+                {"accuracy01": 0.5, "accuracy01/std": 0.0},
                 {
                     "accuracy01": 0.75,
-                    "accuracy": 0.75,
-                    "accuracy/std": 0.288675,
                     "accuracy01/std": 0.288675,
                 },
                 {
                     "accuracy01": 0.6,
-                    "accuracy": 0.6,
-                    "accuracy/std": 0.41833,
                     "accuracy01/std": 0.41833,
                 },
             ],
@@ -112,16 +104,12 @@ def test_accuracy(
                 {
                     "accuracy01": 0.5,
                     "accuracy02": 1.0,
-                    "accuracy": 0.5,
-                    "accuracy/std": 0.0,
                     "accuracy01/std": 0.0,
                     "accuracy02/std": 0.0,
                 },
                 {
                     "accuracy01": 0.333333,
                     "accuracy02": 0.666667,
-                    "accuracy": 0.333333,
-                    "accuracy/std": 0.288675,
                     "accuracy01/std": 0.288675,
                     "accuracy02/std": 0.57735,
                 },
