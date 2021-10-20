@@ -10,39 +10,28 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
-def _filter_fn_from_epochs(
-    epochs: Union[int, float, Sequence[int]], reverse_condition: bool
-) -> FILTER_FN:
-    """Build ``filter_fn`` from epochs for ``ControlFlowCallback``
+class _filter_fn_from_epochs:
+    def __init__(self, epochs: Union[int, float, Sequence[int]], reverse_condition: bool):
+        self.epochs = epochs
+        self.reverse_condition = reverse_condition
 
-    Args:
-        epochs: epochs description
-        reverse_condition: indicator to use reversed
-            condition in filter function
-
-    Raises:
-        ValueError: if passed object with unexpected type
-
-    Returns:
-        filter function which accepts 3 arguments - stage (str),
-        epoch (int), loader (str) and return ``True`` if
-        need to disable callback
-    """
-    if isinstance(epochs, (int, float)):
-        epochs = int(epochs)
-        if reverse_condition:
-            filter_fn = lambda stage, epoch, loader: epoch % epochs != 0
+    def __call__(self, stage, epoch, loader):
+        if isinstance(self.epochs, (int, float)):
+            epochs = int(self.epochs)
+            if self.reverse_condition:
+                return epoch % epochs != 0
+            else:
+                return epoch % epochs == 0
+        elif isinstance(self.epochs, (list, tuple)):
+            epochs = sorted(set(self.epochs))
+            if self.reverse_condition:
+                return epoch not in epochs
+            else:
+                return epoch in epochs
         else:
-            filter_fn = lambda stage, epoch, loader: epoch % epochs == 0
-    elif isinstance(epochs, (list, tuple)):
-        epochs = sorted(set(epochs))
-        if reverse_condition:
-            filter_fn = lambda stage, epoch, loader: epoch not in epochs
-        else:
-            filter_fn = lambda stage, epoch, loader: epoch in epochs
-    else:
-        raise ValueError("'epochs' should be int/float/Sequence[int]! " f"(got {type(epochs)})")
-    return filter_fn
+            raise ValueError(
+                "'epochs' should be int/float/Sequence[int]! " f"(got {type(self.epochs)})"
+            )
 
 
 def _filter_fn_from_loaders(loaders: LOADERS, reverse_condition: bool) -> FILTER_FN:
