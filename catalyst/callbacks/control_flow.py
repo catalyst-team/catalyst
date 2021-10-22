@@ -34,104 +34,75 @@ class _filter_fn_from_epochs:
             )
 
 
-def _filter_fn_from_loaders(loaders: LOADERS, reverse_condition: bool) -> FILTER_FN:
-    """Build ``filter_fn`` from loaders for ``ControlFlowCallback``.
+class _filter_fn_from_loaders:
+    def __init__(self, loaders: LOADERS, reverse_condition: bool):
+        self.loaders = loaders
+        self.reverse_condition = reverse_condition
 
-    Args:
-        loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
-            loaders description
-        reverse_condition: indicator to use reversed
-            condition in filter function
+    def __call__(self, stage, epoch, loader):
+        if isinstance(loaders, str):
+            loaders = [self.loaders]
 
-    Raises:
-        ValueError: if can't build filter_fn from mappings
-        ValueError: if passed object with unexpected type
-
-    Returns:
-        filter function which accepts 3 arguments - stage (str),
-        epoch (int), loader (str) and return ``True`` if
-        need to disable callback
-    """
-    if isinstance(loaders, str):
-        loaders = [loaders]
-
-    # sequence of loaders
-    if isinstance(loaders, (list, tuple)):
-        loaders = sorted(set(loaders))  # ignore duplicates
-        if reverse_condition:
-            filter_fn = lambda stage, epoch, loader: loader not in loaders
-        else:
-            filter_fn = lambda stage, epoch, loader: loader in loaders
-    # loader: ignore epoch or epochs
-    elif isinstance(loaders, (dict, OrderedDict)):
-        ignore_list = {}
-        for loader, epochs in loaders.items():
-            if isinstance(epochs, (int, float)):
-                ignore_list[loader] = [int(epochs)]
+        # sequence of loaders
+        if isinstance(loaders, (list, tuple)):
+            loaders = sorted(set(loaders))  # ignore duplicates
+            if self.reverse_condition:
+                return loader not in loaders
             else:
-                try:
-                    ignore_list[loader] = []
-                    for num in sorted(set(epochs)):
-                        to_add = int(num)
-                        ignore_list[loader].append(to_add)
-                except (ValueError, TypeError):
-                    raise ValueError(
-                        "'ignore_list' should be a dict where "
-                        "keys is a int/float/List[int]/Tuple[int]!"
-                    )
-        if reverse_condition:
-            filter_fn = lambda stage, epoch, loader: epoch not in (
-                ignore_list.get(loader) or {}  # {loader: [epoch]}.get(loader)
-            )
+                return loader in loaders
+        # loader: ignore epoch or epochs
+        elif isinstance(loaders, (dict, OrderedDict)):
+            ignore_list = {}
+            for loader, epochs in loaders.items():
+                if isinstance(epochs, (int, float)):
+                    ignore_list[loader] = [int(epochs)]
+                else:
+                    try:
+                        ignore_list[loader] = []
+                        for num in sorted(set(epochs)):
+                            to_add = int(num)
+                            ignore_list[loader].append(to_add)
+                    except (ValueError, TypeError):
+                        raise ValueError(
+                            "'ignore_list' should be a dict where "
+                            "keys is a int/float/List[int]/Tuple[int]!"
+                        )
+            if self.reverse_condition:
+                return epoch not in (
+                    ignore_list.get(loader) or {}  # {loader: [epoch]}.get(loader)
+                )
+            else:
+                return epoch in (ignore_list.get(loader) or {})
         else:
-            filter_fn = lambda stage, epoch, loader: epoch in (ignore_list.get(loader) or {})
-    else:
-        raise ValueError(
-            "'loaders' type should be one of - str, "
-            "Sequence[str], Mapping[str, int] or "
-            "Mapping[str, Sequence[int]]! "
-            f"(got {type(loaders)})"
-        )
-    return filter_fn
-
-
-def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
-    """Check if filter function from argumets
-    can be used with ``ControlFlowCallback``.
-
-    Args:
-        filter_fn (str or Callable): filter function to check
-
-    Raises:
-        ValueError: if ``filter_fn`` is a string and can not be
-            interpreted as python code then an error will be raised
-        ValueError: if passed not callable object then will be
-            raised an error
-        ValueError: will be raised error if filter function do not
-            have three arguments
-
-    Returns:
-        filter function which accepts 3 arguments - stage (str),
-        epoch (int), loader (str) and return ``True`` if
-        need to disable callback
-    """
-    if isinstance(filter_fn, str):
-        # lambda function from string
-        try:
-            filter_fn = eval(filter_fn)
-        except (ValueError, SyntaxError):
             raise ValueError(
-                "'filter_fn' should be a valid "
-                "python lambda function with "
-                "three arguments - 'stage', 'epoch' and 'loader'!"
+                "'loaders' type should be one of - str, "
+                "Sequence[str], Mapping[str, int] or "
+                "Mapping[str, Sequence[int]]! "
+                f"(got {type(loaders)})"
             )
-    if not callable(filter_fn):
-        raise ValueError("'filter_fn' should be a callable!")
-    if filter_fn.__code__.co_argcount != 3:
-        raise ValueError(
-            "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
-        )
-    return filter_fn
+
+
+class _filter_fn_from_arg:
+    def __init__(self, filter_fn: Union[str, FILTER_FN]):
+        self.filter_fn = filter_fn
+
+    def __call__(self, stage, epoch, loader):
+        if isinstance(self.filter_fn, str):
+            # lambda function from string
+            try:
+                filter_fn = eval(self.filter_fn)
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "'filter_fn' should be a valid "
+                    "python lambda function with "
+                    "three arguments - 'stage', 'epoch' and 'loader'!"
+                )
+        if not callable(self.filter_fn):
+            raise ValueError("'filter_fn' should be a callable!")
+        if self.filter_fn.__code__.co_argcount != 3:
+            raise ValueError(
+                "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
+            )
 
 
 class ControlFlowCallback(CallbackWrapper):
