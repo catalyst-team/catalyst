@@ -113,6 +113,15 @@ class HitrateMetric(TopKMetric):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"hitrate01"``
+        - ``topk_args = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
