@@ -153,7 +153,8 @@ class CMCMetric(AccumulativeMetric):
         - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
         - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
 
-        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or ``runner.epoch_metrics``.
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.

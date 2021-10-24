@@ -131,7 +131,8 @@ class MAPMetric(TopKMetric):
         - ``topk_args = (1, 3)`` ---> ``"map01"``, ``"map03"``
         - ``topk_args = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
 
-        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or ``runner.epoch_metrics``.
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
