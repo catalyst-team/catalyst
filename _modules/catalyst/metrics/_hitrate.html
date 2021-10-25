@@ -424,6 +424,16 @@
 <span class="sd">        )</span>
 
 <span class="sd">    .. note::</span>
+<span class="sd">        Metric names depending on input parameters:</span>
+
+<span class="sd">        - ``topk_args = (1,) or None`` ---&gt; ``&quot;hitrate01&quot;``</span>
+<span class="sd">        - ``topk_args = (1, 3)`` ---&gt; ``&quot;hitrate01&quot;``, ``&quot;hitrate03&quot;``</span>
+<span class="sd">        - ``topk_args = (1, 3, 5)`` ---&gt; ``&quot;hitrate01&quot;``, ``&quot;hitrate03&quot;``, ``&quot;hitrate05&quot;``</span>
+
+<span class="sd">        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or</span>
+<span class="sd">        ``runner.epoch_metrics``.</span>
+
+<span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
 <span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>

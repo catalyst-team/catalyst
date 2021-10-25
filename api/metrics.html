@@ -1086,6 +1086,18 @@ It computes mean value of accuracy and it’s approximate std value
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">None</span></code> —&gt; see             <a class="reference internal" href="#catalyst.metrics.functional._misc.get_default_topk_args" title="catalyst.metrics.functional._misc.get_default_topk_args"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.metrics.functional._misc.get_default_topk_args</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;accuracy01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;accuracy01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;accuracy03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;accuracy01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;accuracy03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;accuracy05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Please follow the <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> sections for more use cases.</p>
 </div>
 </dd></dl>
@@ -1812,6 +1824,17 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span> <span class="pre">or</span> <span class="pre">None</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;cmc01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;cmc01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;cmc03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;cmc01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;cmc03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;cmc05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Please follow the <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> sections for more use cases.</p>
 </div>
 </dd></dl>
@@ -1994,6 +2017,17 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span> <span class="pre">or</span> <span class="pre">None</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;hitrate01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;hitrate01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;hitrate03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;hitrate01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;hitrate03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;hitrate05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Please follow the <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> sections for more use cases.</p>
 </div>
 </dd></dl>
@@ -2125,6 +2159,17 @@ Computes mean value of MAP and it’s approximate std value</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span> <span class="pre">or</span> <span class="pre">None</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;map01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;map01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;map03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;map01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;map03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;map05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Please follow the <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> sections for more use cases.</p>
 </div>
 </dd></dl>
@@ -2239,6 +2284,17 @@ Computes mean value of map and it’s approximate std value</p>
     <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span> <span class="pre">or</span> <span class="pre">None</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;mrr01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;mrr01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;mrr03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;mrr01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;mrr03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;mrr05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -2363,6 +2419,17 @@ Computes mean value of NDCG and it’s approximate std value</p>
     <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Metric names depending on input parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,)</span> <span class="pre">or</span> <span class="pre">None</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;ndcg01&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;ndcg01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ndcg03&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topk_args</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">&quot;ndcg01&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ndcg03&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ndcg05&quot;</span></code></p></li>
+</ul>
+<p>You can find them in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">runner.loader_metrics</span></code> or
+<code class="docutils literal notranslate"><span class="pre">runner.epoch_metrics</span></code>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -4633,7 +4700,7 @@ with shape [bs; …, 1]</p></li>
 <dl class="function">
 <dt id="catalyst.metrics.functional._misc.get_default_topk_args">
 <code class="sig-prename descclassname">catalyst.metrics.functional._misc.</code><code class="sig-name descname">get_default_topk_args</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int</em><span class="sig-paren">)</span> &#x2192; Sequence[int]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_misc.html#get_default_topk_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._misc.get_default_topk_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate list params for <code class="docutils literal notranslate"><span class="pre">Accuracy&#64;k</span></code> and <code class="docutils literal notranslate"><span class="pre">mAP&#64;k</span></code>.</p>
+<dd><p>Calculate list params for <code class="docutils literal notranslate"><span class="pre">Accuracy&#64;k</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>num_classes</strong> – number of classes</p>
