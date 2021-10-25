@@ -8,11 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- RSquareLoss ([#1313](https://github.com/catalyst-team/catalyst/pull/1313))
+- Self-Supervised example updates: ([#1305](https://github.com/catalyst-team/catalyst/pull/1305)), ([#1322](https://github.com/catalyst-team/catalyst/pull/1322)), ([#1325](https://github.com/catalyst-team/catalyst/pull/1325)), ([#1335](https://github.com/catalyst-team/catalyst/pull/1335))
+- Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
 - YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
+- `TopKMetric` asbtraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
 
 ### Changed
 
-- `CMCMetric` renamed from `<prefix>cmc<suffix><k>` to `<prefix>cmc<k><suffix>`
+- simlified readme ([#1312](https://github.com/catalyst-team/catalyst/pull/1312))
+- improved DDP tutorial ([#1327](https://github.com/catalyst-team/catalyst/pull/1327))
+- `CMCMetric` renamed from `<prefix>cmc<suffix><k>` to `<prefix>cmc<k><suffix>` ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
 
 ### Removed
 
@@ -20,7 +26,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- Zero seed error ([#1329](https://github.com/catalyst-team/catalyst/pull/1329))
+- updated codestyle issues ([#1331](https://github.com/catalyst-team/catalyst/pull/1331))
+- TopK metrics: ([#1330](https://github.com/catalyst-team/catalyst/pull/1330)), ([#1334](https://github.com/catalyst-team/catalyst/pull/1334))
 
 
 ## [21.09] - 2021-09-30
