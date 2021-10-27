@@ -348,7 +348,8 @@ class MovieLens20M(Dataset):
                 download=False, 
                 min_rating=0.0,
                 min_items_per_user=5.0,
-                min_users_per_item=0.0):
+                min_users_per_item=0.0,
+                n_rows=1000):
         """
         Args:
             root (string): Root directory of dataset where
@@ -370,6 +371,7 @@ class MovieLens20M(Dataset):
         self.min_rating = min_rating
         self.min_items_per_user = args.min_items_per_user
         self.min_users_per_item = args.min_users_per_item
+        self.n_rows = n_rows
 
         if download:
             self._download()
@@ -439,16 +441,16 @@ class MovieLens20M(Dataset):
         """Return the raw lines of the train and test files."""
         path = self.raw_folder
 
-        movies = pd.read_csv(path+'ml-20m/movies.csv')
-        ratings = pd.read_csv(path+'ml-20m/ratings.csv')
-        genome_scores = pd.read_csv(path+'ml-20m/genome-scores.csv')
-        genome_tags = pd.read_csv(path+'ml-20m/genome-tags.csv')
-        tags = pd.read_csv(path+'ml-20m/tags.csv')
+        movies = pd.read_csv(path+'ml-20m/movies.csv', nrows=self.nrows)
+        ratings = pd.read_csv(path+'ml-20m/ratings.csv', nrows=self.nrows))
+        genome_scores = pd.read_csv(path+'ml-20m/genome-scores.csv', nrows=self.nrows))
+        genome_tags = pd.read_csv(path+'ml-20m/genome-tags.csv', nrows=self.nrows))
+        tags = pd.read_csv(path+'ml-20m/tags.csv', nrows=self.nrows))
 
         return (movies, ratings, genome_scores, genome_tags, tags)
 
     def _build_interaction_matrix(self, rows, cols, data):
-        """Builds interaction matrix.
+        """[WIP] Builds interaction matrix.
 
         ?? Need to decide the filter order
         - rating
@@ -466,10 +468,30 @@ class MovieLens20M(Dataset):
             sparse user2item interaction matrix
         """
 
+        if user_id_map is None:
+            users = dataframe[user_col].unique()
+            user_id_map = {user: userid for userid, user in enumerate(users)}
+
+        if item_id_map is None:
+            items = dataframe[item_col].unique()
+            item_id_map = {item: itemid for itemid, item in enumerate(items)}
+
+        matrix_size = (len(user_id_map.keys()), len(item_id_map.keys()))
+
+        matrix_users = dataframe[user_col].map(user_id_map)
+        matrix_items = dataframe[item_col].map(item_id_map)
+        matrix_inters = dataframe[inter_col]
+
+        csr_matrix = coo_matrix((matrix_inters, (matrix_users, matrix_items)), shape=matrix_size).tocsr()
+
+        return csr_matrix, item_id_map, user_id_map
+
 
         return ratings,  usercount, itemcount
 
-    def _get_count(rating, user_count=None, item_count=None):
+    def _get_dimensions(rating, user_count=None, item_count=None):
+        """Gets the dimensions of the raw dataset"""
+
         if user_count and item_count:
             raise ValueError("Both cannot be True")
         if not user_count and not item_count:
@@ -485,7 +507,7 @@ class MovieLens20M(Dataset):
         cnt = rating[[id]].groupby(id, as_index=False).size()
         return cnt
 
-    def _parse(self, ratings):
+    def _parse(self, data, name="ratings"):
         """Parses and pre-process the raw data. Substract one to shift to zero based indexing
 
         Args:
@@ -494,57 +516,44 @@ class MovieLens20M(Dataset):
         Returns:
             Generator iterator for parsed data
         """
-        ratings = ratings[ratings['rating'] > self.min_rating].sort_values(['userId', 'timestamp'])
+        if name == "ratings":
+            ratings = ratings[ratings['rating'] > self.min_rating].sort_values(['userId', 'timestamp'])
 
-        if self.min_users_per_item:
-            user_cnt = self._get_count(ratings, user_count=True)
-            ratings = ratings[ratings['movieId'].isin(itemcount.index[user_cnt >= self.min_users_per_item])]
-
-
-        if self.min_items_per_user:
-            item_cnt = self._get_count(ratings, item_count=True)
-            ratings = ratings[ratings['userId'].isin(itemcount.index[item_cnt >= self.min_items_per_user])]
-
-        usercount, itemcount = self._get_count(ratings, item_count=True), self._get_count(ratings, user_count=True)
-
-        unique_uid = usercount.index
-
-        np.random.seed(98765)
-        idx_perm = np.random.permutation(unique_uid.size)
-        unique_uid = unique_uid[idx_perm]
-
-        n_users = unique_uid.size
-
-        train_users = unique_uid[:n_users]
-        test_users = unique_uid[n_users:]
+            if self.min_users_per_item:
+                user_cnt = self._get_dimensions(ratings, user_count=True)
+                ratings = ratings[ratings['movieId'].isin(itemcount.index[user_cnt >= self.min_users_per_item])]
 
 
-    
-    def _get_dimensions(self, train_data, test_data):
-        """Gets the dimensions of the raw dataset
+            if self.min_items_per_user:
+                item_cnt = self._get_dimensions(ratings, item_count=True)
+                ratings = ratings[ratings['userId'].isin(itemcount.index[item_cnt >= self.min_items_per_user])]
 
-        Args:
-            train_data: (uid, iid, rating, timestamp)
-                Genrator for training data
-            test_data: (uid, iid, rating, timestamp)
-                Genrator for testing data
+            num_users, num_items = self._get_dimensions(ratings, item_count=True), self._get_dimensions(ratings, user_count=True)
+            return ratings, num_users, num_items
+        
+        else:
+            ValueError("Only rating is availbale")
 
-        Returns:
-            The total dimension of the dataset
+    def _split(self, by="users", test_prop=0.2, ratings, num_users, num_items):
+        """Split the rating into train and test
+        Split by users
         """
-        uids = set()
-        iids = set()
+        if by = "users":
+            unique_uid = num_users.index
 
-        for uid, iid, _, _ in itertools.chain(train_data, test_data):
-            uids.add(uid)
-            iids.add(iid)
+            idx_perm = np.random.permutation(num_users.size)
+            unique_uid = unique_uid[idx_perm]
 
-        rows = max(uids) + 1
-        cols = max(iids) + 1
+            n_users = unique_uid.size
 
-        self.dimensions = (rows, cols)
+            train_users = unique_uid[:n_users]
+            test_users = unique_uid[n_users:]
 
-        return rows, cols
+            trains_events = ratings.loc[ratings['userId'].isin(train_users)]
+            test_events = ratings.loc[ratings['userId'].isin(test_users)]
+
+        else:
+            ValueError("Only splitting by user is availbale")
 
     def _fetch_movies(self):
         """
@@ -554,9 +563,12 @@ class MovieLens20M(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (train_raw, test_raw, item_metadata_raw, genres_raw) = self._read_raw_movielens_data()
 
-        num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
+        (movies, ratings, genome_scores, genome_tags, tags) =  self._read_raw_movielens_data()
+        
+        # TO-DO: add error handling
+        ratings, num_users, num_items = self._parse(ratings)
+        train_raw, test_raw = self._split(by="users", test_prop=0.2, ratings, num_users, num_items)
 
         train = self._build_interaction_matrix(num_users, num_items, self._parse(train_raw))
         test = self._build_interaction_matrix(num_users, num_items, self._parse(test_raw))
