@@ -1,7 +1,6 @@
 
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -28,6 +27,8 @@
 
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 
@@ -184,7 +185,7 @@
               
             
             
-              <p><span class="caption-text">Getting started</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/quickstart.html">Quickstart 101</a></li>
@@ -192,11 +193,11 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p><span class="caption-text">Core</span></p>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/engine.html">Engine</a></li>
@@ -204,7 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/logger.html">Logger</a></li>
 </ul>
-<p><span class="caption-text">FAQ</span></p>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/data.html">Dataflow</a></li>
@@ -223,7 +224,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/config_api.html">Config API</a></li>
 </ul>
-<p><span class="caption-text">API</span></p>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
@@ -236,7 +237,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
 </ul>
-<p><span class="caption-text">Contribution guide</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -345,9 +346,87 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/data.html#catalyst.contrib.data.augmentor.Augmentor.__init__">__init__() (catalyst.contrib.data.augmentor.Augmentor method)</a>
+      <li><a href="api/callbacks.html#catalyst.callbacks.batch_overfit.BatchOverfitCallback.__init__">__init__() (catalyst.callbacks.batch_overfit.BatchOverfitCallback method)</a>
 
       <ul>
+        <li><a href="api/callbacks.html#catalyst.callbacks.batch_transform.BatchTransformCallback.__init__">(catalyst.callbacks.batch_transform.BatchTransformCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback.__init__">(catalyst.callbacks.checkpoint.CheckpointCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.control_flow.ControlFlowCallback.__init__">(catalyst.callbacks.control_flow.ControlFlowCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.criterion.CriterionCallback.__init__">(catalyst.callbacks.criterion.CriterionCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metric.BatchMetricCallback.__init__">(catalyst.callbacks.metric.BatchMetricCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metric_aggregation.MetricAggregationCallback.__init__">(catalyst.callbacks.metric_aggregation.MetricAggregationCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.accuracy.AccuracyCallback.__init__">(catalyst.callbacks.metrics.accuracy.AccuracyCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.accuracy.MultilabelAccuracyCallback.__init__">(catalyst.callbacks.metrics.accuracy.MultilabelAccuracyCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.auc.AUCCallback.__init__">(catalyst.callbacks.metrics.auc.AUCCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.classification.MultilabelPrecisionRecallF1SupportCallback.__init__">(catalyst.callbacks.metrics.classification.MultilabelPrecisionRecallF1SupportCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback.__init__">(catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.cmc_score.CMCScoreCallback.__init__">(catalyst.callbacks.metrics.cmc_score.CMCScoreCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback.__init__">(catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback.__init__">(catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback.__init__">(catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.r2_squared.R2SquaredCallback.__init__">(catalyst.callbacks.metrics.r2_squared.R2SquaredCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.HitrateCallback.__init__">(catalyst.callbacks.metrics.recsys.HitrateCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.MAPCallback.__init__">(catalyst.callbacks.metrics.recsys.MAPCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.MRRCallback.__init__">(catalyst.callbacks.metrics.recsys.MRRCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.recsys.NDCGCallback.__init__">(catalyst.callbacks.metrics.recsys.NDCGCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback.__init__">(catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback.__init__">(catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.segmentation.DiceCallback.__init__">(catalyst.callbacks.metrics.segmentation.DiceCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.segmentation.IOUCallback.__init__">(catalyst.callbacks.metrics.segmentation.IOUCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.segmentation.TrevskyCallback.__init__">(catalyst.callbacks.metrics.segmentation.TrevskyCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.misc.CheckRunCallback.__init__">(catalyst.callbacks.misc.CheckRunCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.misc.EarlyStoppingCallback.__init__">(catalyst.callbacks.misc.EarlyStoppingCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.misc.TimerCallback.__init__">(catalyst.callbacks.misc.TimerCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.mixup.MixupCallback.__init__">(catalyst.callbacks.mixup.MixupCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.onnx.OnnxCallback.__init__">(catalyst.callbacks.onnx.OnnxCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.optimizer.OptimizerCallback.__init__">(catalyst.callbacks.optimizer.OptimizerCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.optuna.OptunaPruningCallback.__init__">(catalyst.callbacks.optuna.OptunaPruningCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.periodic_loader.PeriodicLoaderCallback.__init__">(catalyst.callbacks.periodic_loader.PeriodicLoaderCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.pruning.PruningCallback.__init__">(catalyst.callbacks.pruning.PruningCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.quantization.QuantizationCallback.__init__">(catalyst.callbacks.quantization.QuantizationCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.scheduler.LRFinder.__init__">(catalyst.callbacks.scheduler.LRFinder method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback.__init__">(catalyst.callbacks.scheduler.SchedulerCallback method)</a>
+</li>
+        <li><a href="api/callbacks.html#catalyst.callbacks.tracing.TracingCallback.__init__">(catalyst.callbacks.tracing.TracingCallback method)</a>
+</li>
+        <li><a href="api/data.html#catalyst.contrib.data.augmentor.Augmentor.__init__">(catalyst.contrib.data.augmentor.Augmentor method)</a>
+</li>
         <li><a href="api/data.html#catalyst.contrib.data.augmentor.AugmentorCompose.__init__">(catalyst.contrib.data.augmentor.AugmentorCompose method)</a>
 </li>
         <li><a href="api/data.html#catalyst.contrib.data.augmentor.AugmentorKeys.__init__">(catalyst.contrib.data.augmentor.AugmentorKeys method)</a>
@@ -446,6 +525,12 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup.__init__">(catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callback.Callback.__init__">(catalyst.core.callback.Callback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callback.CallbackList.__init__">(catalyst.core.callback.CallbackList method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.__init__">(catalyst.core.callback.CallbackWrapper method)</a>
+</li>
         <li><a href="api/data.html#catalyst.data.AllTripletsSampler.__init__">(catalyst.data.AllTripletsSampler method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.collate_fn.FilteringCollateFn.__init__">(catalyst.data.collate_fn.FilteringCollateFn method)</a>
@@ -489,6 +574,42 @@
         <li><a href="api/data.html#catalyst.data.transforms.Normalize.__init__">(catalyst.data.transforms.Normalize method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.transforms.ToTensor.__init__">(catalyst.data.transforms.ToTensor method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric.__init__">(catalyst.metrics._accumulative.AccumulativeMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveMetric.__init__">(catalyst.metrics._additive.AdditiveMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.__init__">(catalyst.metrics._metric.ICallbackBatchMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.__init__">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.__init__">(catalyst.metrics._metric.IMetric method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.__init__">(catalyst.runners.config.ConfigRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.config.SelfSupervisedConfigRunner.__init__">(catalyst.runners.config.SelfSupervisedConfigRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.config.SupervisedConfigRunner.__init__">(catalyst.runners.config.SupervisedConfigRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner.__init__">(catalyst.runners.hydra.HydraRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.hydra.SupervisedHydraRunner.__init__">(catalyst.runners.hydra.SupervisedHydraRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.runner.Runner.__init__">(catalyst.runners.runner.Runner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.runner.SelfSupervisedRunner.__init__">(catalyst.runners.runner.SelfSupervisedRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.runner.SupervisedRunner.__init__">(catalyst.runners.runner.SupervisedRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.self_supervised.ISelfSupervisedRunner.__init__">(catalyst.runners.self_supervised.ISelfSupervisedRunner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.supervised.ISupervisedRunner.__init__">(catalyst.runners.supervised.ISupervisedRunner method)</a>
+</li>
+        <li><a href="api/tools.html#catalyst.tools.forward_wrapper.ModelForwardWrapper.__init__">(catalyst.tools.forward_wrapper.ModelForwardWrapper method)</a>
+</li>
+        <li><a href="api/tools.html#catalyst.tools.metric_handler.MetricHandler.__init__">(catalyst.tools.metric_handler.MetricHandler method)</a>
+</li>
+        <li><a href="api/tools.html#catalyst.tools.time_manager.TimeManager.__init__">(catalyst.tools.time_manager.TimeManager method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -561,7 +682,7 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.backend">backend() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.backend">backend (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.backward_loss">backward_loss() (catalyst.core.engine.IEngine method)</a>
 </li>
@@ -621,118 +742,393 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper">CallbackWrapper (class in catalyst.core.callback)</a>
 </li>
-      <li><a href="api/callbacks.html#module-catalyst.callbacks">catalyst.callbacks (module)</a>
+      <li>
+    catalyst.callbacks
+
+      <ul>
+        <li><a href="api/callbacks.html#module-catalyst.callbacks">module</a>
 </li>
-      <li><a href="api/callbacks.html#module-catalyst.callbacks.metrics">catalyst.callbacks.metrics (module)</a>
+      </ul></li>
+      <li>
+    catalyst.callbacks.metrics
+
+      <ul>
+        <li><a href="api/callbacks.html#module-catalyst.callbacks.metrics">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib">catalyst.contrib (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.__main__">catalyst.contrib.__main__ (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.__main__
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.__main__">module</a>
 </li>
-      <li><a href="api/data.html#module-catalyst.contrib.data">catalyst.contrib.data (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.data
+
+      <ul>
+        <li><a href="api/data.html#module-catalyst.contrib.data">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.datasets">catalyst.contrib.datasets (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.datasets
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.datasets">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcface">catalyst.contrib.nn.modules.arcface (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.arcface
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcface">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcmargin">catalyst.contrib.nn.modules.arcmargin (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.arcmargin
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcmargin">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.cosface">catalyst.contrib.nn.modules.cosface (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.cosface
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.cosface">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.curricularface">catalyst.contrib.nn.modules.curricularface (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.curricularface
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.curricularface">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.softmax">catalyst.contrib.nn.modules.softmax (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.softmax
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.softmax">module</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.nn.schedulers">catalyst.contrib.nn.schedulers (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.schedulers
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.schedulers">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils">catalyst.contrib.utils (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.compression">catalyst.contrib.utils.compression (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.compression
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.compression">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.image">catalyst.contrib.utils.image (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.image
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.image">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.pandas">catalyst.contrib.utils.pandas (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.pandas
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.pandas">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.parallel">catalyst.contrib.utils.parallel (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.parallel
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.parallel">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.report">catalyst.contrib.utils.report (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.report
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.report">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.serialization">catalyst.contrib.utils.serialization (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.serialization
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.serialization">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.thresholds">catalyst.contrib.utils.thresholds (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.thresholds
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.thresholds">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.visualization">catalyst.contrib.utils.visualization (module)</a>
+      </ul></li>
+      <li>
+    catalyst.contrib.utils.visualization
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.visualization">module</a>
 </li>
-      <li><a href="api/core.html#module-catalyst.core">catalyst.core (module)</a>
+      </ul></li>
+      <li>
+    catalyst.core
+
+      <ul>
+        <li><a href="api/core.html#module-catalyst.core">module</a>
 </li>
-      <li><a href="api/data.html#module-catalyst.data">catalyst.data (module)</a>
+      </ul></li>
+      <li>
+    catalyst.data
+
+      <ul>
+        <li><a href="api/data.html#module-catalyst.data">module</a>
 </li>
-      <li><a href="api/data.html#module-catalyst.data.dataset">catalyst.data.dataset (module)</a>
+      </ul></li>
+      <li>
+    catalyst.data.dataset
+
+      <ul>
+        <li><a href="api/data.html#module-catalyst.data.dataset">module</a>
 </li>
-      <li><a href="api/core.html#module-catalyst.dl.__main__">catalyst.dl.__main__ (module)</a>
+      </ul></li>
+      <li>
+    catalyst.dl.__main__
+
+      <ul>
+        <li><a href="api/core.html#module-catalyst.dl.__main__">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics">catalyst.metrics (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._accuracy">catalyst.metrics.functional._accuracy (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._accuracy
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._accuracy">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._auc">catalyst.metrics.functional._auc (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._auc
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._auc">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._average_precision">catalyst.metrics.functional._average_precision (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._average_precision
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._average_precision">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._classification">catalyst.metrics.functional._classification (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._classification
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._classification">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._cmc_score">catalyst.metrics.functional._cmc_score (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._cmc_score
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._cmc_score">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._f1_score">catalyst.metrics.functional._f1_score (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._f1_score
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._f1_score">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._focal">catalyst.metrics.functional._focal (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._focal
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._focal">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._hitrate">catalyst.metrics.functional._hitrate (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._hitrate
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._hitrate">module</a>
 </li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._misc">catalyst.metrics.functional._misc (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._mrr">catalyst.metrics.functional._mrr (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._ndcg">catalyst.metrics.functional._ndcg (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._precision">catalyst.metrics.functional._precision (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._r2_squared">catalyst.metrics.functional._r2_squared (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">catalyst.metrics.functional._recall (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.functional._segmentation">catalyst.metrics.functional._segmentation (module)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/utils.html#module-catalyst.utils">catalyst.utils (module)</a>
+      <li>
+    catalyst.metrics.functional._misc
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._misc">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.config">catalyst.utils.config (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._mrr
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._mrr">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.data">catalyst.utils.data (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._ndcg
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._ndcg">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.distributed">catalyst.utils.distributed (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._precision
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._precision">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.misc">catalyst.utils.misc (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._r2_squared
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._r2_squared">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.mixup">catalyst.utils.mixup (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._recall
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.numpy">catalyst.utils.numpy (module)</a>
+      </ul></li>
+      <li>
+    catalyst.metrics.functional._segmentation
+
+      <ul>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._segmentation">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.onnx">catalyst.utils.onnx (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.pruning">catalyst.utils.pruning (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.config
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.config">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.quantization">catalyst.utils.quantization (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.data
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.data">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.swa">catalyst.utils.swa (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.distributed
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.distributed">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.sys">catalyst.utils.sys (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.misc
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.misc">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.torch">catalyst.utils.torch (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.mixup
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.mixup">module</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.utils.tracing">catalyst.utils.tracing (module)</a>
+      </ul></li>
+      <li>
+    catalyst.utils.numpy
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.numpy">module</a>
 </li>
+      </ul></li>
+      <li>
+    catalyst.utils.onnx
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.onnx">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.pruning
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.pruning">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.quantization
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.quantization">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.swa
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.swa">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.sys
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.sys">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.torch
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.torch">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.utils.tracing
+
+      <ul>
+        <li><a href="api/utils.html#module-catalyst.utils.tracing">module</a>
+</li>
+      </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss">CategoricalRegressionLoss (class in catalyst.contrib.nn.criterion.regression)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._misc.check_consistent_length">check_consistent_length() (in module catalyst.metrics.functional._misc)</a>
@@ -839,7 +1235,7 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.detach_tensor">detach_tensor() (in module catalyst.utils.torch)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.device">device() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.device">device (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/engines.html#catalyst.engines.torch.DeviceEngine">DeviceEngine (class in catalyst.engines.torch)</a>
 </li>
@@ -985,7 +1381,7 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.gallery_size">gallery_size() (catalyst.data.dataset.metric_learning.QueryGalleryDataset property)</a>
+      <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.gallery_size">gallery_size (catalyst.data.dataset.metric_learning.QueryGalleryDataset property)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._classification.get_aggregated_metrics">get_aggregated_metrics() (in module catalyst.metrics.functional._classification)</a>
 </li>
@@ -1243,7 +1639,7 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics._hitrate.HitrateMetric">HitrateMetric (class in catalyst.metrics._hitrate)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.runner.IRunner.hparams">hparams() (catalyst.core.runner.IRunner property)</a>
+      <li><a href="api/core.html#catalyst.core.runner.IRunner.hparams">hparams (catalyst.core.runner.IRunner property)</a>
 
       <ul>
         <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.hparams">(catalyst.runners.config.ConfigRunner property)</a>
@@ -1329,13 +1725,13 @@
 </li>
       <li><a href="api/core.html#catalyst.core.runner.IRunner">IRunner (class in catalyst.core.runner)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_ddp">is_ddp() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_ddp">is_ddp (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.misc.is_exception">is_exception() (in module catalyst.utils.misc)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_master_process">is_master_process() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_master_process">is_master_process (catalyst.core.engine.IEngine property)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_worker_process">is_worker_process() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.is_worker_process">is_worker_process (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/runners.html#catalyst.runners.self_supervised.ISelfSupervisedRunner">ISelfSupervisedRunner (class in catalyst.runners.self_supervised)</a>
 </li>
@@ -1387,7 +1783,7 @@
         <li><a href="api/core.html#catalyst.core.runner.IRunner.log_metrics">(catalyst.core.runner.IRunner method)</a>
 </li>
       </ul></li>
-      <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.logdir">logdir() (catalyst.runners.config.ConfigRunner property)</a>
+      <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.logdir">logdir (catalyst.runners.config.ConfigRunner property)</a>
 
       <ul>
         <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner.logdir">(catalyst.runners.hydra.HydraRunner property)</a>
@@ -1445,8 +1841,6 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.MetricAggregation">MetricAggregation (catalyst.core.callback.CallbackOrder attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metric_aggregation.MetricAggregationCallback">MetricAggregationCallback (class in catalyst.callbacks.metric_aggregation)</a>
 </li>
       <li><a href="api/tools.html#catalyst.tools.metric_handler.MetricHandler">MetricHandler (class in catalyst.tools.metric_handler)</a>
@@ -1467,6 +1861,123 @@
 </li>
       <li><a href="api/tools.html#catalyst.tools.forward_wrapper.ModelForwardWrapper">ModelForwardWrapper (class in catalyst.tools.forward_wrapper)</a>
 </li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/callbacks.html#module-catalyst.callbacks">catalyst.callbacks</a>
+</li>
+        <li><a href="api/callbacks.html#module-catalyst.callbacks.metrics">catalyst.callbacks.metrics</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib">catalyst.contrib</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.__main__">catalyst.contrib.__main__</a>
+</li>
+        <li><a href="api/data.html#module-catalyst.contrib.data">catalyst.contrib.data</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.datasets">catalyst.contrib.datasets</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcface">catalyst.contrib.nn.modules.arcface</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.arcmargin">catalyst.contrib.nn.modules.arcmargin</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.cosface">catalyst.contrib.nn.modules.cosface</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.curricularface">catalyst.contrib.nn.modules.curricularface</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.softmax">catalyst.contrib.nn.modules.softmax</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.schedulers">catalyst.contrib.nn.schedulers</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils">catalyst.contrib.utils</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.compression">catalyst.contrib.utils.compression</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.image">catalyst.contrib.utils.image</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.pandas">catalyst.contrib.utils.pandas</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.parallel">catalyst.contrib.utils.parallel</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.report">catalyst.contrib.utils.report</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.serialization">catalyst.contrib.utils.serialization</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.thresholds">catalyst.contrib.utils.thresholds</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.contrib.utils.visualization">catalyst.contrib.utils.visualization</a>
+</li>
+        <li><a href="api/core.html#module-catalyst.core">catalyst.core</a>
+</li>
+        <li><a href="api/data.html#module-catalyst.data">catalyst.data</a>
+</li>
+        <li><a href="api/data.html#module-catalyst.data.dataset">catalyst.data.dataset</a>
+</li>
+        <li><a href="api/core.html#module-catalyst.dl.__main__">catalyst.dl.__main__</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics">catalyst.metrics</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._accuracy">catalyst.metrics.functional._accuracy</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._auc">catalyst.metrics.functional._auc</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._average_precision">catalyst.metrics.functional._average_precision</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._classification">catalyst.metrics.functional._classification</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._cmc_score">catalyst.metrics.functional._cmc_score</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._f1_score">catalyst.metrics.functional._f1_score</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._focal">catalyst.metrics.functional._focal</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._hitrate">catalyst.metrics.functional._hitrate</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._misc">catalyst.metrics.functional._misc</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._mrr">catalyst.metrics.functional._mrr</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._ndcg">catalyst.metrics.functional._ndcg</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._precision">catalyst.metrics.functional._precision</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._r2_squared">catalyst.metrics.functional._r2_squared</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">catalyst.metrics.functional._recall</a>
+</li>
+        <li><a href="api/metrics.html#module-catalyst.metrics.functional._segmentation">catalyst.metrics.functional._segmentation</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils">catalyst.utils</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.config">catalyst.utils.config</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.data">catalyst.utils.data</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.distributed">catalyst.utils.distributed</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.misc">catalyst.utils.misc</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.mixup">catalyst.utils.mixup</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.numpy">catalyst.utils.numpy</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.onnx">catalyst.utils.onnx</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.pruning">catalyst.utils.pruning</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.quantization">catalyst.utils.quantization</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.swa">catalyst.utils.swa</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.sys">catalyst.utils.sys</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.torch">catalyst.utils.torch</a>
+</li>
+        <li><a href="api/utils.html#module-catalyst.utils.tracing">catalyst.utils.tracing</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.movielens.MovieLens">MovieLens (class in catalyst.contrib.datasets.movielens)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._mrr.mrr">mrr() (in module catalyst.metrics.functional._mrr)</a>
@@ -1493,7 +2004,7 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.name">name() (catalyst.runners.config.ConfigRunner property)</a>
+      <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.name">name (catalyst.runners.config.ConfigRunner property)</a>
 
       <ul>
         <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner.name">(catalyst.runners.hydra.HydraRunner property)</a>
@@ -1697,7 +2208,7 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.onnx.quantize_onnx_model">quantize_onnx_model() (in module catalyst.utils.onnx)</a>
 </li>
-      <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.query_size">query_size() (catalyst.data.dataset.metric_learning.QueryGalleryDataset property)</a>
+      <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.query_size">query_size (catalyst.data.dataset.metric_learning.QueryGalleryDataset property)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset">QueryGalleryDataset (class in catalyst.data.dataset.metric_learning)</a>
 </li>
@@ -1717,7 +2228,7 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.ralamb.Ralamb">Ralamb (class in catalyst.contrib.nn.optimizers.ralamb)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.rank">rank() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.rank">rank (catalyst.core.engine.IEngine property)</a>
 </li>
       <li><a href="api/data.html#catalyst.contrib.data.reader.ReaderCompose">ReaderCompose (class in catalyst.contrib.data.reader)</a>
 </li>
@@ -1799,7 +2310,7 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.scSE">scSE (class in catalyst.contrib.nn.modules.se)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.runner.IRunner.seed">seed() (catalyst.core.runner.IRunner property)</a>
+      <li><a href="api/core.html#catalyst.core.runner.IRunner.seed">seed (catalyst.core.runner.IRunner property)</a>
 
       <ul>
         <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.seed">(catalyst.runners.config.ConfigRunner property)</a>
@@ -1865,7 +2376,7 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.stage">stage (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.runner.IRunner.stages">stages() (catalyst.core.runner.IRunner property)</a>
+      <li><a href="api/core.html#catalyst.core.runner.IRunner.stages">stages (catalyst.core.runner.IRunner property)</a>
 
       <ul>
         <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner.stages">(catalyst.runners.config.ConfigRunner property)</a>
@@ -1919,12 +2430,50 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.tracing.trace_model">trace_model() (in module catalyst.utils.tracing)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.tracing.TracingCallback">TracingCallback (class in catalyst.callbacks.tracing)</a>
 </li>
       <li><a href="api/runners.html#catalyst.runners.runner.Runner.train">train() (catalyst.runners.runner.Runner method)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss.training">training (catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss attribute)</a>
+
+      <ul>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.BPRLoss.training">(catalyst.contrib.nn.criterion.recsys.BPRLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss.training">(catalyst.contrib.nn.criterion.recsys.HingeLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.LogisticLoss.training">(catalyst.contrib.nn.criterion.recsys.LogisticLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.RocStarLoss.training">(catalyst.contrib.nn.criterion.recsys.RocStarLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss.training">(catalyst.contrib.nn.criterion.recsys.WARPLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss.training">(catalyst.contrib.nn.criterion.regression.CategoricalRegressionLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.HuberLossV0.training">(catalyst.contrib.nn.criterion.regression.HuberLossV0 attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss.training">(catalyst.contrib.nn.criterion.regression.QuantileRegressionLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.regression.RSquareLoss.training">(catalyst.contrib.nn.criterion.regression.RSquareLoss attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace.training">(catalyst.contrib.nn.modules.arcface.ArcFace attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.SubCenterArcFace.training">(catalyst.contrib.nn.modules.arcface.SubCenterArcFace attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct.training">(catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.cosface.AdaCos.training">(catalyst.contrib.nn.modules.cosface.AdaCos attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.cosface.CosFace.training">(catalyst.contrib.nn.modules.cosface.CosFace attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.curricularface.CurricularFace.training">(catalyst.contrib.nn.modules.curricularface.CurricularFace attribute)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.softmax.SoftMax.training">(catalyst.contrib.nn.modules.softmax.SoftMax attribute)</a>
+</li>
+        <li><a href="api/tools.html#catalyst.tools.forward_wrapper.ModelForwardWrapper.training">(catalyst.tools.forward_wrapper.ModelForwardWrapper attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#catalyst.metrics.functional._segmentation.trevsky">trevsky() (in module catalyst.metrics.functional._segmentation)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.segmentation.TrevskyCallback">TrevskyCallback (class in catalyst.callbacks.metrics.segmentation)</a>
@@ -1985,7 +2534,7 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.worker">worker (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.engine.IEngine.world_size">world_size() (catalyst.core.engine.IEngine property)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.world_size">world_size (catalyst.core.engine.IEngine property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2050,11 +2599,10 @@
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-         <script type="text/javascript" src="_static/jquery.js"></script>
-         <script type="text/javascript" src="_static/underscore.js"></script>
-         <script type="text/javascript" src="_static/doctools.js"></script>
-         <script type="text/javascript" src="_static/language_data.js"></script>
-         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+         <script src="_static/jquery.js"></script>
+         <script src="_static/underscore.js"></script>
+         <script src="_static/doctools.js"></script>
      
 
   
