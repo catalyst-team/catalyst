@@ -40,20 +40,20 @@ class _filter_fn_from_loaders:
         self.reverse_condition = reverse_condition
 
     def __call__(self, stage, epoch, loader):
-        if isinstance(loaders, str):
-            loaders = [self.loaders]
+        if isinstance(self.loaders, str):
+            self.loaders = [self.loaders]
 
         # sequence of loaders
-        if isinstance(loaders, (list, tuple)):
-            loaders = sorted(set(loaders))  # ignore duplicates
+        if isinstance(self.loaders, (list, tuple)):
+            self.loaders = sorted(set(self.loaders))  # ignore duplicates
             if self.reverse_condition:
-                return loader not in loaders
+                return loader not in self.loaders
             else:
-                return loader in loaders
+                return loader in self.loaders
         # loader: ignore epoch or epochs
-        elif isinstance(loaders, (dict, OrderedDict)):
+        elif isinstance(self.loaders, (dict, OrderedDict)):
             ignore_list = {}
-            for loader, epochs in loaders.items():
+            for loader, epochs in self.loaders.items():
                 if isinstance(epochs, (int, float)):
                     ignore_list[loader] = [int(epochs)]
                 else:
@@ -78,7 +78,7 @@ class _filter_fn_from_loaders:
                 "'loaders' type should be one of - str, "
                 "Sequence[str], Mapping[str, int] or "
                 "Mapping[str, Sequence[int]]! "
-                f"(got {type(loaders)})"
+                f"(got {type(self.loaders)})"
             )
 
 
