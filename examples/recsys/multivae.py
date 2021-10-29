@@ -34,7 +34,6 @@ def collate_fn_valid(batch: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
 
 
 class MultiVAE(nn.Module):
-
     def __init__(self, p_dims, q_dims=None, dropout=0.5):
         super().__init__()
         self.p_dims = p_dims
@@ -102,7 +101,6 @@ class MultiVAE(nn.Module):
 
 
 class RecSysRunner(dl.Runner):
-
     def on_loader_start(self, runner):
         super().on_loader_start(runner)
         self.meters = {
