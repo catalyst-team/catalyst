@@ -12,7 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Self-Supervised example updates: ([#1305](https://github.com/catalyst-team/catalyst/pull/1305)), ([#1322](https://github.com/catalyst-team/catalyst/pull/1322)), ([#1325](https://github.com/catalyst-team/catalyst/pull/1325)), ([#1335](https://github.com/catalyst-team/catalyst/pull/1335))
 - Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
 - YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
-- `TopKMetric` asbtraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+- `TopKMetric` abstraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 
 ### Changed
 
