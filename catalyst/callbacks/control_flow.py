@@ -17,17 +17,17 @@ class _filter_fn_from_epochs:
 
     def __call__(self, stage, epoch, loader):
         if isinstance(self.epochs, (int, float)):
-            epochs = int(self.epochs)
+            self.epochs = int(self.epochs)
             if self.reverse_condition:
-                return epoch % epochs != 0
+                return epoch % self.epochs != 0
             else:
-                return epoch % epochs == 0
+                return epoch % self.epochs == 0
         elif isinstance(self.epochs, (list, tuple)):
-            epochs = sorted(set(self.epochs))
+            self.epochs = sorted(set(self.epochs))
             if self.reverse_condition:
-                return epoch not in epochs
+                return epoch not in self.epochs
             else:
-                return epoch in epochs
+                return epoch in self.epochs
         else:
             raise ValueError(
                 "'epochs' should be int/float/Sequence[int]! " f"(got {type(self.epochs)})"
@@ -90,7 +90,7 @@ class _filter_fn_from_arg:
         if isinstance(self.filter_fn, str):
             # lambda function from string
             try:
-                filter_fn = eval(self.filter_fn)
+                self.filter_fn = eval(self.filter_fn)
             except (ValueError, SyntaxError):
                 raise ValueError(
                     "'filter_fn' should be a valid "
