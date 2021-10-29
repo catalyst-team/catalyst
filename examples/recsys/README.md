@@ -1,6 +1,6 @@
 # RecSys Learning Examples
 
-## Requriments
+## Requirements
 
 To run examples you need `catalyst[ml]>=21.10`
 ```bash
