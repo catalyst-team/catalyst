@@ -21,10 +21,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: embeddings key in output dict
         labels_key: labels key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log.
-            [1] - cmc@1
-            [1, 3] - cmc@1 and cmc@3
-            [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+        topk_args: specifies which cmc@K to log
         prefix: metric prefix
         suffix: metric suffix
 
@@ -122,6 +119,16 @@ class CMCScoreCallback(LoaderMetricCallback):
             minimize_valid_metric=False,
             num_epochs=10,
         )
+
+    .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
+        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
