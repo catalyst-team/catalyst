@@ -26,9 +26,7 @@ def collate_fn_valid(batch: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
     for u_items in targets:
         num_test_items = int(test_prop * torch.count_nonzero(u_items))
         u_input_items = u_items.clone()
-        idx = u_items.multinomial(
-            num_samples=num_test_items, replacement=False
-        )
+        idx = u_items.multinomial(num_samples=num_test_items, replacement=False)
         u_input_items[idx] = 0
         inputs.append(u_input_items)
 
@@ -41,12 +39,8 @@ class MultiVAE(nn.Module):
         super().__init__()
         self.p_dims = p_dims
         if q_dims:
-            assert (
-                q_dims[0] == p_dims[-1]
-            ), "In and Out dimensions must equal to each other"
-            assert (
-                q_dims[-1] == p_dims[0]
-            ), "Latent dimension for p- and q- network mismatches."
+            assert (q_dims[0] == p_dims[-1]), "In and Out dimensions must equal to each other"
+            assert (q_dims[-1] == p_dims[0]), "Latent dimension for p- and q- network mismatches."
             self.q_dims = q_dims
         else:
             self.q_dims = p_dims[::-1]
@@ -54,16 +48,10 @@ class MultiVAE(nn.Module):
         # Last dimension of q- network is for mean and variance
         temp_q_dims = self.q_dims[:-1] + [self.q_dims[-1] * 2]
         self.q_layers = nn.ModuleList(
-            [
-                nn.Linear(d_in, d_out)
-                for d_in, d_out in zip(temp_q_dims[:-1], temp_q_dims[1:])
-            ]
+            [nn.Linear(d_in, d_out) for d_in, d_out in zip(temp_q_dims[:-1], temp_q_dims[1:])]
         )
         self.p_layers = nn.ModuleList(
-            [
-                nn.Linear(d_in, d_out)
-                for d_in, d_out in zip(self.p_dims[:-1], self.p_dims[1:])
-            ]
+            [nn.Linear(d_in, d_out) for d_in, d_out in zip(self.p_dims[:-1], self.p_dims[1:])]
         )
 
         self.drop = nn.Dropout(dropout)
@@ -133,20 +121,14 @@ class RecSysRunner(dl.Runner):
         )
 
         loss_ae = -torch.mean(torch.sum(F.log_softmax(x_recon, 1) * x, -1))
-        loss_kld = -0.5 * torch.mean(
-            torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
-        )
+        loss_kld = -0.5 * torch.mean(torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1))
         loss = loss_ae + anneal * loss_kld
 
         self.batch.update({"logits": x_recon, "inputs": x, "targets": x_true})
 
-        self.batch_metrics.update(
-            {"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss}
-        )
+        self.batch_metrics.update({"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss})
         for key in ["loss_ae", "loss_kld", "loss"]:
-            self.meters[key].update(
-                self.batch_metrics[key].item(), self.batch_size
-            )
+            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
 
     def on_loader_end(self, runner):
         for key in ["loss_ae", "loss_kld", "loss"]:
@@ -161,12 +143,8 @@ if __name__ == "__main__":
     train_dataset = MovieLens(root=".", train=True, download=True)
     test_dataset = MovieLens(root=".", train=False, download=True)
     loaders = {
-        "train": DataLoader(
-            train_dataset, batch_size=32, collate_fn=collate_fn_train
-        ),
-        "valid": DataLoader(
-            test_dataset, batch_size=32, collate_fn=collate_fn_valid
-        ),
+        "train": DataLoader(train_dataset, batch_size=32, collate_fn=collate_fn_train),
+        "valid": DataLoader(test_dataset, batch_size=32, collate_fn=collate_fn_valid),
     }
 
     item_num = len(train_dataset[0])
