@@ -38,7 +38,7 @@ class CosFace(nn.Module):
     """
 
     def __init__(  # noqa: D107
-        self, in_features: int, out_features: int, s: float = 64.0, m: float = 0.35,
+        self, in_features: int, out_features: int, s: float = 64.0, m: float = 0.35
     ):
         super(CosFace, self).__init__()
         self.in_features = in_features
@@ -130,7 +130,7 @@ class AdaCos(nn.Module):
     """  # noqa: E501,W505
 
     def __init__(  # noqa: D107
-        self, in_features: int, out_features: int, dynamical_s: bool = True, eps: float = 1e-6,
+        self, in_features: int, out_features: int, dynamical_s: bool = True, eps: float = 1e-6
     ):
         super(AdaCos, self).__init__()
         self.in_features = in_features
@@ -185,7 +185,7 @@ class AdaCos(nn.Module):
             with torch.no_grad():
                 b_avg = (
                     torch.where(
-                        one_hot < 1, torch.exp(self.s * cos_theta), torch.zeros_like(cos_theta),
+                        one_hot < 1, torch.exp(self.s * cos_theta), torch.zeros_like(cos_theta)
                     )
                     .sum(1)
                     .mean()

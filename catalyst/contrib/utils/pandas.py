@@ -232,7 +232,7 @@ def split_dataframe_on_folds(
 
 
 def split_dataframe_on_stratified_folds(
-    dataframe: pd.DataFrame, class_column: str, random_state: int = 42, n_folds: int = 5,
+    dataframe: pd.DataFrame, class_column: str, random_state: int = 42, n_folds: int = 5
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` stratified folds.
 
@@ -256,7 +256,7 @@ def split_dataframe_on_stratified_folds(
 
 
 def split_dataframe_on_column_folds(
-    dataframe: pd.DataFrame, column: str, random_state: int = 42, n_folds: int = 5,
+    dataframe: pd.DataFrame, column: str, random_state: int = 42, n_folds: int = 5
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` folds.
 
@@ -396,7 +396,7 @@ def split_dataframe(
 
     if class_column is not None:
         df_all = split_dataframe_on_stratified_folds(
-            dataframe, class_column=class_column, random_state=seed, n_folds=n_folds,
+            dataframe, class_column=class_column, random_state=seed, n_folds=n_folds
         )
     else:
         df_all = split_dataframe_on_folds(dataframe, random_state=seed, n_folds=n_folds)

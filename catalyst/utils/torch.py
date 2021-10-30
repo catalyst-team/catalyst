@@ -1,9 +1,10 @@
-from typing import Any, Callable, Dict, Iterable, List, Mapping, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Tuple, TYPE_CHECKING, Union
 import collections
 import os
 import re
 
 import numpy as np
+
 import torch
 from torch import nn, Tensor
 import torch.backends
@@ -25,8 +26,11 @@ from catalyst.utils.misc import maybe_recursive_call, merge_dicts
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine
 
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
+
 # TODO: move to global registry with activation functions
-ACTIVATIONS = {  # noqa: WPS407
+ACTIVATIONS = {
     None: "sigmoid",
     nn.Sigmoid: "sigmoid",
     nn.Tanh: "tanh",
@@ -172,15 +176,12 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 def get_device() -> torch.device:
     """Simple returning the best available device (TPU > GPU > CPU)."""
-    is_available_gpu = torch.cuda.is_available()
-    device = "cpu"
+    device = torch.device("cpu")
     if SETTINGS.xla_required:
-        import torch_xla.core.xla_model as xm
-
         device = xm.xla_device()
-    elif is_available_gpu:
-        device = "cuda"
-    return torch.device(device)
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    return device
 
 
 def get_available_engine(
@@ -225,8 +226,8 @@ def get_available_engine(
         assert not amp, "Could not use both apex and amp engines"
         from catalyst.engines.apex import (
             APEXEngine,
-            DataParallelApexEngine,
-            DistributedDataParallelApexEngine,
+            DataParallelAPEXEngine,
+            DistributedDataParallelAPEXEngine,
         )
 
     is_multiple_gpus = NUM_CUDA_DEVICES > 1
@@ -237,14 +238,14 @@ def get_available_engine(
             if amp:
                 return DistributedDataParallelAMPEngine()
             elif apex:
-                return DistributedDataParallelApexEngine()
+                return DistributedDataParallelAPEXEngine()
             else:
                 return DistributedDataParallelEngine()
         else:
             if amp:
                 return DataParallelAMPEngine()
             elif apex:
-                return DataParallelApexEngine()
+                return DataParallelAPEXEngine()
             else:
                 return DataParallelEngine()
     else:
@@ -294,7 +295,9 @@ def get_available_gpus():
     return result
 
 
-def any2device(value, device: Device):
+def any2device(
+    value: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module], device: Device
+) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
     """
     Move tensor, list of tensors, list of list of tensors,
     dict of tensors, tuple of tensors to target device.
@@ -554,7 +557,7 @@ def pack_checkpoint(
         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2save is None:
             continue
@@ -593,11 +596,11 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
+            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"]
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
     ):
         if dict2load is None:
             continue
@@ -635,6 +638,19 @@ def load_checkpoint(path: str):
     return checkpoint
 
 
+def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
+    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation).
+
+    Args:
+        target: nn.Module to update
+        source: nn.Module for updating
+        tau: smoothing parametr
+
+    """
+    for target_param, param in zip(target.parameters(), source.parameters()):
+        target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -658,4 +674,5 @@ __all__ = [
     "unpack_checkpoint",
     "save_checkpoint",
     "load_checkpoint",
+    "soft_update",
 ]

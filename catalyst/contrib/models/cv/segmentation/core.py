@@ -79,7 +79,7 @@ class UnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict,
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict
         )
 
     def _get_components(
@@ -120,7 +120,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict,
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict
         )
 
     def _get_components(

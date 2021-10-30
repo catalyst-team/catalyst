@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import numpy as np
+
 import torch
 
 
@@ -77,7 +78,7 @@ def binary_auc(
             tpr[i] = tpr[i - 1]
             fpr[i] = fpr[i - 1] + 1
 
-    tpr /= targets.sum() * 1.0  # noqa: WPS345
+    tpr /= targets.sum() * 1.0
     fpr /= (targets - 1.0).sum() * -1.0
 
     # calculating area under curve using trapezoidal rule

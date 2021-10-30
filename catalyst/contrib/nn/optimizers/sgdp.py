@@ -153,7 +153,7 @@ class SGDP(Optimizer):
                 wd_ratio = 1
                 if len(p.shape) > 1:
                     d_p, wd_ratio = self._projection(
-                        p, grad, d_p, group["delta"], group["wd_ratio"], group["eps"],
+                        p, grad, d_p, group["delta"], group["wd_ratio"], group["eps"]
                     )
 
                 # Weight decay

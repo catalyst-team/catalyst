@@ -9,6 +9,7 @@ from catalyst.contrib.nn.modules.common import (
     GaussianNoise,
     Lambda,
     Normalize,
+    ResidualBlock,
 )
 from catalyst.contrib.nn.modules.cosface import CosFace, AdaCos
 from catalyst.contrib.nn.modules.curricularface import CurricularFace

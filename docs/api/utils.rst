@@ -42,6 +42,13 @@ Misc
     :undoc-members:
     :show-inheritance:
 
+MixUp
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.mixup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Numpy
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.numpy
@@ -130,6 +137,13 @@ Pandas
 Parallel
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.parallel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Report
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.report
     :members:
     :undoc-members:
     :show-inheritance:

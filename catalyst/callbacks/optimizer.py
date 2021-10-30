@@ -2,7 +2,7 @@ from typing import Callable, Dict, TYPE_CHECKING, Union
 from functools import partial
 import logging
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import CallbackNode, CallbackOrder, IOptimizerCallback
 from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
 from catalyst.utils import get_optimizer_momentum_list
@@ -23,12 +23,6 @@ def zero_grad(optimizer: Optimizer) -> None:
     for group in optimizer.param_groups:
         for p in group["params"]:
             p.grad = None
-
-
-class IOptimizerCallback(Callback):
-    """Optimizer callback interface, abstraction over optimizer step."""
-
-    pass
 
 
 class OptimizerCallback(IOptimizerCallback):
@@ -133,6 +127,8 @@ class OptimizerCallback(IOptimizerCallback):
             self.grad_clip_fn = REGISTRY.get(grad_clip_fn)
         else:
             self.grad_clip_fn = grad_clip_fn
+        if grad_clip_params is not None:
+            self.grad_clip_fn = partial(self.grad_clip_fn, **grad_clip_params)
 
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
@@ -149,9 +145,6 @@ class OptimizerCallback(IOptimizerCallback):
         else:
             self._prefix_lr = "lr"
             self._prefix_momentum = "momentum"
-
-        if grad_clip_params is not None:
-            self.grad_clip_fn = partial(self.grad_clip_fn, **grad_clip_params)
 
     def _get_lr_momentum_stats(self) -> Dict:
         lr_list = [param_group["lr"] for param_group in self.optimizer.param_groups]

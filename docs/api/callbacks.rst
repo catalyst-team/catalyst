@@ -99,6 +99,13 @@ Misc – TqdmCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+MixUp Callback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.mixup.MixupCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
 OnnxCallback
 ~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.onnx.OnnxCallback
@@ -130,6 +137,13 @@ PeriodicLoaderCallback
 PruningCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.pruning.PruningCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+ProfilerCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.profiler.ProfilerCallback
     :members:
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
@@ -261,6 +275,13 @@ RecSys – NDCGCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+Regression – R2SquaredCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.r2_squared.R2SquaredCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
 Segmentation – DiceCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.segmentation.DiceCallback
@@ -278,6 +299,27 @@ Segmentation – IOUCallback
 Segmentation – TrevskyCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.segmentation.TrevskyCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+SklearnBatchCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+SklearnLoaderCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+SklearnModelCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.sklearn_model.SklearnModelCallback
     :members:
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:

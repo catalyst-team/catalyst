@@ -67,9 +67,7 @@ class MNIST(Dataset):
         "9 - nine",
     ]
 
-    def __init__(
-        self, root, train=True, transform=None, target_transform=None, download=False,
-    ):
+    def __init__(self, root, train=True, transform=None, target_transform=None, download=False):
         """
         Args:
             root: Root directory of dataset where
@@ -84,8 +82,11 @@ class MNIST(Dataset):
                 takes in an image and returns a transformed version.
             target_transform (callable, optional): A function/transform
                 that takes in the target and transforms it.
+
+        Raises:
+            RuntimeError: If ``download is False`` and the dataset not found.
         """
-        if isinstance(root, torch._six.string_classes):  # noqa: WPS437
+        if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
         self.root = root
         self.train = train  # training set or test set
@@ -217,6 +218,9 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
 
     def __init__(self, **kwargs):
         """
+        Args:
+            **kwargs: Keyword-arguments passed to ``super().__init__`` method.
+
         Raises:
             ValueError: if train argument is False (MnistMLDataset
                 should be used only for training)
@@ -262,7 +266,7 @@ class MnistQGDataset(QueryGalleryDataset):
     ]
 
     def __init__(
-        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2,
+        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2
     ) -> None:
         """
         Args:

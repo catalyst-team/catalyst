@@ -1,6 +1,6 @@
 # flake8: noqa
 # import argparse
-# import pickle  # noqa: S403
+# import pickle
 #
 # import nmslib
 # import numpy as np

@@ -8,7 +8,7 @@ from catalyst.utils.torch import get_nn_from_ddp_module
 
 
 def quantize_model(
-    model: Model, qconfig_spec: Dict = None, dtype: Union[str, Optional[torch.dtype]] = "qint8",
+    model: Model, qconfig_spec: Dict = None, dtype: Union[str, Optional[torch.dtype]] = "qint8"
 ) -> Model:
     """Function to quantize model weights.
 
@@ -26,12 +26,12 @@ def quantize_model(
         type_mapping = {"qint8": torch.qint8, "quint8": torch.quint8}
     try:
         quantized_model = quantization.quantize_dynamic(
-            nn_model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
+            nn_model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype]
         )
     except RuntimeError:
         torch.backends.quantized.engine = "qnnpack"
         quantized_model = quantization.quantize_dynamic(
-            nn_model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
+            nn_model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype]
         )
 
     return quantized_model

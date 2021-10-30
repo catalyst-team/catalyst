@@ -37,19 +37,19 @@ ICallbackLoaderMetric
     :exclude-members: __init__
     :show-inheritance:
 
-AccumulationMetric
+General Metrics
+----------------------
+
+AccumulativeMetric
 ~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._metric.AccumulationMetric
+.. autoclass:: catalyst.metrics._accumulative.AccumulativeMetric
     :members:
     :exclude-members: __init__
     :show-inheritance:
 
-General Metrics
-----------------------
-
-AdditiveValueMetric
+AdditiveMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._additive.AdditiveValueMetric
+.. autoclass:: catalyst.metrics._additive.AdditiveMetric
     :members:
     :exclude-members: __init__
     :show-inheritance:
@@ -68,6 +68,19 @@ FunctionalBatchMetric
     :undoc-members:
     :show-inheritance:
 
+FunctionalLoaderMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._functional_metric.FunctionalLoaderMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+TopKMetric
+~~~~~~~~~~
+.. autoclass:: catalyst.metrics._topk_metric.TopKMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
 
 Runner Metrics
 ----------------------
@@ -152,6 +165,13 @@ RecSys – MRRMetric
 RecSys – NDCGMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._ndcg.NDCGMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Regression – R2Squared
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._r2_squared.R2Squared
     :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
@@ -261,6 +281,13 @@ NDCG
 Precision
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.metrics.functional._precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+R2Squared
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.metrics.functional._r2_squared
     :members:
     :undoc-members:
     :show-inheritance:

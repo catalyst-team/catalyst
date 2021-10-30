@@ -20,7 +20,199 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+-
+
+
+## [21.10] - 2021-10-30
+
+### Added
+
+- RSquareLoss ([#1313](https://github.com/catalyst-team/catalyst/pull/1313))
+- Self-Supervised example updates: ([#1305](https://github.com/catalyst-team/catalyst/pull/1305)), ([#1322](https://github.com/catalyst-team/catalyst/pull/1322)), ([#1325](https://github.com/catalyst-team/catalyst/pull/1325)), ([#1335](https://github.com/catalyst-team/catalyst/pull/1335))
+- Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
+- YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
+- `TopKMetric` asbtraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+
+### Changed
+
+- simlified readme ([#1312](https://github.com/catalyst-team/catalyst/pull/1312))
+- improved DDP tutorial ([#1327](https://github.com/catalyst-team/catalyst/pull/1327))
+- `CMCMetric` renamed from `<prefix>cmc<suffix><k>` to `<prefix>cmc<k><suffix>` ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+
+### Removed
+
+-
+
+### Fixed
+
+- Zero seed error ([#1329](https://github.com/catalyst-team/catalyst/pull/1329))
+- updated codestyle issues ([#1331](https://github.com/catalyst-team/catalyst/pull/1331))
+- TopK metrics: ([#1330](https://github.com/catalyst-team/catalyst/pull/1330)), ([#1334](https://github.com/catalyst-team/catalyst/pull/1334)), ([#1339](https://github.com/catalyst-team/catalyst/pull/1339))
+- `--expdir` param for `catalyst-dl run` ([#1338](https://github.com/catalyst-team/catalyst/pull/1338))
+- ControlFlowCallback for distributed setup ([#1341](https://github.com/catalyst-team/catalyst/pull/1341))
+
+
+## [21.09] - 2021-09-30
+
+### Added
+
+- CometLogger support ([#1283](https://github.com/catalyst-team/catalyst/pull/1283))
+- CometLogger examples ([#1287](https://github.com/catalyst-team/catalyst/pull/1287))
+- XLA docs ([#1288](https://github.com/catalyst-team/catalyst/pull/1288))
+- Contarstive loss functions: `NTXentLoss` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278)), `SupervisedContrastiveLoss` ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
+- Self supervised learning: `ISelfSupervisedRunner`, `SelfSupervisedConfigRunner`, `SelfSupervisedRunner`, `SelfSupervisedDatasetWrapper` ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- SimCLR example ([#1278](https://github.com/catalyst-team/catalyst/pull/1278))
+- Superivised Contrastive example ([#1293](https://github.com/catalyst-team/catalyst/pull/1293))
+- extra warnings for runner-callbacks interaction ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `CategoricalRegressionLoss` and `QuantileRegressionLoss` to the `contrib` ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- R2 score metric ([#1274](https://github.com/catalyst-team/catalyst/pull/1274))
+
+
+### Changed
+- Improved `WandbLogger` to support artifacts and fix logging steps ([#1309](https://github.com/catalyst-team/catalyst/pull/1309))
+- full `Runner` cleanup, with callbacks and loaders destruction, moved to `PipelineParallelFairScaleEngine` only ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- `HuberLoss` renamed to `HuberLossV0` for the PyTorch compatibility ([#1295](https://github.com/catalyst-team/catalyst/pull/1295))
+- codestyle update ([#1298](https://github.com/catalyst-team/catalyst/pull/1298))
+- BalanceBatchSampler - deprecated ([#1303](https://github.com/catalyst-team/catalyst/pull/1303))
+
+### Removed
+
+-
+
+### Fixed
+
+- CI/CD ([#1292](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1299](https://github.com/catalyst-team/catalyst/pull/1299)), ([#1304](https://github.com/catalyst-team/catalyst/pull/1304)), ([#1306](https://github.com/catalyst-team/catalyst/pull/1306))
+- Optuna configs ([#1296](https://github.com/catalyst-team/catalyst/pull/1292)), ([#1296](https://github.com/catalyst-team/catalyst/pull/1299))
+
+
+## [21.08] - 2021-08-31
+
+### Added
+
+- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `RocStarLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269), [#1282](https://github.com/catalyst-team/catalyst/pull/1282))
+- object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
+- SklearnModelCallback ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- Barlow Twins example ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - with updated [example](./examples/engines)
+- native `sync_bn` support for all available engines ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - Torch, AMP, Apex, FairScale
+
+### Changed
+
+- Registry moved to `hydra-slayer` ([#1264)](https://github.com/catalyst-team/catalyst/pull/1264))
+- ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - batch metrics sync removed from ddp-runs to speedup training process
+  - `AccumulationMetric` renamed to `AccumulativeMetric`
+    - moved from `catalyst.metrics._metric` to `catalyst.metrics._accumulative`
+    - `accululative_fields` renamed to `keys`
+
+
+### Removed
+
+-
+
+### Fixed
+
+- PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
+- matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
+- sample counter for the loader ([#1285](https://github.com/catalyst-team/catalyst/pull/1285))
+
+
+## [21.07] - 2021-07-29
+
+### Added
+
+- added `pre-commit` hook to run codestyle checker on commit ([#1257](https://github.com/catalyst-team/catalyst/pull/1257))
+- `on publish` github action for docker and docs added ([#1260](https://github.com/catalyst-team/catalyst/pull/1260))
+- MixupCallback and `utils.mixup_batch` ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
+- Barlow twins loss ([#1259](https://github.com/catalyst-team/catalyst/pull/1259))
+- BatchBalanceClassSampler ([#1262](https://github.com/catalyst-team/catalyst/pull/1262))
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+- make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
+- Bump neptune-client from 0.9.5 to 0.9.8 in `requirements-neptune.txt` ([#1251](https://github.com/catalyst-team/catalyst/pull/1251))
+- automatic merge for master (with [Mergify](https://mergify.io/)) fixed ([#1250](https://github.com/catalyst-team/catalyst/pull/1250))
+- Evaluate loader custom model bug was fixed ([#1254](https://github.com/catalyst-team/catalyst/pull/1254))
+- `BatchPrefetchLoaderWrapper` issue with batch-based PyTorch samplers ([#1262](https://github.com/catalyst-team/catalyst/pull/1262))
+- Adapted MlflowLogger for new config hierarchy ([#1263](https://github.com/catalyst-team/catalyst/pull/1263))
+
+
+## [21.06] - 2021-06-29
+
+### Added
+
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - FairScale support
+  - DeepSpeed support
+  - `utils.ddp_sync_run` function for synchronous ddp run
+  - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
+  - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
+- `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
+- transform from params support for config API added ([#1236](https://github.com/catalyst-team/catalyst/pull/1236))
+- samplers from params support for config API added ([#1240](https://github.com/catalyst-team/catalyst/pull/1240))
+- recursive registry.get_from_params added ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
+- albumentations integration ([#1238](https://github.com/catalyst-team/catalyst/pull/1238))
+- Profiler callback ([#1226](https://github.com/catalyst-team/catalyst/pull/1226))
+
+### Changed
+
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - loaders creation now wrapper with `utils.ddp_sync_run` for `utils.ddp_sync_run` data preparation
+  - runner support stage cleanup: loaders and callbacks will be deleted on the stage end
+  - Apex-based engines now support both APEXEngine and ApexEngine registry names
+
+### Removed
+
+-
+
+### Fixed
+
+- multiprocessing in minimal tests hotfix ([#1232](https://github.com/catalyst-team/catalyst/pull/1232))
+- Tracing callback hotfix ([#1234](https://github.com/catalyst-team/catalyst/pull/1234))
+- Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - Hydra hotfix due to `1.1.0` version changes
+- `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
+
+
+## [21.05] - 2021-05-31
+
+### Added
+
+- Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
+- customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
+- FAQ docs: multiple input and output keys, engine tutorial ([#1202](https://github.com/catalyst-team/catalyst/pull/1202))
+- minimal Config API example ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
+- Distributed RL example (Catalyst.RL 2.0 concepts) ([#1224](https://github.com/catalyst-team/catalyst/pull/1224))
+- SklearnCallback as integration of sklearn metrics ([#1198](https://github.com/catalyst-team/catalyst/pull/1198))
+
+### Changed
+
+- tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
+- pipeline tests moved to `tests/pipelines` ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
+- updated NeptuneLogger docstrings ([#1223](https://github.com/catalyst-team/catalyst/pull/1223))
+
+### Removed
+
+-
+
+### Fixed
+
 - customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
+- transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
+- change layerwise to layerwise_params ([#1210](https://github.com/catalyst-team/catalyst/pull/1210))
+- add torch metrics support ([#1195](https://github.com/catalyst-team/catalyst/issues/1195))
+- add Config API support for BatchTransformCallback ([#1209](https://github.com/catalyst-team/catalyst/issues/1209))
 
 
 ## [21.04.2] - 2021-04-30

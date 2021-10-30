@@ -2,6 +2,7 @@ from typing import Dict
 import os
 
 import numpy as np
+
 from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
@@ -122,7 +123,7 @@ class TensorboardLogger(ILogger):
         elif scope == "loader":
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch",
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch"
             )
         elif scope == "epoch":
             # @TODO: remove naming magic
@@ -170,10 +171,11 @@ class TensorboardLogger(ILogger):
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
-        for logger in self.loggers.values():
-            logger.close()
+        if scope is None or scope == "experiment":
+            for logger in self.loggers.values():
+                logger.close()
 
 
 __all__ = ["TensorboardLogger"]

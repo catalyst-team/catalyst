@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from pathlib import Path
 
 import numpy as np
+
 from torch.utils.data import Dataset, Sampler
 
 from catalyst.utils.misc import merge_dicts
@@ -46,7 +47,7 @@ class ListDataset(Dataset):
     """General purpose dataset class with several data sources `list_data`."""
 
     def __init__(
-        self, list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None,
+        self, list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None
     ):
         """
         Args:

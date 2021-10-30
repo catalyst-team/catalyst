@@ -42,6 +42,8 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       batch_size: 1  # KEYWORD, размер батча для всех стейджей
       num_workers: 1  # KEYWORD, количество параллельных процессов для DataLoader
       drop_last: False  # KEYWORD, параметр для DataLoader (по умолчанию False)
+      loaders_params:  # KEYWORD, словарь с дополнительными параметры для DataLoader. Аналогичным образом можно передавать параметры в Sampler через словарь samplers_params
+        persistent_workers: True # KEYWORD, пример параметра. Полный список допустимых параметров можно найти в документации к torch.utils.data.DataLoader
       per_gpu_scaling: False  # KEYWORD, если True, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт (для distributed увеличивает только батчсайз)
 
       # kwargs для `runner.get_datasets(...)` в этом стейдже
@@ -56,7 +58,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
 
     optimizer: # REQUIRED KEYWORD, параметры для оптимизатора
       _key_value: False  # KEYWORD, если True, то оптимизаторов может быть несколько и тогда их нужно обернуть еще в key-value
-      layerwise: # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
+      layerwise_params: # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
         conv1.*: # регулярное выражение с именем слоя
           lr: 0.001
           weight_decay: 0.0003

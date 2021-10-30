@@ -6,6 +6,7 @@ from random import sample
 from sys import maxsize
 
 import numpy as np
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
@@ -64,7 +65,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
     The batches must contain at least 2 samples for
     each class and at least 2 different classes,
     such behaviour can be garantee via using
-    catalyst.data.sampler.BalanceBatchSampler
+    catalyst.data.sampler.BatchBalanceClassSampler
 
     But you are not limited to using it in any other way.
     """
@@ -137,7 +138,8 @@ class AllTripletsSampler(InBatchTripletsSampler):
             labels: labels of the samples in the batch
             *_: note, that we ignore features argument
 
-        Returns: indices of triplets
+        Returns:
+            indices of triplets
         """
         num_labels = len(labels)
 

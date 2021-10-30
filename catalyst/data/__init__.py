@@ -8,6 +8,7 @@ from catalyst.data.dataset import (
     PathsDataset,
     MetricLearningTrainDataset,
     QueryGalleryDataset,
+    SelfSupervisedDatasetWrapper,
 )
 from catalyst.data.loader import (
     ILoaderWrapper,
@@ -15,8 +16,9 @@ from catalyst.data.loader import (
     BatchPrefetchLoaderWrapper,
 )
 from catalyst.data.sampler import (
-    BalanceClassSampler,
     BalanceBatchSampler,
+    BalanceClassSampler,
+    BatchBalanceClassSampler,
     DistributedSamplerWrapper,
     DynamicLenBatchSampler,
     DynamicBalanceClassSampler,
@@ -29,5 +31,7 @@ from catalyst.data.sampler_inbatch import (
     HardTripletsSampler,
     HardClusterSampler,
 )
+
+from catalyst.data.transforms import Compose, Normalize, ToTensor, to_tensor, normalize
 
 from catalyst.contrib.data import *

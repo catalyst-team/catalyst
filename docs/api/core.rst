@@ -21,7 +21,7 @@ Runner
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.runner.RunnerException
+.. autoclass:: catalyst.core.runner.RunnerError
     :members:
     :undoc-members:
     :show-inheritance:

@@ -49,7 +49,7 @@ class ISupervisedRunner(IRunner):
         from torch import nn, optim
         from torch.utils.data import DataLoader
         from catalyst import dl, utils
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -146,7 +146,7 @@ class ISupervisedRunner(IRunner):
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = {key: batch[key] for key in self._input_key}  # noqa: WPS125
+        input = {key: batch[key] for key in self._input_key}
         output = self.model(**input, **kwargs)
         return output
 

@@ -1,6 +1,8 @@
-from typing import Any, Dict, Mapping, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 import copy
 import os
+
+import numpy as np
 
 import torch
 import torch.distributed as dist
@@ -8,8 +10,16 @@ import torch.nn as nn
 from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.engine import IEngine
-from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import mean_reduce, sum_reduce
+from catalyst.typing import (
+    Device,
+    Model,
+    Optimizer,
+    RunnerCriterion,
+    RunnerModel,
+    RunnerOptimizer,
+    RunnerScheduler,
+)
+from catalyst.utils.distributed import ddp_reduce
 from catalyst.utils.torch import (
     any2device,
     load_checkpoint,
@@ -68,10 +78,15 @@ class DeviceEngine(IEngine):
     def __init__(self, device: str = None):
         """Init."""
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.device = device
+        self._device = device
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}')"
+        return f"{self.__class__.__name__}(device='{self._device}')"
+
+    @property
+    def device(self) -> Device:
+        """Pytorch device."""
+        return self._device
 
     @property
     def rank(self) -> int:
@@ -83,18 +98,27 @@ class DeviceEngine(IEngine):
         """Process world size for distributed training."""
         return 1
 
+    @property
+    def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
+        return None
+
     def sync_device(
-        self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
-    ) -> Any:
+        self, tensor_or_module: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module]
+    ) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
         """Moves ``tensor_or_module`` to Engine's deivce."""
         return any2device(tensor_or_module, device=self.device)
 
-    def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
+    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode."""
         return tensor
 
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
+        return metrics
+
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         # model
@@ -111,20 +135,19 @@ class DeviceEngine(IEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
-        # remove backend
         pass
 
-    def zero_grad(self, loss, model, optimizer) -> None:
+    def zero_grad(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""
         model.zero_grad()
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         loss.backward()
 
-    def optimizer_step(self, loss, model, optimizer) -> None:
+    def optimizer_step(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
 
@@ -257,7 +280,7 @@ class DataParallelEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device_count={self.device_count})"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -289,6 +312,9 @@ class DistributedDataParallelEngine(DeviceEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
@@ -344,12 +370,17 @@ class DistributedDataParallelEngine(DeviceEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
+
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
     ):
@@ -357,8 +388,9 @@ class DistributedDataParallelEngine(DeviceEngine):
         super().__init__()
         self.address = address or "localhost"
         self.port = port or 12345
+        self._sync_bn = sync_bn
         self._rank = 0
-        self.device = None
+        self._device = None
 
         if ddp_kwargs is None:
             ddp_kwargs = {}
@@ -373,9 +405,8 @@ class DistributedDataParallelEngine(DeviceEngine):
         if "world_size" not in self.process_group_kwargs:
             self.process_group_kwargs["world_size"] = torch.cuda.device_count()
 
-        self._world_size = (
-            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
-        )
+        self._backend = self.process_group_kwargs["backend"]
+        self._world_size = self.process_group_kwargs["world_size"]
 
     def __repr__(self):  # noqa: D105
         return (
@@ -396,54 +427,67 @@ class DistributedDataParallelEngine(DeviceEngine):
         return self._world_size
 
     @property
-    def is_master_process(self) -> bool:
-        """Checks if a process is master process.
-        Should be implemented only for DDP setup in other cases should always return True.
+    def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
+        return self._backend
+
+    def barrier(self) -> None:
+        """
+        Synchronizes all processes.
+
+        This collective blocks processes until the all runs enter the function.
+        """
+        dist.barrier()
+
+    def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
 
         Returns:
-            `True` if current process is a master process, otherwise `False`.
+            wrapped function.
         """
-        return self._rank == 0
-
-    @property
-    def is_worker_process(self) -> bool:
-        """Checks if a process is worker process.
-        Should be implemented only for DDP setup in other cases should always return False.
-
-        Returns:
-            `True` if current process is a worker process, otherwise `False`.
-        """
-        return self._rank > 0
+        return torch.multiprocessing.spawn(
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True
+        )
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
         Args:
             rank: process rank. Default is `-1`.
-            world_size: number of devices in netwok to expect for train.
-                Default is `1`.
+            world_size: number of devices in netwok to expect for train. Default is `1`.
         """
         self._rank = rank
         self._world_size = world_size
+        torch.cuda.set_device(int(self._rank))
+        self._device = f"cuda:{int(self._rank)}"
 
         self.process_group_kwargs["rank"] = rank
         self.process_group_kwargs["world_size"] = world_size
+
+        os.environ["RANK"] = str(self._rank)
+        os.environ["LOCAL_RANK"] = str(self._rank)
+        os.environ["WORLD_SIZE"] = str(self._world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-
         dist.init_process_group(**self.process_group_kwargs)
-
-        torch.cuda.set_device(int(self._rank))
-        self.device = f"cuda:{int(self._rank)}"
-        if "device_ids" not in self.ddp_kwargs:
-            self.ddp_kwargs["device_ids"] = [self.device]
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
+        dist.barrier()
         dist.destroy_process_group()
 
-    # @TODO: add all_gather
-    def sync_tensor(self, tensor: torch.Tensor, mode: str):
+    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
@@ -454,26 +498,34 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         Returns:
             torch.Tensor with synchronized values.
-
-        Raises:
-            ValueError: if mode is out of ``sum`` or ``mean``
         """
-        if mode not in {"sum", "mean"}:
-            raise ValueError(f"Unknown sync_type '{mode}'")
-        if mode == "sum":
-            return sum_reduce(tensor)
-        else:
-            return mean_reduce(tensor, self.world_size)
+        return ddp_reduce(tensor, mode, self.world_size)
+
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
+        metrics = {
+            k: self.sync_tensor(torch.tensor(v, device=self.device), "mean")
+            for k, v in metrics.items()
+        }
+        return metrics
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
         """Inits the runs components."""
+        if "device_ids" not in self.ddp_kwargs:
+            self.ddp_kwargs["device_ids"] = [self._device]
+
+        # model
         model = model_fn()
         model = self.sync_device(model)
         if isinstance(model, nn.Module):
+            if self._sync_bn:
+                model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
             model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
+            if self._sync_bn:
+                model = {k: nn.SyncBatchNorm.convert_sync_batchnorm(v) for k, v in model.items()}
             model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
         else:
             raise ValueError("Model should be ``nn.Module`` or ``dict``")
@@ -488,23 +540,6 @@ class DistributedDataParallelEngine(DeviceEngine):
         scheduler = self.sync_device(scheduler)
         dist.barrier()
         return model, criterion, optimizer, scheduler
-
-    def deinit_components(self):
-        """Deinits the runs components."""
-        dist.barrier()
-        self.cleanup_process()
-
-    def zero_grad(self, loss, model, optimizer) -> None:
-        """Abstraction over ``model.zero_grad()`` step."""
-        model.zero_grad()
-
-    def backward_loss(self, loss, model, optimizer) -> None:
-        """Abstraction over ``loss.backward()`` step."""
-        loss.backward()
-
-    def optimizer_step(self, loss, model, optimizer) -> None:
-        """Abstraction over ``optimizer.step()`` step."""
-        optimizer.step()
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]

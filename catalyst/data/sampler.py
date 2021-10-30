@@ -2,9 +2,10 @@ from typing import Iterator, List, Optional, Union
 from collections import Counter
 import logging
 from operator import itemgetter
-from random import choices, sample
+import random
 
 import numpy as np
+
 import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
@@ -13,66 +14,14 @@ from catalyst.data.dataset.torch import DatasetFromSampler
 from catalyst.utils.misc import find_value_ids
 
 
-class BalanceClassSampler(Sampler):
-    """Allows you to create stratified sample on unbalanced classes.
-
-    Args:
-        labels: list of class label for each elem in the dataset
-        mode: Strategy to balance classes.
-            Must be one of [downsampling, upsampling]
-    """
-
-    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
-        """Sampler initialisation."""
-        super().__init__(labels)
-
-        labels = np.array(labels)
-        samples_per_class = {label: (labels == label).sum() for label in set(labels)}
-
-        self.lbl2idx = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
-        }
-
-        if isinstance(mode, str):
-            assert mode in ["downsampling", "upsampling"]
-
-        if isinstance(mode, int) or mode == "upsampling":
-            samples_per_class = mode if isinstance(mode, int) else max(samples_per_class.values())
-        else:
-            samples_per_class = min(samples_per_class.values())
-
-        self.labels = labels
-        self.samples_per_class = samples_per_class
-        self.length = self.samples_per_class * len(set(labels))
-
-    def __iter__(self) -> Iterator[int]:
-        """
-        Yields:
-            indices of stratified sample
-        """
-        indices = []
-        for key in sorted(self.lbl2idx):
-            replace_flag = self.samples_per_class > len(self.lbl2idx[key])
-            indices += np.random.choice(
-                self.lbl2idx[key], self.samples_per_class, replace=replace_flag
-            ).tolist()
-        assert len(indices) == self.length
-        np.random.shuffle(indices)
-
-        return iter(indices)
-
-    def __len__(self) -> int:
-        """
-        Returns:
-             length of result sample
-        """
-        return self.length
-
-
 class BalanceBatchSampler(Sampler):
     """
     This kind of sampler can be used for both metric learning and
     classification task.
+
+    .. warning::
+        Deprecated realization, used for backward compatibility.
+        Please use `BatchBalanceClassSampler` instead.
 
     Sampler with the given strategy for the C unique classes dataset:
     - Selection P of C classes for the 1st batch
@@ -121,7 +70,7 @@ class BalanceBatchSampler(Sampler):
             n > 1 for n in Counter(labels).values()
         ), "Each class shoud contain at least 2 instances to fit (1)"
 
-        self._labels = labels
+        self._labels = np.array(labels)
         self._p = p
         self._k = k
 
@@ -165,22 +114,258 @@ class BalanceBatchSampler(Sampler):
         """
         inds = []
 
-        for cls_id in sample(self._classes, self._num_epoch_classes):
+        for cls_id in random.sample(self._classes, self._num_epoch_classes):
             all_cls_inds = find_value_ids(self._labels, cls_id)
 
             # we've checked in __init__ that this value must be > 1
             num_samples_exists = len(all_cls_inds)
 
             if num_samples_exists < self._k:
-                selected_inds = sample(all_cls_inds, k=num_samples_exists) + choices(
+                selected_inds = random.sample(all_cls_inds, k=num_samples_exists) + random.choices(
                     all_cls_inds, k=self._k - num_samples_exists
                 )
             else:
-                selected_inds = sample(all_cls_inds, k=self._k)
+                selected_inds = random.sample(all_cls_inds, k=self._k)
 
             inds.extend(selected_inds)
 
         return iter(inds)
+
+
+class BalanceClassSampler(Sampler):
+    """Allows you to create stratified sample on unbalanced classes.
+
+    Args:
+        labels: list of class label for each elem in the dataset
+        mode: Strategy to balance classes.
+            Must be one of [downsampling, upsampling]
+
+    Python API examples:
+
+    .. code-block:: python
+
+        import os
+        from torch import nn, optim
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor, BalanceClassSampler
+        from catalyst.contrib.datasets import MNIST
+
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_labels = train_data.targets.cpu().numpy().tolist()
+        train_sampler = BalanceClassSampler(train_labels, mode=5000)
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+
+        loaders = {
+            "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
+        }
+
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+        runner = dl.SupervisedRunner()
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            logdir="./logs",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+    """
+
+    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
+        """Sampler initialisation."""
+        super().__init__(labels)
+
+        labels = np.array(labels)
+        samples_per_class = {label: (labels == label).sum() for label in set(labels)}
+
+        self.lbl2idx = {
+            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+        }
+
+        if isinstance(mode, str):
+            assert mode in ["downsampling", "upsampling"]
+
+        if isinstance(mode, int) or mode == "upsampling":
+            samples_per_class = mode if isinstance(mode, int) else max(samples_per_class.values())
+        else:
+            samples_per_class = min(samples_per_class.values())
+
+        self.labels = labels
+        self.samples_per_class = samples_per_class
+        self.length = self.samples_per_class * len(set(labels))
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Returns:
+            iterator of indices of stratified sample
+        """
+        indices = []
+        for key in sorted(self.lbl2idx):
+            replace_flag = self.samples_per_class > len(self.lbl2idx[key])
+            indices += np.random.choice(
+                self.lbl2idx[key], self.samples_per_class, replace=replace_flag
+            ).tolist()
+        assert len(indices) == self.length
+        np.random.shuffle(indices)
+
+        return iter(indices)
+
+    def __len__(self) -> int:
+        """
+        Returns:
+             length of result sample
+        """
+        return self.length
+
+
+class BatchBalanceClassSampler(Sampler):
+    """
+    This kind of sampler can be used for both metric learning and classification task.
+
+    BatchSampler with the given strategy for the C unique classes dataset:
+    - Selection `num_classes` of C classes for each batch
+    - Selection `num_samples` instances for each class in the batch
+    The epoch ends after `num_batches`.
+    So, the batch sise is `num_classes` * `num_samples`.
+
+    One of the purposes of this sampler is to be used for
+    forming triplets and pos/neg pairs inside the batch.
+    To guarante existance of these pairs in the batch,
+    `num_classes` and `num_samples` should be > 1. (1)
+
+    This type of sampling can be found in the classical paper of Person Re-Id,
+    where P (`num_classes`) equals 32 and K (`num_samples`) equals 4:
+    `In Defense of the Triplet Loss for Person Re-Identification`_.
+
+    Args:
+        labels: list of classes labeles for each elem in the dataset
+        num_classes: number of classes in a batch, should be > 1
+        num_samples: number of instances of each class in a batch, should be > 1
+        num_batches: number of batches in epoch
+            (default = len(labels) // (num_classes * num_samples))
+
+    .. _In Defense of the Triplet Loss for Person Re-Identification:
+        https://arxiv.org/abs/1703.07737
+
+    Python API examples:
+
+    .. code-block:: python
+
+        import os
+        from torch import nn, optim
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor, BatchBalanceClassSampler
+        from catalyst.contrib.datasets import MNIST
+
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_labels = train_data.targets.cpu().numpy().tolist()
+        train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+
+        loaders = {
+            "train": DataLoader(train_data, batch_sampler=train_sampler),
+            "valid": DataLoader(valid_data, batch_size=32),
+        }
+
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+        runner = dl.SupervisedRunner()
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            logdir="./logs",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+    """
+
+    def __init__(
+        self,
+        labels: Union[List[int], np.ndarray],
+        num_classes: int,
+        num_samples: int,
+        num_batches: int = None,
+    ):
+        """Sampler initialisation."""
+        super().__init__(labels)
+        classes = set(labels)
+
+        assert isinstance(num_classes, int) and isinstance(num_samples, int)
+        assert (1 < num_classes <= len(classes)) and (1 < num_samples)
+        assert all(
+            n > 1 for n in Counter(labels).values()
+        ), "Each class shoud contain at least 2 instances to fit (1)"
+
+        labels = np.array(labels)
+        self._labels = list(set(labels.tolist()))
+        self._num_classes = num_classes
+        self._num_samples = num_samples
+        self._batch_size = self._num_classes * self._num_samples
+        self._num_batches = num_batches or len(labels) // self._batch_size
+        self.lbl2idx = {
+            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+        }
+
+    @property
+    def batch_size(self) -> int:
+        """
+        Returns:
+            this value should be used in DataLoader as batch size
+        """
+        return self._batch_size
+
+    @property
+    def batches_in_epoch(self) -> int:
+        """
+        Returns:
+            number of batches in an epoch
+        """
+        return self._num_batches
+
+    def __len__(self) -> int:
+        """
+        Returns:
+            number of samples in an epoch
+        """
+        return self._num_batches  # * self._batch_size
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Returns:
+            indeces for sampling dataset elems during an epoch
+        """
+        indices = []
+        for _ in range(self._num_batches):
+            batch_indices = []
+            classes_for_batch = random.sample(self._labels, self._num_classes)
+            while self._num_classes != len(set(classes_for_batch)):
+                classes_for_batch = random.sample(self._labels, self._num_classes)
+            for cls_id in classes_for_batch:
+                replace_flag = self._num_samples > len(self.lbl2idx[cls_id])
+                batch_indices += np.random.choice(
+                    self.lbl2idx[cls_id], self._num_samples, replace=replace_flag
+                ).tolist()
+            indices.append(batch_indices)
+        return iter(indices)
 
 
 class DynamicBalanceClassSampler(Sampler):
@@ -285,10 +470,7 @@ class DynamicBalanceClassSampler(Sampler):
         self._update()
 
     def _update(self) -> None:
-        """
-        Update d coefficients
-        Returns: None
-        """
+        """Update d coefficients."""
         current_d = {
             key: min(value ** self._exp_scheduler(), self.max_d)
             for key, value in self.original_d.items()
@@ -305,8 +487,8 @@ class DynamicBalanceClassSampler(Sampler):
 
     def __iter__(self) -> Iterator[int]:
         """
-        Yields:
-            indices of stratified sample
+        Returns:
+            iterator of indices of stratified sample
         """
         indices = []
         for key in sorted(self.label2idxes):
@@ -352,7 +534,7 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None,
+        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None
     ):
         """Sampler initialisation."""
         super().__init__(None)
@@ -494,8 +676,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-            "produced an inccorect number of batches. "
-            + "expected %i, but yielded %i" % (len(self), yielded)
+            "produced an inccorect number of batches."
+            f" expected {len(self)}, but yielded {yielded}"
         )
 
 
@@ -526,14 +708,14 @@ class DistributedSamplerWrapper(DistributedSampler):
         Args:
             sampler: Sampler used for subsampling
             num_replicas (int, optional): Number of processes participating in
-              distributed training
+                distributed training
             rank (int, optional): Rank of the current process
-              within ``num_replicas``
+                within ``num_replicas``
             shuffle (bool, optional): If true (default),
-              sampler will shuffle the indices
+                sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
-            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle,
+            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle
         )
         self.sampler = sampler
 
@@ -550,8 +732,9 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 
 __all__ = [
-    "BalanceClassSampler",
     "BalanceBatchSampler",
+    "BalanceClassSampler",
+    "BatchBalanceClassSampler",
     "DistributedSamplerWrapper",
     "DynamicBalanceClassSampler",
     "DynamicLenBatchSampler",

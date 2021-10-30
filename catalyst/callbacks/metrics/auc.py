@@ -68,9 +68,7 @@ class AUCCallback(LoaderMetricCallback):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(
-        self, input_key: str, target_key: str, prefix: str = None, suffix: str = None,
-    ):
+    def __init__(self, input_key: str, target_key: str, prefix: str = None, suffix: str = None):
         """Init."""
         super().__init__(
             metric=AUCMetric(prefix=prefix, suffix=suffix),

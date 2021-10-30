@@ -14,7 +14,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -39,7 +39,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -96,7 +96,7 @@ Multi-model example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     # <--- multi-model setup --->
@@ -128,7 +128,7 @@ Multi-model example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -191,7 +191,7 @@ Multi-optimizer example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     # <--- multi-model/optimizer setup --->
@@ -223,7 +223,7 @@ Multi-optimizer example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 
@@ -290,7 +290,7 @@ Multi-criterion example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -320,7 +320,7 @@ Multi-criterion example:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 

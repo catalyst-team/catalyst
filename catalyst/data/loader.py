@@ -5,6 +5,7 @@ import sys
 import threading
 
 import numpy as np
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -34,14 +35,16 @@ class ILoaderWrapper:
             attribute value
 
         Raises:
-            NotImplementedError: if could not find attribute in ``origin``
-                or ``wrapper``
+            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``
         """
-        value = getattr(self.origin, key, None)
-        if value is not None:
+        some_default_value = "_no_attr_found_"
+        value = self.origin.__dict__.get(key, some_default_value)
+        # value = getattr(self.origin, key, None)
+        if value != some_default_value:
             return value
-        value = getattr(self, key, None)
-        if value is not None:
+        value = self.__dict__.get(key, some_default_value)
+        # value = getattr(self, key, None)
+        if value != some_default_value:
             return value
         raise NotImplementedError()
 
@@ -128,6 +131,9 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
 
         Returns:
             next batch
+
+        Raises:
+            StopIteration: if iteration_index >= len(origin)
         """
         if self.iteration_index >= len(self.origin):
             raise StopIteration()
@@ -164,20 +170,20 @@ def _map_loop(
         for x in iterable:
             result = func(x)
             result_queue.put(result)
-    except BaseException:  # noqa: WPS424
+    except BaseException:
         error_queue.put(sys.exc_info())
     finally:
         done_event.set()
 
 
 def _prefetch_map(
-    func: Callable, iterable: Iterable, num_prefetches: int = 1, timeout: int = 2,
+    func: Callable, iterable: Iterable, num_prefetches: int = 1, timeout: int = 2
 ) -> Iterable:
     result_queue = queue.Queue(num_prefetches)
     error_queue = queue.Queue(1)
     done_event = threading.Event()
     map_thread = threading.Thread(
-        target=_map_loop, args=(func, iterable, result_queue, error_queue, done_event),
+        target=_map_loop, args=(func, iterable, result_queue, error_queue, done_event)
     )
     map_thread.daemon = True
     map_thread.start()

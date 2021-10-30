@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
@@ -21,10 +21,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: embeddings key in output dict
         labels_key: labels key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log.
-            [1] - cmc@1
-            [1, 3] - cmc@1 and cmc@3
-            [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+        topk_args: specifies which cmc@K to log
         prefix: metric prefix
         suffix: metric suffix
 
@@ -52,10 +49,10 @@ class CMCScoreCallback(LoaderMetricCallback):
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
             )
-        sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
-        train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
-            )
+        sampler = data.BatchBalanceClassSampler(
+            labels=train_dataset.get_labels(), num_classes=5, num_samples=10
+        )
+        train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
         valid_dataset = datasets.MnistQGDataset(
             root=os.getcwd(), transform=transforms, gallery_fraq=0.2
@@ -124,6 +121,16 @@ class CMCScoreCallback(LoaderMetricCallback):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
+        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -134,7 +141,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -177,7 +184,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
