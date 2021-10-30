@@ -145,7 +145,7 @@ class Ralamb(Optimizer):
 
                 if n_sma >= 5:
                     p_data_fp32.addcdiv_(
-                        -radam_step_size * group["lr"] * trust_ratio, exp_avg, denom,
+                        -radam_step_size * group["lr"] * trust_ratio, exp_avg, denom
                     )
                 else:
                     p_data_fp32.add_(-radam_step_size * group["lr"] * trust_ratio, exp_avg)

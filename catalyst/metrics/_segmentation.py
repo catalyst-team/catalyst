@@ -3,6 +3,7 @@ from functools import partial
 
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -10,7 +11,11 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
-from catalyst.utils.distributed import all_gather, get_rank
+from catalyst.utils import get_device
+from catalyst.utils.distributed import all_gather, get_backend
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
@@ -59,7 +64,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.weights = weights
         self.class_names = class_names
         self._checked_params = False
-        self._is_ddp = False
+        self._ddp_backend = None
 
     def _check_parameters(self):
         # check class_names
@@ -79,7 +84,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def reset(self):
         """Reset all statistics"""
         self.statistics = {}
-        self._is_ddp = get_rank() > -1
+        self._ddp_backend = get_backend()
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Updates segmentation statistics with new data and return intermediate metrics values.
@@ -92,8 +97,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             metric for each class
         """
         tp, fp, fn = get_segmentation_statistics(
-            outputs=outputs.detach(),
-            targets=targets.detach(),
+            outputs=outputs.cpu().detach(),
+            targets=targets.cpu().detach(),
             class_dim=self.class_dim,
             threshold=self.threshold,
         )
@@ -108,6 +113,11 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["tp"] = tp_class
                 self.statistics[idx]["fp"] = fp_class
                 self.statistics[idx]["fn"] = fn_class
+
+        # need only one time
+        if not self._checked_params:
+            self._check_parameters()
+            self._checked_params = True
 
         metrics_per_class = self.metric_fn(tp, fp, fn)
         return metrics_per_class
@@ -126,10 +136,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         metrics_per_class = self.update(outputs, targets)
         macro_metric = torch.mean(metrics_per_class)
-        # need only one time
-        if not self._checked_params:
-            self._check_parameters()
-            self._checked_params = True
         metrics = {
             f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": value
             for idx, value in enumerate(metrics_per_class)
@@ -140,9 +146,51 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
+
+    def compute(self):
+        """
+        Compute metrics with accumulated statistics
+
+        Returns:
+            tuple of metrics: per_class, micro_metric, macro_metric, weighted_metric(None if
+                weights is None)
+        """
+        per_class = []
+        total_statistics = {}
+        macro_metric = 0
+        weighted_metric = 0
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        # TODO: optimise speed
+        if self._ddp_backend == "xla":
+            device = get_device()
+            for _, statistics in self.statistics.items():
+                for key in statistics:
+                    value = torch.tensor([statistics[key]], device=device)
+                    statistics[key] = xm.all_gather(value).sum(dim=0)
+        elif self._ddp_backend == "ddp":
+            for _, statistics in self.statistics.items():
+                for key in statistics:
+                    value: List[torch.Tensor] = all_gather(statistics[key])
+                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0)
+                    statistics[key] = value
+
+        for class_idx, statistics in self.statistics.items():
+            value = self.metric_fn(**statistics)
+            per_class.append(value)
+            macro_metric += value
+            if self.weights is not None:
+                weighted_metric += value * self.weights[class_idx]
+            for stats_name, value in statistics.items():
+                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+
+        macro_metric /= len(self.statistics)
+        micro_metric = self.metric_fn(**total_statistics)
+
+        if self.weights is None:
+            weighted_metric = None
+        return per_class, micro_metric, macro_metric, weighted_metric
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
         """
@@ -151,44 +199,20 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Returns:
              dict of metrics, including micro, macro and weighted (if weights were given) metrics
         """
+        per_class, micro_metric, macro_metric, weighted_metric = self.compute()
+
         metrics = {}
-        total_statistics = {}
-        macro_metric = 0
-        weighted_metric = 0
-
-        # @TODO: ddp hotfix, could be done better
-        if self._is_ddp:
-            for _, statistics in self.statistics.items():
-                for key in statistics:
-                    device = statistics[key].device
-                    value: List[torch.Tensor] = all_gather(statistics[key].cpu())
-                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
-                    statistics[key] = value
-
-        for class_idx, statistics in self.statistics.items():
-            value = self.metric_fn(**statistics)
-            macro_metric += value
-            if self.weights is not None:
-                weighted_metric += value * self.weights[class_idx]
+        for class_idx, value in enumerate(per_class):
             metrics[
                 f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
             ] = value
-            for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
-        macro_metric /= len(self.statistics)
-        micro_metric = self.metric_fn(**total_statistics)
+
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
-
-    def compute(self):
-        """@TODO: Docs."""
-        return self.compute_key_value()
 
 
 class IOUMetric(RegionBasedMetric):
@@ -220,6 +244,10 @@ class IOUMetric(RegionBasedMetric):
         metric = metrics.IOUMetric()
         metric.reset()
 
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.2222)], tensor(0.2222), tensor(0.2222), None)
+
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
         # {
@@ -236,7 +264,7 @@ class IOUMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 
@@ -349,6 +377,10 @@ class DiceMetric(RegionBasedMetric):
         metric = metrics.DiceMetric()
         metric.reset()
 
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.3636)], tensor(0.3636), tensor(0.3636), None)
+
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
         # {
@@ -365,7 +397,7 @@ class DiceMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 
@@ -482,6 +514,10 @@ class TrevskyMetric(RegionBasedMetric):
         metric = metrics.TrevskyMetric(alpha=0.2)
         metric.reset()
 
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.4167)], tensor(0.4167), tensor(0.4167), None)
+
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
         # {
@@ -498,7 +534,7 @@ class TrevskyMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 

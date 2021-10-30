@@ -5,7 +5,7 @@ from torch.nn.utils import prune
 
 from catalyst.utils.torch import get_nn_from_ddp_module
 
-PRUNING_FN = {  # noqa: WPS407
+PRUNING_FN = {
     "l1_unstructured": prune.l1_unstructured,
     "random_unstructured": prune.random_unstructured,
     "ln_structured": prune.ln_structured,
@@ -120,7 +120,7 @@ def prune_model(
 
 
 def remove_reparametrization(
-    model: Module, keys_to_prune: List[str], layers_to_prune: Optional[List[str]] = None,
+    model: Module, keys_to_prune: List[str], layers_to_prune: Optional[List[str]] = None
 ) -> None:
     """
     Removes pre-hooks and pruning masks from the model.

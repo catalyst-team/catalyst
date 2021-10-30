@@ -20,7 +20,7 @@ Catalyst supports a variety of metrics storages during the experiment
 
         runner.epoch_metrics = {
             "train": {"loss": ..., "accuracy": ..., "auc": ...},
-            "valid: {"loss": ..., "accuracy": ..., "auc": ...}
+            "valid": {"loss": ..., "accuracy": ..., "auc": ...}
             "_epoch_": {"lr": ..., "momentum": ...,}
         }
 
@@ -33,7 +33,7 @@ You could log any new metric in a straightforward way:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -57,7 +57,7 @@ You could log any new metric in a straightforward way:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 

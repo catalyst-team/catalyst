@@ -124,10 +124,10 @@ def main(args, unknown_args):
         trial, trial_config = _process_trial_config(trial, config.copy())
         runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=trial_config)
         # @TODO: here we need better solution.
-        runner._trial = trial  # noqa: WPS437
+        runner._trial = trial
 
         if get_rank() <= 0:
-            dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+            dump_environment(logdir=runner.logdir, config=trial_config, configs_path=args.configs)
             dump_code(expdir=args.expdir, logdir=runner.logdir)
 
         runner.run()

@@ -13,7 +13,7 @@ Suppose you have the following classification pipeline:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -40,7 +40,7 @@ Suppose you have the following classification pipeline:
         def on_loader_start(self, runner):
             super().on_loader_start(runner)
             self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
+                key: metrics.AdditiveMetric(compute_on_call=False)
                 for key in ["loss", "accuracy01", "accuracy03"]
             }
 

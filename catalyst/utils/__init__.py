@@ -6,12 +6,16 @@ from catalyst.utils.config import load_config, save_config
 from catalyst.utils.data import get_loaders_from_params, get_loader
 
 from catalyst.utils.distributed import (
+    get_backend,
+    get_world_size,
     get_distributed_params,
     get_rank,
     get_nn_from_ddp_module,
     sum_reduce,
     mean_reduce,
     all_gather,
+    ddp_reduce,
+    ddp_sync_run,
 )
 
 from catalyst.utils.misc import (
@@ -35,6 +39,7 @@ from catalyst.utils.misc import (
     get_by_keys,
     convert_labels2list,
 )
+from catalyst.utils.mixup import mixup_batch
 from catalyst.utils.numpy import get_one_hot
 
 from catalyst.utils.onnx import onnx_export
@@ -83,6 +88,7 @@ from catalyst.utils.torch import (
     unpack_checkpoint,
     save_checkpoint,
     load_checkpoint,
+    soft_update,
 )
 
 from catalyst.utils.tracing import trace_model

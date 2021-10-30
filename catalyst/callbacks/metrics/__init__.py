@@ -17,6 +17,8 @@ if SETTINGS.ml_required:
 
 from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
 
+from catalyst.callbacks.metrics.r2_squared import R2SquaredCallback
+
 from catalyst.callbacks.metrics.recsys import (
     HitrateCallback,
     MAPCallback,
@@ -29,3 +31,6 @@ from catalyst.callbacks.metrics.segmentation import (
     IOUCallback,
     TrevskyCallback,
 )
+
+if SETTINGS.ml_required:
+    from catalyst.callbacks.metrics.scikit_learn import SklearnBatchCallback, SklearnLoaderCallback

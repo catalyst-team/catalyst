@@ -1,5 +1,6 @@
 # based on https://github.com/pytorch/vision
 import numpy as np
+
 import torch
 
 _IMAGENET_STD = (0.229, 0.224, 0.225)

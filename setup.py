@@ -2,19 +2,13 @@
 # flake8: noqa
 # -*- coding: utf-8 -*-
 
-# Note: To use the "upload" functionality of this file, you must:
-#   $ pip install twine
-
-import io
 import os
-from shutil import rmtree
-import sys
 
-from setuptools import Command, find_packages, setup
+from setuptools import find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = "Catalyst. PyTorch framework for DL research and development."
+DESCRIPTION = "Catalyst. Accelerated deep learning R&D with PyTorch."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -32,7 +26,7 @@ def load_requirements(filename):
 def load_readme():
     """Docs? Contribution is welcome."""
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
-    with io.open(readme_path, encoding="utf-8") as f:
+    with open(readme_path, encoding="utf-8") as f:
         return f"\n{f.read()}"
 
 
@@ -44,58 +38,23 @@ def load_version():
     return context["__version__"]
 
 
-class UploadCommand(Command):
-    """Support setup.py upload."""
-
-    description = "Build and publish the package."
-    user_options = []
-
-    @staticmethod
-    def status(s):
-        """Prints things in bold."""
-        print("\033[1m{0}\033[0m".format(s))
-
-    def initialize_options(self):
-        """Docs? Contribution is welcome."""
-        pass
-
-    def finalize_options(self):
-        """Docs? Contribution is welcome."""
-        pass
-
-    def run(self):
-        """Docs? Contribution is welcome."""
-        try:
-            self.status("Removing previous builds…")
-            rmtree(os.path.join(PROJECT_ROOT, "dist"))
-        except OSError:
-            pass
-
-        self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
-
-        self.status("Uploading the package to PyPI via Twine…")
-        os.system("twine upload dist/*")
-
-        self.status("Pushing git tags…")
-        os.system("git tag v{0}".format(load_version()))
-        os.system("git push --tags")
-
-        sys.exit()
-
-
 # Specific dependencies.
 extras = {
-    "dev": load_requirements("requirements/requirements-dev.txt"),
+    "albu": load_requirements("requirements/requirements-albu.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
-    "ml": load_requirements("requirements/requirements-ml.txt"),
-    "nifti": load_requirements("requirements/requirements-nifti.txt"),
+    "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
+    "dev": load_requirements("requirements/requirements-dev.txt"),
+    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
     "hydra": load_requirements("requirements/requirements-hydra.txt"),
-    "optuna": load_requirements("requirements/requirements-optuna.txt"),
-    "onnx": load_requirements("requirements/requirements-onnx.txt"),
-    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "ml": load_requirements("requirements/requirements-ml.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
+    "nifti": load_requirements("requirements/requirements-nifti.txt"),
+    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "onnx": load_requirements("requirements/requirements-onnx.txt"),
+    "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "wandb": load_requirements("requirements/requirements-wandb.txt"),
+    # "xla": load_requirements("requirements/requirements-xla.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.
@@ -142,6 +101,7 @@ setup(
         "bin/scripts/catalyst-parallel-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
+        "bin/scripts/install-apex",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
@@ -167,6 +127,4 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    # $ setup.py publish support.
-    cmdclass={"upload": UploadCommand},
 )

@@ -36,9 +36,7 @@ def build_args(parser):
     """
     parser.add_argument("--in-dir", required=True, type=Path, help="Raw data folder path")
 
-    parser.add_argument(
-        "--out-dir", required=True, type=Path, help="Processed images folder path",
-    )
+    parser.add_argument("--out-dir", required=True, type=Path, help="Processed images folder path")
 
     parser.add_argument(
         "--num-workers",
@@ -61,7 +59,7 @@ def build_args(parser):
     boolean_flag(parser, "grayscale", default=False, help="Read images in grayscale")
 
     boolean_flag(
-        parser, "expand-dims", default=True, help="Expand array shape for grayscale images",
+        parser, "expand-dims", default=True, help="Expand array shape for grayscale images"
     )
 
     return parser
@@ -81,7 +79,7 @@ def parse_args():
 def py3round(number):
     """Unified rounding in all python versions."""
     if abs(round(number) - number) == 0.5:
-        return int(2.0 * round(number / 2.0))  # noqa: WPS432
+        return int(2.0 * round(number / 2.0))
 
     return int(round(number))
 
@@ -165,7 +163,7 @@ class Preprocessor:
         target_path = self.out_dir / image_path.relative_to(self.in_dir)
         target_path.parent.mkdir(parents=True, exist_ok=True)
 
-        image = image.clip(0, 255).round().astype(np.uint8)  # noqa: WPS432
+        image = image.clip(0, 255).round().astype(np.uint8)
         imwrite(target_path, image)
 
     def process_all(self, pool: Pool):

@@ -215,10 +215,7 @@ class BatchMetricCallback(MetricCallback):
             runner: current runner
         """
         metrics = self.metric.compute_key_value()
-        metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-            for k, v in metrics.items()
-        }
+        metrics = runner.engine.sync_metrics(metrics)
         runner.loader_metrics.update(metrics)
 
 
@@ -304,7 +301,7 @@ class LoaderMetricCallback(MetricCallback):
             runner: current runner
         """
         self.metric.reset(
-            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
+            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len
         )
 
     def on_batch_end(self, runner: "IRunner") -> None:

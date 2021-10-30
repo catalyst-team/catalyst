@@ -1,15 +1,34 @@
-from typing import Tuple
+from typing import Any, Callable, Tuple, Union
+import functools
 
 import numpy as np
 
+import torch
+
 from catalyst.metrics._metric import IMetric
+from catalyst.utils.torch import detach_tensor
 
 
-class AdditiveValueMetric(IMetric):
+def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
+    @functools.wraps(metric_fn)
+    def _wrapper(value: torch.Tensor, *args: Any, **kwargs: Any) -> Union[float, np.ndarray]:
+        np_tensor = detach_tensor(value)
+        value = metric_fn(np_tensor, *args, **kwargs)
+
+        return value
+
+    return _wrapper
+
+
+class AdditiveMetric(IMetric):
     """This metric computes mean and std values of input data.
 
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
+        mode: expected dtype returned by the metric, ``"numpy"`` or ``"torch"``
+
+    Raises:
+        ValueError: if mode is not supported
 
     Examples:
 
@@ -22,7 +41,7 @@ class AdditiveValueMetric(IMetric):
         num_samples_list = [1, 2, 3, 4, 5]
         true_values = [1, 1.666667, 2.333333, 3, 3.666667]
 
-        metric = metrics.AdditiveValueMetric()
+        metric = metrics.AdditiveMetric()
         for value, num_samples, true_value in zip(values, num_samples_list, true_values):
             metric.update(value=value, num_samples=num_samples)
             mean, _ = metric.compute()
@@ -35,7 +54,7 @@ class AdditiveValueMetric(IMetric):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -60,7 +79,7 @@ class AdditiveValueMetric(IMetric):
             def on_loader_start(self, runner):
                 super().on_loader_start(runner)
                 self.meters = {
-                    key: metrics.AdditiveValueMetric(compute_on_call=False)
+                    key: metrics.AdditiveMetric(compute_on_call=False)
                     for key in ["loss", "accuracy01", "accuracy03"]
                 }
 
@@ -111,8 +130,8 @@ class AdditiveValueMetric(IMetric):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, compute_on_call: bool = True):
-        """Init AdditiveValueMetric"""
+    def __init__(self, compute_on_call: bool = True, mode: str = "numpy"):
+        """Init AdditiveMetric"""
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
         self.value = 0.0
@@ -121,6 +140,12 @@ class AdditiveValueMetric(IMetric):
         self.m_s = 0.0
         self.std = np.nan
         self.num_samples = 0
+
+        valid_modes = {"numpy", "torch"}
+        if mode not in valid_modes:
+            raise ValueError(f"mode must be one of {valid_modes}, but got mode={mode}")
+        elif mode == "torch":
+            self.update = _to_numpy_wrapper(self.update)
 
     def reset(self) -> None:
         """Reset all fields"""
@@ -148,7 +173,7 @@ class AdditiveValueMetric(IMetric):
 
         if self.n == 1:
             # Force a copy in torch/numpy
-            self.mean = 0.0 + value  # noqa: WPS345
+            self.mean = 0.0 + value
             self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0
@@ -171,4 +196,6 @@ class AdditiveValueMetric(IMetric):
         return self.mean, self.std
 
 
-__all__ = ["AdditiveValueMetric"]
+AdditiveValueMetric = AdditiveMetric
+
+__all__ = ["AdditiveMetric", "AdditiveValueMetric"]

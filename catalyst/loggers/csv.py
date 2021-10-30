@@ -123,7 +123,7 @@ class CSVLogger(ILogger):
                     )
                     self._make_header(metrics=per_loader_metrics, loader_key=loader_key)
                 self._log_metrics(
-                    metrics=per_loader_metrics, step=stage_epoch_step, loader_key=loader_key,
+                    metrics=per_loader_metrics, step=stage_epoch_step, loader_key=loader_key
                 )
 
     def log_hparams(
@@ -143,10 +143,11 @@ class CSVLogger(ILogger):
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """@TODO: docs."""
-        for logger in self.loggers.values():
-            logger.close()
+        if scope is None or scope == "experiment":
+            for logger in self.loggers.values():
+                logger.close()
 
 
 __all__ = ["CSVLogger"]

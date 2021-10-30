@@ -20,7 +20,7 @@ def build_args(parser: ArgumentParser):
     )
     parser.add_argument("--logdir", type=Path, default=None, help="Path to experiment logdir")
     parser.add_argument(
-        "--output-path", type=Path, default="./swa.pth", help="Path to save averaged model",
+        "--output-path", type=Path, default="./swa.pth", help="Path to save averaged model"
     )
 
     return parser

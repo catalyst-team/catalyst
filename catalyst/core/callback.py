@@ -119,9 +119,9 @@ class CallbackNode(IntFlag):
     - Worker (2) - use only in worker nodes.
     """
 
-    All = all = 0  # noqa: WPS115
-    Master = master = 1  # noqa: WPS115
-    Worker = worker = 2  # noqa: WPS115
+    All = all = 0
+    Master = master = 1
+    Worker = worker = 2
 
 
 class CallbackOrder(IntFlag):
@@ -156,13 +156,13 @@ class CallbackOrder(IntFlag):
         # but before all `MetricAggregation`-Callbacks.
     """
 
-    Internal = internal = 0  # noqa: WPS115
-    Metric = metric = 20  # noqa: WPS115
-    MetricAggregation = metric_aggregation = 40  # noqa: WPS115
-    Optimizer = optimizer = 60  # noqa: WPS115
-    Scheduler = scheduler = 80  # noqa: WPS115
-    External = external = 100  # noqa: WPS115
-    ExternalExtra = external_extra = 120  # noqa: WPS115
+    Internal = internal = 0
+    Metric = metric = 20
+    MetricAggregation = metric_aggregation = 40
+    Optimizer = optimizer = 60
+    Scheduler = scheduler = 80
+    External = external = 100
+    ExternalExtra = external_extra = 120
 
 
 class CallbackScope(IntFlag):
@@ -172,8 +172,8 @@ class CallbackScope(IntFlag):
     - Experiment (1) - use Callback during whole experiment run.
     """
 
-    Stage = stage = 0  # noqa: WPS115
-    Experiment = experiment = 1  # noqa: WPS115
+    Stage = stage = 0
+    Experiment = experiment = 1
 
 
 class Callback(ICallback):
@@ -218,13 +218,29 @@ class Callback(ICallback):
 
     """
 
-    def __init__(
-        self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage,
-    ):
+    def __init__(self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage):
         """Callback initializer."""
         self.node = node
         self.order = order
         self.scope = scope
+
+
+class ICriterionCallback(Callback):
+    """Criterion callback interface, abstraction over criterion step."""
+
+    pass
+
+
+class IOptimizerCallback(Callback):
+    """Optimizer callback interface, abstraction over optimizer step."""
+
+    pass
+
+
+class ISchedulerCallback(Callback):
+    """Scheduler callback interface, abstraction over scheduler step."""
+
+    pass
 
 
 class CallbackWrapper(Callback):
@@ -242,7 +258,7 @@ class CallbackWrapper(Callback):
         if base_callback is None or not isinstance(base_callback, Callback):
             raise ValueError(f"Expected callback but got - {type(base_callback)}!")
         super().__init__(
-            order=base_callback.order, node=base_callback.node, scope=base_callback.scope,
+            order=base_callback.order, node=base_callback.node, scope=base_callback.scope
         )
         self.callback = base_callback
         self._is_enabled = enable_callback
@@ -464,6 +480,9 @@ __all__ = [
     "CallbackNode",
     "CallbackOrder",
     "CallbackScope",
+    "ICriterionCallback",
+    "IOptimizerCallback",
+    "ISchedulerCallback",
     "CallbackWrapper",
     "CallbackList",
 ]

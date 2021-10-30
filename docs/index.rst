@@ -13,21 +13,16 @@ It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can **create** something new rather than write yet another train loop.
 Break the cycle - use the Catalyst_!
 
-Read more about our vision in the `Project Manifest`_. Catalyst is a part of the `PyTorch Ecosystem`_.
-
-`Catalyst Ecosystem`_ consists of:
-    - Alchemy_ - experiments logging & visualization
-    - Catalyst_ - accelerated deep learning R&D
-    - Reaction_ - convenient deep learning models serving
-
-`Catalyst at AI Landscape`_.
+- `Project Manifest`_
+- `Framework architecture`_
+- `Catalyst at AI Landscape`_
+- Part of the `PyTorch Ecosystem`_
 
 .. _PyTorch Ecosystem: https://pytorch.org/ecosystem/
 .. _Catalyst Ecosystem: https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing
-.. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
-.. _Reaction: https://github.com/catalyst-team/reaction
 .. _`Project Manifest`: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _`Framework architecture`: https://miro.com/app/board/o9J_lxBO-2k=/
 .. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
 Getting started
@@ -39,18 +34,24 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(train_data, batch_size=32),
+        "valid": DataLoader(valid_data, batch_size=32),
     }
-    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+
+    runner = dl.SupervisedRunner(
+        input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+    )
+
     # model training
     runner.train(
         model=model,
@@ -60,8 +61,9 @@ Getting started
         num_epochs=1,
         callbacks=[
             dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            # catalyst[ml] required
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
         ],
         logdir="./logs",
         valid_loader="valid",
@@ -70,6 +72,14 @@ Getting started
         verbose=True,
         load_best_on_end=True,
     )
+
+    # model evaluation
+    metrics = runner.evaluate_loader(
+        loader=loaders["valid"],
+        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
+    )
+    assert "accuracy" in metrics.keys()
+
     # model inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
         assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
@@ -89,20 +99,17 @@ Getting started
 
 Step by step guide
 ~~~~~~~~~~~~~~~~~~~~~~
-1. Start with `Catalyst 2021–Accelerated PyTorch 2.0`_ introduction.
-2. Check `minimal examples`_.
-3. Try `notebook tutorials with Google Colab`_.
-4. Read `blogposts`_ with use-cases and guides.
-5. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
-6. If you would like to contribute to the project, follow our `contribution guidelines`_.
-7. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
-8. And do not forget to `join our slack`_ for collaboration.
+1. Start with `Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D`_ introduction.
+2. Try `notebook tutorials`_ or check `minimal examples`_ for first deep dive.
+3. Read `blogposts`_ with use-cases and guides.
+4. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
+5. And do not forget to `join our slack`_ for collaboration.
 
-.. _`Catalyst 2021–Accelerated PyTorch 2.0`: https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762
+.. _`Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D`: https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef
 .. _`Kittylyst`: https://github.com/Scitator/kittylyst
 .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-.. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
-.. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
+.. _`notebook tutorials`: https://github.com/catalyst-team/catalyst#minimal-examples
+.. _`blogposts`: https://catalyst-team.com/post/
 .. _`"Deep Learning with Catalyst" course`: https://github.com/catalyst-team/dl-course
 .. _`classification`: https://github.com/catalyst-team/classification
 .. _`detection`: https://github.com/catalyst-team/detection
@@ -194,7 +201,7 @@ Indices and tables
     getting_started/quickstart
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
     getting_started/migrating_from_other
-    Catalyst 2021 — Accelerated PyTorch 2.0 <https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762>
+    Catalyst — Accelerated Deep Learning R&D <https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef>
 
 .. toctree::
     :caption: Tutorials
@@ -227,7 +234,9 @@ Indices and tables
     faq/amp
     faq/ddp
 
+    faq/engines
     faq/multi_components
+    faq/multiple_keys
     faq/early_stopping
     faq/checkpointing
     faq/debugging

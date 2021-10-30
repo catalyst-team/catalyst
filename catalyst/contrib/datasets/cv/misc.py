@@ -55,7 +55,7 @@ class ImageClassificationDataset(ImageFolderDataset):
             download: if ``True``, downloads the dataset from
                 the internet and puts it in root directory. If dataset
                 is already downloaded, it is not downloaded again
-            **kwargs:
+            **kwargs: Keyword-arguments passed to ``super().__init__`` method.
         """
         # downlad dataset if needed
         if download and not os.path.exists(os.path.join(root, self.name)):

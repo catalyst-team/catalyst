@@ -25,7 +25,7 @@ class Hydra(nn.Module):
     normalize_keyword = "normalize_output"
 
     def __init__(
-        self, heads: nn.ModuleDict, encoder: nn.Module = None, embedders: nn.ModuleDict = None,
+        self, heads: nn.ModuleDict, encoder: nn.Module = None, embedders: nn.ModuleDict = None
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
@@ -35,7 +35,7 @@ class Hydra(nn.Module):
 
     @staticmethod
     def parse_head_params(
-        head_params: Dict, in_features: int, is_leaf: bool = False,
+        head_params: Dict, in_features: int, is_leaf: bool = False
     ) -> Union[nn.Module, nn.ModuleDict]:
         """@TODO: Docs. Contribution is welcome."""
         if is_leaf:
@@ -61,7 +61,7 @@ class Hydra(nn.Module):
                     else hidden_params["hiddens"][-1]
                 )
                 output[Hydra.hidden_keyword] = Hydra.parse_head_params(
-                    head_params=hidden_params, in_features=in_features, is_leaf=True,
+                    head_params=hidden_params, in_features=in_features, is_leaf=True
                 )
 
             for head_branch_name, head_branch_params in head_params.items():
@@ -94,9 +94,7 @@ class Hydra(nn.Module):
             raise NotImplementedError()
         return output
 
-    def forward(
-        self, features: torch.Tensor, **targets_kwargs,
-    ):
+    def forward(self, features: torch.Tensor, **targets_kwargs):
         """Forward call."""
         embeddings = self.encoder(features)
 

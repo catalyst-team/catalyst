@@ -10,6 +10,8 @@ from itertools import tee
 import random
 
 import numpy as np
+
+import torch
 from torch import int as tint, long, short, Tensor
 
 T = TypeVar("T")
@@ -19,7 +21,7 @@ def boolean_flag(
     parser: argparse.ArgumentParser,
     name: str,
     default: Optional[bool] = False,
-    help: str = None,  # noqa: WPS125
+    help: str = None,
     shorthand: str = None,
 ) -> None:
     """Add a boolean flag to a parser inplace.
@@ -55,15 +57,18 @@ def set_global_seed(seed: int) -> None:
     """
     random.seed(seed)
     np.random.seed(seed)
+
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
     try:
-        import torch
+        import torch_xla.core.xla_model as xm
     except ImportError:
         pass
     else:
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed(seed)
-            torch.cuda.manual_seed_all(seed)
+        xm.set_rng_state(seed)
 
 
 def maybe_recursive_call(
@@ -91,7 +96,7 @@ def maybe_recursive_call(
             r_args = None if recursive_args is None else recursive_args[k]
             r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
             result[k] = maybe_recursive_call(
-                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs,
+                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs
             )
         return result
 

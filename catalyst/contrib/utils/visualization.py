@@ -1,10 +1,7 @@
 import itertools
 
-import matplotlib
-import numpy as np
-
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np
 
 # def tensor_to_ndimage(
 #     images: torch.Tensor,
@@ -137,7 +134,7 @@ def plot_confusion_matrix(
 #
 #     figure.canvas.draw()
 #
-#     image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+#     image = np.array(figure.canvas.renderer._renderer)
 #     plt.close(figure)
 #     del figure
 #
@@ -150,7 +147,7 @@ def render_figure_to_array(figure):
 
     figure.canvas.draw()
 
-    image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+    image = np.array(figure.canvas.renderer._renderer)
     plt.close(figure)
     del figure
 

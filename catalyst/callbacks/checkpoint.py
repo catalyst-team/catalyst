@@ -4,8 +4,6 @@ import os
 from pathlib import Path
 import shutil
 
-import torch.distributed as dist
-
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.tools.metric_handler import MetricHandler
@@ -160,6 +158,7 @@ def _load_states_from_file_map(
     from files specified in ``load_map``.
 
     Arguments:
+        logdir: directory with logs
         runner: current runner
         load_map (Dict[str, str]): dict with mappings to load.
             Expected keys - ``'model'``, ``'criterion'``
@@ -198,7 +197,7 @@ def _load_states_from_file_map(
 
 
 def _load_runner(
-    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,
+    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False
 ) -> None:
     """
     Selects a loading method based on type of mapping.
@@ -487,6 +486,15 @@ class CheckpointCallback(ICheckpointCallback):
         """
         Saves checkpoints: full with model/criterion/optimizer/scheduler
         and truncated with model only.
+
+        Args:
+            runner: current runner.
+            checkpoint: data to save.
+            is_best: if ``True`` then also will be generated best checkpoint file.
+            is_last: if ``True`` then also will be generated last checkpoint file.
+
+        Returns:
+            path to saved checkpoint
         """
         logdir = Path(f"{self.logdir}/")
         suffix = f"{runner.stage_key}.{runner.stage_epoch_step}"
@@ -520,7 +528,7 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _truncate_checkpoints(self) -> None:
         self.top_best_metrics = sorted(
-            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
+            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
@@ -674,7 +682,7 @@ class CheckpointCallback(ICheckpointCallback):
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
             checkpoint_path = self._save_checkpoint(
-                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True,
+                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True
             )
             # add metrics to records
             metrics_record = (
@@ -703,7 +711,7 @@ class CheckpointCallback(ICheckpointCallback):
             return
         if runner.engine.is_ddp and not runner.engine.is_master_process:
             # worker sync
-            dist.barrier()
+            runner.engine.barrier()
             return
 
         # let's log Top-N base metrics
@@ -758,8 +766,8 @@ class CheckpointCallback(ICheckpointCallback):
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
         if runner.engine.is_ddp and runner.engine.is_master_process:
-            # master sync
-            dist.barrier()
+            # worker sync
+            runner.engine.barrier()
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

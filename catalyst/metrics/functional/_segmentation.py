@@ -5,7 +5,7 @@ import torch
 
 
 def get_segmentation_statistics(
-    outputs: torch.Tensor, targets: torch.Tensor, class_dim: int = 1, threshold: float = None,
+    outputs: torch.Tensor, targets: torch.Tensor, class_dim: int = 1, threshold: float = None
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Computes true positive, false positive, false negative
@@ -118,7 +118,7 @@ def _get_region_based_metrics(
     """
     assert mode in ["per-class", "micro", "macro", "weighted"]
     segmentation_stats = get_segmentation_statistics(
-        outputs=outputs, targets=targets, class_dim=class_dim, threshold=threshold,
+        outputs=outputs, targets=targets, class_dim=class_dim, threshold=threshold
     )
     if mode == "micro":
         segmentation_stats = [torch.sum(stats) for stats in segmentation_stats]

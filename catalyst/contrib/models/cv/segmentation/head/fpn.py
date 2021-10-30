@@ -3,6 +3,7 @@
 from typing import List
 
 import numpy as np
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -38,7 +39,7 @@ class FPNHead(HeadSpec):
                 i = np.log2(in_strides[i]) - num_upsample_blocks - np.log2(upsample_scale)
             segmentation_blocks.append(
                 SegmentationBlock(
-                    in_channels=in_channels_i, out_channels=hid_channel, num_upsamples=int(i),
+                    in_channels=in_channels_i, out_channels=hid_channel, num_upsamples=int(i)
                 )
             )
         self.segmentation_blocks = nn.ModuleList(segmentation_blocks)

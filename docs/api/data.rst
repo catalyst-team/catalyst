@@ -157,6 +157,13 @@ BalanceClassSampler
     :undoc-members:
     :special-members:
 
+BatchBalanceClassSampler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.sampler.BatchBalanceClassSampler
+    :members: __init__
+    :undoc-members:
+    :special-members:
+
 DistributedSamplerWrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DistributedSamplerWrapper

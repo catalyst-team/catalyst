@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/catalyst-team/codestyle
+    rev: 'v21.09.2'
+    hooks:
+      - id: catalyst-make-codestyle
+        args: [--line-length=99]
+  - repo: https://github.com/catalyst-team/codestyle
+    rev: 'v21.09.2'
+    hooks:
+      - id: catalyst-check-codestyle
+        args: [--line-length=99]
+exclude: __init__.py

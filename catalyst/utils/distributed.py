@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Callable, List, Optional
 from collections import OrderedDict
 import os
 import pickle
@@ -8,15 +8,22 @@ import subprocess
 
 import torch
 from torch import nn
-import torch.distributed
 import torch.distributed as dist
 
 from catalyst.settings import SETTINGS
 
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_env_vars as xenv
+    import torch_xla.core.xla_model as xm
+
 
 def _is_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
-    return torch.distributed.is_available() and torch.distributed.is_initialized()
+    return dist.is_available() and dist.is_initialized()
+
+
+def _is_xla_distributed_initialized() -> bool:
+    return SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
 
 
 def _is_slurm_available():
@@ -34,6 +41,16 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
         from apex.parallel import DistributedDataParallel as apex_DDP
 
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
+
+    if SETTINGS.fairscale_required:
+        from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
+
+        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel)
+
+    if SETTINGS.deepspeed_required:
+        from deepspeed import DeepSpeedEngine, PipelineEngine
+
+        parallel_wrappers = parallel_wrappers + (DeepSpeedEngine, PipelineEngine)
 
     return isinstance(model, parallel_wrappers)
 
@@ -55,6 +72,16 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     return model
 
 
+def get_backend() -> Optional[str]:
+    """Returns the backend for distributed training."""
+    if _is_xla_distributed_initialized():
+        return "xla"
+    elif _is_torch_distributed_initialized():
+        return "ddp"
+    else:
+        return None
+
+
 def get_rank() -> int:
     """
     Returns the rank of the current worker.
@@ -62,13 +89,42 @@ def get_rank() -> int:
     Returns:
         int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
-    if _is_torch_distributed_initialized():
-        return torch.distributed.get_rank()
+    if _is_xla_distributed_initialized():
+        return xm.get_ordinal()
+    elif _is_torch_distributed_initialized():
+        return dist.get_rank()
     else:
         return -1
 
 
+# def get_local_rank() -> int:
+#     pass
+
+
+def get_world_size() -> int:
+    """Returns the world size for distributed training."""
+    if _is_xla_distributed_initialized():
+        return xm.xrt_world_size()
+    elif _is_torch_distributed_initialized():
+        return dist.get_world_size()
+    else:
+        return 1
+
+
+# def get_num_nodes() -> int:
+#     pass
+#
+#
+# def get_num_proc_per_nodes() -> int:
+#     pass
+#
+#
+# def get_node_rank() -> int:
+#     pass
+
+
 # TODO: rename
+# TODO: remove, restore? deprecated part
 def _get_slurm_params():
     """Return slurm params for experiment run.
 
@@ -88,6 +144,7 @@ def _get_slurm_params():
 
 
 # TODO: rename
+# TODO: remove, restore? deprecated part
 def get_distributed_params():
     """Returns distributed params for experiment run.
 
@@ -191,7 +248,7 @@ def all_gather(data: Any) -> List[Any]:
     # we pad the tensor because torch all_gather does not support
     # gathering tensors of different shapes
     tensor_list = []
-    for _ in size_list:  # noqa: WPS122
+    for _ in size_list:
         tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
 
     if local_size != max_size:
@@ -207,11 +264,53 @@ def all_gather(data: Any) -> List[Any]:
     return data_list
 
 
+def ddp_reduce(tensor: torch.Tensor, mode: str, world_size: int):
+    """Syncs ``tensor`` over ``world_size`` in distributed mode.
+
+    Args:
+        tensor: tensor to sync across the processes.
+        mode: tensor synchronization type, should be one of 'sum', 'mean' or 'all'.
+        world_size: world size
+
+    Returns:
+        torch.Tensor with synchronized values.
+
+    Raises:
+        ValueError: if mode is out of ``sum``, ``mean``, ``all``.
+    """
+    if mode not in {"sum", "mean", "all"}:
+        raise ValueError(f"Unknown sync_type '{mode}'")
+    if mode == "sum":
+        return sum_reduce(tensor)
+    elif mode == "mean":
+        return mean_reduce(tensor, world_size)
+    else:
+        return all_gather(tensor)
+
+
+def ddp_sync_run(function: Callable):
+    """Runs function in a synchronous way: 0-rank first and all other processes after.
+
+    Args:
+        function: callable function
+    """
+    rank = get_rank()
+    if rank > 0:
+        dist.barrier()
+    function()
+    if rank == 0:
+        dist.barrier()
+
+
 __all__ = [
+    "get_backend",
     "get_rank",
+    "get_world_size",
     "get_distributed_params",
     "get_nn_from_ddp_module",
     "sum_reduce",
     "mean_reduce",
     "all_gather",
+    "ddp_reduce",
+    "ddp_sync_run",
 ]

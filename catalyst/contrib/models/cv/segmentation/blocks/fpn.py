@@ -99,7 +99,7 @@ class SegmentationBlock(nn.Module):
         blocks = [Conv3x3GNReLU(in_channels, out_channels, upsample=bool(num_upsamples))]
 
         if num_upsamples > 1:
-            for _ in range(1, num_upsamples):  # noqa: WPS122
+            for _ in range(1, num_upsamples):
                 blocks.append(Conv3x3GNReLU(out_channels, out_channels, upsample=True))
 
         self.block = nn.Sequential(*blocks)

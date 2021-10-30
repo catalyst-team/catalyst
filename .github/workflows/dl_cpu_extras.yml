@@ -21,8 +21,8 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         python-version: [3.7]
-        requirements: ['latest']
-        extras: ['base', 'cv', 'ml', 'hydra', 'optuna', 'onnx', 'neptune']
+        requirements: [latest]
+        extras: [base, cv, ml, hydra, optuna, onnx, neptune, albu]
 
     timeout-minutes: 30
     steps:
@@ -34,7 +34,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: set base extras
-        if: matrix.extras == 'base'
+        if: ${{ matrix.extras == 'base' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt
@@ -44,7 +44,7 @@ jobs:
         shell: bash
 
       - name: set cv extras
-        if: matrix.extras == 'cv'
+        if: ${{ matrix.extras == 'cv' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt
@@ -54,7 +54,7 @@ jobs:
         shell: bash
 
       - name: set ml extras
-        if: matrix.extras == 'ml'
+        if: ${{ matrix.extras == 'ml' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt
@@ -64,7 +64,7 @@ jobs:
         shell: bash
 
       - name: set hydra extras
-        if: matrix.extras == 'hydra'
+        if: ${{ matrix.extras == 'hydra' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt
@@ -74,7 +74,7 @@ jobs:
         shell: bash
 
       - name: set optuna extras
-        if: matrix.extras == 'optuna'
+        if: ${{ matrix.extras == 'optuna' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-optuna.txt
@@ -84,7 +84,7 @@ jobs:
         shell: bash
 
       - name: set onnx extras
-        if: matrix.extras == 'onnx'
+        if: ${{ matrix.extras == 'onnx' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-onnx.txt
@@ -94,10 +94,20 @@ jobs:
         shell: bash
 
       - name: set neptune extras
-        if: matrix.extras == 'neptune'
+        if: ${{ matrix.extras == 'neptune' }}
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-neptune.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set albu extras
+        if: ${{ matrix.extras == 'albu' }}
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-albu.txt
           python --version
           pip --version
           pip list
@@ -116,7 +126,7 @@ jobs:
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
 
       - name: check examples hydra
-        if: matrix.extras == 'hydra'
+        if: ${{ matrix.extras == 'hydra' }}
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
           OMP_NUM_THREADS: "1"
@@ -126,7 +136,7 @@ jobs:
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
 
       - name: check examples optuna
-        if: matrix.extras == 'optuna'
+        if: ${{ matrix.extras == 'optuna' }}
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
           OMP_NUM_THREADS: "1"

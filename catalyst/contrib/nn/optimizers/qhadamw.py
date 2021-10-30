@@ -30,7 +30,7 @@ class QHAdamW(Optimizer):
     """
 
     def __init__(
-        self, params, lr=1e-3, betas=(0.995, 0.999), nus=(0.7, 1.0), weight_decay=0.0, eps=1e-8,
+        self, params, lr=1e-3, betas=(0.995, 0.999), nus=(0.7, 1.0), weight_decay=0.0, eps=1e-8
     ):
         r"""
         Args:
@@ -51,6 +51,10 @@ class QHAdamW(Optimizer):
             weight_decay (float, optional): weight decay
                 (L2 regularization coefficient, times two)
                 (default: 0.0)
+
+        Raises:
+            ValueError: if invalid learning rate, epsilon value, betas or
+                weight_decay value.
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")

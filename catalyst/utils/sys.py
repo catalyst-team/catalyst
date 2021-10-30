@@ -59,10 +59,10 @@ def get_config_runner(expdir: Path, config: Dict):
         ConfigRunner instance
     """
     config_copy = copy.deepcopy(config)
-    if not isinstance(expdir, Path):
-        expdir = Path(expdir)
-    dir_module = import_module(expdir)  # noqa: F841
-    # runner_fn = getattr(m, "Runner", None)
+
+    if expdir is not None:
+        dir_module = import_module(expdir)  # noqa: F841
+        # runner_fn = getattr(dir_module, "Runner", None)
 
     runner_params = config_copy.get("runner", {})
     runner_from_config = runner_params.pop("_target_", None)
@@ -133,7 +133,7 @@ def _get_environment_vars() -> Dict[str, Any]:
         try:
             git_branch = (
                 subprocess.check_output(
-                    "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull,
+                    "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull
                 )
                 .strip()
                 .decode("UTF-8")
@@ -142,7 +142,7 @@ def _get_environment_vars() -> Dict[str, Any]:
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
-                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull,
+                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull
             )
 
             git = {

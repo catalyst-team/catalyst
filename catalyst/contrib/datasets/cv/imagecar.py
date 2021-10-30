@@ -1,11 +1,15 @@
 from typing import Callable, Optional
 from pathlib import Path
 
-import cv2
 import requests
+
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.functional import _extract_archive
+from catalyst.settings import SETTINGS
+
+if SETTINGS.cv_required:
+    import cv2
 
 DATASET_IDX = "1lq6wOcxtIR3LnIARvlIBZBwJzL7h0FYc"
 CHUNK_SIZE = 32768
@@ -65,6 +69,9 @@ class CarvanaOneCarDataset(Dataset):
             transforms: (callable, optional): A function/transform that
                 takes in an image and returns a transformed version.
 
+        Raises:
+            RuntimeError: If ``download is False`` and the dataset not found.
+
         Examples:
             >>> from catalyst.contrib.datasets import CarvanaOneCarDataset
             >>> dataset = CarvanaOneCarDataset(root='./',
@@ -98,6 +105,7 @@ class CarvanaOneCarDataset(Dataset):
         """
         Args:
             idx: Index
+
         Returns:
              Dict with 2 fields: ``image`` and ``mask``
         """

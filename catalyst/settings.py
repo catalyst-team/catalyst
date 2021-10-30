@@ -33,9 +33,36 @@ def _is_amp_available():
         return False
 
 
+def _is_albumentations_available():
+    try:
+        import albumentations as albu  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _is_xla_available():
     try:
         import torch_xla.core.xla_model as xm  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_fairscale_available():
+    try:
+        import fairscale  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_deepspeed_available():
+    try:
+        import deepspeed  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -94,6 +121,7 @@ def _is_cv_available():
         import cv2  # noqa: F401
         import imageio  # noqa: F401
         from skimage.color import label2rgb, rgb2gray  # noqa: F401
+
         import torchvision  # noqa: F401
 
         return True
@@ -140,6 +168,15 @@ def _is_wandb_available():
         return False
 
 
+def _is_comet_available():
+    try:
+        import comet_ml  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 def _is_neptune_available():
     try:
         import neptune.new as neptune  # noqa: F401
@@ -171,6 +208,7 @@ class Settings(FrozenClass):
         nifti_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
+        albu_required: Optional[bool] = None,
         hydra_required: Optional[bool] = None,
         # nmslib_required: Optional[bool] = False,
         optuna_required: Optional[bool] = None,
@@ -178,6 +216,8 @@ class Settings(FrozenClass):
         amp_required: Optional[bool] = None,
         apex_required: Optional[bool] = None,
         xla_required: Optional[bool] = None,
+        fairscale_required: Optional[bool] = None,
+        deepspeed_required: Optional[bool] = None,
         # [dl-extras]
         onnx_required: Optional[bool] = None,
         pruning_required: Optional[bool] = None,
@@ -187,6 +227,7 @@ class Settings(FrozenClass):
         neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
         wandb_required: Optional[bool] = None,
+        comet_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -214,6 +255,11 @@ class Settings(FrozenClass):
         )
 
         # [integrations]
+        self.albu_required: bool = _get_optional_value(
+            albu_required,
+            _is_albumentations_available,
+            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
+        )
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
             _is_hydra_available,
@@ -242,6 +288,18 @@ class Settings(FrozenClass):
             xla_required,
             _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
+        )
+        self.fairscale_required: bool = _get_optional_value(
+            fairscale_required,
+            _is_fairscale_available,
+            "catalyst[fairscale] is not available, "
+            "to install it, run `pip install catalyst[fairscale]`.",
+        )
+        self.deepspeed_required: bool = _get_optional_value(
+            deepspeed_required,
+            _is_deepspeed_available,
+            "catalyst[deepspeed] is not available, "
+            "to install it, run `pip install catalyst[deepspeed]`.",
         )
 
         # [dl-extras]
@@ -282,6 +340,12 @@ class Settings(FrozenClass):
             wandb_required,
             _is_wandb_available,
             "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
+        self.comet_required: bool = _get_optional_value(
+            comet_required,
+            _is_comet_available,
+            "comet is not available, to install, run 'pip install comet_ml'.",
         )
 
         # self.wandb_required: bool = wandb_required
@@ -444,7 +508,7 @@ class MergedConfigParser:
 
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = {"store_true", "store_false"}  # noqa: WPS115
+    GETBOOL_ACTIONS = {"store_true", "store_false"}
 
     def __init__(self, config_finder: ConfigFileFinder):
         """Initialize the MergedConfigParser instance.
@@ -458,7 +522,7 @@ class MergedConfigParser:
     def _normalize_value(self, option, value):
         final_value = option.normalize(value, self.config_finder.local_directory)
         logger.debug(
-            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'",
+            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'"
         )
         return final_value
 
@@ -498,7 +562,6 @@ class MergedConfigParser:
 SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-
 
 __all__ = [
     "SETTINGS",

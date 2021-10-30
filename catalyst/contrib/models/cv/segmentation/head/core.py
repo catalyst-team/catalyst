@@ -10,9 +10,7 @@ from torch import nn
 class HeadSpec(ABC, nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def __init__(
-        self, in_channels: List[int], out_channles: int, in_strides: List[int] = None,
-    ):
+    def __init__(self, in_channels: List[int], out_channles: int, in_strides: List[int] = None):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.in_channels = in_channels

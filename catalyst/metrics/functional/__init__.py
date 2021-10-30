@@ -27,6 +27,7 @@ from catalyst.metrics.functional._hitrate import hitrate
 from catalyst.metrics.functional._mrr import reciprocal_rank, mrr
 from catalyst.metrics.functional._ndcg import dcg, ndcg
 from catalyst.metrics.functional._precision import precision
+from catalyst.metrics.functional._r2_squared import r2_squared
 from catalyst.metrics.functional._recall import recall
 from catalyst.metrics.functional._segmentation import (
     iou,

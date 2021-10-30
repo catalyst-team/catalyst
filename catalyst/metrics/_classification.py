@@ -3,8 +3,10 @@ from collections import defaultdict
 from functools import partial
 
 import numpy as np
+
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -12,7 +14,11 @@ from catalyst.metrics.functional._misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
-from catalyst.utils.distributed import all_gather, get_rank
+from catalyst.utils import get_device
+from catalyst.utils.distributed import all_gather, get_backend
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class StatisticsMetric(ICallbackBatchMetric):
@@ -28,6 +34,9 @@ class StatisticsMetric(ICallbackBatchMetric):
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
+
+    Raises:
+        ValueError: if mode is incorrect
 
     Examples:
 
@@ -94,14 +103,8 @@ class StatisticsMetric(ICallbackBatchMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """Init params
-
-        Raises:
-            ValueError: if mode is incorrect
-        """
-        super().__init__(
-            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix,
-        )
+        """Init params"""
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         if mode == "binary":
             self.statistics_fn = get_binary_statistics
         elif mode == "multiclass":
@@ -113,7 +116,7 @@ class StatisticsMetric(ICallbackBatchMetric):
 
         self.num_classes = num_classes
         self.statistics = None
-        self._is_ddp = False
+        self._ddp_backend = None
         self.reset()
 
     # multiprocessing could not handle lamdas, so..
@@ -123,7 +126,7 @@ class StatisticsMetric(ICallbackBatchMetric):
     def reset(self) -> None:
         """Reset all the statistics."""
         self.statistics = defaultdict(self._mp_hack)
-        self._is_ddp = get_rank() > -1
+        self._ddp_backend = get_backend()
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -140,7 +143,7 @@ class StatisticsMetric(ICallbackBatchMetric):
                 negative, true positive and support statistics
         """
         tn, fp, fn, tp, support = self.statistics_fn(
-            outputs=outputs.cpu().detach(), targets=targets.cpu().detach(),
+            outputs=outputs.cpu().detach(), targets=targets.cpu().detach()
         )
 
         tn = tn.numpy()
@@ -263,7 +266,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             for metric_name, metric_value in zip(
                 ("precision", "recall", "f1", "support"), per_class
             )
-            for i in range(self.num_classes)  # noqa: WPS361
+            for i in range(self.num_classes)
         }
         kv_metrics.update(per_class_metrics)
         return kv_metrics
@@ -282,7 +285,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         """
         tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
         per_class, micro, macro, weighted = get_aggregated_metrics(
-            tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division,
+            tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division
         )
         return per_class, micro, macro, weighted
 
@@ -312,6 +315,20 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             list of aggregated metrics: per-class, micro, macro and weighted averaging of
                 precision, recall, f1 score and support metrics
         """
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        if self._ddp_backend == "xla":
+            device = get_device()
+            for key in self.statistics:
+                key_statistics = torch.tensor([self.statistics[key]], device=device)
+                key_statistics = xm.all_gather(key_statistics).sum(dim=0).cpu().numpy()
+                self.statistics[key] = key_statistics
+        elif self._ddp_backend == "ddp":
+            for key in self.statistics:
+                value: List[np.ndarray] = all_gather(self.statistics[key])
+                value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                self.statistics[key] = value
+
         per_class, micro, macro, weighted = get_aggregated_metrics(
             tp=self.statistics["tp"],
             fp=self.statistics["fp"],
@@ -329,13 +346,6 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         Returns:
             dict of metrics
         """
-        # @TODO: ddp hotfix, could be done better
-        if self._is_ddp:
-            for key in self.statistics:
-                value: List[np.ndarray] = all_gather(self.statistics[key])
-                value: np.ndarray = np.sum(np.vstack(value), axis=0)
-                self.statistics[key] = value
-
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
             per_class=per_class, micro=micro, macro=macro, weighted=weighted
@@ -396,7 +406,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
 
     def reset(self) -> None:
         """Reset all the statistics and metrics fields."""
-        self.statistics = defaultdict(float)
+        self.statistics = defaultdict(int)
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[float, float, float]:
         """
@@ -428,7 +438,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         """
         precision_value, recall_value, f1_value = self.update(outputs=outputs, targets=targets)
         kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value
         )
         return kv_metrics
 
@@ -439,11 +449,14 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         Returns:
             tuple of metrics: precision, recall, f1 score
         """
-        # @TODO: ddp hotfix, could be done better
-        if self._is_ddp:
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        if self._ddp_backend == "xla":
+            self.statistics = {k: xm.mesh_reduce(k, v, np.sum) for k, v in self.statistics.items()}
+        elif self._ddp_backend == "ddp":
             for key in self.statistics:
-                value: List[float] = all_gather(self.statistics[key])
-                value: float = sum(value)
+                value: List[int] = all_gather(self.statistics[key])
+                value: int = sum(value)
                 self.statistics[key] = value
 
         precision_value, recall_value, f1_value = get_binary_metrics(
@@ -463,7 +476,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         """
         precision_value, recall_value, f1_value = self.compute()
         kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value
         )
         return kv_metrics
 

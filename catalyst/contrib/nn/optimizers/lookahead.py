@@ -102,7 +102,7 @@ class Lookahead(Optimizer):
 
     @classmethod
     def get_from_params(
-        cls, params: Dict, base_optimizer_params: Dict = None, **kwargs,
+        cls, params: Dict, base_optimizer_params: Dict = None, **kwargs
     ) -> "Lookahead":
         """@TODO: Docs. Contribution is welcome."""
         from catalyst.registry import REGISTRY

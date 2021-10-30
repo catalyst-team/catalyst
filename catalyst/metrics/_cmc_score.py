@@ -2,12 +2,12 @@ from typing import Dict, Iterable, List, Optional
 
 import torch
 
-from catalyst.metrics._metric import AccumulationMetric
+from catalyst.metrics._accumulative import AccumulativeMetric
 from catalyst.metrics.functional._cmc_score import cmc_score, masked_cmc_score
 from catalyst.utils.distributed import get_rank
 
 
-class CMCMetric(AccumulationMetric):
+class CMCMetric(AccumulativeMetric):
     """Cumulative Matching Characteristics
 
     Args:
@@ -74,10 +74,10 @@ class CMCMetric(AccumulationMetric):
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
         )
-        sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
-        train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
+        sampler = data.BatchBalanceClassSampler(
+            labels=train_dataset.get_labels(), num_classes=5, num_samples=10
         )
+        train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
         valid_dataset = datasets.MnistQGDataset(
             root=os.getcwd(), transform=transforms, gallery_fraq=0.2
@@ -147,6 +147,16 @@ class CMCMetric(AccumulationMetric):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
+        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -167,13 +177,12 @@ class CMCMetric(AccumulationMetric):
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
-            accumulative_fields=[embeddings_key, labels_key, is_query_key],
+            keys=[embeddings_key, labels_key, is_query_key],
         )
         self.embeddings_key = embeddings_key
         self.labels_key = labels_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -227,12 +236,13 @@ class CMCMetric(AccumulationMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 
 
-class ReidCMCMetric(AccumulationMetric):
+class ReidCMCMetric(AccumulativeMetric):
     """Cumulative Matching Characteristics for Reid case
 
     Args:
@@ -303,14 +313,13 @@ class ReidCMCMetric(AccumulationMetric):
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
-            accumulative_fields=[embeddings_key, pids_key, cids_key, is_query_key],
+            keys=[embeddings_key, pids_key, cids_key, is_query_key],
         )
         self.embeddings_key = embeddings_key
         self.pids_key = pids_key
         self.cids_key = cids_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -384,7 +393,8 @@ class ReidCMCMetric(AccumulationMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 
