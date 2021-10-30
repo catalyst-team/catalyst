@@ -14,6 +14,7 @@ from catalyst.contrib.nn.criterion.contrastive import (
     ContrastivePairwiseEmbeddingLoss,
 )
 from catalyst.contrib.nn.criterion.dice import DiceLoss
+from catalyst.contrib.nn.criterion.smoothing_dice import SmoothingDiceLoss
 from catalyst.contrib.nn.criterion.focal import (
     FocalLossBinary,
     FocalLossMultiClass,
