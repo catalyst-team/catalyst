@@ -40,6 +40,8 @@ class _EpochFilterFn:
 
 class _LoaderFilterFn:
     def __init__(self, loaders: LOADERS, reverse_condition: bool):
+        if isinstance(loaders, str):
+            loaders = [loaders]
         if not isinstance(loaders, (list, tuple, dict, OrderedDict)):
             raise ValueError(
                 "'loaders' type should be one of - str, "
@@ -47,8 +49,6 @@ class _LoaderFilterFn:
                 "Mapping[str, Sequence[int]]! "
                 f"(got {type(loaders)})"
             )
-        if isinstance(loaders, str):
-            loaders = [loaders]
         self.loaders = loaders
         self.reverse_condition = reverse_condition
 
