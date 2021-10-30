@@ -18,7 +18,7 @@ class _EpochFilterFn:
             )
         self.epochs = epochs
         self.reverse_condition = reverse_condition
-        
+
         # extra conditions precomputing
         if isinstance(self.epochs, (int, float)):
             self.epochs = int(self.epochs)
@@ -51,7 +51,7 @@ class _LoaderFilterFn:
             loaders = [loaders]
         self.loaders = loaders
         self.reverse_condition = reverse_condition
-        
+
         # extra conditions precomputing
         if isinstance(self.loaders, (list, tuple)):
             self.loaders = sorted(set(self.loaders))  # ignore duplicates
