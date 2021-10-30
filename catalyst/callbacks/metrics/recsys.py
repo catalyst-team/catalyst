@@ -14,10 +14,7 @@ class HitrateCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        topk_args: specifies which HR@K to log:
-            [1] - HR
-            [1, 3] - HR at 1 and 3
-            [1, 3, 5] - HR at 1, 3 and 5
+        topk_args: specifies which HR@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -82,6 +79,16 @@ class HitrateCallback(BatchMetricCallback):
                 ),
             ]
         )
+
+    .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"hitrate01"``
+        - ``topk_args = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
@@ -115,10 +122,7 @@ class MAPCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which MAP@K to log:
-            [1] - MAP
-            [1, 3] - MAP at 1 and 3
-            [1, 3, 5] - MAP at 1, 3 and 5
+        topk_args: specifies which MAP@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -183,6 +187,16 @@ class MAPCallback(BatchMetricCallback):
                 ),
             ]
         )
+
+    .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"map01"``
+        - ``topk_args = (1, 3)`` ---> ``"map01"``, ``"map03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
@@ -216,10 +230,7 @@ class MRRCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which MRR@K to log:
-            [1] - MRR
-            [1, 3] - MRR at 1 and 3
-            [1, 3, 5] - MRR at 1, 3 and 5
+        topk_args: specifies which MRR@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -286,6 +297,16 @@ class MRRCallback(BatchMetricCallback):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"mrr01"``
+        - ``topk_args = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -317,10 +338,7 @@ class NDCGCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which NDCG@K to log:
-            [1] - NDCG
-            [1, 3] - NDCG at 1 and 3
-            [1, 3, 5] - NDCG at 1, 3 and 5
+        topk_args: specifies which NDCG@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -385,6 +403,16 @@ class NDCGCallback(BatchMetricCallback):
                 ),
             ]
         )
+
+    .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"ndcg01"``
+        - ``topk_args = (1, 3)`` ---> ``"ndcg01"``, ``"ndcg03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"ndcg01"``, ``"ndcg03"``, ``"ndcg05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
