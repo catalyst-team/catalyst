@@ -125,6 +125,13 @@ DiceLoss
     :undoc-members:
     :show-inheritance:
 
+SmoothingDiceLoss
+"""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.smoothing_dice.SmoothingDiceLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 FocalLossBinary
 """""""""""""""
 .. autoclass:: catalyst.contrib.nn.criterion.focal.FocalLossBinary
