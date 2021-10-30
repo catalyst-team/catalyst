@@ -1,4 +1,5 @@
 # flake8: noqa
+from typing import List
 
 import numpy as np
 import pytest
@@ -10,6 +11,7 @@ from catalyst.contrib.nn.criterion import (
     BarlowTwinsLoss,
     CircleLoss,
     NTXentLoss,
+    SmoothingDiceLoss,
     SupervisedContrastiveLoss,
     TripletMarginLossWithSampler,
 )
@@ -333,4 +335,141 @@ def test_supervised_contrastive_loss(
     value = SupervisedContrastiveLoss(tau=tau, pos_aggregation=pos_aggregation)(
         features, targets
     ).item()
+    assert np.isclose(value, true_value)
+
+
+base_outputs = torch.tensor([[0.9, 0.1, 0.2], [0, 0.6, 0.3], [0.4, 0.2, 1]])
+base_targets = torch.tensor([[1.0, 0, 0], [0, 1, 0], [1, 1, 0]])
+base_outputs = torch.stack([base_outputs, base_targets])[None, :, :, :]
+base_targets = torch.stack([base_targets, base_targets])[None, :, :, :]
+
+base_outputs_2 = torch.tensor([[0.8, 0.1, 0.4], [0.2, 0.4, 0.3], [0, 1, 1]])
+base_targets_2 = torch.tensor([[1.0, 0.1, 0], [0, 0.8, 0], [0, 1, 1]])
+base_outputs_2 = torch.stack([base_outputs_2, base_outputs_2])[None, :, :, :]
+base_targets_2 = torch.stack([base_targets_2, base_targets_2])[None, :, :, :]
+
+
+@pytest.mark.parametrize(
+    "features,targets,mode,weights,true_value",
+    (
+        (
+            torch.tensor(
+                [
+                    [
+                        [
+                            [0.9000, 0.1000, 0.2000],
+                            [0.0000, 0.6000, 0.3000],
+                            [0.4000, 0.2000, 1.0000],
+                        ],
+                        [
+                            [1.0000, 0.0000, 0.0000],
+                            [0.0000, 1.0000, 0.0000],
+                            [1.0000, 1.0000, 0.0000],
+                        ],
+                    ]
+                ]
+            ),
+            torch.tensor(
+                [
+                    [
+                        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
+                        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
+                    ]
+                ]
+            ),
+            "micro",
+            None,
+            0.1592005491256714,
+        ),
+        (
+            torch.tensor(
+                [
+                    [
+                        [
+                            [0.8000, 0.1000, 0.4000],
+                            [0.2000, 0.4000, 0.3000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                        [
+                            [0.8000, 0.1000, 0.4000],
+                            [0.2000, 0.4000, 0.3000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                    ]
+                ]
+            ),
+            torch.tensor(
+                [
+                    [
+                        [
+                            [1.0000, 0.1000, 0.0000],
+                            [0.0000, 0.8000, 0.0000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                        [
+                            [1.0000, 0.1000, 0.0000],
+                            [0.0000, 0.8000, 0.0000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                    ]
+                ]
+            ),
+            "macro",
+            None,
+            0.07259261608123779,
+        ),
+        (
+            torch.tensor(
+                [
+                    [
+                        [
+                            [0.8000, 0.1000, 0.4000],
+                            [0.2000, 0.4000, 0.3000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                        [
+                            [0.8000, 0.1000, 0.4000],
+                            [0.2000, 0.4000, 0.3000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                    ]
+                ]
+            ),
+            torch.tensor(
+                [
+                    [
+                        [
+                            [1.0000, 0.1000, 0.0000],
+                            [0.0000, 0.8000, 0.0000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                        [
+                            [1.0000, 0.1000, 0.0000],
+                            [0.0000, 0.8000, 0.0000],
+                            [0.0000, 1.0000, 1.0000],
+                        ],
+                    ]
+                ]
+            ),
+            "macro",
+            [0.3, 0.6],
+            0.16533327102661133,
+        ),
+    ),
+)
+def test_smoothing_dice_loss(
+    features: torch.Tensor, targets: torch.Tensor, mode: str, weights: List[int], true_value: float
+):
+    """
+    Test smoothing dice loss
+
+    Args:
+        features: features of objects
+        targets: targets of objects
+        mode: aggeragation type
+        weights: label weights
+        true_value: expected loss value
+    """
+    criterion = SmoothingDiceLoss(mode=mode, weights=weights)
+    value = criterion(features, targets).item()
     assert np.isclose(value, true_value)
