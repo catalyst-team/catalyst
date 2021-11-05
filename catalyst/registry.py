@@ -10,10 +10,10 @@ Registry = REGISTRY.add
 
 
 def _transforms_loader(r: hydra_slayer.Registry):
-    # from catalyst.data import transforms as t
+    from catalyst.data import transforms as t
 
     # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
-    # r.add_from_module(t, prefix=["transform."])
+    r.add_from_module(t, prefix=["transform."])
 
     if SETTINGS.albu_required:
         import albumentations as m
