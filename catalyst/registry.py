@@ -33,9 +33,14 @@ def _samplers_loader(r: hydra_slayer.Registry):
 
     factories = {k: v for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"}
     r.add(**factories)
+
     from catalyst.data import sampler
 
     r.add_from_module(sampler)
+
+    from catalyst.contrib.data import sampler as c_sampler
+
+    r.add_from_module(c_sampler)
 
 
 def _datasets_loader(r: hydra_slayer.Registry):
