@@ -12,4 +12,5 @@ from catalyst.data.sampler import (
     DynamicBalanceClassSampler,
     MiniEpochSampler,
 )
+
 from catalyst.contrib.data import *

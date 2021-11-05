@@ -72,7 +72,7 @@ require_libs cv
 
 python -c """
 try:
-    from catalyst.contrib.dataset import cv as cv_data
+    from catalyst.contrib.data.dataset_cv import ImageFolderDataset
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -81,7 +81,7 @@ else:
 
 python -c """
 try:
-    from catalyst.contrib.models import cv as cv_models
+    from catalyst.contrib.models import ResnetEncoder
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -114,54 +114,54 @@ pip install -r requirements/requirements-cv.txt --quiet \
   --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.contrib.data import cv as cv_data
-from catalyst.contrib.models import cv as cv_models
+from catalyst.contrib.data.dataset_cv import ImageFolderDataset
+from catalyst.contrib.models import ResnetEncoder
 from catalyst.contrib.utils import imread, imwrite
 """
 
 
 ################################  pipeline 02  ################################
-# checking catalyst-ml dependencies loading
-clean_requirements
-require_libs ml
+# # checking catalyst-ml dependencies loading
+# clean_requirements
+# require_libs ml
 
-# check if fail if requirements not installed
-python -c """
-try:
-    from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
+# # check if fail if requirements not installed
+# python -c """
+# try:
+#     from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
+# except (AttributeError, ImportError, AssertionError):
+#     pass  # Ok
+# else:
+#     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+# """
 
-python -c """
-try:
-    from catalyst.contrib.__main__ import COMMANDS
+# python -c """
+# try:
+#     from catalyst.contrib.__main__ import COMMANDS
 
-    assert not (
-        'tag2label' in COMMANDS
-        or 'split-dataframe' in COMMANDS
-    )
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
+#     assert not (
+#         'tag2label' in COMMANDS
+#         or 'split-dataframe' in COMMANDS
+#     )
+# except (AttributeError, ImportError, AssertionError):
+#     pass  # Ok
+# else:
+#     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+# """
 
-pip install -r requirements/requirements-ml.txt --quiet \
-  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
-  --upgrade-strategy only-if-needed
+# pip install -r requirements/requirements-ml.txt --quiet \
+#   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+#   --upgrade-strategy only-if-needed
 
-python -c """
-from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
-from catalyst.contrib.__main__ import COMMANDS
+# python -c """
+# from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
+# from catalyst.contrib.__main__ import COMMANDS
 
-assert (
-    'tag2label' in COMMANDS
-    and 'split-dataframe' in COMMANDS
-)
-"""
+# assert (
+#     'tag2label' in COMMANDS
+#     and 'split-dataframe' in COMMANDS
+# )
+# """
 
 ################################  pipeline 03  ################################
 # checking catalyst-(cv/ml) dependencies loading
@@ -180,7 +180,7 @@ EOT
 
 python -c """
 try:
-    from catalyst.contrib.dataset import cv as cv_data
+    from catalyst.contrib.data.dataset_cv import ImageFolderDataset
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -189,7 +189,7 @@ else:
 
 python -c """
 try:
-    from catalyst.contrib.models import cv as cv_models
+    from catalyst.contrib.models import ResnetEncoder
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -249,8 +249,8 @@ pip install -r requirements/requirements-ml.txt --quiet \
   --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.contrib.data import cv as cv_data
-from catalyst.contrib.models import cv as cv_models
+from catalyst.contrib.data.dataset_cv import ImageFolderDataset
+from catalyst.contrib.models import ResnetEncoder
 from catalyst.contrib.utils import imread, imwrite
 from catalyst.contrib.__main__ import COMMANDS
 

@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
 from catalyst.callbacks.metric import BatchMetricCallback, LoaderMetricCallback
-from catalyst.contrib import data, datasets, models, nn
+from catalyst.contrib import datasets, models, nn
 from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
 from catalyst.metrics import AccuracyMetric, CMCMetric
 

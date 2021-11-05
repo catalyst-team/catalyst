@@ -1,5 +1,7 @@
 from typing import Any, Iterable, List, Union
 
+import numpy as np
+
 from torch import int as tint, long, short, Tensor
 
 
