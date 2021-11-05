@@ -28,6 +28,33 @@ def _transforms_loader(r: hydra_slayer.Registry):
 REGISTRY.late_add(_transforms_loader)
 
 
+def _datasets_loader(r: hydra_slayer.Registry):
+    from catalyst.data import dataset as m
+
+    r.add_from_module(m)
+
+    from catalyst.contrib.data import dataset
+
+    r.add_from_module(dataset)
+
+    from catalyst.contrib import datasets as m_contrib
+
+    r.add_from_module(m_contrib)
+
+    if SETTINGS.cv_required:
+        from catalyst.contrib.data import dataset_cv
+
+        r.add_from_module(dataset_cv)
+
+    if SETTINGS.ml_required:
+        from catalyst.contrib.data import dataset_ml
+
+        r.add_from_module(dataset_ml)
+
+
+REGISTRY.late_add(_datasets_loader)
+
+
 def _samplers_loader(r: hydra_slayer.Registry):
     from torch.utils.data import sampler as s
 
@@ -43,31 +70,7 @@ def _samplers_loader(r: hydra_slayer.Registry):
     r.add_from_module(c_sampler)
 
 
-def _datasets_loader(r: hydra_slayer.Registry):
-    from catalyst.data import dataset as m
-
-    r.add_from_module(m)
-
-    from catalyst.contrib.data import dataset
-
-    r.add_from_module(dataset)
-
-    if SETTINGS.cv_required:
-        from catalyst.contrib.data import dataset_cv
-
-        r.add_from_module(dataset_cv)
-
-    if SETTINGS.ml_required:
-        from catalyst.contrib.data import dataset_ml
-
-        r.add_from_module(dataset_ml)
-
-    from catalyst.contrib import datasets as m_contrib
-
-    r.add_from_module(m_contrib)
-
-
-REGISTRY.late_add(_datasets_loader)
+REGISTRY.late_add(_samplers_loader)
 
 
 def _dataloaders_loader(r: hydra_slayer.Registry):
@@ -81,9 +84,6 @@ def _dataloaders_loader(r: hydra_slayer.Registry):
 
 
 REGISTRY.late_add(_dataloaders_loader)
-
-
-REGISTRY.late_add(_samplers_loader)
 
 
 def _grad_clip_loader(r: hydra_slayer.Registry):
@@ -145,19 +145,6 @@ def _schedulers_loader(r: hydra_slayer.Registry):
 REGISTRY.late_add(_schedulers_loader)
 
 
-def _runners_loader(r: hydra_slayer.Registry):
-    from catalyst.core.runner import IRunner
-
-    r.add(IRunner)
-
-    from catalyst import runners as m
-
-    r.add_from_module(m)
-
-
-REGISTRY.late_add(_runners_loader)
-
-
 def _engines_loader(r: hydra_slayer.Registry):
     from catalyst.core.engine import IEngine
 
@@ -169,6 +156,19 @@ def _engines_loader(r: hydra_slayer.Registry):
 
 
 REGISTRY.late_add(_engines_loader)
+
+
+def _runners_loader(r: hydra_slayer.Registry):
+    from catalyst.core.runner import IRunner
+
+    r.add(IRunner)
+
+    from catalyst import runners as m
+
+    r.add_from_module(m)
+
+
+REGISTRY.late_add(_runners_loader)
 
 
 def _callbacks_loader(r: hydra_slayer.Registry):

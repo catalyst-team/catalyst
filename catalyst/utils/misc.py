@@ -1,4 +1,3 @@
-# simplify
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 import argparse
 from base64 import urlsafe_b64encode
