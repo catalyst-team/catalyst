@@ -65,7 +65,10 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            [
+                transforms.ImageToTensor(),
+                transforms.NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            ]
         )
         train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
         valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)

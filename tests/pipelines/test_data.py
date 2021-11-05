@@ -12,16 +12,16 @@ from catalyst.data import (
     BalanceClassSampler,
     BatchBalanceClassSampler,
     BatchPrefetchLoaderWrapper,
-    ToTensor,
+    ImageToTensor,
 )
 from catalyst.settings import IS_CUDA_AVAILABLE
 
 
 def test_balance_class_sampler():
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
     train_labels = train_data.targets.cpu().numpy().tolist()
     train_sampler = BalanceClassSampler(train_labels, mode=5000)
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
 
     loaders = {
         "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
@@ -48,10 +48,10 @@ def test_balance_class_sampler():
 
 
 def test_batch_balance_class_sampler():
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
     train_labels = train_data.targets.cpu().numpy().tolist()
     train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
 
     loaders = {
         "train": DataLoader(train_data, batch_sampler=train_sampler),
@@ -79,10 +79,10 @@ def test_batch_balance_class_sampler():
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_balance_class_sampler_with_prefetch():
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
     train_labels = train_data.targets.cpu().numpy().tolist()
     train_sampler = BalanceClassSampler(train_labels, mode=5000)
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
 
     loaders = {
         "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
@@ -111,10 +111,10 @@ def test_balance_class_sampler_with_prefetch():
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_batch_balance_class_sampler_with_prefetch():
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
     train_labels = train_data.targets.cpu().numpy().tolist()
     train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
 
     loaders = {
         "train": DataLoader(train_data, batch_sampler=train_sampler),

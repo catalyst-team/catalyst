@@ -5,7 +5,7 @@ import numpy as np
 
 import torch
 
-from catalyst.contrib.utils import imread
+from catalyst.contrib.utils.image import imread
 from catalyst.data import MetricLearningTrainDataset, QueryGalleryDataset
 
 

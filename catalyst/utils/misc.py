@@ -1,3 +1,4 @@
+# simplify
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 import argparse
 from base64 import urlsafe_b64encode
@@ -7,6 +8,7 @@ from datetime import datetime
 from hashlib import sha256
 import inspect
 from itertools import tee
+import os
 import random
 
 import numpy as np
@@ -55,6 +57,8 @@ def set_global_seed(seed: int) -> None:
     Args:
         seed: random seed
     """
+    os.environ["PYTHONHASHSEED"] = str(seed)
+
     random.seed(seed)
     np.random.seed(seed)
 
@@ -219,56 +223,6 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         return getattr(obj, key)[inner_key]
 
 
-def _get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Any:
-    return dictionary[key]
-
-
-def _get_key_list(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
-    result = {name: dictionary[name] for name in key}
-    return result
-
-
-def _get_key_dict(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
-    result = {key_out: dictionary[key_in] for key_in, key_out in key.items()}
-    return result
-
-
-def _get_key_none(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
-    return {}
-
-
-def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
-    return dictionary
-
-
-def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
-    """Function generator for sub-dict preparation from dict based on predefined keys.
-
-    Args:
-        key: keys
-
-    Returns:
-        function
-
-    Raises:
-        NotImplementedError: if key is out of
-            `str`, `tuple`, `list`, `dict`, `None`
-    """
-    if isinstance(key, str):
-        if key == "__all__":
-            return _get_key_all
-        else:
-            return _get_key_str
-    elif isinstance(key, (list, tuple)):
-        return _get_key_list
-    elif isinstance(key, dict):
-        return _get_key_dict
-    elif key is None:
-        return _get_key_none
-    else:
-        raise NotImplementedError()
-
-
 def merge_dicts(*dicts: dict) -> dict:
     """Recursive dict merge.
     Instead of updating only top-level keys,
@@ -401,41 +355,6 @@ def make_tuple(tuple_like):
     return tuple_like
 
 
-def args_are_not_none(*args: Optional[Any]) -> bool:
-    """Check that all arguments are not ``None``.
-
-    Args:
-        *args: values  # noqa: RST213
-
-    Returns:
-         bool: True if all value were not None, False otherwise
-    """
-    if args is None:
-        return False
-
-    for arg in args:
-        if arg is None:
-            return False
-
-    return True
-
-
-def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
-    """
-    Args:
-        it: list of any
-        value: query element
-
-    Returns:
-        indices of the all elements equal x0
-    """
-    if isinstance(it, np.ndarray):
-        inds = list(np.where(it == value)[0])
-    else:  # could be very slow
-        inds = [i for i, el in enumerate(it) if el == value]
-    return inds
-
-
 def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
     """@TODO: docs."""
     if not isinstance(dict_, dict):
@@ -484,15 +403,12 @@ __all__ = [
     "maybe_recursive_call",
     "get_attr",
     "set_global_seed",
-    "get_dictkey_auto_fn",
     "merge_dicts",
     "flatten_dict",
     "get_hash",
     "get_short_hash",
-    "args_are_not_none",
     "make_tuple",
     "pairwise",
-    "find_value_ids",
     "get_by_keys",
     "convert_labels2list",
 ]

@@ -4,7 +4,8 @@ import logging
 
 from catalyst.core.callback import CallbackNode, CallbackOrder, IOptimizerCallback
 from catalyst.registry import REGISTRY
-from catalyst.typing import Optimizer
+
+# from catalyst.typing import Optimizer
 from catalyst.utils import get_optimizer_momentum_list
 from catalyst.utils.misc import get_attr
 
@@ -14,15 +15,15 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def zero_grad(optimizer: Optimizer) -> None:
-    """Perform an hacky way to zero gradients.
+# def zero_grad(optimizer: Optimizer) -> None:
+#     """Perform an hacky way to zero gradients.
 
-    Args:
-        optimizer: optimizer with model parameters.
-    """
-    for group in optimizer.param_groups:
-        for p in group["params"]:
-            p.grad = None
+#     Args:
+#         optimizer: optimizer with model parameters.
+#     """
+#     for group in optimizer.param_groups:
+#         for p in group["params"]:
+#             p.grad = None
 
 
 class OptimizerCallback(IOptimizerCallback):

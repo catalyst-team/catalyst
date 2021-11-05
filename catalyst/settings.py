@@ -6,7 +6,7 @@ import os
 # from packaging.version import parse, Version
 import torch
 
-from catalyst.tools.frozen_class import FrozenClass
+from catalyst.extras.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
 
@@ -27,15 +27,6 @@ def _is_apex_avalilable():
 def _is_amp_available():
     try:
         import torch.cuda.amp as amp  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_albumentations_available():
-    try:
-        import albumentations as albu  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -205,12 +196,9 @@ class Settings(FrozenClass):
         self,
         # [subpackages]
         cv_required: Optional[bool] = None,
-        nifti_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
-        albu_required: Optional[bool] = None,
         hydra_required: Optional[bool] = None,
-        # nmslib_required: Optional[bool] = False,
         optuna_required: Optional[bool] = None,
         # [engines]
         amp_required: Optional[bool] = None,
@@ -229,6 +217,7 @@ class Settings(FrozenClass):
         wandb_required: Optional[bool] = None,
         comet_required: Optional[bool] = None,
         # [extras]
+        nifti_required: Optional[bool] = None,
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
         use_libjpeg_turbo: Optional[bool] = None,
@@ -255,17 +244,11 @@ class Settings(FrozenClass):
         )
 
         # [integrations]
-        self.albu_required: bool = _get_optional_value(
-            albu_required,
-            _is_albumentations_available,
-            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
-        )
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
             _is_hydra_available,
             "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
         )
-        # self.nmslib_required: bool = nmslib_required
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
             _is_optuna_available,

@@ -13,9 +13,9 @@ from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, RunnerError
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper

@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import os
 import sys
 
-from catalyst.dl.scripts.misc import parse_args_uargs
+from catalyst.dl.scripts._misc import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.settings import SETTINGS
 from catalyst.utils.distributed import get_rank
