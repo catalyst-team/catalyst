@@ -33,6 +33,15 @@ def _is_amp_available():
         return False
 
 
+def _is_albumentations_available():
+    try:
+        import albumentations as albu  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _is_xla_available():
     try:
         import torch_xla.core.xla_model as xm  # noqa: F401
@@ -217,10 +226,12 @@ class Settings(FrozenClass):
         wandb_required: Optional[bool] = None,
         comet_required: Optional[bool] = None,
         # [extras]
-        nifti_required: Optional[bool] = None,
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
         use_libjpeg_turbo: Optional[bool] = None,
+        # [to remove]
+        nifti_required: Optional[bool] = None,
+        albu_required: Optional[bool] = None,
     ):
         # True – use the package
         # None – use the package if available
@@ -231,12 +242,6 @@ class Settings(FrozenClass):
             _is_cv_available,
             "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
         )
-        self.nifti_required: bool = _get_optional_value(
-            nifti_required,
-            _is_nifti_available,
-            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
-        )
-
         self.ml_required: bool = _get_optional_value(
             ml_required,
             _is_ml_available,
@@ -254,6 +259,18 @@ class Settings(FrozenClass):
             _is_optuna_available,
             "catalyst[optuna] is not available, to install it, "
             "run `pip install catalyst[optuna]`.",
+        )
+
+        # [to remove]
+        self.nifti_required: bool = _get_optional_value(
+            nifti_required,
+            _is_nifti_available,
+            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
+        )
+        self.albu_required: bool = _get_optional_value(
+            albu_required,
+            _is_albumentations_available,
+            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
         )
 
         # [engines]
