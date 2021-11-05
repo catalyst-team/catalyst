@@ -66,8 +66,8 @@ stages:
           transform: &transform
             _target_: transform.Compose
             transforms:
-              - _target_: transform.ToTensor
-              - _target_: transform.Normalize
+              - _target_: transform.ImageToTensor
+              - _target_: transform.NormalizeImage
                 mean: [0]
                 std: [1]
           download: True
