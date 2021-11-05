@@ -14,7 +14,6 @@ import random
 import numpy as np
 
 import torch
-from torch import int as tint, long, short, Tensor
 
 T = TypeVar("T")
 
@@ -366,34 +365,6 @@ def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
     return get_by_keys(dict_[key], *keys, default=default)
 
 
-def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
-    """
-    This function allows to work with 2 types of indexing:
-    using a integer tensor and a list of indices.
-
-    Args:
-        labels: labels of batch samples
-
-    Returns:
-        labels of batch samples in the aligned format
-
-    Raises:
-        TypeError: if type of input labels is not tensor and list
-    """
-    if isinstance(labels, Tensor):
-        labels = labels.squeeze()
-        assert (len(labels.shape) == 1) and (
-            labels.dtype in [short, tint, long]
-        ), "Labels cannot be interpreted as indices."
-        labels_list = labels.tolist()
-    elif isinstance(labels, list):
-        labels_list = labels.copy()
-    else:
-        raise TypeError(f"Unexpected type of labels: {type(labels)}).")
-
-    return labels_list
-
-
 __all__ = [
     "boolean_flag",
     "get_fn_default_params",
@@ -410,5 +381,4 @@ __all__ = [
     "make_tuple",
     "pairwise",
     "get_by_keys",
-    "convert_labels2list",
 ]

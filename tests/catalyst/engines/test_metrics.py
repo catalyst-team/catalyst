@@ -3,30 +3,22 @@
 from typing import Any, Dict, List
 import logging
 import os
-import random
 from tempfile import TemporaryDirectory
-import time
 
 from pytest import mark
 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, Dataset, DistributedSampler, SequentialSampler
+from torch.utils.data import DataLoader, DistributedSampler, SequentialSampler
 
 from catalyst.callbacks import (
     AccuracyCallback,
     AUCCallback,
-    CheckpointCallback,
     CriterionCallback,
-    OptimizerCallback,
     PrecisionRecallF1SupportCallback,
-    TqdmCallback,
 )
-from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.models import MnistSimpleNet
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
-from catalyst.data.transforms import ImageToTensor
 from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner

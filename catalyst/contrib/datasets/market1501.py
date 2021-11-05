@@ -5,8 +5,8 @@ import numpy as np
 
 import torch
 
+from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
 from catalyst.contrib.utils.image import imread
-from catalyst.data import MetricLearningTrainDataset, QueryGalleryDataset
 
 
 class Market1501MLDataset(MetricLearningTrainDataset):

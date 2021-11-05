@@ -189,7 +189,6 @@ class PathsDataset(ListDataset):
 
 
 __all__ = [
-    "DatasetFromSampler",
     "ListDataset",
     "MergeDataset",
     "NumpyDataset",

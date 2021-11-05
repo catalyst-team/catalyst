@@ -12,9 +12,8 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
 from catalyst.callbacks.metric import BatchMetricCallback, LoaderMetricCallback
-from catalyst.contrib import datasets, models, nn
+from catalyst.contrib import data, datasets, models, nn
 from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
-from catalyst.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.metrics import AccuracyMetric, CMCMetric
 
 NUM_CLASSES = 4
@@ -270,7 +269,9 @@ def test_reid_pipeline():
     with TemporaryDirectory() as logdir:
 
         # 1. train and valid loaders
-        transforms = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
+        transforms = data.Compose(
+            [data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))]
+        )
 
         train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
         sampler = data.BatchBalanceClassSampler(

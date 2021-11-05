@@ -12,8 +12,8 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
+from catalyst.contrib.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:

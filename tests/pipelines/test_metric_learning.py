@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
-from catalyst.data.transforms import Compose, ImageToTensor, NormalizeImage
+from catalyst.contrib.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 

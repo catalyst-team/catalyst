@@ -5,11 +5,11 @@ import torch
 from torch import nn, Tensor
 from torch.nn import TripletMarginLoss
 
+from catalyst.contrib.data._misc import convert_labels2list
 from catalyst.contrib.nn.criterion.functional import triplet_loss
-from catalyst.utils.misc import convert_labels2list
 
 if TYPE_CHECKING:
-    from catalyst.data.sampler_inbatch import IInbatchTripletSampler
+    from catalyst.contrib.data.sampler_inbatch import IInbatchTripletSampler
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 

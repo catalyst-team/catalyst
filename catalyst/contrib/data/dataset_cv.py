@@ -2,10 +2,10 @@ from typing import Callable, Dict, Mapping, Optional
 import glob
 from pathlib import Path
 
+from catalyst.contrib.data.dataset import PathsDataset
 from catalyst.contrib.data.reader import ReaderCompose, ScalarReader
 from catalyst.contrib.data.reader_cv import ImageReader
 from catalyst.contrib.utils.image import has_image_extension
-from catalyst.data.dataset.torch import PathsDataset
 
 
 class ImageFolderDataset(PathsDataset):

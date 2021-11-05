@@ -844,12 +844,14 @@ import os
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
-from catalyst.data.transforms import Compose, Normalize, ToTensor
+from catalyst.contrib import data, datasets, models, nn
 
 
 # 1. train and valid loaders
-transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+transforms = data.Compose([
+    data.ImageToTensor(), 
+    data.NormalizeImage((0.1307,), (0.3081,))
+])
 
 train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
 sampler = data.BatchBalanceClassSampler(

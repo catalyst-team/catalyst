@@ -3,8 +3,6 @@ from catalyst.settings import SETTINGS
 
 from catalyst.utils.config import load_config, save_config
 
-from catalyst.utils.data import get_loaders_from_params, get_loader
-
 from catalyst.utils.distributed import (
     get_backend,
     get_world_size,
@@ -27,20 +25,14 @@ from catalyst.utils.misc import (
     get_attr,
     set_global_seed,
     boolean_flag,
-    get_dictkey_auto_fn,
     merge_dicts,
     flatten_dict,
     get_hash,
     get_short_hash,
-    args_are_not_none,
     make_tuple,
     pairwise,
-    find_value_ids,
     get_by_keys,
-    convert_labels2list,
 )
-from catalyst.utils.mixup import mixup_batch
-from catalyst.utils.numpy import get_one_hot
 
 from catalyst.utils.onnx import onnx_export
 
@@ -48,7 +40,7 @@ if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model
 
 if SETTINGS.pruning_required:
-    from catalyst.utils.pruning import prune_model, remove_reparametrization
+    from catalyst.utils.pruning import prune_model, remove_reparametrization, get_pruning_fn
 
 if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model
@@ -62,7 +54,6 @@ from catalyst.utils.sys import (
     import_module,
     dump_code,
     dump_environment,
-    get_config_runner,
 )
 
 from catalyst.utils.torch import (
@@ -89,6 +80,7 @@ from catalyst.utils.torch import (
     save_checkpoint,
     load_checkpoint,
     soft_update,
+    mixup_batch,
 )
 
 from catalyst.utils.tracing import trace_model

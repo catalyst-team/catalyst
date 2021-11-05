@@ -11,28 +11,12 @@ import torch
 from torch import Tensor
 from torch.nn import functional as F
 
-from catalyst.utils.misc import convert_labels2list
+from catalyst.contrib.data._misc import convert_labels2list, find_value_ids
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
 TLabels = Union[List[int], Tensor]
-
-
-def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
-    """
-    Args:
-        it: list of any
-        value: query element
-
-    Returns:
-        indices of the all elements equal x0
-    """
-    if isinstance(it, np.ndarray):
-        inds = list(np.where(it == value)[0])
-    else:  # could be very slow
-        inds = [i for i, el in enumerate(it) if el == value]
-    return inds
 
 
 class IInbatchTripletSampler(ABC):

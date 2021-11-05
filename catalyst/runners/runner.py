@@ -23,6 +23,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners._misc import get_loaders_from_params
 from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -35,7 +36,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.torch import get_available_engine
 

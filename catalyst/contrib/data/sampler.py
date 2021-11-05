@@ -1,17 +1,14 @@
 from typing import Iterator, List, Optional, Union
 from collections import Counter
 import logging
-from operator import itemgetter
 import random
 
 import numpy as np
 
 import torch
-from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
-from catalyst.data.dataset import DatasetFromSampler
-from catalyst.utils.misc import find_value_ids
+from catalyst.contrib.data._misc import find_value_ids
 
 
 class BalanceBatchSampler(Sampler):
