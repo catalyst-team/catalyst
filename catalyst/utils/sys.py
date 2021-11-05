@@ -1,5 +1,4 @@
 from typing import Any, Dict, List, Union
-import copy
 from importlib.util import module_from_spec, spec_from_file_location
 import json
 import os
@@ -13,7 +12,6 @@ import warnings
 
 from tensorboardX import SummaryWriter
 
-from catalyst.registry import REGISTRY
 from catalyst.settings import SETTINGS
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time

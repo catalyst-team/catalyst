@@ -103,7 +103,7 @@ def train_experiment(engine):
                             "batch_size": 1024,
                             "datasets": {
                                 "train": {
-                                    "_target_": "catalyst.data.dataset.SelfSupervisedDatasetWrapper",
+                                    "_target_": "catalyst.data.SelfSupervisedDatasetWrapper",
                                     "dataset": {
                                         "_target_": "catalyst.contrib.datasets.MNIST",
                                         "root": logdir,
@@ -114,7 +114,7 @@ def train_experiment(engine):
                                     "transform_original": transform_original,
                                 },
                                 "valid": {
-                                    "_target_": "catalyst.data.dataset.SelfSupervisedDatasetWrapper",
+                                    "_target_": "catalyst.data.SelfSupervisedDatasetWrapper",
                                     "dataset": {
                                         "_target_": "catalyst.contrib.datasets.MNIST",
                                         "root": logdir,

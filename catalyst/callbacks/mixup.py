@@ -56,7 +56,9 @@ class MixupCallback(Callback):
 
         class SimpleDataset(torch.utils.data.Dataset):
             def __init__(self, train: bool = False):
-                self.mnist = MNIST(os.getcwd(), train=train, download=True, transform=ImageToTensor())
+                self.mnist = MNIST(
+                    os.getcwd(), train=train, download=True, transform=ImageToTensor()
+                )
 
             def __len__(self) -> int:
                 return len(self.mnist)

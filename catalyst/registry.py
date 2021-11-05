@@ -10,10 +10,10 @@ Registry = REGISTRY.add
 
 
 def _transforms_loader(r: hydra_slayer.Registry):
-    from catalyst.data import transforms as t
+    # from catalyst.data import transforms as t
 
     # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
-    r.add_from_module(t, prefix=["transform."])
+    # r.add_from_module(t, prefix=["transform."])
 
     if SETTINGS.albu_required:
         import albumentations as m
@@ -38,17 +38,47 @@ def _samplers_loader(r: hydra_slayer.Registry):
     r.add_from_module(sampler)
 
 
+def _datasets_loader(r: hydra_slayer.Registry):
+    from catalyst.data import dataset as m
+
+    r.add_from_module(m)
+
+    from catalyst.contrib.data import dataset
+
+    r.add_from_module(dataset)
+
+    if SETTINGS.cv_required:
+        from catalyst.contrib.data import dataset_cv
+
+        r.add_from_module(dataset_cv)
+
+    if SETTINGS.ml_required:
+        from catalyst.contrib.data import dataset_ml
+
+        r.add_from_module(dataset_ml)
+
+    from catalyst.contrib import datasets as m_contrib
+
+    r.add_from_module(m_contrib)
+
+
+REGISTRY.late_add(_datasets_loader)
+
+
+def _dataloaders_loader(r: hydra_slayer.Registry):
+    from torch.utils.data import DataLoader
+
+    r.add(DataLoader)
+
+    from catalyst.data import loader as m
+
+    r.add_from_module(m)
+
+
+REGISTRY.late_add(_dataloaders_loader)
+
+
 REGISTRY.late_add(_samplers_loader)
-
-
-class _GradClipperWrap:
-    def __init__(self, fn, args, kwargs):
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self, x):
-        self.fn(x, *self.args, **self.kwargs)
 
 
 def _grad_clip_loader(r: hydra_slayer.Registry):
@@ -114,7 +144,6 @@ def _runners_loader(r: hydra_slayer.Registry):
     from catalyst.core.runner import IRunner
 
     r.add(IRunner)
-    r.add(IRunner)
 
     from catalyst import runners as m
 
@@ -176,28 +205,6 @@ def _torch_loader(r: hydra_slayer.Registry):
 
 
 REGISTRY.late_add(_torch_loader)
-
-
-def _datasets_loader(r: hydra_slayer.Registry):
-    from catalyst.data import dataset as m
-
-    r.add_from_module(m)
-
-    from catalyst.contrib import datasets as m_contrib
-
-    r.add_from_module(m_contrib)
-
-
-REGISTRY.late_add(_datasets_loader)
-
-
-def _dataloaders_loader(r: hydra_slayer.Registry):
-    from torch.utils.data import DataLoader
-
-    r.add(DataLoader)
-
-
-REGISTRY.late_add(_dataloaders_loader)
 
 
 __all__ = ["REGISTRY"]
