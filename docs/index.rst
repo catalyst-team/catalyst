@@ -200,8 +200,9 @@ Indices and tables
     self
     getting_started/quickstart
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
-    getting_started/migrating_from_other
     Catalyst — Accelerated Deep Learning R&D <https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef>
+    .. getting_started/migrating_from_other
+    
 
 .. toctree::
     :caption: Tutorials
@@ -258,7 +259,7 @@ Indices and tables
     api/loggers
     api/metrics
     api/runners
-    api/tools
+    .. api/tools
     api/utils
 
 

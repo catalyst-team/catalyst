@@ -10,7 +10,7 @@ Tools
 
 FrozenClass
 ----------------------
-.. autoclass:: catalyst.tools.frozen_class.FrozenClass
+.. autoclass:: catalyst.extras.frozen_class.FrozenClass
     :exclude-members: __init__
     :members:
     :undoc-members:
@@ -18,7 +18,7 @@ FrozenClass
 
 MetricHandler
 ----------------------
-.. autoclass:: catalyst.tools.metric_handler.MetricHandler
+.. autoclass:: catalyst.extras.metric_handler.MetricHandler
     :exclude-members: __init__
     :members:
     :undoc-members:
@@ -26,7 +26,7 @@ MetricHandler
 
 ModelForwardWrapper
 ----------------------
-.. autoclass:: catalyst.tools.forward_wrapper.ModelForwardWrapper
+.. autoclass:: catalyst.extras.forward_wrapper.ModelForwardWrapper
     :exclude-members: __init__
     :members:
     :undoc-members:
@@ -34,7 +34,7 @@ ModelForwardWrapper
 
 TimeManager
 ----------------------
-.. autoclass:: catalyst.tools.time_manager.TimeManager
+.. autoclass:: catalyst.extras.time_manager.TimeManager
     :exclude-members: __init__
     :members:
     :undoc-members:

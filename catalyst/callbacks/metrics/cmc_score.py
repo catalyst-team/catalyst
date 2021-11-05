@@ -75,10 +75,11 @@ class CMCScoreCallback(LoaderMetricCallback):
                     features = self.model(images)
                     self.batch = {"embeddings": features, "targets": targets,}
                 else:
-                    images, targets, is_query = \
-                        batch["features"].float(), \
-                        batch["targets"].long(), \
+                    images, targets, is_query = (
+                        batch["features"].float(),
+                        batch["targets"].long(),
                         batch["is_query"].bool()
+                    )
                     features = self.model(images)
                     self.batch = {
                         "embeddings": features, "targets": targets, "is_query": is_query

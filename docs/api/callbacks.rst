@@ -78,12 +78,16 @@ Misc – CheckRunCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+.. @TODO: rewrite
+
 Misc – EarlyStoppingCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.misc.EarlyStoppingCallback
     :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end, handle_score_is_better, handle_score_is_not_better
     :show-inheritance:
+
+.. @TODO: rewrite
 
 Misc – TimerCallback
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -91,6 +95,8 @@ Misc – TimerCallback
     :members:
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
+
+.. @TODO: rewrite
 
 Misc – TqdmCallback
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -159,14 +165,14 @@ Scheduler – SchedulerCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.scheduler.SchedulerCallback
     :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end, make_batch_step, make_epoch_step
     :show-inheritance:
 
 Scheduler – LRFinder
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.scheduler.LRFinder
     :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end, calc_lr, calc_momentum
     :show-inheritance:
 
 Tracing
