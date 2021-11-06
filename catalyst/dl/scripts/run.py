@@ -2,7 +2,6 @@
 import argparse
 from argparse import ArgumentParser
 import os
-from pathlib import Path
 import sys
 
 from catalyst.dl.scripts.misc import parse_args_uargs
@@ -29,7 +28,7 @@ def build_args(parser: ArgumentParser):
         dest="configs",
         required=False,
     )
-    parser.add_argument("--expdir", type=Path, default=None)
+    parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     # parser.add_argument(

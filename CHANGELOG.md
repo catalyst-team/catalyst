@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.10] - 2021-10-30
+
+### Added
+
 - RSquareLoss ([#1313](https://github.com/catalyst-team/catalyst/pull/1313))
 - Self-Supervised example updates: ([#1305](https://github.com/catalyst-team/catalyst/pull/1305)), ([#1322](https://github.com/catalyst-team/catalyst/pull/1322)), ([#1325](https://github.com/catalyst-team/catalyst/pull/1325)), ([#1335](https://github.com/catalyst-team/catalyst/pull/1335))
 - Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
@@ -29,7 +48,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Zero seed error ([#1329](https://github.com/catalyst-team/catalyst/pull/1329))
 - updated codestyle issues ([#1331](https://github.com/catalyst-team/catalyst/pull/1331))
-- TopK metrics: ([#1330](https://github.com/catalyst-team/catalyst/pull/1330)), ([#1334](https://github.com/catalyst-team/catalyst/pull/1334))
+- TopK metrics: ([#1330](https://github.com/catalyst-team/catalyst/pull/1330)), ([#1334](https://github.com/catalyst-team/catalyst/pull/1334)), ([#1339](https://github.com/catalyst-team/catalyst/pull/1339))
+- `--expdir` param for `catalyst-dl run` ([#1338](https://github.com/catalyst-team/catalyst/pull/1338))
+- ControlFlowCallback for distributed setup ([#1341](https://github.com/catalyst-team/catalyst/pull/1341))
 
 
 ## [21.09] - 2021-09-30
