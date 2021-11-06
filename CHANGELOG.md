@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 
 ### Changed
 
@@ -32,7 +32,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
 - YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
 - `TopKMetric` abstraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
-- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 
 ### Changed
 
