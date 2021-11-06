@@ -1687,10 +1687,10 @@ please open an issue first and discuss it with us.
 
 We've created `feedback@catalyst-team.com` as an additional channel for user feedback.
 
-- If you like the project and want to thanks us, this the right place.
+- If you like the project and want to thank us, this is the right place.
 - If you would like to start a collaboration between your team and Catalyst team to improve Deep Learning R&D, you are always welcome.
-- If you just don't like Github Issues and this prefer email, feel free to email us.
-- Finally, if you do not like something, please, share it with us and we can see how to improve it.
+- If you don't like Github Issues and prefer email, feel free to email us.
+- Finally, if you do not like something, please, share it with us, and we can see how to improve it.
 
 We appreciate any type of feedback. Thank you!
 
