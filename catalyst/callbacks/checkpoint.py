@@ -675,10 +675,7 @@ class CheckpointCallback(ICheckpointCallback):
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
             checkpoint_path = self._save_checkpoint(
-                runner=runner,
-                checkpoint=checkpoint,
-                is_best=is_best,
-                is_last=True,
+                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True
             )
             # add metrics to records
             metrics_record = (
@@ -692,9 +689,7 @@ class CheckpointCallback(ICheckpointCallback):
             # truncate checkpoints
             self._truncate_checkpoints()
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(
-                float(score), dict(runner.epoch_metrics)
-            )
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -732,17 +727,12 @@ class CheckpointCallback(ICheckpointCallback):
             )
             # add metrics to records
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(
-                float(score), dict(runner.epoch_metrics)
-            )
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
             log_message += f"{checkpoint_path}\t{score:3.4f}"
         else:
             log_message += "\n".join(
-                [
-                    f"{filepath}\t{score:3.4f}"
-                    for score, filepath, _, _, _ in self.top_best_metrics
-                ]
+                [f"{filepath}\t{score:3.4f}" for score, filepath, _, _, _ in self.top_best_metrics]
             )
         print(log_message)
 
@@ -755,7 +745,7 @@ class CheckpointCallback(ICheckpointCallback):
                 logdir=self.logdir,
                 runner=runner,
                 mapping=self.load_on_stage_end,
-                skip_states=not_required_load_states,
+                not_required_states=not_required_load_states,
             )
 
         if runner.engine.is_ddp and runner.engine.is_master_process:
