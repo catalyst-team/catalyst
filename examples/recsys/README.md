@@ -7,9 +7,17 @@ To run examples you need `catalyst[ml]>=21.10`
 pip install catalyst[ml]
 ```
 
-## Run
+## Models
 
+### MultiVAE
+
+Implementation based on the article [Variational Autoencoders for Collaborative Filtering](https://arxiv.org/pdf/1802.05814.pdf).
+Model train on [MovieLens 100K Dataset](https://grouplens.org/datasets/movielens/100k/). Train part is 80% of users, valid - 20%.
+
+``collate_fn`` functions split each user interactions tensor on two tensors. ``collate_fn_train``: `inputs` and `targets`
+tensors contain all 100% interactions. ``collate_fn_valid``: `inputs` contain 80% interactions per each user, `targets` - all 100%.
+
+Run the example:
 ```bash
-# MultiVAE
 python multivae.py
 ```
