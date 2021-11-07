@@ -1,7 +1,6 @@
 # flake8: noqa
+# backward compatibility
 
-from catalyst.contrib.data import *
-from catalyst.contrib.datasets import *
 from catalyst.contrib.layers import *
 from catalyst.contrib.losses import *
 from catalyst.contrib.models import *

@@ -8,7 +8,7 @@ import torch
 
 from catalyst.callbacks import AccuracyCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn import Flatten
+from catalyst.contrib.layers import Flatten
 from catalyst.data import ImageToTensor
 from catalyst.runners import SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE

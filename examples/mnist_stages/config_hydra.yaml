@@ -116,7 +116,7 @@ stages:
       _target_: torch.nn.CrossEntropyLoss
 
     optimizer:
-      _target_: catalyst.contrib.nn.Ralamb
+      _target_: catalyst.contrib.Ralamb
 
     scheduler:
       _target_: torch.optim.lr_scheduler.MultiStepLR

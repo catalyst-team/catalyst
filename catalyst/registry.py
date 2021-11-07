@@ -65,7 +65,7 @@ REGISTRY.late_add(_grad_clip_loader)
 
 
 def _modules_loader(r: hydra_slayer.Registry):
-    from catalyst.contrib.nn import modules as m
+    from catalyst.contrib import layers as m
 
     r.add_from_module(m)
 
@@ -83,7 +83,7 @@ REGISTRY.late_add(_model_loader)
 
 
 def _criterion_loader(r: hydra_slayer.Registry):
-    from catalyst.contrib.nn import criterion as m
+    from catalyst.contrib import losses as m
 
     r.add_from_module(m)
 
@@ -92,7 +92,7 @@ REGISTRY.late_add(_criterion_loader)
 
 
 def _optimizers_loader(r: hydra_slayer.Registry):
-    from catalyst.contrib.nn import optimizers as m
+    from catalyst.contrib import optimizers as m
 
     r.add_from_module(m)
 
@@ -106,7 +106,7 @@ REGISTRY.late_add(_optimizers_loader)
 
 
 def _schedulers_loader(r: hydra_slayer.Registry):
-    from catalyst.contrib.nn import schedulers as m
+    from catalyst.contrib import schedulers as m
 
     r.add_from_module(m)
 

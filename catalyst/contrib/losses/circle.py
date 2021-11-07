@@ -31,7 +31,7 @@ class CircleLoss(nn.Module):
     Example:
         >>> import torch
         >>> from torch.nn import functional as F
-        >>> from catalyst.contrib.nn import CircleLoss
+        >>> from catalyst.contrib.losses import CircleLoss
         >>>
         >>> features = F.normalize(torch.rand(256, 64, requires_grad=True))
         >>> labels = torch.randint(high=10, size=(256))

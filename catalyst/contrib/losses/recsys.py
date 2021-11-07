@@ -79,7 +79,7 @@ class BPRLoss(PairwiseLoss):
     .. code-block:: python
 
         import torch
-        from catalyst.contrib.nn.criterion import recsys
+        from catalyst.contrib.losses import recsys
 
         pos_score = torch.randn(3, requires_grad=True)
         neg_score = torch.randn(3, requires_grad=True)
@@ -116,7 +116,7 @@ class LogisticLoss(PairwiseLoss):
     .. code-block:: python
 
         import torch
-        from catalyst.contrib.nn.criterion import recsys
+        from catalyst.contrib.losses import recsys
 
         pos_score = torch.randn(3, requires_grad=True)
         neg_score = torch.randn(3, requires_grad=True)
@@ -156,7 +156,7 @@ class HingeLoss(PairwiseLoss):
     .. code-block:: python
 
         import torch
-        from catalyst.contrib.nn.criterion import recsys
+        from catalyst.contrib.losses import recsys
 
         pos_score = torch.randn(3, requires_grad=True)
         neg_score = torch.randn(3, requires_grad=True)
@@ -196,7 +196,7 @@ class AdaptiveHingeLoss(PairwiseLoss):
     .. code-block:: python
 
         import torch
-        from catalyst.contrib.nn.criterion import recsys
+        from catalyst.contrib.losses import recsys
 
         pos_score = torch.randn(3, requires_grad=True)
         neg_scores = torch.randn(5, 3, requires_grad=True)
@@ -337,7 +337,7 @@ class WARPLoss(ListwiseLoss):
     .. code-block:: python
 
         import torch
-        from catalyst.contrib.nn.criterion import recsys
+        from catalyst.contrib.losses import recsys
 
         outputs = torch.randn(5, 3, requires_grad=True)
         targets = torch.randn(5, 3, requires_grad=True)
@@ -389,7 +389,7 @@ class RocStarLoss(PairwiseLoss):
         .. code-block:: python
 
             import torch
-            from catalyst.contrib.nn.criterion import recsys
+            from catalyst.contrib.losses import recsys
 
             outputs = torch.randn(5, 1, requires_grad=True)
             targets = torch.randn(5, 1, requires_grad=True)

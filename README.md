@@ -932,7 +932,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
+from catalyst.contrib.layers import Flatten, GlobalMaxPool2d, Lambda
 from catalyst.data import ToTensor
 
 latent_dim = 128

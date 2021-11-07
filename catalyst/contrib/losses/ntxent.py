@@ -16,7 +16,7 @@ class NTXentLoss(nn.Module):
 
         import torch
         from torch.nn import functional as F
-        from catalyst.contrib.nn import NTXentLoss
+        from catalyst.contrib import NTXentLoss
 
         embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
         embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))

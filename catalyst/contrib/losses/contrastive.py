@@ -147,7 +147,7 @@ class BarlowTwinsLoss(nn.Module):
 
         import torch
         from torch.nn import functional as F
-        from catalyst.contrib.nn import BarlowTwinsLoss
+        from catalyst.contrib import BarlowTwinsLoss
 
         embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
         embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))

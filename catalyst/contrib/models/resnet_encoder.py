@@ -9,7 +9,7 @@ import torchvision
 from torchvision.models import ResNet
 
 from catalyst import utils
-from catalyst.contrib.nn.modules import Flatten
+from catalyst.contrib.layers import Flatten
 from catalyst.registry import REGISTRY
 
 
