@@ -96,7 +96,7 @@ class CustomRunner(dl.IRunner):
         return self._engine
 
     def get_callbacks(self, stage: str):
-        callbacks =  {
+        callbacks = {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
@@ -104,7 +104,7 @@ class CustomRunner(dl.IRunner):
             "test_model_load": CheckModelStateLoadAfterStages("second", self._logdir, "best.pth"),
         }
         if stage == "first":
-            callbacks["checkpoint"] =  dl.CheckpointCallback(
+            callbacks["checkpoint"] = dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="loss",
@@ -112,7 +112,7 @@ class CustomRunner(dl.IRunner):
                 save_n_best=3,
             )
         elif stage == "second":
-            callbacks["checkpoint"] =  dl.CheckpointCallback(
+            callbacks["checkpoint"] = dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="loss",
@@ -219,7 +219,7 @@ def train_runner(logdir, n_epochs, callbacks):
         valid_loader="valid",
         valid_metric="loss",
         minimize_valid_metric=True,
-        callbacks=callbacks
+        callbacks=callbacks,
     )
     return runner
 
@@ -227,7 +227,7 @@ def train_runner(logdir, n_epochs, callbacks):
 def test_files_existence(tmpdir):
     logfile = tmpdir + "/_metrics.json"
     n_epochs = 5
-    callbacks=[
+    callbacks = [
         dl.CheckpointCallback(
             logdir=tmpdir,
             loader_key="valid",
@@ -254,7 +254,7 @@ def test_files_existence(tmpdir):
 def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
     # experiment_setup
     n_epochs = 5
-    callbacks=[
+    callbacks = [
         dl.CheckpointCallback(
             logdir=tmpdir,
             loader_key="valid",
@@ -277,14 +277,17 @@ def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
 @pytest.mark.parametrize(
     ("to_load", "exp_loaded"),
     [
-        ({"model": "best", "criterion": "best", "optimizer": "last"}, "model, criterion"), 
-        ({"model": "best", "criterion": "best", "optimizer": "best"}, "model, criterion, optimizer")
-    ]
+        ({"model": "best", "criterion": "best", "optimizer": "last"}, "model, criterion"),
+        (
+            {"model": "best", "criterion": "best", "optimizer": "best"},
+            "model, criterion, optimizer",
+        ),
+    ],
 )
 def test_load_dict_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
     # experiment_setup
     n_epochs = 5
-    callbacks=[
+    callbacks = [
         dl.CheckpointCallback(
             logdir=tmpdir,
             loader_key="valid",
@@ -307,7 +310,7 @@ def test_load_dict_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
 def test_load_empty(to_load, capsys, tmpdir):
     # experiment_setup
     n_epochs = 5
-    callbacks=[
+    callbacks = [
         dl.CheckpointCallback(
             logdir=tmpdir,
             loader_key="valid",
@@ -328,8 +331,7 @@ def test_load_empty(to_load, capsys, tmpdir):
 
 
 @pytest.mark.parametrize(
-    "to_load",
-    ["best", {"model": "not_existing_file.pth", "criterion": "not_existing_file.pth"}]
+    "to_load", ["best", {"model": "not_existing_file.pth", "criterion": "not_existing_file.pth"}]
 )
 def test_resume_with_missing_file(to_load, tmpdir):
     n_epochs = 5

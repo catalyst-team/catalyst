@@ -294,9 +294,7 @@ class HydraRunner(IRunner):
         assert "model" in self._config, "config must contain 'model' key"
         model_params: "DictConfig" = self._config.model
         model: RunnerModel = (
-            self._get_model_from_params(model_params)
-            if self.model is None
-            else self.model
+            self._get_model_from_params(model_params) if self.model is None else self.model
         )
         return model
 
@@ -451,8 +449,7 @@ class HydraRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints"),
-                resume=self._resume
+                logdir=os.path.join(self._logdir, "checkpoints"), resume=self._resume
             )
 
         return callbacks

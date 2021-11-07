@@ -311,7 +311,7 @@ class Runner(IRunner):
                 loader_key=self._valid_loader,
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
-                resume=self._resume
+                resume=self._resume,
             )
         return callbacks
 

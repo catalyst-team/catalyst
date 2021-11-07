@@ -228,22 +228,16 @@ def _load_runner(
         file_exists = os.path.isfile(checkpoint)
         if not file_exists:
             raise FileNotFoundError(f"Missing file '{checkpoint}'!")  # noqa: F821
-        _load_checkpoint(
-            filename=checkpoint, runner=runner, load_full=load_full
-        )
+        _load_checkpoint(filename=checkpoint, runner=runner, load_full=load_full)
     elif isinstance(mapping, dict):
-        mapping = {
-            k: v for k, v in mapping.items() if v not in not_required_states
-        }
+        mapping = {k: v for k, v in mapping.items() if v not in not_required_states}
         required_files = _get_required_files(logdir, mapping).keys()
         file_exists = True
         for use_file in required_files:
             if not os.path.isfile(use_file):
                 file_exists = False
                 raise FileNotFoundError(f"Missing file '{use_file}'!")
-        _load_states_from_file_map(
-            logdir=logdir, runner=runner, load_map=mapping
-        )
+        _load_states_from_file_map(logdir=logdir, runner=runner, load_map=mapping)
 
 
 class ICheckpointCallback(Callback):
@@ -446,7 +440,7 @@ class CheckpointCallback(ICheckpointCallback):
                 "requires both `loader_key` and `metric_key` specified."
             )
             self._use_model_selection = True
-            self.minimize = minimize if minimize is not None else True # loss-oriented selection
+            self.minimize = minimize if minimize is not None else True  # loss-oriented selection
         else:
             self._use_model_selection = False
             self.minimize = False  # epoch-num-oriented selection

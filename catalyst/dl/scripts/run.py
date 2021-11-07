@@ -32,14 +32,16 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
+        help="path to latest checkpoint",
     )
     parser.add_argument(
         "--autoresume",
         type=str,
-        help=(
-            "try automatically resume from logdir/{best,last}_full.pth " "if --resume is empty"
-        ),
+        help=("try automatically resume from logdir/{best,last}_full.pth " "if --resume is empty"),
         required=False,
         choices=["best", "last"],
         default=None,
