@@ -8,8 +8,8 @@ import torch
 
 from catalyst.callbacks import AccuracyCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn import Flatten
-from catalyst.data import ToTensor
+from catalyst.contrib.layers import Flatten
+from catalyst.data import ImageToTensor
 from catalyst.runners import SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.utils.quantization import quantize_model
@@ -60,8 +60,8 @@ def test_accuracy():
         torch.nn.Linear(64, 10),
     )
     datasets = {
-        "train": MNIST("./data", transform=ToTensor(), download=True),
-        "valid": MNIST("./data", transform=ToTensor(), train=False),
+        "train": MNIST("./data", transform=ImageToTensor(), download=True),
+        "valid": MNIST("./data", transform=ImageToTensor(), train=False),
     }
     dataloaders = {k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()}
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)

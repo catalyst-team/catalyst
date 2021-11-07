@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
 from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.extras.metric_handler import MetricHandler
 from catalyst.settings import SETTINGS
-from catalyst.tools.metric_handler import MetricHandler
 
 if SETTINGS.optuna_required:
     import optuna

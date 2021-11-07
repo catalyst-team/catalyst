@@ -7,11 +7,11 @@ from pathlib import Path
 
 import optuna
 
-from catalyst.dl.scripts.misc import parse_args_uargs
+from catalyst.dl.scripts._misc import get_config_runner, parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
-from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
+from catalyst.utils.sys import dump_code, dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
 

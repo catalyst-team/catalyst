@@ -4,45 +4,45 @@ from tqdm.auto import tqdm
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.tools.metric_handler import MetricHandler
-from catalyst.tools.time_manager import TimeManager
+from catalyst.extras.metric_handler import MetricHandler
+from catalyst.extras.time_manager import TimeManager
 from catalyst.utils.misc import is_exception
 
 EPS = 1e-8
 
 
-class IBatchMetricHandlerCallback(ABC, Callback):
-    """@TODO: docs"""
+# class IBatchMetricHandlerCallback(ABC, Callback):
+#     """@TODO: docs"""
 
-    def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
-        """@TODO: docs"""
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
-        self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
-        self.metric_key = metric_key
-        self.best_score = None
+#     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
+#         """@TODO: docs"""
+#         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+#         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
+#         self.metric_key = metric_key
+#         self.best_score = None
 
-    @abstractmethod
-    def handle_score_is_better(self, runner: "IRunner"):
-        """Event handler."""
-        pass
+#     @abstractmethod
+#     def handle_score_is_better(self, runner: "IRunner"):
+#         """Event handler."""
+#         pass
 
-    @abstractmethod
-    def handle_score_is_not_better(self, runner: "IRunner"):
-        """Event handler."""
-        pass
+#     @abstractmethod
+#     def handle_score_is_not_better(self, runner: "IRunner"):
+#         """Event handler."""
+#         pass
 
-    def on_loader_start(self, runner: "IRunner") -> None:
-        """Event handler."""
-        self.best_score = None
+#     def on_loader_start(self, runner: "IRunner") -> None:
+#         """Event handler."""
+#         self.best_score = None
 
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Event handler."""
-        score = runner.batch_metrics[self.metric_key]
-        if self.best_score is None or self.is_better(score, self.best_score):
-            self.best_score = score
-            self.handle_score_is_better(runner=runner)
-        else:
-            self.handle_score_is_not_better(runner=runner)
+#     def on_batch_end(self, runner: "IRunner") -> None:
+#         """Event handler."""
+#         score = runner.batch_metrics[self.metric_key]
+#         if self.best_score is None or self.is_better(score, self.best_score):
+#             self.best_score = score
+#             self.handle_score_is_better(runner=runner)
+#         else:
+#             self.handle_score_is_not_better(runner=runner)
 
 
 class IEpochMetricHandlerCallback(ABC, Callback):
@@ -313,7 +313,7 @@ __all__ = [
     "TimerCallback",
     "TqdmCallback",
     "CheckRunCallback",
-    "IBatchMetricHandlerCallback",
-    "IEpochMetricHandlerCallback",
+    # "IBatchMetricHandlerCallback",
+    # "IEpochMetricHandlerCallback",
     "EarlyStoppingCallback",
 ]

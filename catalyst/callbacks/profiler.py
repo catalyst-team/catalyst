@@ -51,7 +51,7 @@ class ProfilerCallback(Callback):
             from catalyst import dl
             from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
-            from catalyst.contrib.nn.modules import Flatten
+            from catalyst.contrib.layers import Flatten
 
             loaders = {
                 "train": DataLoader(
