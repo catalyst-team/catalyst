@@ -34,15 +34,14 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.data import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from catalyst.contrib import ImageToTensor, MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
     loaders = {
         "train": DataLoader(train_data, batch_size=32),
         "valid": DataLoader(valid_data, batch_size=32),
@@ -78,7 +77,7 @@ Getting started
         loader=loaders["valid"],
         callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
     )
-    assert "accuracy" in metrics.keys()
+    assert "accuracy01" in metrics.keys()
 
     # model inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
@@ -88,13 +87,13 @@ Getting started
     # model stochastic weight averaging
     model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
     # model tracing
-    utils.trace_model(model=runner.model, batch=features_batch)
+    utils.trace_model(model=runner.model.cpu(), batch=features_batch)
     # model quantization
     utils.quantize_model(model=runner.model)
     # model pruning
     utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
     # onnx export
-    utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True)
+    utils.onnx_export(model=runner.model.cpu(), batch=features_batch, file="./logs/mnist.onnx", verbose=True)
 
 
 Step by step guide
