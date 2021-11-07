@@ -73,6 +73,7 @@ class HydraRunner(IRunner):
 
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
+        self._resume: str = self._get_resume()
 
         # @TODO: hack for catalyst-dl tune, could be done better
         self._trial = None
@@ -103,6 +104,15 @@ class HydraRunner(IRunner):
             logdir = self._get_logdir(self._config)
             output = f"{baselogdir}/{logdir}"
         return output
+
+    def _get_resume(self) -> str:
+        autoresume = self._config.args.autoresume
+        logdir = self._config.args.logdir
+        resume = self._config.args.resume
+        if autoresume is not None and logdir is not None and resume is None:
+            checkpoint_filename = f"{logdir}/checkpoints/{autoresume}_full.pth"
+            return checkpoint_filename
+        return resume
 
     @property
     def logdir(self) -> str:
@@ -437,7 +447,8 @@ class HydraRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints")
+                logdir=os.path.join(self._logdir, "checkpoints"),
+                resume=self._resume
             )
 
         return callbacks

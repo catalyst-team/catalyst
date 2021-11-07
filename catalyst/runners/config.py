@@ -105,6 +105,7 @@ class ConfigRunner(IRunner):
         self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
         self._check: bool = get_by_keys(self._config, "args", "check", default=False)
         self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+        self._resume: str = get_by_keys(self._config, "args", "resume")
 
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
@@ -414,7 +415,8 @@ class ConfigRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints")
+                logdir=os.path.join(self._logdir, "checkpoints"),
+                resume=self._resume
             )
 
         return callbacks
