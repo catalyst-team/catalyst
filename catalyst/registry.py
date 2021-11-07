@@ -9,11 +9,10 @@ REGISTRY = hydra_slayer.Registry()
 Registry = REGISTRY.add
 
 
-def _transforms_loader(r: hydra_slayer.Registry):
-    # from catalyst.data import transforms as t
+def _data_loader(r: hydra_slayer.Registry):
+    from catalyst import data as m
 
-    # # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
-    # r.add_from_module(t, prefix=["transform."])
+    r.add_from_module(m)
 
     if SETTINGS.albu_required:
         import albumentations as m
@@ -25,17 +24,13 @@ def _transforms_loader(r: hydra_slayer.Registry):
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
 
-REGISTRY.late_add(_transforms_loader)
+REGISTRY.late_add(_data_loader)
 
 
 def _datasets_loader(r: hydra_slayer.Registry):
-    from catalyst import data as m
+    from catalyst.contrib import datasets
 
-    r.add_from_module(m)
-
-    from catalyst.contrib import datasets as m_contrib
-
-    r.add_from_module(m_contrib)
+    r.add_from_module(datasets)
 
 
 REGISTRY.late_add(_datasets_loader)
