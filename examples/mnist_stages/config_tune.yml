@@ -64,16 +64,16 @@ stages:
           root: *dataset_root
           train: True
           transform: &transform
-            _target_: transform.Compose
+            _target_: Compose
             transforms:
-              - _target_: transform.ImageToTensor
-              - _target_: transform.NormalizeImage
+              - _target_: ImageToTensor
+              - _target_: NormalizeImage
                 mean: [0]
                 std: [1]
           download: True
         batch_size: &batch_size 32
         sampler:
-          _target_: MiniEpochSampler
+          _target_: catalyst.data.MiniEpochSampler
           data_len: 50000
           mini_epoch_len: 35000
           drop_last: true

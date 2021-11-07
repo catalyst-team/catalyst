@@ -58,14 +58,14 @@ stages:
           root: *dataset_root
           train: True
           transform:
-            _target_: transform.ImageToTensor
+            _target_: ImageToTensor
           download: True
         valid:
           _target_: MNIST
           root: *dataset_root
           train: False
           transform:
-            _target_: transform.ImageToTensor
+            _target_: ImageToTensor
           download: True
 
     criterion:
