@@ -430,4 +430,3 @@ def test_resume_with_missing_file(to_load, tmpdir):
 #     assert len(re.findall(r"=> Loading", exp_output)) == 3
 #     assert len(re.findall(r"=> Loading .*best_full\.pth", exp_output)) == 2
 #     assert len(re.findall(r"=> Loading .*last_full\.pth", exp_output)) == 1
-
