@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.scheduler &mdash; Catalyst 21.10 documentation</title>
+  <title>catalyst.callbacks.scheduler &mdash; Catalyst 21.11rc0 documentation</title>
   
 
   
@@ -27,8 +27,6 @@
 
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 
@@ -157,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.11</a>
                 </div>
               
             
@@ -185,19 +183,18 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
@@ -205,7 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
@@ -224,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
@@ -234,10 +231,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -316,7 +312,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.schedulers</span> <span class="kn">import</span> <span class="n">BatchScheduler</span><span class="p">,</span> <span class="n">OneCycleLRWithWarmup</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.schedulers</span> <span class="kn">import</span> <span class="n">BatchScheduler</span><span class="p">,</span> <span class="n">OneCycleLRWithWarmup</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">ISchedulerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_attr</span>
@@ -409,7 +405,7 @@
 <span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SchedulerCallback.__init__"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">scheduler_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -431,7 +427,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">loader_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_scheduler_step</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">reduced_metric</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -468,16 +464,16 @@
             <span class="p">)</span>
             <span class="n">metrics_dict</span><span class="p">[</span><span class="n">momentum_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">momentum</span>
 
-<div class="viewcode-block" id="SchedulerCallback.make_batch_step"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback.make_batch_step">[docs]</a>    <span class="k">def</span> <span class="nf">make_batch_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">make_batch_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform scheduler step and update batch metrics</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lr_list</span><span class="p">,</span> <span class="n">momentum_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_step</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_lr_and_momentum_in_metrics_dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">,</span> <span class="n">lr_list</span><span class="p">,</span> <span class="n">momentum_list</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_lr_and_momentum_in_metrics_dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">,</span> <span class="n">lr_list</span><span class="p">,</span> <span class="n">momentum_list</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SchedulerCallback.make_epoch_step"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback.make_epoch_step">[docs]</a>    <span class="k">def</span> <span class="nf">make_epoch_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">make_epoch_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform scheduler step and update epoch metrics</span>
 
 <span class="sd">        Args:</span>
@@ -493,7 +489,7 @@
         <span class="c1"># @TODO: trick to save pure epoch-based metrics, like lr/momentum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_lr_and_momentum_in_metrics_dict</span><span class="p">(</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="s2">&quot;_epoch_&quot;</span><span class="p">],</span> <span class="n">lr_list</span><span class="p">,</span> <span class="n">momentum_list</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Stage start hook.</span>
@@ -668,7 +664,7 @@
 <span class="sd">        https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="LRFinder.__init__"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.LRFinder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">final_lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
@@ -700,7 +696,7 @@
         <span class="k">elif</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_lr_linear</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Not supported&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Not supported&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_calc_lr_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span>
@@ -708,7 +704,7 @@
     <span class="k">def</span> <span class="nf">_calc_lr_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span>
 
-<div class="viewcode-block" id="LRFinder.calc_lr"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.LRFinder.calc_lr">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculates learning rate.</span>
 
 <span class="sd">        Returns:</span>
@@ -716,11 +712,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_lr</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">res</span></div>
+        <span class="k">return</span> <span class="n">res</span>
 
-<div class="viewcode-block" id="LRFinder.calc_momentum"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.scheduler.LRFinder.calc_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculates new momentum.&quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loader start hook. Updates scheduler statistics.</span>
@@ -796,10 +792,10 @@
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-         <script src="../../../_static/jquery.js"></script>
-         <script src="../../../_static/underscore.js"></script>
-         <script src="../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../_static/language_data.js"></script>
      
 
   

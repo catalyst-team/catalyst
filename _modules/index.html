@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; Catalyst 21.10 documentation</title>
+  <title>Overview: module code &mdash; Catalyst 21.11rc0 documentation</title>
   
 
   
@@ -27,8 +27,6 @@
 
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 
@@ -157,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.11</a>
                 </div>
               
             
@@ -185,19 +183,18 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -234,10 +231,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/loggers.html">Loggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/runners.html">Runners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utils</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -338,46 +334,7 @@
 <li><a href="catalyst/callbacks/scheduler.html">catalyst.callbacks.scheduler</a></li>
 <li><a href="catalyst/callbacks/sklearn_model.html">catalyst.callbacks.sklearn_model</a></li>
 <li><a href="catalyst/callbacks/tracing.html">catalyst.callbacks.tracing</a></li>
-<li><a href="catalyst/contrib/data/augmentor.html">catalyst.contrib.data.augmentor</a></li>
-<li><a href="catalyst/contrib/data/cv/dataset.html">catalyst.contrib.data.cv.dataset</a></li>
-<li><a href="catalyst/contrib/data/cv/reader.html">catalyst.contrib.data.cv.reader</a></li>
-<li><a href="catalyst/contrib/data/nifti/reader.html">catalyst.contrib.data.nifti.reader</a></li>
-<li><a href="catalyst/contrib/data/reader.html">catalyst.contrib.data.reader</a></li>
-<li><a href="catalyst/contrib/datasets/cv/imagenette.html">catalyst.contrib.datasets.cv.imagenette</a></li>
-<li><a href="catalyst/contrib/datasets/cv/imagewang.html">catalyst.contrib.datasets.cv.imagewang</a></li>
-<li><a href="catalyst/contrib/datasets/cv/imagewoof.html">catalyst.contrib.datasets.cv.imagewoof</a></li>
-<li><a href="catalyst/contrib/datasets/mnist.html">catalyst.contrib.datasets.mnist</a></li>
-<li><a href="catalyst/contrib/datasets/movielens.html">catalyst.contrib.datasets.movielens</a></li>
-<li><a href="catalyst/contrib/nn/criterion/circle.html">catalyst.contrib.nn.criterion.circle</a></li>
-<li><a href="catalyst/contrib/nn/criterion/contrastive.html">catalyst.contrib.nn.criterion.contrastive</a></li>
-<li><a href="catalyst/contrib/nn/criterion/dice.html">catalyst.contrib.nn.criterion.dice</a></li>
-<li><a href="catalyst/contrib/nn/criterion/focal.html">catalyst.contrib.nn.criterion.focal</a></li>
-<li><a href="catalyst/contrib/nn/criterion/iou.html">catalyst.contrib.nn.criterion.iou</a></li>
-<li><a href="catalyst/contrib/nn/criterion/margin.html">catalyst.contrib.nn.criterion.margin</a></li>
-<li><a href="catalyst/contrib/nn/criterion/ntxent.html">catalyst.contrib.nn.criterion.ntxent</a></li>
-<li><a href="catalyst/contrib/nn/criterion/recsys.html">catalyst.contrib.nn.criterion.recsys</a></li>
-<li><a href="catalyst/contrib/nn/criterion/regression.html">catalyst.contrib.nn.criterion.regression</a></li>
-<li><a href="catalyst/contrib/nn/criterion/supervised_contrastive.html">catalyst.contrib.nn.criterion.supervised_contrastive</a></li>
-<li><a href="catalyst/contrib/nn/criterion/trevsky.html">catalyst.contrib.nn.criterion.trevsky</a></li>
-<li><a href="catalyst/contrib/nn/criterion/triplet.html">catalyst.contrib.nn.criterion.triplet</a></li>
-<li><a href="catalyst/contrib/nn/criterion/wing.html">catalyst.contrib.nn.criterion.wing</a></li>
-<li><a href="catalyst/contrib/nn/modules/arcface.html">catalyst.contrib.nn.modules.arcface</a></li>
-<li><a href="catalyst/contrib/nn/modules/arcmargin.html">catalyst.contrib.nn.modules.arcmargin</a></li>
-<li><a href="catalyst/contrib/nn/modules/cosface.html">catalyst.contrib.nn.modules.cosface</a></li>
-<li><a href="catalyst/contrib/nn/modules/curricularface.html">catalyst.contrib.nn.modules.curricularface</a></li>
-<li><a href="catalyst/contrib/nn/modules/se.html">catalyst.contrib.nn.modules.se</a></li>
-<li><a href="catalyst/contrib/nn/modules/softmax.html">catalyst.contrib.nn.modules.softmax</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/adamp.html">catalyst.contrib.nn.optimizers.adamp</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/lamb.html">catalyst.contrib.nn.optimizers.lamb</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/lookahead.html">catalyst.contrib.nn.optimizers.lookahead</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/qhadamw.html">catalyst.contrib.nn.optimizers.qhadamw</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/radam.html">catalyst.contrib.nn.optimizers.radam</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/ralamb.html">catalyst.contrib.nn.optimizers.ralamb</a></li>
-<li><a href="catalyst/contrib/nn/optimizers/sgdp.html">catalyst.contrib.nn.optimizers.sgdp</a></li>
-<li><a href="catalyst/contrib/nn/schedulers/onecycle.html">catalyst.contrib.nn.schedulers.onecycle</a></li>
 <li><a href="catalyst/contrib/utils/image.html">catalyst.contrib.utils.image</a></li>
-<li><a href="catalyst/contrib/utils/pandas.html">catalyst.contrib.utils.pandas</a></li>
-<li><a href="catalyst/contrib/utils/parallel.html">catalyst.contrib.utils.parallel</a></li>
 <li><a href="catalyst/contrib/utils/report.html">catalyst.contrib.utils.report</a></li>
 <li><a href="catalyst/contrib/utils/thresholds.html">catalyst.contrib.utils.thresholds</a></li>
 <li><a href="catalyst/contrib/utils/visualization.html">catalyst.contrib.utils.visualization</a></li>
@@ -386,13 +343,9 @@
 <li><a href="catalyst/core/logger.html">catalyst.core.logger</a></li>
 <li><a href="catalyst/core/runner.html">catalyst.core.runner</a></li>
 <li><a href="catalyst/core/trial.html">catalyst.core.trial</a></li>
-<li><a href="catalyst/data/collate_fn.html">catalyst.data.collate_fn</a></li>
-<li><a href="catalyst/data/dataset/metric_learning.html">catalyst.data.dataset.metric_learning</a></li>
-<li><a href="catalyst/data/dataset/torch.html">catalyst.data.dataset.torch</a></li>
+<li><a href="catalyst/data/dataset.html">catalyst.data.dataset</a></li>
 <li><a href="catalyst/data/loader.html">catalyst.data.loader</a></li>
 <li><a href="catalyst/data/sampler.html">catalyst.data.sampler</a></li>
-<li><a href="catalyst/data/sampler_inbatch.html">catalyst.data.sampler_inbatch</a></li>
-<li><a href="catalyst/data/transforms.html">catalyst.data.transforms</a></li>
 <li><a href="catalyst/engines/amp.html">catalyst.engines.amp</a></li>
 <li><a href="catalyst/engines/apex.html">catalyst.engines.apex</a></li>
 <li><a href="catalyst/engines/deepspeed.html">catalyst.engines.deepspeed</a></li>
@@ -442,16 +395,9 @@
 <li><a href="catalyst/runners/runner.html">catalyst.runners.runner</a></li>
 <li><a href="catalyst/runners/self_supervised.html">catalyst.runners.self_supervised</a></li>
 <li><a href="catalyst/runners/supervised.html">catalyst.runners.supervised</a></li>
-<li><a href="catalyst/tools/forward_wrapper.html">catalyst.tools.forward_wrapper</a></li>
-<li><a href="catalyst/tools/frozen_class.html">catalyst.tools.frozen_class</a></li>
-<li><a href="catalyst/tools/metric_handler.html">catalyst.tools.metric_handler</a></li>
-<li><a href="catalyst/tools/time_manager.html">catalyst.tools.time_manager</a></li>
 <li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
-<li><a href="catalyst/utils/data.html">catalyst.utils.data</a></li>
 <li><a href="catalyst/utils/distributed.html">catalyst.utils.distributed</a></li>
 <li><a href="catalyst/utils/misc.html">catalyst.utils.misc</a></li>
-<li><a href="catalyst/utils/mixup.html">catalyst.utils.mixup</a></li>
-<li><a href="catalyst/utils/numpy.html">catalyst.utils.numpy</a></li>
 <li><a href="catalyst/utils/onnx.html">catalyst.utils.onnx</a></li>
 <li><a href="catalyst/utils/pruning.html">catalyst.utils.pruning</a></li>
 <li><a href="catalyst/utils/quantization.html">catalyst.utils.quantization</a></li>
@@ -503,10 +449,10 @@
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-         <script src="../_static/jquery.js"></script>
-         <script src="../_static/underscore.js"></script>
-         <script src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
      
 
   

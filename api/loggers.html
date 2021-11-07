@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Loggers &mdash; Catalyst 21.10 documentation</title>
+  <title>Loggers &mdash; Catalyst 21.11rc0 documentation</title>
   
 
   
@@ -28,8 +28,6 @@
 
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Metrics" href="metrics.html" />
@@ -160,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.11</a>
                 </div>
               
             
@@ -188,19 +186,18 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -208,7 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -227,7 +224,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
@@ -237,10 +234,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Loggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="runners.html">Runners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -334,9 +330,9 @@
 </div>
 <section id="consolelogger">
 <h2><a class="toc-backref" href="#id1">ConsoleLogger</a><a class="headerlink" href="#consolelogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.console.ConsoleLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.console.</span></span><span class="sig-name descname"><span class="pre">ConsoleLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_hparams</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_loader_metrics</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_epoch_metrics</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/console.html#ConsoleLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.console.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.console.ConsoleLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.console.</code><code class="sig-name descname">ConsoleLogger</code><span class="sig-paren">(</span><em class="sig-param">log_hparams: bool = False</em>, <em class="sig-param">log_loader_metrics: bool = True</em>, <em class="sig-param">log_epoch_metrics: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/console.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.console.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Console logger for parameters and metrics.
 Output the metric into the console during experiment.</p>
@@ -358,9 +354,9 @@ Output the metric into the console during experiment.</p>
 </section>
 <section id="csvlogger">
 <h2><a class="toc-backref" href="#id2">CSVLogger</a><a class="headerlink" href="#csvlogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.csv.CSVLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.csv.</span></span><span class="sig-name descname"><span class="pre">CSVLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_logdir_postfix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/csv.html#CSVLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.csv.CSVLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.csv.CSVLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.csv.</code><code class="sig-name descname">CSVLogger</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">use_logdir_postfix: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/csv.html#CSVLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.csv.CSVLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>CSV logger for the metrics storing under <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file.</p>
 <dl class="field-list simple">
@@ -428,9 +424,9 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </section>
 <section id="mlflowlogger">
 <h2><a class="toc-backref" href="#id3">MLflowLogger</a><a class="headerlink" href="#mlflowlogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.mlflow.MLflowLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.mlflow.</span></span><span class="sig-name descname"><span class="pre">MLflowLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_uri</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">registry_uri</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/mlflow.html#MLflowLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.mlflow.MLflowLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.mlflow.MLflowLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.mlflow.</code><code class="sig-name descname">MLflowLogger</code><span class="sig-paren">(</span><em class="sig-param">experiment: str</em>, <em class="sig-param">run: Optional[str] = None</em>, <em class="sig-param">tracking_uri: Optional[str] = None</em>, <em class="sig-param">registry_uri: Optional[str] = None</em>, <em class="sig-param">exclude: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/mlflow.html#MLflowLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.mlflow.MLflowLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Mlflow logger for parameters, metrics, images and other artifacts.</p>
 <p>Mlflow documentation: <a class="reference external" href="https://mlflow.org/docs/latest/index.html">https://mlflow.org/docs/latest/index.html</a>.</p>
@@ -494,9 +490,9 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </section>
 <section id="neptunelogger">
 <h2><a class="toc-backref" href="#id4">NeptuneLogger</a><a class="headerlink" href="#neptunelogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.neptune.NeptuneLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.neptune.</span></span><span class="sig-name descname"><span class="pre">NeptuneLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">neptune_run_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/neptune.html#NeptuneLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.neptune.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.neptune.NeptuneLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.neptune.</code><code class="sig-name descname">NeptuneLogger</code><span class="sig-paren">(</span><em class="sig-param">base_namespace=None</em>, <em class="sig-param">api_token=None</em>, <em class="sig-param">project=None</em>, <em class="sig-param">run=None</em>, <em class="sig-param">**neptune_run_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/neptune.html#NeptuneLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.neptune.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Neptune logger for parameters, metrics, images and other artifacts (videos, audio,
 model checkpoints, etc.).</p>
@@ -585,9 +581,9 @@ Read more about it
 </section>
 <section id="tensorboardlogger">
 <h2><a class="toc-backref" href="#id5">TensorboardLogger</a><a class="headerlink" href="#tensorboardlogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.tensorboard.TensorboardLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.tensorboard.</span></span><span class="sig-name descname"><span class="pre">TensorboardLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_logdir_postfix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/tensorboard.html#TensorboardLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.tensorboard.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.tensorboard.TensorboardLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.tensorboard.</code><code class="sig-name descname">TensorboardLogger</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">use_logdir_postfix: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/tensorboard.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.tensorboard.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Tensorboard logger for parameters, metrics, images and other artifacts.</p>
 <dl class="field-list simple">
@@ -655,9 +651,9 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </section>
 <section id="wandblogger">
 <h2><a class="toc-backref" href="#id6">WandbLogger</a><a class="headerlink" href="#wandblogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.wandb.WandbLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.wandb.</span></span><span class="sig-name descname"><span class="pre">WandbLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/wandb.html#WandbLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.wandb.WandbLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.wandb.WandbLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.wandb.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">project: str</em>, <em class="sig-param">name: Optional[str] = None</em>, <em class="sig-param">entity: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/wandb.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.wandb.WandbLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Wandb logger for parameters, metrics, images and other artifacts.</p>
 <p>W&amp;B documentation: <a class="reference external" href="https://docs.wandb.com">https://docs.wandb.com</a></p>
@@ -720,9 +716,9 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </section>
 <section id="cometlogger">
 <h2><a class="toc-backref" href="#id7">CometLogger</a><a class="headerlink" href="#cometlogger" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="catalyst.loggers.comet.CometLogger">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">catalyst.loggers.comet.</span></span><span class="sig-name descname"><span class="pre">CometLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workspace</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comet_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'online'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_frequency</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">experiment_kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/comet.html#CometLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.loggers.comet.CometLogger" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="catalyst.loggers.comet.CometLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.comet.</code><code class="sig-name descname">CometLogger</code><span class="sig-paren">(</span><em class="sig-param">workspace: Optional[str] = None</em>, <em class="sig-param">project_name: Optional[str] = None</em>, <em class="sig-param">experiment_id: Optional[str] = None</em>, <em class="sig-param">comet_mode: str = 'online'</em>, <em class="sig-param">tags: List[str] = None</em>, <em class="sig-param">logging_frequency: int = 1</em>, <em class="sig-param">**experiment_kwargs: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/comet.html#CometLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.comet.CometLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Comet logger for parameters, metrics, images and other artifacts
 (videos, audio, model checkpoints, etc.).</p>
@@ -861,10 +857,10 @@ the Experiment object</p></li>
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-         <script src="../_static/jquery.js"></script>
-         <script src="../_static/underscore.js"></script>
-         <script src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
      
 
   

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.sys &mdash; Catalyst 21.10 documentation</title>
+  <title>catalyst.utils.sys &mdash; Catalyst 21.11rc0 documentation</title>
   
 
   
@@ -27,8 +27,6 @@
 
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 
@@ -157,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.11</a>
                 </div>
               
             
@@ -185,19 +183,18 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
@@ -205,7 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
@@ -224,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
@@ -234,10 +231,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -312,7 +308,6 @@
               
   <h1>Source code for catalyst.utils.sys</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -326,7 +321,6 @@
 
 <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
@@ -358,38 +352,6 @@
     <span class="n">module_spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">dir_module</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">expdir</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dir_module</span>
     <span class="k">return</span> <span class="n">dir_module</span></div>
-
-
-<div class="viewcode-block" id="get_config_runner"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.get_config_runner">[docs]</a><span class="k">def</span> <span class="nf">get_config_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Imports and creates ConfigRunner instance.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        expdir: experiment directory path</span>
-<span class="sd">        config: dictionary with experiment Config</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        ConfigRunner instance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">config_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">expdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dir_module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>  <span class="c1"># noqa: F841</span>
-        <span class="c1"># runner_fn = getattr(dir_module, &quot;Runner&quot;, None)</span>
-
-    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config_copy</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner&quot;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">runner_from_config</span> <span class="o">=</span> <span class="n">runner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_target_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">runner_from_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;You should specify the ConfigRunner.&quot;</span>
-    <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">runner_from_config</span><span class="p">)</span>
-    <span class="c1"># assert any(</span>
-    <span class="c1">#     x is None for x in (runner_fn, runner_from_config)</span>
-    <span class="c1"># ), &quot;Runner is set both in code and config.&quot;</span>
-    <span class="c1"># if runner_fn is None and runner_from_config is not None:</span>
-    <span class="c1">#     runner_fn = REGISTRY.get(runner_from_config)</span>
-
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">runner_fn</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config_copy</span><span class="p">,</span> <span class="o">**</span><span class="n">runner_params</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">runner</span></div>
 
 
 <span class="k">def</span> <span class="nf">_tricky_dir_copy</span><span class="p">(</span><span class="n">dir_from</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dir_to</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -584,7 +546,6 @@
     <span class="s2">&quot;dump_environment&quot;</span><span class="p">,</span>
     <span class="s2">&quot;import_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dump_code&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_config_runner&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 
@@ -630,10 +591,10 @@
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-         <script src="../../../_static/jquery.js"></script>
-         <script src="../../../_static/underscore.js"></script>
-         <script src="../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../_static/language_data.js"></script>
      
 
   
