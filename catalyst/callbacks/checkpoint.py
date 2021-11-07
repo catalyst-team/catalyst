@@ -202,7 +202,6 @@ def _load_runner(
     runner: "IRunner",
     mapping: Union[str, Dict[str, str]],
     not_required_states: Iterable[str] = None,
-    load_full: bool = False,
 ) -> None:
     """
     Checks if the files used in mapping exist and selects a loading method based on type of mapping.
@@ -212,7 +211,6 @@ def _load_runner(
         runner: current runner
         mapping: mapping to use for loading
         not_required_states: TODO
-        load_full: load a full model, used inly when mapping type is string
 
     Raises:
         FileNotFoundError: if files given in mapping are missing.
@@ -222,8 +220,7 @@ def _load_runner(
     possible_states = _default_states.difference(not_required_states)
     file_exists = False
     if isinstance(mapping, str):
-        if not load_full:
-            load_full = mapping.endswith("full")
+        load_full = "full" in mapping
         if mapping in possible_states:
             checkpoint = f"{logdir}/{mapping}.pth"
         else:
@@ -325,7 +322,19 @@ class CheckpointCallback(ICheckpointCallback):
             and will be used the last runner.
 
             **NOTE:** Loading will be performed always at stage end.
-        resume (str or Dict[str, str]): TODO
+        resume (str or Dict[str, str]): load specified
+            state/model for experiment resuming.
+
+            If passed **string** then will be performed initialization from
+            specified state (``best``/``best_full``/``last``/``last_full``)
+            or checkpoint file.
+
+            If passed **dict** then will be performed initialization only
+            for specified parts - model, criterion, optimizer, scheduler.
+            Logic for dict is the same as for ``load_on_stage_start``.
+
+            If ``None`` or an empty dict (or dict without mentioned
+            above keys) then no action is required at stage start and:
         metrics_filename: filename to save metrics
             in checkpoint folder.
             Must ends on ``.json`` or ``.yml``
@@ -430,10 +439,6 @@ class CheckpointCallback(ICheckpointCallback):
             assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
             assert load_on_stage_end in possible_states
-        if isinstance(resume, str):
-            assert resume in possible_states
-        # if resume_dir is not None:
-        #     assert resume is not None
 
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
@@ -583,10 +588,10 @@ class CheckpointCallback(ICheckpointCallback):
 
         .. note::
 
-            If CheckpointCallback initialized with
-            ``resume`` (as path to checkpoint file)
-            or ``resume`` (as filename)
-            and ``resume_dir`` (as directory with file)
+            If CheckpointCallback initialized with ``resume`` or ``load_on_stage_start``:
+                - as path to checkpoint file or filename (``for resume only``)
+                - as specified state (``best``/``best_full``/``last``/``last_full``)
+                - as dict with specified parts (model, criterion, optimizer, etc.)
             then will be performed loading checkpoint.
 
         Raises:
@@ -613,29 +618,12 @@ class CheckpointCallback(ICheckpointCallback):
         # Use a barrier() to make sure that all processes have finished reading the checkpoint
         # dist.barrier()
 
-        #     if getattr(runner, "resume", None) is not None:
-        #         self.resume = runner.resume
-        #         runner.resume = None
-        #     elif getattr(runner, "autoresume", None) is not None:
-        #         self.resume_dir = runner.logdir / "checkpoints"
-        #         self.resume = f"{runner.autoresume}_full.pth"
-        #         runner.autoresume = None
-        #
-        #     for key in self._keys_from_runner:
-        #         value = getattr(runner, key, None)
-        #         if value is not None:
-        #             setattr(self, key, value)
-        #
-        #     if self.resume_dir is not None:
-        #         self.resume = str(self.resume_dir) + "/" + str(self.resume)
-        #
+        if getattr(runner, "_resume", None) is not None:
+            self.resume = runner._resume
+            runner._resume = None
+
         if self.resume is not None:
-            _load_runner(
-                logdir=self.logdir,
-                runner=runner,
-                mapping=self.resume,
-                load_full=True,
-            )
+            _load_runner(logdir=self.logdir, runner=runner, mapping=self.resume)
             self.resume = None
         elif self.load_on_stage_start is not None:
             _load_runner(
