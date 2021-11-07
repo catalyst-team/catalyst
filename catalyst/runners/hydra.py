@@ -293,7 +293,11 @@ class HydraRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: "DictConfig" = self._config.model
-        model: RunnerModel = self._get_model_from_params(model_params)
+        model: RunnerModel = (
+            self._get_model_from_params(model_params)
+            if self.model is None
+            else self.model
+        )
         return model
 
     @staticmethod
