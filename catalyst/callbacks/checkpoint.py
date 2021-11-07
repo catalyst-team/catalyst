@@ -222,17 +222,15 @@ def _load_runner(
     possible_states = _default_states.difference(not_required_states)
     file_exists = False
     if isinstance(mapping, str):
+        if not load_full:
+            load_full = mapping.endswith("full")
         if mapping in possible_states:
             checkpoint = f"{logdir}/{mapping}.pth"
         else:
             checkpoint = mapping
-        if not load_full:
-            load_full = checkpoint.endswith("full")
         file_exists = os.path.isfile(checkpoint)
         if not file_exists:
-            raise FileNotFoundError(
-                f"Missing file '{checkpoint}'!"
-            )  # noqa: F821
+            raise FileNotFoundError(f"Missing file '{checkpoint}'!")  # noqa: F821
         _load_checkpoint(
             filename=checkpoint, runner=runner, load_full=load_full
         )

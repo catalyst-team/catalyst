@@ -1,12 +1,9 @@
 # flake8: noqa
+# TODO: add test for `save_n_best=0``
 
 from collections import OrderedDict
-from io import StringIO
 import os
 import re
-import shutil
-import sys
-from tempfile import TemporaryDirectory
 
 import pytest
 
@@ -69,7 +66,7 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         runner.engine.save_checkpoint(checkpoint, checkpoint_file)
 
     def on_batch_start(self, runner):
-        if not (runner.stage_key == self.stage and runner.stage_batch_step == 0):
+        if not (runner.stage_key == self.stage and runner.stage_batch_step == 1):
             return
         # check if model loaded right checkpoint
         model = runner.model
@@ -99,21 +96,31 @@ class CustomRunner(dl.IRunner):
         return self._engine
 
     def get_callbacks(self, stage: str):
-        return {
+        callbacks =  {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
+            "test_model_load": CheckModelStateLoadAfterStages("second", self._logdir, "best.pth"),
+        }
+        if stage == "first":
+            callbacks["checkpoint"] =  dl.CheckpointCallback(
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
+            )
+        elif stage == "second":
+            callbacks["checkpoint"] =  dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
                 save_n_best=3,
                 load_on_stage_start="best",
-            ),
-            "test_model_load": CheckModelStateLoadAfterStages("second", self._logdir, "best.pth"),
-        }
+            )
+        return callbacks
 
     @property
     def stages(self) -> "Iterable[str]":
@@ -143,7 +150,7 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {}
 
     def handle_batch(self, batch):
         x, y = batch
@@ -152,52 +159,39 @@ class CustomRunner(dl.IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def test_device_load_on_stage_start():
-    to_check_devices = ["cpu"]
-    for device in to_check_devices:
-        with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, DeviceEngine(device))
-            runner.run()
+def to_check_devices():
+    cuda_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    return ["cpu", *cuda_devices]
 
 
-@pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA is not available")
-def test_device_load_on_stage_start():
-    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
-    for device in to_check_devices:
-        with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, DeviceEngine(device))
-            runner.run()
+@pytest.mark.parametrize("device", to_check_devices())
+def test_device_load_on_stage_end(device, tmpdir):
+    logdir = tmpdir
+    runner = CustomRunner(logdir, DeviceEngine(device))
+    runner.run()
 
 
 @pytest.mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
     reason="Number of CUDA devices is less than 2",
 )
-def test_dp_load_on_stage_start():
-    with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir, DataParallelEngine())
-        runner.run()
+def test_dp_load_on_stage_end(tmpdir):
+    logdir = tmpdir
+    runner = CustomRunner(logdir, DataParallelEngine())
+    runner.run()
 
 
 @pytest.mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
     reason="Number of CUDA devices is less than 2",
 )
-def test_ddp_load_on_stage_start():
-    with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir, DistributedDataParallelEngine())
-        runner.run()
+def test_ddp_load_on_stage_start(tmpdir):
+    logdir = tmpdir
+    runner = CustomRunner(logdir, DistributedDataParallelEngine())
+    runner.run()
 
 
-def test_load_best_on_stage_end():
-    old_stdout = sys.stdout
-    sys.stdout = str_stdout = StringIO()
-
-    # experiment_setup
-    logdir = "./logs/checkpoint_callback"
-    checkpoint = logdir  # + "/checkpoints"
-    logfile = checkpoint + "/_metrics.json"
-
+def train_runner(logdir, n_epochs, callbacks):
     # data
     num_samples, num_features = int(1e4), int(1e1)
     X = torch.rand(num_samples, num_features)
@@ -211,8 +205,8 @@ def test_load_best_on_stage_end():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters())
     runner = dl.SupervisedRunner()
+    runner.loggers = {}
 
-    n_epochs = 5
     # first stage
     runner.train(
         model=model,
@@ -225,39 +219,138 @@ def test_load_best_on_stage_end():
         valid_loader="valid",
         valid_metric="loss",
         minimize_valid_metric=True,
-        callbacks=[
-            dl.CheckpointCallback(
-                logdir=logdir,
-                loader_key="valid",
-                metric_key="loss",
-                minimize=True,
-                save_n_best=2,
-                load_on_stage_end="best",
-            ),
-            dl.CheckRunCallback(num_epoch_steps=n_epochs),
-        ],
+        callbacks=callbacks
     )
+    return runner
 
-    sys.stdout = old_stdout
-    exp_output = str_stdout.getvalue()
 
-    assert len(re.findall(r"=> Loading", exp_output)) == 1
-    assert len(re.findall(r"=> Loading .*best\.pth", exp_output)) == 1
+def test_files_existence(tmpdir):
+    logfile = tmpdir + "/_metrics.json"
+    n_epochs = 5
+    callbacks=[
+        dl.CheckpointCallback(
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            save_n_best=2,
+        ),
+        dl.CheckRunCallback(num_epoch_steps=n_epochs),
+    ]
+    train_runner(tmpdir, n_epochs, callbacks)
 
     assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/train.4.pth")
-    assert os.path.isfile(checkpoint + "/train.4_full.pth")
-    assert os.path.isfile(checkpoint + "/train.5.pth")
-    assert os.path.isfile(checkpoint + "/train.5_full.pth")
-    assert os.path.isfile(checkpoint + "/best.pth")
-    assert os.path.isfile(checkpoint + "/best_full.pth")
-    assert os.path.isfile(checkpoint + "/last.pth")
-    assert os.path.isfile(checkpoint + "/last_full.pth")
-
-    shutil.rmtree(logdir, ignore_errors=True)
+    assert os.path.isfile(tmpdir + "/train.4.pth")
+    assert os.path.isfile(tmpdir + "/train.4_full.pth")
+    assert os.path.isfile(tmpdir + "/train.5.pth")
+    assert os.path.isfile(tmpdir + "/train.5_full.pth")
+    assert os.path.isfile(tmpdir + "/best.pth")
+    assert os.path.isfile(tmpdir + "/best_full.pth")
+    assert os.path.isfile(tmpdir + "/last.pth")
+    assert os.path.isfile(tmpdir + "/last_full.pth")
 
 
-# @pytest.mark.skip(reason="disabled")
+@pytest.mark.parametrize(("to_load", "exp_loaded"), [("best", "model"), ("best_full", "full")])
+def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
+    # experiment_setup
+    n_epochs = 5
+    callbacks=[
+        dl.CheckpointCallback(
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            save_n_best=2,
+            load_on_stage_end=to_load,
+        ),
+        dl.CheckRunCallback(num_epoch_steps=n_epochs),
+    ]
+
+    train_runner(tmpdir, n_epochs, callbacks)
+    exp_output = capsys.readouterr().out
+
+    assert len(re.findall(r"=> Loading", exp_output)) == 1
+    assert len(re.findall(r"=> Loading .*{}\.pth".format(to_load), exp_output)) == 1
+    assert len(re.findall(r"{} checkpoint".format(exp_loaded), exp_output)) == 1
+
+
+@pytest.mark.parametrize(
+    ("to_load", "exp_loaded"),
+    [
+        ({"model": "best", "criterion": "best", "optimizer": "last"}, "model, criterion"), 
+        ({"model": "best", "criterion": "best", "optimizer": "best"}, "model, criterion, optimizer")
+    ]
+)
+def test_load_dict_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
+    # experiment_setup
+    n_epochs = 5
+    callbacks=[
+        dl.CheckpointCallback(
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            save_n_best=2,
+            load_on_stage_end=to_load,
+        ),
+        dl.CheckRunCallback(num_epoch_steps=n_epochs),
+    ]
+
+    train_runner(tmpdir, n_epochs, callbacks)
+    exp_output = capsys.readouterr().out
+
+    assert len(re.findall(r"=> Loading", exp_output)) == 1
+    assert len(re.findall(r"loaded: {}".format(exp_loaded), exp_output)) == 1
+
+
+@pytest.mark.parametrize("to_load", [{}, None])
+def test_load_empty(to_load, capsys, tmpdir):
+    # experiment_setup
+    n_epochs = 5
+    callbacks=[
+        dl.CheckpointCallback(
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            save_n_best=2,
+            load_on_stage_start=to_load,
+            load_on_stage_end=to_load,
+            resume=to_load,
+        ),
+        dl.CheckRunCallback(num_epoch_steps=n_epochs),
+    ]
+
+    train_runner(tmpdir, n_epochs, callbacks)
+    exp_output = capsys.readouterr().out
+
+    assert len(re.findall(r"=> Loading", exp_output)) == 0
+
+
+@pytest.mark.parametrize(
+    "to_load",
+    ["best", {"model": "not_existing_file.pth", "criterion": "not_existing_file.pth"}]
+)
+def test_resume_with_missing_file(to_load, tmpdir):
+    n_epochs = 5
+    callbacks = [
+        dl.CheckpointCallback(
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            save_n_best=2,
+            load_on_stage_start=to_load,
+            load_on_stage_end=to_load,
+            resume="best",
+        ),
+        dl.CheckRunCallback(num_epoch_steps=n_epochs),
+    ]
+
+    with pytest.raises(FileNotFoundError):
+        train_runner(tmpdir, n_epochs, callbacks)
+
+
 # def test_multiple_stages_and_different_checkpoints_to_load():
 #     old_stdout = sys.stdout
 #     sys.stdout = str_stdout = StringIO()
@@ -337,163 +430,4 @@ def test_load_best_on_stage_end():
 #     assert len(re.findall(r"=> Loading", exp_output)) == 3
 #     assert len(re.findall(r"=> Loading .*best_full\.pth", exp_output)) == 2
 #     assert len(re.findall(r"=> Loading .*last_full\.pth", exp_output)) == 1
-#
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.3.pth")
-#     assert os.path.isfile(checkpoint + "/train.3_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.4.pth")
-#     assert os.path.isfile(checkpoint + "/train.4_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.5.pth")
-#     assert os.path.isfile(checkpoint + "/train.5_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
-#
-#     shutil.rmtree(logdir, ignore_errors=True)
-#
-#
-# @pytest.mark.skip(reason="disabled")
-# def test_resume_with_missing_file():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-#
-#     # experiment_setup
-#     logdir = "./logs/checkpoint_callback"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-#     num_epochs = 5
-#
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {"train": loader, "valid": loader}
-#
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = dl.SupervisedRunner()
-#
-#     with pytest.raises(FileNotFoundError):
-#         runner.train(
-#             model=model,
-#             criterion=criterion,
-#             optimizer=optimizer,
-#             loaders=loaders,
-#             logdir=logdir,
-#             num_epochs=num_epochs,
-#             verbose=False,
-#             valid_loader="valid",
-#             valid_metric="loss",
-#             minimize_valid_metric=True,
-#             callbacks=[
-#                 dl.CheckpointCallback(
-#                     logdir=logdir,
-#                     loader_key="valid",
-#                     metric_key="loss",
-#                     minimize=True,
-#                     save_n_best=2,
-#                     load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
-#                     resume="not_existing_file.pth",
-#                 ),
-#                 dl.CheckRunCallback(num_epoch_steps=num_epochs),
-#             ],
-#         )
-#
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-#
-#     shutil.rmtree(logdir, ignore_errors=True)
-#
-#
-# @pytest.mark.skip(reason="disabled")
-# def test_load_on_stage_start_with_empty_dict():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-#
-#     # experiment_setup
-#     logdir = "./logs/checkpoint_callback"
-#     checkpoint = logdir  # + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-#     num_epochs = 5
-#
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {"train": loader, "valid": loader}
-#
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = dl.SupervisedRunner()
-#
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=num_epochs,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             dl.CheckpointCallback(
-#                 logdir=logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=2
-#             ),
-#             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-#         ],
-#     )
-#     # second stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=num_epochs,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             dl.CheckpointCallback(
-#                 logdir=logdir,
-#                 loader_key="valid",
-#                 metric_key="loss",
-#                 minimize=True,
-#                 save_n_best=3,
-#                 load_on_stage_start={},
-#             ),
-#             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-#         ],
-#     )
-#
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-#
-#     assert len(re.findall(r"=> Loading", exp_output)) == 0
-#
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.3.pth")
-#     assert os.path.isfile(checkpoint + "/train.3_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.4.pth")
-#     assert os.path.isfile(checkpoint + "/train.4_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.5.pth")
-#     assert os.path.isfile(checkpoint + "/train.5_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
-#
-#     shutil.rmtree(logdir, ignore_errors=True)
+
