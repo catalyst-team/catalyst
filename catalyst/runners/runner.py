@@ -390,6 +390,8 @@ class Runner(IRunner):
             overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
                 ``BatchOverfitCallback``
+            profile: if True, then uses ProfilerCallback, for advance usage please check
+                ``ProfilerCallback``
             load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
