@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 
+
 ### Changed
 
 - A few framework simplifications were made ([#1346](https://github.com/catalyst-team/catalyst/pull/1346)):
