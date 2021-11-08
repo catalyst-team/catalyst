@@ -153,16 +153,16 @@ class MovieLens(Dataset):
         """Return the raw lines of the train and test files."""
         path = self.raw_folder
 
-        with open(path + "/ml-20m/ua.base") as datafile:
+        with open(path + "/ml-100k/ua.base") as datafile:
             ua_base = datafile.read().split("\n")
 
-        with open(path + "/ml-20m/ua.test") as datafile:
+        with open(path + "/ml-100k/ua.test") as datafile:
             ua_test = datafile.read().split("\n")
 
-        with open(path + "/ml-20m/u.item", encoding="ISO-8859-1") as datafile:
+        with open(path + "/ml-100k/u.item", encoding="ISO-8859-1") as datafile:
             u_item = datafile.read().split("\n")
 
-        with open(path + "/ml-20,/u.genre") as datafile:
+        with open(path + "/ml-100k/u.genre") as datafile:
             u_genre = datafile.read().split("\n")
 
         return (ua_base, ua_test, u_item, u_genre)
