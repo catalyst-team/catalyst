@@ -204,7 +204,8 @@ def _load_runner(
     not_required_states: Iterable[str] = None,
 ) -> None:
     """
-    Checks if the files used in mapping exist and selects a loading method based on type of mapping.
+    Checks if the files used in mapping exist and selects a loading method
+    based on type of mapping.
 
     Args:
         logdir: logdir with checkpoints
@@ -286,10 +287,8 @@ class CheckpointCallback(ICheckpointCallback):
             ``"optimizer"`` and ``"scheduler"`` will be ignored.
 
             If ``None`` or an empty dict (or dict without mentioned
-            above keys) then no action is required at stage start and:
-
-            - Config API - will be used best state of model
-            - Notebook API - no action will be performed (will be used the last state)
+            above keys) then no action is required at stage start and
+            no action will be performed (will be used the last state).
 
             **NOTE:** Criterion, optimizer and scheduler are optional keys
             and should be loaded from full checkpoint.
@@ -588,10 +587,6 @@ class CheckpointCallback(ICheckpointCallback):
                 - as dict with specified parts (model, criterion, optimizer, etc.)
             then will be performed loading checkpoint.
 
-        Raises:
-            FileNotFoundError: if specified load_on_stage_start or resume
-                but checkpoint file is missing.
-
         Args:
             runner: current runner
         """
@@ -676,10 +671,6 @@ class CheckpointCallback(ICheckpointCallback):
         """
         Show information about best checkpoints during the stage and
         load model specified in ``load_on_stage_end``.
-
-        Raises:
-            FileNotFoundError: if specified load_on_stage_end
-                but checkpoint file is missing.
 
         Args:
             runner: current runner
