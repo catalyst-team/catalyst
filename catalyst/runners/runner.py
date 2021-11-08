@@ -307,9 +307,7 @@ class Runner(IRunner):
             callbacks["_overfit"] = BatchOverfitCallback()
         if self._profile and not is_callback_exists(ProfilerCallback):
             callbacks["_profile"] = ProfilerCallback(
-                on_trace_ready=torch.profiler.tensorboard_trace_handler(
-                    os.path.join(self._logdir, "tb_profile")
-                )
+                tensorboard_path=os.path.join(self._logdir, "tb_profile")
             )
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
