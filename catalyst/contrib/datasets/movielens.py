@@ -344,20 +344,18 @@ class MovieLens20M(Dataset):
 
     def __init__(self, 
                 root, 
-                train=True, 
                 download=False, 
                 min_rating=0.0,
                 min_items_per_user=5.0,
                 min_users_per_item=0.0,
                 test_prop=0.2,
+                split="users",
                 n_rows=1000):
         """
         Args:
             root (string): Root directory of dataset where
                 ``MovieLens/processed/training.pt``
                 and  ``MovieLens/processed/test.pt`` exist.
-            train (bool, optional): If True, creates dataset from
-                ``training.pt``, otherwise from ``test.pt``.
             download (bool, optional): If true, downloads the dataset from
                 the internet and puts it in root directory. If dataset
                 is already downloaded, it is not downloaded again.
@@ -368,27 +366,21 @@ class MovieLens20M(Dataset):
             root = os.path.expanduser(root)
 
         self.root = root
-        self.train = train
         self.min_rating = min_rating
         self.min_items_per_user = min_items_per_user
         self.min_users_per_item = min_users_per_item
         self.test_prop = test_prop
-        self.n_rows = n_rows
+        self.nrows = n_rows
+        self.split = split
 
         if download:
             self._download()
 
-        # self._fetch_movies()
+        self._fetch_movies(split_by=split)
 
         if not self._check_exists():
             raise RuntimeError("Dataset not found. You can use download=True to download it")
 
-        if self.train:
-            data_file = self.training_file
-        else:
-            data_file = self.test_file
-
-        # self.data = torch.load(os.path.join(self.processed_folder, data_file))
 
     def __getitem__(self, user_index):
         """Get item.
@@ -422,7 +414,7 @@ class MovieLens20M(Dataset):
         ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
 
     def _download(self):
-        """Download and extract files/"""
+        """Download and extract files"""
         if self._check_exists():
             return
 
@@ -440,7 +432,10 @@ class MovieLens20M(Dataset):
         )
 
     def _read_raw_movielens_data(self):
-        """Return the raw lines of the train and test files."""
+        """Read the csv files with pandas.
+        Returns:
+            (movies, ratings, genome_scores, genome_tags, tags): (pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame)
+        """
         path = self.raw_folder
 
         movies = pd.read_csv(path+'/ml-20m/movies.csv', nrows=self.nrows)
@@ -452,20 +447,16 @@ class MovieLens20M(Dataset):
         return (movies, ratings, genome_scores, genome_tags, tags)
 
     def _build_interaction_matrix(self, ratings):
-        """[WIP] Builds interaction matrix.
-
-        ?? Need to decide the filter order
-        - rating
-        - items per user
-        - user per item
-
-        Transform to Compressed Sparse Row
+        """Builds interaction matrix.
 
         Args:
-            rows (int): rows of the oevrall dataset
-            cols (int): columns of the overall dataset
-            data (generator object): generator of
-            the data object
+            ratings (pd.Dataframe): pandas DataFrame of the following format 
+                    userId	movieId	rating	
+                    20	1	924	     3.5
+                    19	1	919	     3.5
+                    86	1	2683	 3.5
+                    61	1	1584	 3.5
+                    23	1	1079	 4.0
 
         Returns:
             interaction_matrix (torch.sparse.Float):
@@ -486,10 +477,22 @@ class MovieLens20M(Dataset):
         To-do add timestamp cut
 
         Args:
-            data: raw data of the dataset
+            ratings (pd.Dataframe): pandas DataFrame of the following format 
+                userId	movieId	rating	timestamp
+                20	1	924	     3.5	1094785598
+                19	1	919	     3.5	1094785621
+                86	1	2683	 3.5	1094785650
+                61	1	1584	 3.5	1094785656
+                23	1	1079	 4.0	1094785665
+            rating_cut (bool, optional): If true, filter datafreame on the `min_rating` value 
+            user_per_item_cut (bool, optional): If true, filter datafreame on the `min_users_per_item` value 
+            item_per_user_cut (bool, optional): If true, filter datafreame on the `min_items_per_user` value 
+            ts_cut (bool, optional): If true, filter datafreame on the `min_ts` value [TO-DO]
 
         Returns:
-            Generator iterator for parsed data
+            ratings (pd.Dataframe): filtered `ratings` pandas DataFrame
+            users_activity (pd.DataFrame): Number of items each user interacted with
+            items_activity (pd.DataFrame): Number of users interacted with each item.
         """
         if rating_cut:
             ratings = ratings[ratings['rating'] > self.min_rating].sort_values(['userId', 'timestamp'])
@@ -498,7 +501,7 @@ class MovieLens20M(Dataset):
             if self.min_users_per_item:
                 id = 'movieId'
                 usert_cnt = ratings[[id]].groupby(id, as_index=False).size()
-                ratings = ratings[ratings['movieId'].isin(user_cnt.index[user_cnt['size'] >= min_users_per_item])]
+                ratings = ratings[ratings['movieId'].isin(user_cnt.index[user_cnt['size'] >= self.min_users_per_item])]
             else:
                 ValueError("user_per_item is not set")
 
@@ -506,36 +509,62 @@ class MovieLens20M(Dataset):
             if self.min_items_per_user:
                 id = 'userId'
                 item_cnt = ratings[[id]].groupby(id, as_index=False).size()
-                ratings = ratings[ratings['userId'].isin(item_cnt.index[item_cnt['size'] > min_items_per_user])]
+                ratings = ratings[ratings['userId'].isin(item_cnt.index[item_cnt['size'] > self.min_items_per_user])]
             else:
                 ValueError("item_per_user_cut is not set")
 
         users_activity, items_activity = ratings[['userId']].groupby('userId', as_index=False).size(), ratings[['movieId']].groupby('movieId', as_index=False).size()
         return ratings, users_activity, items_activity
-        
-        else:
-            ValueError("Only rating is availbale")
+    
 
     def _split_by_users(self, ratings, users_activity):
-        """Split the rating into train and test
-        Randomly shuffle users.
-        """
-        idx_perm = np.random.permutation(users_activity.index.size)
-        users_activity.index[idx_perm]
-        
-        unique_uid = users_activity[idx_perm]
+        """Split the ratings DataFrame into train and test
+        Randomly shuffle users and split
 
+        Args:
+            ratings (pd.Dataframe): pandas DataFrame of the following format 
+                userId	movieId	rating	timestamp
+                20	1	924	     3.5	1094785598
+                19	1	919	     3.5	1094785621
+                86	1	2683	 3.5	1094785650
+                61	1	1584	 3.5	1094785656
+                23	1	1079	 4.0	1094785665
+            users_activity (pd.DataFrame): Number of items each user interacted with
+
+        Returns:
+            train_events (pd.Dataframe): pandas DataFrame for training data
+            test_events (pd.Dataframe): pandas DataFrame for training data
+        """
+        idx_perm
+        idx_perm = np.random.permutation(users_activity.index.size)
+        unique_uid = users_activity.index[idx_perm]
+        n_users = unique_uid.size
+        
         test_users = unique_uid[:int(n_users*self.test_prop)]
         train_users = unique_uid[int(n_users*self.test_prop):]
 
-        trains_events = ratings.loc[ratings['userId'].isin(train_users)]
+        train_events = ratings.loc[ratings['userId'].isin(train_users)]
         test_events = ratings.loc[ratings['userId'].isin(test_users)]
 
         return (train_events, test_events)
 
     def _split_by_time(self, ratings):
-        """
-        test_prop between 0 and 1
+        """Split the ratings DataFrame into train and test by timestamp
+        Ratings[timestamp] extreme values used for the filtering interval
+
+        Args:
+            ratings (pd.Dataframe): pandas DataFrame of the following format 
+                userId	movieId	rating	timestamp
+                20	1	924	     3.5	1094785598
+                19	1	919	     3.5	1094785621
+                86	1	2683	 3.5	1094785650
+                61	1	1584	 3.5	1094785656
+                23	1	1079	 4.0	1094785665
+            users_activity (pd.DataFrame): Number of items each user interacted with
+
+        Returns:
+            train_events (pd.Dataframe): pandas DataFrame for training data
+            test_events (pd.Dataframe): pandas DataFrame for training data
         """
         ts = ratings['timestamp'].sort_values()
         ts_max = ts.max()
@@ -551,9 +580,10 @@ class MovieLens20M(Dataset):
     def _fetch_movies(self, split_by="users"):
         """
         Fetch data and save in the pytorch format
-            1. Read the train/test data from raw archive
-            2. Parse train data
-            3. Parse test data
+            1. Read the MovieLens20 data from raw archive
+            2. Parse the rating dataset
+            3. Split dataset into train and test
+            4. Build user-item matrix interaction
             4. Save in the .pt with torch.save
         """
 
