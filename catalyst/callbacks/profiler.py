@@ -51,7 +51,6 @@ class ProfilerCallback(Callback):
             from catalyst import dl
             from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
-            from catalyst.contrib.nn.modules import Flatten
 
             loaders = {
                 "train": DataLoader(
@@ -64,7 +63,7 @@ class ProfilerCallback(Callback):
                 ),
             }
 
-            model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
             criterion = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
             runner = dl.SupervisedRunner()
