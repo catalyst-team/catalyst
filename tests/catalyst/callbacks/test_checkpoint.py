@@ -159,12 +159,15 @@ class CustomRunner(dl.IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def to_check_devices():
-    cuda_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
-    return ["cpu", *cuda_devices]
-
-
-@pytest.mark.parametrize("device", to_check_devices())
+@pytest.mark.parametrize(
+    "device",
+    [
+        "cpu",
+        pytest.param(
+            "cuda", marks=pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA is not available")
+        ),
+    ],
+)
 def test_device_load_on_stage_end(device, tmpdir):
     logdir = tmpdir
     runner = CustomRunner(logdir, DeviceEngine(device))
@@ -351,84 +354,3 @@ def test_resume_with_missing_file(to_load, tmpdir):
 
     with pytest.raises(FileNotFoundError):
         train_runner(tmpdir, n_epochs, callbacks)
-
-
-# def test_multiple_stages_and_different_checkpoints_to_load():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-#
-#     # experiment_setup
-#     logdir = "./logs/checkpoint_callback"
-#     checkpoint = logdir  # + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-#     num_epochs = 5
-#
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {"train": loader, "valid": loader}
-#
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = dl.SupervisedRunner()
-#
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=num_epochs,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             dl.CheckpointCallback(
-#                 logdir=logdir,
-#                 loader_key="valid",
-#                 metric_key="loss",
-#                 minimize=True,
-#                 save_n_best=2,
-#                 load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
-#             ),
-#             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-#         ],
-#     )
-#     # second stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=num_epochs,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             dl.CheckpointCallback(
-#                 logdir=logdir,
-#                 loader_key="valid",
-#                 metric_key="loss",
-#                 minimize=True,
-#                 save_n_best=3,
-#                 load_on_stage_start={"model": "last", "criterion": "last", "optimizer": "best"},
-#             ),
-#             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-#         ],
-#     )
-#
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-#
-#     assert len(re.findall(r"=> Loading", exp_output)) == 3
-#     assert len(re.findall(r"=> Loading .*best_full\.pth", exp_output)) == 2
-#     assert len(re.findall(r"=> Loading .*last_full\.pth", exp_output)) == 1
