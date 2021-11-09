@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
 - YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
 - `TopKMetric` asbtraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+- Returned `resume` support - resolved [#1349](https://github.com/catalyst-team/catalyst/issues/1193 ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
 
 ### Changed
 
