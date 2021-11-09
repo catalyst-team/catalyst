@@ -6,7 +6,7 @@ import shutil
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.tools.metric_handler import MetricHandler
+from catalyst.extras.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
 
 _default_states = {"best", "best_full", "last", "last_full"}

@@ -9,9 +9,9 @@ import pytest
 
 from torch.utils.data import DataLoader
 
+from catalyst.contrib.data.sampler import BalanceBatchSampler
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.sampler import (
-    BalanceBatchSampler,
     BalanceClassSampler,
     BatchBalanceClassSampler,
     DynamicBalanceClassSampler,

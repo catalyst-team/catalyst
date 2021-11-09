@@ -10,9 +10,9 @@ from torch.utils.data import DataLoader, Dataset
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.core._misc import callback_isinstance
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import IEngine
@@ -20,7 +20,11 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
-from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
+from catalyst.runners._misc import (
+    do_lr_linear_scaling,
+    get_loaders_from_params,
+    get_model_parameters,
+)
 from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -31,7 +35,6 @@ from catalyst.typing import (
     Sampler,
     Scheduler,
 )
-from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
 

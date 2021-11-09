@@ -5,8 +5,8 @@ import pytest
 
 import torch
 
-from catalyst.contrib.nn import criterion as module
-from catalyst.contrib.nn.criterion import (
+from catalyst.contrib import losses as module
+from catalyst.contrib.losses import (
     BarlowTwinsLoss,
     CircleLoss,
     NTXentLoss,
@@ -42,7 +42,7 @@ def test_criterion_init():
 
 def test_bpr_loss():
     """Testing for Bayesian Personalized Ranking"""
-    from catalyst.contrib.nn.criterion.recsys import BPRLoss
+    from catalyst.contrib.losses.recsys import BPRLoss
 
     loss = BPRLoss()
 
@@ -58,7 +58,7 @@ def test_bpr_loss():
 
 
 def test_warp_loss():
-    from catalyst.contrib.nn.criterion.recsys import WARPLoss
+    from catalyst.contrib.losses.recsys import WARPLoss
 
     loss = WARPLoss(max_num_trials=1)
 
@@ -89,7 +89,7 @@ def test_warp_loss():
 
 
 def test_logistic_loss():
-    from catalyst.contrib.nn.criterion.recsys import LogisticLoss
+    from catalyst.contrib.losses.recsys import LogisticLoss
 
     loss = LogisticLoss()
 
@@ -104,7 +104,7 @@ def test_logistic_loss():
 
 
 def test_hinge_loss():
-    from catalyst.contrib.nn.criterion.recsys import HingeLoss
+    from catalyst.contrib.losses.recsys import HingeLoss
 
     loss = HingeLoss()
 
@@ -122,7 +122,7 @@ def test_hinge_loss():
 
 
 def test_adaptive_hinge_loss():
-    from catalyst.contrib.nn.criterion.recsys import AdaptiveHingeLoss
+    from catalyst.contrib.losses.recsys import AdaptiveHingeLoss
 
     loss = AdaptiveHingeLoss()
 
@@ -143,7 +143,7 @@ def test_adaptive_hinge_loss():
 
 
 def test_roc_star_loss():
-    from catalyst.contrib.nn.criterion.recsys import RocStarLoss
+    from catalyst.contrib.losses.recsys import RocStarLoss
 
     params = dict(sample_size=5, sample_size_gamma=5, update_gamma_each=1)
     const_history = torch.Tensor([[0], [1], [0], [0], [1], [1], [0], [1], [0], [1]])  # rand seq

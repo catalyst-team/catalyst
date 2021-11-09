@@ -4,11 +4,11 @@ import os
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.functional import (
+from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.datasets.misc import (
     download_and_extract_archive,
     read_sn3_pascalvincent_tensor,
 )
-from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
 
 
 def _read_label_file(path):

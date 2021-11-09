@@ -9,6 +9,12 @@ import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
+from catalyst.core._misc import (
+    callback_isinstance,
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.callback import (
     Callback,
     ICallback,
@@ -18,12 +24,6 @@ from catalyst.core.callback import (
 )
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import (
-    callback_isinstance,
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
-    validate_loaders,
-)
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
     Criterion,

@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 import torch.optim as optim
 
 from catalyst import dl
-from catalyst.contrib.nn import BarlowTwinsLoss
+from catalyst.contrib import BarlowTwinsLoss
 
 parser = argparse.ArgumentParser(description="Train Barlow Twins")
 add_arguments(parser)
