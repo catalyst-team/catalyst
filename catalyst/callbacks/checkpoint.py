@@ -211,7 +211,7 @@ def _load_runner(
         logdir: logdir with checkpoints
         runner: current runner
         mapping: mapping to use for loading
-        not_required_states: TODO
+        not_required_states: states to skip when loading checkpoints
 
     Raises:
         FileNotFoundError: if files given in mapping are missing.
