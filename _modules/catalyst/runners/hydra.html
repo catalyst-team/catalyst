@@ -385,6 +385,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_name</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_logdir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_resume</span><span class="p">()</span>
 
         <span class="c1"># @TODO: hack for catalyst-dl tune, could be done better</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="o">=</span> <span class="kc">None</span>
@@ -415,6 +416,15 @@
             <span class="n">logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
             <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baselogdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">_get_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">autoresume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">autoresume</span>
+        <span class="n">logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">logdir</span>
+        <span class="n">resume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">resume</span>
+        <span class="k">if</span> <span class="n">autoresume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">resume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">checkpoint_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/</span><span class="si">{</span><span class="n">autoresume</span><span class="si">}</span><span class="s2">_full.pth&quot;</span>
+            <span class="k">return</span> <span class="n">checkpoint_filename</span>
+        <span class="k">return</span> <span class="n">resume</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -595,7 +605,9 @@
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="s2">&quot;model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="s2">&quot;config must contain &#39;model&#39; key&quot;</span>
         <span class="n">model_params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">model</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_from_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_from_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span></div>
 
     <span class="nd">@staticmethod</span>
@@ -749,7 +761,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
             <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_checkpoint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span>
-                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">)</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">),</span> <span class="n">resume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_resume</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">callbacks</span></div></div>

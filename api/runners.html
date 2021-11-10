@@ -872,7 +872,7 @@ If <cite>None</cite> simply takes current model from runner.</p></li>
 
 <dl class="method">
 <dt id="catalyst.runners.runner.Runner.predict_loader">
-<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">engine: Union[IEngine</em>, <em class="sig-param">str] = None</em>, <em class="sig-param">seed: int = 42</em>, <em class="sig-param">fp16: bool = False</em>, <em class="sig-param">amp: bool = False</em>, <em class="sig-param">apex: bool = False</em>, <em class="sig-param">ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">engine: Union[IEngine</em>, <em class="sig-param">str] = None</em>, <em class="sig-param">seed: int = 42</em>, <em class="sig-param">resume: str = None</em>, <em class="sig-param">fp16: bool = False</em>, <em class="sig-param">amp: bool = False</em>, <em class="sig-param">apex: bool = False</em>, <em class="sig-param">ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs model inference on PyTorch DataLoader and returns
 python generator with model predictions from <cite>runner.predict_batch</cite>.</p>
 <dl class="field-list simple">
@@ -882,6 +882,7 @@ python generator with model predictions from <cite>runner.predict_batch</cite>.<
 <li><p><strong>model</strong> – model to use for prediction</p></li>
 <li><p><strong>engine</strong> – engine to use for prediction</p></li>
 <li><p><strong>seed</strong> – random seed to use before prediction</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
 <li><p><strong>fp16</strong> – boolean flag to use half-precision training (AMP &gt; APEX)</p></li>
 <li><p><strong>amp</strong> – boolean flag to use amp half-precision</p></li>
 <li><p><strong>apex</strong> – boolean flag to use apex half-precision</p></li>
@@ -978,6 +979,9 @@ Note: Works only with python scripts. No jupyter support.</p></li>
 <span class="c1"># model inference</span>
 <span class="k">for</span> <span class="n">logits</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_loader</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]):</span>
     <span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+<span class="c1"># model inference from checkpoint</span>
+<span class="k">for</span> <span class="n">logits</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_loader</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">],</span> <span class="n">resume</span><span class="o">=</span><span class="s2">&quot;./logs/best.pth&quot;</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -996,7 +1000,7 @@ Note: Works only with python scripts. No jupyter support.</p></li>
 
 <dl class="method">
 <dt id="catalyst.runners.runner.Runner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, loaders: OrderedDict[str, DataLoader], model: torch.nn.modules.module.Module, engine: Union[IEngine, str] = None, trial: catalyst.core.trial.ITrial = None, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, loggers: Dict[str, ILogger] = None, seed: int = 42, hparams: Dict[str, Any] = None, num_epochs: int = 1, logdir: str = None, valid_loader: str = None, valid_metric: str = None, minimize_valid_metric: bool = True, verbose: bool = False, timeit: bool = False, check: bool = False, overfit: bool = False, load_best_on_end: bool = False, fp16: bool = False, amp: bool = False, apex: bool = False, ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, loaders: OrderedDict[str, DataLoader], model: torch.nn.modules.module.Module, engine: Union[IEngine, str] = None, trial: catalyst.core.trial.ITrial = None, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, loggers: Dict[str, ILogger] = None, seed: int = 42, hparams: Dict[str, Any] = None, num_epochs: int = 1, logdir: str = None, resume: str = None, valid_loader: str = None, valid_metric: str = None, minimize_valid_metric: bool = True, verbose: bool = False, timeit: bool = False, check: bool = False, overfit: bool = False, load_best_on_end: bool = False, fp16: bool = False, amp: bool = False, apex: bool = False, ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the train stage of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1015,6 +1019,7 @@ for training, validation or inference</p></li>
 <li><p><strong>hparams</strong> – hyperparameters for the run</p></li>
 <li><p><strong>num_epochs</strong> – number of training epochs</p></li>
 <li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
 <li><p><strong>valid_loader</strong> – loader name used to calculate
 the metrics and save the checkpoints. For example,
 you can pass <cite>train</cite> and then

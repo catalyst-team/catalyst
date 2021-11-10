@@ -496,6 +496,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># extras</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check</span> <span class="o">=</span> <span class="kc">False</span>
@@ -619,6 +620,7 @@
                 <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span>
                 <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span><span class="p">,</span>
                 <span class="n">minimize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span><span class="p">,</span>
+                <span class="n">resume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_resume</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">callbacks</span></div>
 
@@ -646,6 +648,7 @@
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="c1"># extra info (callbacks info)</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">valid_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">minimize_valid_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -678,6 +681,7 @@
 <span class="sd">            hparams: hyperparameters for the run</span>
 <span class="sd">            num_epochs: number of training epochs</span>
 <span class="sd">            logdir: path to output directory</span>
+<span class="sd">            resume: path to checkpoint for model</span>
 <span class="sd">            valid_loader: loader name used to calculate</span>
 <span class="sd">                the metrics and save the checkpoints. For example,</span>
 <span class="sd">                you can pass `train` and then</span>
@@ -812,6 +816,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_hparams</span> <span class="o">=</span> <span class="n">hparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span> <span class="o">=</span> <span class="n">num_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resume</span> <span class="o">=</span> <span class="n">resume</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span> <span class="o">=</span> <span class="n">valid_loader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span> <span class="o">=</span> <span class="n">valid_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span> <span class="o">=</span> <span class="n">minimize_valid_metric</span>
@@ -849,6 +854,8 @@
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="c1"># extra info</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="c1"># engine extra params,</span>
         <span class="n">fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -864,6 +871,7 @@
 <span class="sd">            model: model to use for prediction</span>
 <span class="sd">            engine: engine to use for prediction</span>
 <span class="sd">            seed: random seed to use before prediction</span>
+<span class="sd">            resume: path to checkpoint for model</span>
 <span class="sd">            fp16: boolean flag to use half-precision training (AMP &gt; APEX)</span>
 <span class="sd">            amp: boolean flag to use amp half-precision</span>
 <span class="sd">            apex: boolean flag to use apex half-precision</span>
@@ -962,6 +970,9 @@
 <span class="sd">            # model inference</span>
 <span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
 <span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
+<span class="sd">            # model inference from checkpoint</span>
+<span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;], resume=&quot;./logs/best.pth&quot;):</span>
+<span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
 
@@ -969,9 +980,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-        <span class="c1"># if resume is not None:</span>
-        <span class="c1">#     checkpoint = load_checkpoint(resume)</span>
-        <span class="c1">#     unpack_checkpoint(checkpoint, model=self.model)</span>
+        <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
