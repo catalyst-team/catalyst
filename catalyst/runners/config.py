@@ -108,6 +108,7 @@ class ConfigRunner(IRunner):
         self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
         self._check: bool = get_by_keys(self._config, "args", "check", default=False)
         self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+        self._resume: str = get_by_keys(self._config, "args", "resume")
 
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
@@ -295,7 +296,9 @@ class ConfigRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
-        model: RunnerModel = self._get_model_from_params(**model_params)
+        model: RunnerModel = (
+            self._get_model_from_params(**model_params) if self.model is None else self.model
+        )
         return model
 
     def get_criterion(self, stage: str) -> RunnerCriterion:
@@ -417,7 +420,7 @@ class ConfigRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints")
+                logdir=os.path.join(self._logdir, "checkpoints"), resume=self._resume
             )
 
         return callbacks
