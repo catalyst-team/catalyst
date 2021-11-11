@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data import ToTensor
+from catalyst.data import ImageToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
@@ -58,11 +58,11 @@ class CustomRunner(dl.IRunner):
     def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32,
             ),
         }

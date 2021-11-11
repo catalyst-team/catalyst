@@ -10,9 +10,9 @@ from torch.utils.data import DataLoader, Dataset
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.core._misc import callback_isinstance
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import IEngine
@@ -20,7 +20,11 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
-from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
+from catalyst.runners._misc import (
+    do_lr_linear_scaling,
+    get_loaders_from_params,
+    get_model_parameters,
+)
 from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -31,7 +35,6 @@ from catalyst.typing import (
     Sampler,
     Scheduler,
 )
-from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
 
@@ -105,6 +108,7 @@ class ConfigRunner(IRunner):
         self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
         self._check: bool = get_by_keys(self._config, "args", "check", default=False)
         self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+        self._resume: str = get_by_keys(self._config, "args", "resume")
 
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
@@ -292,7 +296,9 @@ class ConfigRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
-        model: RunnerModel = self._get_model_from_params(**model_params)
+        model: RunnerModel = (
+            self._get_model_from_params(**model_params) if self.model is None else self.model
+        )
         return model
 
     def get_criterion(self, stage: str) -> RunnerCriterion:
@@ -414,7 +420,7 @@ class ConfigRunner(IRunner):
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
-                logdir=os.path.join(self._logdir, "checkpoints")
+                logdir=os.path.join(self._logdir, "checkpoints"), resume=self._resume
             )
 
         return callbacks

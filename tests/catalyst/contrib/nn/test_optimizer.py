@@ -1,7 +1,7 @@
 from torch import nn, optim
 
-from catalyst.contrib.nn import optimizers as module
-from catalyst.contrib.nn.optimizers import Lookahead
+from catalyst.contrib import optimizers as module
+from catalyst.contrib.optimizers import Lookahead
 
 
 def test_optimizer_init():

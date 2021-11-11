@@ -264,10 +264,7 @@ class IOUMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import ImageToTensor, IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -278,11 +275,11 @@ class IOUMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
         }
@@ -397,10 +394,7 @@ class DiceMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import ImageToTensor, IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -411,11 +405,11 @@ class DiceMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
         }
@@ -534,10 +528,7 @@ class TrevskyMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import ImageToTensor, IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -548,11 +539,11 @@ class TrevskyMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
         }
