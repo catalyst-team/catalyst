@@ -29,9 +29,9 @@ class XLAEngine(DeviceEngine):
         from torch.utils.data import DataLoader
 
         from catalyst import dl
-        from catalyst.contrib.datasets import CIFAR10
-        from catalyst.contrib.nn import ResidualBlock
-        from catalyst.data import transforms
+        from catalyst.contrib import (
+            ImageToTensor, NormalizeImage, Compose, CIFAR10, ResidualBlock
+        )
 
         def conv_block(in_channels, out_channels, pool=False):
             layers = [
@@ -81,8 +81,8 @@ class XLAEngine(DeviceEngine):
                 return 3
 
             def get_loaders(self, stage: str):
-                transform = transforms.Compose(
-                    [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+                transform = Compose(
+                    [ImageToTensor(), NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
                 )
                 train_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
                 valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
@@ -183,9 +183,9 @@ class DistributedXLAEngine(DeviceEngine):
         from torch.utils.data import DataLoader
 
         from catalyst import dl
-        from catalyst.contrib.datasets import CIFAR10
-        from catalyst.contrib.nn import ResidualBlock
-        from catalyst.data import transforms
+        from catalyst.contrib import (
+            ImageToTensor, NormalizeImage, Compose, CIFAR10, ResidualBlock
+        )
 
         def conv_block(in_channels, out_channels, pool=False):
             layers = [
@@ -235,8 +235,8 @@ class DistributedXLAEngine(DeviceEngine):
                 return 3
 
             def get_loaders(self, stage: str):
-                transform = transforms.Compose(
-                    [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+                transform = Compose(
+                    [ImageToTensor(), NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
                 )
                 train_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
                 valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)

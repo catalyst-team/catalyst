@@ -4,8 +4,8 @@ from pathlib import Path
 
 import torch
 
+from catalyst.extras.forward_wrapper import ModelForwardWrapper
 from catalyst.settings import SETTINGS
-from catalyst.tools.forward_wrapper import ModelForwardWrapper
 from catalyst.utils.torch import get_nn_from_ddp_module
 
 if SETTINGS.onnx_required:

@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from torch.optim import Adam
 
 from catalyst import dl
-from catalyst.contrib.nn.criterion import NTXentLoss
+from catalyst.contrib.losses import NTXentLoss
 from catalyst.dl import SelfSupervisedRunner
 
 parser = argparse.ArgumentParser(description="Train SimCLR")

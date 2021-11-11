@@ -10,43 +10,18 @@ Examples:
 
         $ catalyst-contrib collect-env
 
-    2.  **process-images** reads raw data and outputs
-    preprocessed resized images
+    2.  **project-embeddings**
 
     .. code:: bash
 
         $ catalyst-contrib process-images \\
-            --in-dir /path/to/raw/data/ \\
-            --out-dir=./data/dataset \\
-            --num-workers=6 \\
-            --max-size=224 \\
-            --extension=png \\
-            --clear-exif \\
-            --grayscale \\
-            --expand-dims
-
-    3. **tag2label** prepares a dataset to json like
-    `{"class_id":  class_column_from_dataset}`
-
-    .. code:: bash
-
-        $ catalyst-contrib tag2label \\
-            --in-dir=./data/dataset \\
-            --out-dataset=./data/dataset_raw.csv \\
-            --out-labeling=./data/tag2cls.json
-
-    4. **split-dataframe** split your dataset into train/valid folds
-
-    .. code:: bash
-
-        $ catalyst-contrib split-dataframe \\
-            --in-csv=./data/dataset_raw.csv \\
-            --tag2class=./data/tag2cls.json \\
-            --tag-column=tag \\
-            --class-column=class \\
-            --n-folds=5 \\
-            --train-folds=0,1,2,3 \\
-            --out-csv=./data/dataset.csv
+            --in-npy="./embeddings.npy" \
+            --in-csv="./images.csv" \
+            --out-dir="." \
+            --img-size=64 \
+            --img-col="images" \
+            --meta-cols="meta" \
+            --img-rootpath="."
 """
 
 from argparse import ArgumentParser, RawTextHelpFormatter

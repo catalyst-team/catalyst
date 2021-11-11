@@ -2,7 +2,7 @@
 from typing import Union
 from pathlib import Path
 
-from catalyst.data.dataset import PathsDataset
+from catalyst.contrib.data.dataset import PathsDataset
 
 
 def test_PathsDataset() -> None:
