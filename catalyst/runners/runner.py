@@ -309,17 +309,17 @@ class Runner(IRunner):
             callbacks["_profile"] = ProfilerCallback(
                 tensorboard_path=os.path.join(self._logdir, "tb_profile"),
                 loader_key="train",
-                profiler_kwargs=dict(
-                    activities=[
+                profiler_kwargs={
+                    activities: [
                         torch.profiler.ProfilerActivity.CPU,
                         torch.profiler.ProfilerActivity.CUDA,
                     ],
-                    on_trace_ready=torch.profiler.tensorboard_trace_handler(
+                    on_trace_ready: torch.profiler.tensorboard_trace_handler(
                         os.path.join(self._logdir, "tb_profile")
                     ),
-                    with_stack=True,
-                    with_flops=True,
-                ),
+                    with_stack: True,
+                    with_flops: True,
+                },
             )
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
