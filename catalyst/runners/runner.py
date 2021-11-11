@@ -330,6 +330,7 @@ class Runner(IRunner):
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
                 resume=self._resume,
+                load_on_stage_end="best" if self._load_best_on_end else None,
             )
         return callbacks
 

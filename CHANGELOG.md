@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
+- Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
 
 ### Changed
 
@@ -42,25 +43,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - documentation search error (21.10 only) ([#1346](https://github.com/catalyst-team/catalyst/pull/1346))
-
-
-## [21.11] - 2021-11-30
-
-### Added
-
-- Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
-
-### Changed
-
--
-
-### Removed
-
--
-
-### Fixed
-
--
 
 
 ## [21.10] - 2021-10-30
