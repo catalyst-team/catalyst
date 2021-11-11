@@ -121,16 +121,6 @@ class ProfilerCallback(Callback):
         self.profiler = None
         self.stats = None
 
-    def on_experiment_start(self, runner: IRunner) -> None:
-        """
-        On batch end action
-
-        Args:
-            runner: current runner
-        """
-        if self.loader_key is None:
-            self.loader_key = runner.loader_key  # use first loader for profile
-
     def _should_use_profiler(self, loader_key: str, epoch: int):
         if self.loader_key == loader_key and self.epoch == epoch:
             if self.num_batches is not None:
@@ -186,7 +176,7 @@ class ProfilerCallback(Callback):
             runner: current runner
         """
         if self.loader_key is None:
-            self.loader_key = runner.loader_key
+            self.loader_key = runner.loader_key  # use first loader for profile
 
         self._enter_profiler(runner)
 
