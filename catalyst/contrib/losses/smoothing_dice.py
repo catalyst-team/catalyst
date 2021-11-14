@@ -12,6 +12,7 @@ class SmoothingDiceLoss(nn.Module):
     smoothing dice score = 2 * intersection / (|outputs|^2 + |targets|^2)
     Criterion was inspired by https://arxiv.org/abs/1606.04797
     """
+
     def __init__(
         self,
         class_dim: int = 1,
