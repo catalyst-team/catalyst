@@ -13,9 +13,9 @@ from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, RunnerError
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
@@ -23,6 +23,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners._misc import get_loaders_from_params
 from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -35,7 +36,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.torch import get_available_engine
 
@@ -187,6 +187,7 @@ class Runner(IRunner):
         self._valid_metric = None
         self._minimize_valid_metric = None
         # extras
+        self._resume: str = None
         self._verbose = False
         self._timeit = False
         self._check = False
@@ -310,6 +311,7 @@ class Runner(IRunner):
                 loader_key=self._valid_loader,
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
+                resume=self._resume,
             )
         return callbacks
 
@@ -337,6 +339,7 @@ class Runner(IRunner):
         num_epochs: int = 1,
         # extra info (callbacks info)
         logdir: str = None,
+        resume: str = None,
         valid_loader: str = None,
         valid_metric: str = None,
         minimize_valid_metric: bool = True,
@@ -369,6 +372,7 @@ class Runner(IRunner):
             hparams: hyperparameters for the run
             num_epochs: number of training epochs
             logdir: path to output directory
+            resume: path to checkpoint for model
             valid_loader: loader name used to calculate
                 the metrics and save the checkpoints. For example,
                 you can pass `train` and then
@@ -503,6 +507,7 @@ class Runner(IRunner):
         self._hparams = hparams
         self._num_epochs = num_epochs
         self._logdir = logdir
+        self._resume = resume
         self._valid_loader = valid_loader
         self._valid_metric = valid_metric
         self._minimize_valid_metric = minimize_valid_metric
@@ -540,6 +545,8 @@ class Runner(IRunner):
         model: Model = None,
         engine: Union["IEngine", str] = None,
         seed: int = 42,
+        # extra info
+        resume: str = None,
         # engine extra params,
         fp16: bool = False,
         amp: bool = False,
@@ -555,6 +562,7 @@ class Runner(IRunner):
             model: model to use for prediction
             engine: engine to use for prediction
             seed: random seed to use before prediction
+            resume: path to checkpoint for model
             fp16: boolean flag to use half-precision training (AMP > APEX)
             amp: boolean flag to use amp half-precision
             apex: boolean flag to use apex half-precision
@@ -653,6 +661,9 @@ class Runner(IRunner):
             # model inference
             for logits in runner.predict_loader(loader=loaders["valid"]):
                 assert logits.detach().cpu().numpy().shape[-1] == 10
+            # model inference from checkpoint
+            for logits in runner.predict_loader(loader=loaders["valid"], resume="./logs/best.pth"):
+                assert logits.detach().cpu().numpy().shape[-1] == 10
         """
         self.engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
@@ -660,9 +671,9 @@ class Runner(IRunner):
             self.model = model
         assert self.model is not None
 
-        # if resume is not None:
-        #     checkpoint = load_checkpoint(resume)
-        #     unpack_checkpoint(checkpoint, model=self.model)
+        if resume is not None:
+            checkpoint = self.engine.load_checkpoint(resume)
+            self.engine.unpack_checkpoint(checkpoint, model=self.model)
 
         self.model = self.engine.sync_device(self.model)
         maybe_recursive_call(self.model, "train", mode=False)

@@ -1,5 +1,4 @@
 from typing import Any, Dict, List, Union
-import copy
 from importlib.util import module_from_spec, spec_from_file_location
 import json
 import os
@@ -13,7 +12,6 @@ import warnings
 
 from tensorboardX import SummaryWriter
 
-from catalyst.registry import REGISTRY
 from catalyst.settings import SETTINGS
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time
@@ -45,38 +43,6 @@ def import_module(expdir: Union[str, Path]):
     module_spec.loader.exec_module(dir_module)
     sys.modules[expdir.name] = dir_module
     return dir_module
-
-
-def get_config_runner(expdir: Path, config: Dict):
-    """
-    Imports and creates ConfigRunner instance.
-
-    Args:
-        expdir: experiment directory path
-        config: dictionary with experiment Config
-
-    Returns:
-        ConfigRunner instance
-    """
-    config_copy = copy.deepcopy(config)
-
-    if expdir is not None:
-        dir_module = import_module(expdir)  # noqa: F841
-        # runner_fn = getattr(dir_module, "Runner", None)
-
-    runner_params = config_copy.get("runner", {})
-    runner_from_config = runner_params.pop("_target_", None)
-    assert runner_from_config is not None, "You should specify the ConfigRunner."
-    runner_fn = REGISTRY.get(runner_from_config)
-    # assert any(
-    #     x is None for x in (runner_fn, runner_from_config)
-    # ), "Runner is set both in code and config."
-    # if runner_fn is None and runner_from_config is not None:
-    #     runner_fn = REGISTRY.get(runner_from_config)
-
-    runner = runner_fn(config=config_copy, **runner_params)
-
-    return runner
 
 
 def _tricky_dir_copy(dir_from: str, dir_to: str) -> None:
@@ -271,5 +237,4 @@ __all__ = [
     "dump_environment",
     "import_module",
     "dump_code",
-    "get_config_runner",
 ]

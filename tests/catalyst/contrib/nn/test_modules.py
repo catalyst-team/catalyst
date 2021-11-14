@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from catalyst.contrib.nn.modules import (
+from catalyst.contrib.layers import (
     AdaCos,
     AMSoftmax,
     ArcFace,

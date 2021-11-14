@@ -1,4 +1,4 @@
-Utilities
+Utils
 ================================================
 
 .. toctree::
@@ -21,13 +21,6 @@ Config
     :undoc-members:
     :show-inheritance:
 
-Data
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.data
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Distributed
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.distributed
@@ -38,20 +31,6 @@ Distributed
 Misc
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MixUp
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.mixup
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Numpy
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.numpy
     :members:
     :undoc-members:
     :show-inheritance:
@@ -113,12 +92,6 @@ Contrib
     :members:
     :show-inheritance:
 
-Compression
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.compression
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Image
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -127,30 +100,9 @@ Image
     :undoc-members:
     :show-inheritance:
 
-Pandas
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.pandas
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Parallel
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.parallel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Report
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.report
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Serialization
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.serialization
     :members:
     :undoc-members:
     :show-inheritance:

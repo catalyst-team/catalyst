@@ -10,8 +10,8 @@ import torchvision
 
 from catalyst import dl
 from catalyst.contrib import nn
+from catalyst.contrib.losses.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.contrib.nn.criterion.supervised_contrastive import SupervisedContrastiveLoss
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 parser = argparse.ArgumentParser(description="Train Supervised Contrastive")

@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from catalyst import utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data import ToTensor
+from catalyst.data import ImageToTensor
 from catalyst.data.sampler import BalanceClassSampler
 from catalyst.dl import IRunner, SupervisedConfigRunner
 from catalyst.settings import SETTINGS
