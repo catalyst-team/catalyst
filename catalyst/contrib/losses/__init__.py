@@ -42,6 +42,7 @@ from catalyst.contrib.losses.regression import (
     RSquareLoss,
 )
 from catalyst.contrib.losses.supervised_contrastive import SupervisedContrastiveLoss
+from catalyst.contrib.losses.smoothing_dice import SmoothingDiceLoss
 from catalyst.contrib.losses.trevsky import FocalTrevskyLoss, TrevskyLoss
 from catalyst.contrib.losses.triplet import (
     TripletLoss,
