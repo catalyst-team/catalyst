@@ -8,8 +8,8 @@ from torch import nn
 class SmoothingDiceLoss(nn.Module):
     """
     The Smoothing Dice loss.
-    SmoothingDiceloss = 1 - smoothing dice score
-    smoothing dice score = 2 * intersection / (|outputs|^2 + |targets|^2)
+    ``SmoothingDiceloss = 1 - smoothing dice score``
+    ``smoothing dice score = 2 * intersection / (|outputs|^2 + |targets|^2)``
     Criterion was inspired by https://arxiv.org/abs/1606.04797
     """
 
