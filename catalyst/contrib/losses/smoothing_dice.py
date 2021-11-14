@@ -11,6 +11,15 @@ class SmoothingDiceLoss(nn.Module):
     ``SmoothingDiceloss = 1 - smoothing dice score``
     ``smoothing dice score = 2 * intersection / (|outputs|^2 + |targets|^2)``
     Criterion was inspired by https://arxiv.org/abs/1606.04797
+
+    Examples:
+        >>> import torch
+        >>> from catalyst.contrib.losses import SmoothingDiceLoss
+        >>> targets = torch.abs(torch.randn((1, 2, 3, 3), ))
+        >>> prediction = torch.abs(torch.randn((1, 2, 3, 3)))
+        >>> criterion = SmoothingDiceLoss()
+        >>> loss = criterion(prediction, targets)
+        >>> print(loss)
     """
 
     def __init__(
