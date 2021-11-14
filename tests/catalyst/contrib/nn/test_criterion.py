@@ -453,7 +453,7 @@ base_targets_2 = torch.stack([base_targets_2, base_targets_2])[None, :, :, :]
             ),
             "macro",
             [0.3, 0.6],
-            0.16533327102661133,
+            0.07259255647659302,
         ),
     ),
 )
