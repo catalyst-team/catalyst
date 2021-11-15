@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DataParallel training (cpu, single/multi-gpu) &mdash; Catalyst 21.11rc0 documentation</title>
+  <title>Dataparallel training (cpu, single/multi-gpu) &mdash; Catalyst 21.11rc0 documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Distributed training (multi-gpu, multi-node)" href="ddp.html" />
-    <link rel="prev" title="Debugging" href="debugging.html" /> 
+    <link rel="next" title="Debugging" href="debugging.html" />
+    <link rel="prev" title="Dataflow" href="dataflow.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -201,8 +201,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 </ul>
 <p><span class="caption-text">FAQ</span></p>
@@ -212,11 +212,11 @@
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
@@ -283,7 +283,7 @@
       </li>
 
         
-      <li>DataParallel training (cpu, single/multi-gpu)</li>
+      <li>Dataparallel training (cpu, single/multi-gpu)</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,7 +316,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <section id="dataparallel-training-cpu-single-multi-gpu">
-<h1>DataParallel training (cpu, single/multi-gpu)<a class="headerlink" href="#dataparallel-training-cpu-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
+<h1>Dataparallel training (cpu, single/multi-gpu)<a class="headerlink" href="#dataparallel-training-cpu-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
 <p>By design, Catalyst tries to use all available GPUs on your machine.
 Nevertheless, thanks to Nvidia CUDA design,
 it’s easy to control GPUs visibility with <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> flag.</p>
@@ -393,10 +393,10 @@ To list them, do the following (with example output from my server):</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ddp.html" class="btn btn-neutral float-right" title="Distributed training (multi-gpu, multi-node)" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="debugging.html" class="btn btn-neutral float-right" title="Debugging" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="debugging.html" class="btn btn-neutral" title="Debugging" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="dataflow.html" class="btn btn-neutral" title="Dataflow" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -424,7 +424,7 @@ To list them, do the following (with example output from my server):</p>
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">DataParallel training (cpu, single/multi-gpu)</a><ul>
+<li><a class="reference internal" href="#">Dataparallel training (cpu, single/multi-gpu)</a><ul>
 <li><a class="reference internal" href="#cpu-training">CPU training</a></li>
 <li><a class="reference internal" href="#single-gpu-training">Single GPU training</a></li>
 <li><a class="reference internal" href="#multi-gpu-training">Multi GPU training</a></li>

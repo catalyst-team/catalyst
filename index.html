@@ -200,8 +200,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core/callback.html">Callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/engine.html">Engine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
 </ul>
 <p><span class="caption-text">FAQ</span></p>
@@ -211,11 +211,11 @@
 <li class="toctree-l1"><a class="reference internal" href="faq/checkpointing.html">Checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/debugging.html">Debugging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq/engines.html">Engines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/engines.html">Engines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/inference.html">Inference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/mixed_precision.html">Mixed precision training</a></li>
@@ -474,53 +474,56 @@ best practices for your deep learning research.</p>
 <p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks">Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks">Run-based</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchoverfitcallback">BatchOverfitCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchtransformcallback">BatchTransformCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#checkpointcallback">CheckpointCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#checkruncallback">CheckRunCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#controlflowcallback">ControlFlowCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#criterioncallback">CriterionCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#metric-batchmetriccallback">Metric – BatchMetricCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#metric-loadermetriccallback">Metric – LoaderMetricCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#metric-metricaggregationcallback">Metric – MetricAggregationCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#misc-checkruncallback">Misc – CheckRunCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#misc-earlystoppingcallback">Misc – EarlyStoppingCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#misc-timercallback">Misc – TimerCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#misc-tqdmcallback">Misc – TqdmCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mixup-callback">MixUp Callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#earlystoppingcallback">EarlyStoppingCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#lrfinder">LRFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#metricaggregationcallback">MetricAggregationCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mixupcallback">MixupCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#onnxcallback">OnnxCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#optimizercallback">OptimizerCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#optunapruningcallback">OptunaPruningCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#periodicloadercallback">PeriodicLoaderCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#pruningcallback">PruningCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#profilercallback">ProfilerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#pruningcallback">PruningCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#quantizationcallback">QuantizationCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#scheduler-schedulercallback">Scheduler – SchedulerCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#scheduler-lrfinder">Scheduler – LRFinder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#tracing">Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#schedulercallback">SchedulerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#timercallback">TimerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#tqdmcallback">TqdmCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#tracingcallback">TracingCallback</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics">Metric</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#accuracy-accuracycallback">Accuracy - AccuracyCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#accuracy-multilabelaccuracycallback">Accuracy - MultilabelAccuracyCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#metric-based-interfaces">Metric-based Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchmetriccallback">BatchMetricCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#loadermetriccallback">LoaderMetricCallback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics">Metric-based</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#accuracycallback">AccuracyCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#auccallback">AUCCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#classification-precisionrecallf1supportcallback">Classification – PrecisionRecallF1SupportCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#classification-multilabelprecisionrecallf1supportcallback">Classification – MultilabelPrecisionRecallF1SupportCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#cmcscorecallback">CMCScoreCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#reidcmcscorecallback">ReidCMCScoreCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#confusionmatrixcallback">ConfusionMatrixCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#dicecallback">DiceCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#functionalmetriccallback">FunctionalMetricCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-hitratecallback">RecSys – HitrateCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-mapcallback">RecSys – MAPCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-mrrcallback">RecSys – MRRCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#recsys-ndcgcallback">RecSys – NDCGCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#regression-r2squaredcallback">Regression – R2SquaredCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-dicecallback">Segmentation – DiceCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-ioucallback">Segmentation – IOUCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#segmentation-trevskycallback">Segmentation – TrevskyCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#hitratecallback">HitrateCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#ioucallback">IOUCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mapcallback">MAPCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#multilabelaccuracycallback">MultilabelAccuracyCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#multilabelprecisionrecallf1supportcallback">MultilabelPrecisionRecallF1SupportCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mrrcallback">MRRCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#ndcgcallback">NDCGCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#precisionrecallf1supportcallback">PrecisionRecallF1SupportCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#r2squaredcallback">R2SquaredCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#reidcmcscorecallback">ReidCMCScoreCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnbatchcallback">SklearnBatchCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnloadercallback">SklearnLoaderCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnmodelcallback">SklearnModelCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#trevskycallback">TrevskyCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -603,49 +606,49 @@ best practices for your deep learning research.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/loggers.html">Loggers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#cometlogger">CometLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#consolelogger">ConsoleLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#csvlogger">CSVLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#mlflowlogger">MLflowLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#neptunelogger">NeptuneLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#tensorboardlogger">TensorboardLogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/loggers.html#wandblogger">WandbLogger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#cometlogger">CometLogger</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/metrics.html">Metrics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-api">Metric API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-interfaces">Metric Interfaces</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#imetric">IMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#icallbackbatchmetric">ICallbackBatchMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#icallbackloadermetric">ICallbackLoaderMetric</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#general-metrics">General Metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-sub-interfaces">Metric Sub-Interfaces</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accumulativemetric">AccumulativeMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#additivemetric">AdditiveMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#functionalbatchmetric">FunctionalBatchMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#functionalloadermetric">FunctionalLoaderMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#regionbasedmetric">RegionBasedMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#topkmetric">TopKMetric</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#runner-metrics">Runner Metrics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accuracy-accuracymetric">Accuracy - AccuracyMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accuracy-multilabelaccuracymetric">Accuracy - MultilabelAccuracyMetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-api">Metric API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accuracymetric">AccuracyMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#aucmetric">AUCMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#classification-binaryprecisionrecallf1metric">Classification – BinaryPrecisionRecallF1Metric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#classification-multiclassprecisionrecallf1supportmetric">Classification – MulticlassPrecisionRecallF1SupportMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#classification-multilabelprecisionrecallf1supportmetric">Classification – MultilabelPrecisionRecallF1SupportMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#binaryprecisionrecallf1metric">BinaryPrecisionRecallF1Metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#cmcmetric">CMCMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#dicemetric">DiceMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#hitratemetric">HitrateMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#ioumetric">IOUMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#mapmetric">MAPMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multiclassprecisionrecallf1supportmetric">MulticlassPrecisionRecallF1SupportMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multilabelaccuracymetric">MultilabelAccuracyMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multilabelprecisionrecallf1supportmetric">MultilabelPrecisionRecallF1SupportMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#mrrmetric">MRRMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#ndcgmetric">NDCGMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#r2squared">R2Squared</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#reidcmcmetric">ReidCMCMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#recsys-hitratemetric">RecSys – HitrateMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#recsys-mapmetric">RecSys – MAPMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#recsys-mrrmetric">RecSys – MRRMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#recsys-ndcgmetric">RecSys – NDCGMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#regression-r2squared">Regression – R2Squared</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#segmentation-regionbasedmetric">Segmentation – RegionBasedMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#segmentation-dicemetric">Segmentation – DiceMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#segmentation-ioumetric">Segmentation – IOUMetric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#segmentation-trevskymetric">Segmentation – TrevskyMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#trevskymetric">TrevskyMetric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#functional-api">Functional API</a><ul>
@@ -660,7 +663,7 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._mrr">MRR</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._ndcg">NDCG</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._precision">Precision</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._r2_squared">R2Squared</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#id15">R2Squared</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._recall">Recall</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._segmentation">Segmentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._misc">Misc</a></li>
@@ -669,7 +672,7 @@ best practices for your deep learning research.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/runners.html">Runners</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/runners.html#runner-extensions">Runner Extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/runners.html#runner-interfaces">Runner Interfaces</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/runners.html#isupervisedrunner">ISupervisedRunner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/runners.html#iselfsupervisedrunner">ISelfSupervisedRunner</a></li>
 </ul>

@@ -216,8 +216,8 @@ Indices and tables
 
     core/callback
     core/engine
-    core/metric
     core/logger
+    core/metric
     core/runner
 
 .. toctree::
@@ -231,11 +231,11 @@ Indices and tables
     faq/checkpointing
     faq/config_api
     faq/dataflow
-    faq/debugging
     faq/dp
+    faq/debugging
     faq/ddp
-    faq/engines
     faq/early_stopping
+    faq/engines
     faq/inference
     faq/logging
     faq/mixed_precision
