@@ -214,11 +214,11 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    core/runner
-    core/engine
     core/callback
+    core/engine
     core/metric
     core/logger
+    core/runner
 
 .. toctree::
     :caption: FAQ
@@ -226,24 +226,24 @@ Indices and tables
     :hidden:
 
     faq/intro
-
-    faq/data
-
-    faq/dp
-    faq/amp
-    faq/ddp
-
-    faq/engines
-    faq/multi_components
-    faq/multiple_keys
-    faq/early_stopping
+    
+    faq/architecture
     faq/checkpointing
-    faq/debugging
-    faq/logging
-    faq/inference
-    faq/optuna
-    faq/finetuning
     faq/config_api
+    faq/dataflow
+    faq/debugging
+    faq/dp
+    faq/ddp
+    faq/engines
+    faq/early_stopping
+    faq/inference
+    faq/logging
+    faq/mixed_precision
+    faq/multi_components
+    faq/multi_keys
+    faq/multi_stage
+    faq/optuna
+    faq/settings
 
 
 .. toctree::

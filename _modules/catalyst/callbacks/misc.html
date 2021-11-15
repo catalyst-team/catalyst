@@ -196,30 +196,32 @@
 </ul>
 <p><span class="caption-text">Core</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
 </ul>
 <p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/amp.html">Mixed precision training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/engines.html">Engines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multiple_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Model checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Model debugging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
 <p><span class="caption-text">API</span></p>
 <ul>
@@ -407,6 +409,92 @@
 <span class="sd">            to qualify as an improvement, i.e. an absolute change</span>
 <span class="sd">            of less than min_delta, will count as no improvement,</span>
 <span class="sd">            default value is ``1e-6``.</span>
+
+<span class="sd">    Minimal working example (Notebook API):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=100,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.EarlyStoppingCallback(</span>
+<span class="sd">                    loader_key=&quot;valid&quot;,</span>
+<span class="sd">                    metric_key=&quot;loss&quot;,</span>
+<span class="sd">                    minimize=True,</span>
+<span class="sd">                    patience=3,</span>
+<span class="sd">                    min_delta=1e-2</span>
+<span class="sd">                )</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    Works even better with ``load_best_on_end=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=100,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.EarlyStoppingCallback(</span>
+<span class="sd">                    loader_key=&quot;valid&quot;,</span>
+<span class="sd">                    metric_key=&quot;loss&quot;,</span>
+<span class="sd">                    minimize=True,</span>
+<span class="sd">                    patience=3,</span>
+<span class="sd">                    min_delta=1e-2</span>
+<span class="sd">                )</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -437,7 +525,84 @@
 
 
 <div class="viewcode-block" id="TimerCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.TimerCallback">[docs]</a><span class="k">class</span> <span class="nc">TimerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Logs pipeline execution time.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Logs pipeline execution time.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[dl.TimerCallback()]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    You should see additional extra metrics, such as:</span>
+
+<span class="sd">    - ``_timer/_fps`` - number handled samples per second during run.</span>
+<span class="sd">    - ``_timer/batch_time`` - time required for single batch handling.</span>
+<span class="sd">    - ``_timer/data_time`` - time required for single batch data preparation handling.</span>
+<span class="sd">    - ``_timer/model_time`` - time required for single batch model forwarding.</span>
+
+<span class="sd">    Moreover, you could use it throught ``timeit=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            timeit=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialisation for TimerCallback.&quot;&quot;&quot;</span>
@@ -493,7 +658,79 @@
 
 
 <div class="viewcode-block" id="TqdmCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.TqdmCallback">[docs]</a><span class="k">class</span> <span class="nc">TqdmCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Logs the params into tqdm console.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Logs the params into tqdm console.</span>
+
+<span class="sd">    Minimal working example (Notebook API):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[dl.TqdmCallback()]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    You should see a tqdm progress bar during the training.</span>
+
+<span class="sd">    Moreover, you could use it throught ``verbose=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
