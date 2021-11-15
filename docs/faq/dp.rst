@@ -1,4 +1,4 @@
-DataParallel training (cpu, single/multi-gpu)
+Dataparallel training (cpu, single/multi-gpu)
 ==============================================================================
 By design, Catalyst tries to use all available GPUs on your machine.
 Nevertheless, thanks to Nvidia CUDA design,
