@@ -8,8 +8,8 @@ from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
-from catalyst.contrib.datasets import MovieLens
 from catalyst.contrib import Normalize
+from catalyst.contrib.datasets import MovieLens
 from catalyst.utils import set_global_seed
 
 
