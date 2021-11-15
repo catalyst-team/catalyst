@@ -1,4 +1,4 @@
-Distributed training
+Distributed training (multi-gpu, multi-node)
 ==============================================================================
 Catalyst supports automatic experiments scaling with distributed training support.
 
