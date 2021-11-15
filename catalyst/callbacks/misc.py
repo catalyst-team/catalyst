@@ -98,7 +98,7 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
             to qualify as an improvement, i.e. an absolute change
             of less than min_delta, will count as no improvement,
             default value is ``1e-6``.
-    
+
     Minimal working example (Notebook API):
 
     .. code-block:: python
@@ -132,15 +132,15 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
             num_epochs=100,
             callbacks=[
                 dl.EarlyStoppingCallback(
-                    loader_key="valid", 
-                    metric_key="loss", 
-                    minimize=True, 
-                    patience=3, 
+                    loader_key="valid",
+                    metric_key="loss",
+                    minimize=True,
+                    patience=3,
                     min_delta=1e-2
                 )
             ]
         )
-    
+
     Works even better with ``load_best_on_end=True`` flag:
 
     .. code-block:: python
@@ -175,10 +175,10 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
             load_best_on_end=True,
             callbacks=[
                 dl.EarlyStoppingCallback(
-                    loader_key="valid", 
-                    metric_key="loss", 
-                    minimize=True, 
-                    patience=3, 
+                    loader_key="valid",
+                    metric_key="loss",
+                    minimize=True,
+                    patience=3,
                     min_delta=1e-2
                 )
             ]
@@ -248,7 +248,7 @@ class TimerCallback(Callback):
             verbose=True,
             callbacks=[dl.TimerCallback()]
         )
-    
+
     You should see additional extra metrics, such as:
 
     - ``_timer/_fps`` - number handled samples per second during run.
@@ -290,7 +290,7 @@ class TimerCallback(Callback):
             verbose=True,
             timeit=True,
         )
-    
+
     """
 
     def __init__(self):
@@ -382,9 +382,9 @@ class TqdmCallback(Callback):
             num_epochs=1,
             callbacks=[dl.TqdmCallback()]
         )
-    
+
     You should see a tqdm progress bar during the training.
-    
+
     Moreover, you could use it throught ``verbose=True`` flag:
 
     .. code-block:: python
@@ -418,7 +418,7 @@ class TqdmCallback(Callback):
             num_epochs=1,
             verbose=True,
         )
-    
+
     """
 
     def __init__(self):
