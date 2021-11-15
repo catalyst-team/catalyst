@@ -1,4 +1,4 @@
-Finetuning (multistage runs)
+Multistage runs (and finetuning)
 ==============================================================================
 
 Suppose you have a large pretrained network you want to adapt for your task.

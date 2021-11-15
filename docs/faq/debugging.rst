@@ -1,4 +1,4 @@
-Model debugging
+Debugging
 ==============================================================================
 
 Pipeline debugging
