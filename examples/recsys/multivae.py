@@ -4,13 +4,13 @@ from typing import Dict, List
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
-from torch.nn.init import constant_, xavier_normal_
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
+from catalyst.contrib import Normalize
 from catalyst.contrib.datasets import MovieLens
-from catalyst.utils import get_device, set_global_seed
+from catalyst.utils import set_global_seed
 
 
 def collate_fn_train(batch: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
@@ -45,59 +45,48 @@ class MultiVAE(nn.Module):
             self.q_dims = p_dims[::-1]
 
         # Last dimension of q- network is for mean and variance
-        temp_q_dims = self.q_dims[:-1] + [self.q_dims[-1] * 2]
-        self.q_layers = nn.ModuleList(
-            [nn.Linear(d_in, d_out) for d_in, d_out in zip(temp_q_dims[:-1], temp_q_dims[1:])]
-        )
-        self.p_layers = nn.ModuleList(
-            [nn.Linear(d_in, d_out) for d_in, d_out in zip(self.p_dims[:-1], self.p_dims[1:])]
+        self.encoder = nn.Sequential()
+        self.encoder.add_module("normalize", Normalize())
+        self.encoder.add_module("dropout", nn.Dropout(dropout))
+        for i, (d_in, d_out) in enumerate(zip(self.q_dims[:-2], self.q_dims[1:-1])):
+            self.encoder.add_module(f"encoder_fc_{i + 1}", nn.Linear(d_in, d_out))
+            self.encoder.add_module(f"encoder_tanh_{i + 1}", nn.Tanh())
+        self.encoder.add_module(
+            f"encoder_fc_{len(self.q_dims)}", nn.Linear(self.q_dims[-2], self.q_dims[-1] * 2)
         )
 
-        self.drop = nn.Dropout(dropout)
-        self.init_weights()
+        self.decoder = nn.Sequential()
+        for i, (d_in, d_out) in enumerate(zip(self.p_dims[:-2], self.p_dims[1:-1])):
+            self.decoder.add_module(f"decoder_fc_{i + 1}", nn.Linear(d_in, d_out))
+            self.decoder.add_module(f"decoder_tanh_{i + 1}", nn.Tanh())
+        self.decoder.add_module(
+            f"decoder_fc_{len(self.p_dims)}", nn.Linear(self.p_dims[-2], self.p_dims[-1])
+        )
 
-    def forward(self, input):
-        mu, logvar = self.encode(input)
+        self.encoder.apply(self.init_weights)
+        self.decoder.apply(self.init_weights)
+
+    def forward(self, x):
+        z = self.encoder(x)
+
+        mu, logvar = z[:, : self.q_dims[-1]], z[:, self.q_dims[-1] :]
         z = self.reparameterize(mu, logvar)
-        return self.decode(z), mu, logvar
 
-    def encode(self, input):
-        h = F.normalize(input)
-        h = self.drop(h)
-
-        for i, layer in enumerate(self.q_layers):
-            h = layer(h)
-            if i != len(self.q_layers) - 1:
-                h = torch.tanh(h)
-            else:
-                mu = h[:, : self.q_dims[-1]]
-                logvar = h[:, self.q_dims[-1] :]
-        return mu, logvar
+        z = self.decoder(z)
+        return z, mu, logvar
 
     def reparameterize(self, mu, logvar):
         if self.training:
             std = torch.exp(0.5 * logvar)
             eps = torch.randn_like(std)
-            return eps.mul(std).add_(mu)
+            return mu + eps * std
         else:
             return mu
 
-    def decode(self, z):
-        h = z
-        for i, layer in enumerate(self.p_layers):
-            h = layer(h)
-            if i != len(self.p_layers) - 1:
-                h = torch.tanh(h)
-        return h
-
-    def init_weights(self):
-        for layer in self.q_layers:
-            xavier_normal_(layer.weight.data)
-            constant_(layer.bias.data, 0)
-
-        for layer in self.p_layers:
-            xavier_normal_(layer.weight.data)
-            constant_(layer.bias.data, 0)
+    def init_weights(self, m):
+        if isinstance(m, nn.Linear):
+            nn.init.xavier_normal_(m.weight.data)
+            nn.init.constant_(m.bias.data, 0)
 
 
 class RecSysRunner(dl.Runner):
@@ -136,7 +125,6 @@ class RecSysRunner(dl.Runner):
 
 if __name__ == "__main__":
     set_global_seed(42)
-    device = get_device()
 
     train_dataset = MovieLens(root=".", train=True, download=True)
     test_dataset = MovieLens(root=".", train=False, download=True)
@@ -149,7 +137,7 @@ if __name__ == "__main__":
     model = MultiVAE([200, 600, item_num], dropout=0.5)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     lr_scheduler = StepLR(optimizer, step_size=20, gamma=0.1)
-    engine = dl.DeviceEngine(device)
+    engine = dl.DeviceEngine()
     hparams = {
         "anneal_cap": 0.2,
         "total_anneal_steps": 6000,
