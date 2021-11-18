@@ -52,7 +52,7 @@ class MultiVAE(nn.Module):
             self.encoder.add_module(f"encoder_fc_{i + 1}", nn.Linear(d_in, d_out))
             self.encoder.add_module(f"encoder_tanh_{i + 1}", nn.Tanh())
         self.encoder.add_module(
-            f"encoder_fc_{len(self.q_dims)}", nn.Linear(self.q_dims[-2], self.q_dims[-1] * 2)
+            f"encoder_fc_{len(self.q_dims) - 1}", nn.Linear(self.q_dims[-2], self.q_dims[-1] * 2)
         )
 
         self.decoder = nn.Sequential()
@@ -60,7 +60,7 @@ class MultiVAE(nn.Module):
             self.decoder.add_module(f"decoder_fc_{i + 1}", nn.Linear(d_in, d_out))
             self.decoder.add_module(f"decoder_tanh_{i + 1}", nn.Tanh())
         self.decoder.add_module(
-            f"decoder_fc_{len(self.p_dims)}", nn.Linear(self.p_dims[-2], self.p_dims[-1])
+            f"decoder_fc_{len(self.p_dims) - 1}", nn.Linear(self.p_dims[-2], self.p_dims[-1])
         )
 
         self.encoder.apply(self.init_weights)
