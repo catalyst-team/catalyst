@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 - Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
+- MultiDAE RecSys example ([#1356](https://github.com/catalyst-team/catalyst/pull/1356))
 
 ### Changed
 
