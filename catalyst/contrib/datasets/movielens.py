@@ -4,6 +4,7 @@ import os
 import numpy as np
 import scipy.sparse as sp
 
+
 import pandas as pd
 
 
@@ -338,24 +339,30 @@ class MovieLens20M(Dataset):
 
     resources = (
         "https://files.grouplens.org/datasets/movielens/ml-20m.zip",
-        "b2116463d890a6a9f1d9b66d91558ed2",
+        " cd245b17a1ae2cc31bb14903e1204af3",
     )
     filename = "ml-20m.zip"
+    training_file = "training.pt"
+    test_file = "test.pt"
 
     def __init__(self, 
                 root, 
+                train=True,
                 download=False, 
                 min_rating=0.0,
                 min_items_per_user=5.0,
                 min_users_per_item=0.0,
                 test_prop=0.2,
                 split="users",
+                sample=False,
                 n_rows=1000):
         """
         Args:
             root (string): Root directory of dataset where
                 ``MovieLens/processed/training.pt``
                 and  ``MovieLens/processed/test.pt`` exist.
+            train (bool, optional): If True, creates dataset from
+                ``training.pt``, otherwise from ``test.pt``.
             download (bool, optional): If true, downloads the dataset from
                 the internet and puts it in root directory. If dataset
                 is already downloaded, it is not downloaded again.
@@ -366,11 +373,13 @@ class MovieLens20M(Dataset):
             root = os.path.expanduser(root)
 
         self.root = root
+        self.train = train
         self.min_rating = min_rating
         self.min_items_per_user = min_items_per_user
         self.min_users_per_item = min_users_per_item
         self.test_prop = test_prop
         self.nrows = n_rows
+        self.sample = sample
         self.split = split
 
         if download:
@@ -380,6 +389,13 @@ class MovieLens20M(Dataset):
 
         if not self._check_exists():
             raise RuntimeError("Dataset not found. You can use download=True to download it")
+
+        if self.train:
+            data_file = self.training_file
+        else:
+            data_file = self.test_file
+
+        self.data = torch.load(os.path.join(self.processed_folder, data_file))
 
 
     def __getitem__(self, user_index):
@@ -411,7 +427,9 @@ class MovieLens20M(Dataset):
         """Check if the path for tarining and testing data exists in processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
+        ) and os.path.exists(
+            os.path.join(self.processed_folder, self.test_file)
+        )
 
     def _download(self):
         """Download and extract files"""
@@ -427,7 +445,6 @@ class MovieLens20M(Dataset):
             url=url,
             download_root=self.raw_folder,
             filename=self.filename,
-            md5=md5,
             remove_finished=True,
         )
 
@@ -438,11 +455,18 @@ class MovieLens20M(Dataset):
         """
         path = self.raw_folder
 
-        movies = pd.read_csv(path+'/ml-20m/movies.csv', nrows=self.nrows)
-        ratings = pd.read_csv(path+'/ml-20m/ratings.csv', nrows=self.nrows)
-        genome_scores = pd.read_csv(path+'/ml-20m/genome-scores.csv', nrows=self.nrows)
-        genome_tags = pd.read_csv(path+'/ml-20m/genome-tags.csv', nrows=self.nrows)
-        tags = pd.read_csv(path+'/ml-20m/tags.csv', nrows=self.nrows)
+        if self.sample:
+            movies = pd.read_csv(path+'/ml-20m/movies.csv', nrows=self.nrows)
+            ratings = pd.read_csv(path+'/ml-20m/ratings.csv', nrows=self.nrows)
+            genome_scores = pd.read_csv(path+'/ml-20m/genome-scores.csv', nrows=self.nrows)
+            genome_tags = pd.read_csv(path+'/ml-20m/genome-tags.csv', nrows=self.nrows)
+            tags = pd.read_csv(path+'/ml-20m/tags.csv', nrows=self.nrows)
+        else:
+            movies = pd.read_csv(path+'/ml-20m/movies.csv')
+            ratings = pd.read_csv(path+'/ml-20m/ratings.csv')
+            genome_scores = pd.read_csv(path+'/ml-20m/genome-scores.csv')
+            genome_tags = pd.read_csv(path+'/ml-20m/genome-tags.csv')
+            tags = pd.read_csv(path+'/ml-20m/tags.csv')
 
         return (movies, ratings, genome_scores, genome_tags, tags)
 
@@ -463,7 +487,7 @@ class MovieLens20M(Dataset):
             sparse user2item interaction matrix
         """
 
-        csr_matrix = coo_matrix(
+        csr_matrix = sp.coo_matrix(
             (ratings["rating"].astype(np.float32), (ratings["movieId"], ratings["userId"]))
         )
 
@@ -472,7 +496,7 @@ class MovieLens20M(Dataset):
 
         return interaction_matrix
 
-    def _parse(self, rating, rating_cut=True, user_per_item_cut=True, item_per_user_cut=True, ts_cut=False):
+    def _parse(self, ratings, rating_cut=True, user_per_item_cut=True, item_per_user_cut=True, ts_cut=False):
         """Parses and pre-process the raw data. Substract one to shift to zero based indexing
         To-do add timestamp cut
 
@@ -535,7 +559,6 @@ class MovieLens20M(Dataset):
             train_events (pd.Dataframe): pandas DataFrame for training data
             test_events (pd.Dataframe): pandas DataFrame for training data
         """
-        idx_perm
         idx_perm = np.random.permutation(users_activity.index.size)
         unique_uid = users_activity.index[idx_perm]
         n_users = unique_uid.size
@@ -596,8 +619,8 @@ class MovieLens20M(Dataset):
             train_raw, test_raw = self._split_by_users(ratings, users_activity)
         if split_by=="ts":
             train_raw, test_raw = self._split_by_time(ratings)
-        else:
-            raise ValueError("Both cannot be None")
+        if (split_by != "users" and split_by != "ts"):
+            raise ValueError("Only splitting by users and ts supported")
 
         train = self._build_interaction_matrix(train_raw)
         test = self._build_interaction_matrix(test_raw)
