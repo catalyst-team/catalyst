@@ -83,7 +83,7 @@ def test_minimal_ranking():
     """
     Tets retrieveing the minimal ranking
     """
-    movielens_20m_min_two = MovieLens20M("./tmp_data", min_rating=2.0, sample=True)
+    movielens_20m_min_two = MovieLens20M("./tmp_data", download=True, min_rating=2.0, sample=True)
 
     assert 1 not in movielens_20m_min_two[1]._values().unique()
     assert 1 not in movielens_20m_min_two[3]._values().unique()
@@ -92,6 +92,30 @@ def test_minimal_ranking():
     assert ((3 in movielens_20m_min_two[1]._values().unique()) or (4 in movielens_20m_min_two[1]._values().unique()) or (5 in movielens_20m_min_two[1]._values().unique()))
     assert ((3 in movielens_20m_min_two[7]._values().unique()) or (4 in movielens_20m_min_two[7]._values().unique()) or (5 in movielens_20m_min_two[7]._values().unique()))
     assert ((3 in movielens_20m_min_two[3]._values().unique()) or (4 in movielens_20m_min_two[3]._values().unique()) or (5 in movielens_20m_min_two[3]._values().unique()))
+
+
+
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
+def test_users_per_item_filtering():
+    """
+    Tets retrieveing the minimal ranking
+    """
+    min_users_per_item = 2.0
+    movielens_20m_min_users = MovieLens20M("./tmp_data", download=True, min_users_per_item=min_users_per_item, sample=True, n_rows=100000)
+    
+    assert (movielens_20m_min_users.users_activity['user_cnt'] >= min_users_per_item).any()
+
+
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
+def test_items_per_user_filtering():
+    """
+    Tets retrieveing the minimal ranking
+    """
+    min_items_per_user = 2.0
+    min_users_per_item = 1.0
+    movielens_20m_min_users = MovieLens20M("./tmp_data", download=True, min_items_per_user=min_items_per_user, min_users_per_item=min_users_per_item, sample=True, n_rows=100000)
+    
+    assert (movielens_20m_min_users.items_activity['item_cnt'] >= min_items_per_user).any()
 
 
 def teardown_module():

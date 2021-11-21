@@ -350,8 +350,8 @@ class MovieLens20M(Dataset):
                 train=True,
                 download=False, 
                 min_rating=0.0,
-                min_items_per_user=5.0,
-                min_users_per_item=0.0,
+                min_items_per_user=1.0,
+                min_users_per_item=2.0,
                 test_prop=0.2,
                 split="users",
                 sample=False,
@@ -521,23 +521,26 @@ class MovieLens20M(Dataset):
         if rating_cut:
             ratings = ratings[ratings['rating'] > self.min_rating].sort_values(['userId', 'timestamp'])
 
-        if user_per_item_cut:
-            if self.min_users_per_item:
-                id = 'movieId'
-                usert_cnt = ratings[[id]].groupby(id, as_index=False).size()
-                ratings = ratings[ratings['movieId'].isin(user_cnt.index[user_cnt['size'] >= self.min_users_per_item])]
-            else:
-                ValueError("user_per_item is not set")
+        movie_id = 'movieId'
+        user_cnt_df = ratings[[movie_id]].groupby(movie_id, as_index=False).size().rename(columns={"size": "user_cnt"})
+        user_id = 'userId'
+        item_cnt_df = ratings[[user_id]].groupby(user_id, as_index=False).size().rename(columns={"size": "item_cnt"})
 
-        if item_per_user_cut:
-            if self.min_items_per_user:
-                id = 'userId'
-                item_cnt = ratings[[id]].groupby(id, as_index=False).size()
-                ratings = ratings[ratings['userId'].isin(item_cnt.index[item_cnt['size'] > self.min_items_per_user])]
-            else:
-                ValueError("item_per_user_cut is not set")
+        user_not_filtered = True
+        item_not_filtered = True
 
-        users_activity, items_activity = ratings[['userId']].groupby('userId', as_index=False).size(), ratings[['movieId']].groupby('movieId', as_index=False).size()
+        while (user_not_filtered or item_not_filtered):
+            ratings = ratings[ratings[movie_id].isin(user_cnt_df.index[user_cnt_df['user_cnt'] >= self.min_users_per_item])]
+            ratings = ratings[ratings[user_id].isin(item_cnt_df.index[item_cnt_df['item_cnt'] >= self.min_items_per_user])]
+            
+            user_cnt_df = ratings[[movie_id]].groupby(movie_id, as_index=False).size().rename(columns={"size": "user_cnt"})
+            item_cnt_df = ratings[[user_id]].groupby(user_id, as_index=False).size().rename(columns={"size": "item_cnt"})
+            
+            user_not_filtered = (user_cnt_df['user_cnt']<self.min_users_per_item).any()
+            item_not_filtered = (item_cnt_df['item_cnt']<self.min_items_per_user).any()
+
+        users_activity = ratings[['userId']].groupby('userId', as_index=False).size().rename(columns={"size": "user_cnt"}) 
+        items_activity = ratings[['movieId']].groupby('movieId', as_index=False).size().rename(columns={"size": "item_cnt"})
         return ratings, users_activity, items_activity
     
 
@@ -614,6 +617,8 @@ class MovieLens20M(Dataset):
         
         # TO-DO: add error handling
         ratings, users_activity, items_activity = self._parse(ratings)
+        self.users_activity = users_activity
+        self.items_activity = items_activity
 
         if split_by=="users":
             train_raw, test_raw = self._split_by_users(ratings, users_activity)
