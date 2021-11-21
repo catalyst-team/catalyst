@@ -7,6 +7,12 @@ Loggers
 .. contents::
    :local:
 
+CometLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.comet.CometLogger
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
 
 ConsoleLogger
 --------------------------------
@@ -50,9 +56,3 @@ WandbLogger
     :undoc-members:
     :show-inheritance:
 
-CometLogger
---------------------------------
-.. autoclass:: catalyst.loggers.comet.CometLogger
-    :exclude-members: __init__
-    :undoc-members:
-    :show-inheritance:
