@@ -6,6 +6,10 @@ import numpy as np
 class ILogger:
     """An abstraction that syncs experiment run with monitoring tools.
 
+    Args:
+        log_batch_metrics: boolean flag to log batch metrics.
+        log_epoch_metrics: boolean flag to log epoch metrics.
+
     Abstraction, please check out implementations for more details:
 
         - :py:mod:`catalyst.loggers.console.ConsoleLogger`
@@ -13,6 +17,28 @@ class ILogger:
         - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`
         - :py:mod:`catalyst.loggers.neptune.NeptuneLogger`
     """
+
+    def __init__(self, log_batch_metrics: bool, log_epoch_metrics: bool) -> None:
+        self._log_batch_metrics = log_batch_metrics
+        self._log_epoch_metrics = log_epoch_metrics
+
+    @property
+    def log_batch_metrics(self) -> bool:
+        """Boolean flag to log batch metrics.
+
+        Returns:
+            bool: boolean flag to log batch metrics.
+        """
+        return self._log_batch_metrics
+
+    @property
+    def log_epoch_metrics(self) -> bool:
+        """Boolean flag to log epoch metrics.
+
+        Returns:
+            bool: boolean flag to log epoch metrics.
+        """
+        return self._log_epoch_metrics
 
     def log_metrics(
         self,
