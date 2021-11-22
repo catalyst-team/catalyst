@@ -30,6 +30,8 @@ class CometLogger(ILogger):
         tags: A list of tags to add to the Experiment.
         experiment_kwargs: Used to pass additional arguments to
             the Experiment object
+        log_batch_metrics: boolean flag to log batch metrics.
+        log_epoch_metrics: boolean flag to log epoch metrics.
 
     Python API examples:
 
@@ -95,8 +97,11 @@ class CometLogger(ILogger):
         comet_mode: str = "online",
         tags: List[str] = None,
         logging_frequency: int = 1,
+        log_batch_metrics: bool = True,
+        log_epoch_metrics: bool = True,
         **experiment_kwargs: Dict,
     ) -> None:
+        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.comet_mode = comet_mode
         self.workspace = workspace
         self.project_name = project_name
@@ -160,6 +165,10 @@ class CometLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs the metrics to the logger."""
+        if (scope == "batch" and not self.log_batch_metrics) or (
+            scope in ["loader", "epoch"] and not self.log_epoch_metrics
+        ):
+            return
         if global_batch_step % self.logging_frequency == 0:
             self.experiment.log_metrics(
                 metrics,

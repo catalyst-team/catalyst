@@ -21,6 +21,8 @@ class WandbLogger(ILogger):
         name: Name of the run in W&B to log to.
         config: Configuration Dictionary for the experiment.
         entity: Name of W&B entity(team) to log to.
+        log_batch_metrics: boolean flag to log batch metrics.
+        log_epoch_metrics: boolean flag to log epoch metrics.
 
     Python API examples:
 
@@ -75,8 +77,14 @@ class WandbLogger(ILogger):
     """
 
     def __init__(
-        self, project: str, name: Optional[str] = None, entity: Optional[str] = None
+        self,
+        project: str,
+        name: Optional[str] = None,
+        entity: Optional[str] = None,
+        log_batch_metrics: bool = True,
+        log_epoch_metrics: bool = True,
     ) -> None:
+        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.project = project
         self.name = name
         self.entity = entity
@@ -111,16 +119,16 @@ class WandbLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs batch and epoch metrics to wandb."""
-        if scope == "batch":
+        if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="batch"
             )
-        elif scope == "loader":
+        elif scope == "loader" and self.log_epoch_metrics:
             self._log_metrics(
                 metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="epoch"
             )
-        elif scope == "epoch":
+        elif scope == "epoch" and self.log_epoch_metrics:
             loader_key = "_epoch_"
             per_loader_metrics = metrics[loader_key]
             self._log_metrics(
