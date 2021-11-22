@@ -140,8 +140,8 @@ class MLflowLogger(ILogger):
         tracking_uri: Optional[str] = None,
         registry_uri: Optional[str] = None,
         exclude: Optional[List[str]] = None,
-        log_batch_metrics: bool = True,
-        log_epoch_metrics: bool = True,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ) -> None:
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.experiment = experiment

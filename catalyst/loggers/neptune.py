@@ -125,8 +125,8 @@ class NeptuneLogger(ILogger):
         api_token=None,
         project=None,
         run=None,
-        log_batch_metrics: bool = True,
-        log_epoch_metrics: bool = True,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **neptune_run_kwargs,
     ):
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)

@@ -7,6 +7,7 @@ from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
 from catalyst.loggers._misc import image_to_tensor
+from catalyst.settings import SETTINGS
 
 
 class TensorboardLogger(ILogger):
@@ -80,8 +81,8 @@ class TensorboardLogger(ILogger):
         self,
         logdir: str,
         use_logdir_postfix: bool = False,
-        log_batch_metrics: bool = True,
-        log_epoch_metrics: bool = True,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ):
         """Init."""
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)

@@ -81,8 +81,8 @@ class WandbLogger(ILogger):
         project: str,
         name: Optional[str] = None,
         entity: Optional[str] = None,
-        log_batch_metrics: bool = True,
-        log_epoch_metrics: bool = True,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ) -> None:
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.project = project

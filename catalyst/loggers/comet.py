@@ -97,8 +97,8 @@ class CometLogger(ILogger):
         comet_mode: str = "online",
         tags: List[str] = None,
         logging_frequency: int = 1,
-        log_batch_metrics: bool = True,
-        log_epoch_metrics: bool = True,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **experiment_kwargs: Dict,
     ) -> None:
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)

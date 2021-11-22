@@ -229,6 +229,8 @@ class Settings(FrozenClass):
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
         use_libjpeg_turbo: Optional[bool] = None,
+        log_batch_metrics: Optional[bool] = None,
+        log_epoch_metrics: Optional[bool] = None,
         # [to remove]
         nifti_required: Optional[bool] = None,
         albu_required: Optional[bool] = None,
@@ -324,6 +326,11 @@ class Settings(FrozenClass):
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
+        self.comet_required: bool = _get_optional_value(
+            comet_required,
+            _is_comet_available,
+            "comet is not available, to install, run 'pip install comet_ml'.",
+        )
         self.neptune_required: bool = _get_optional_value(
             neptune_required,
             _is_neptune_available,
@@ -342,18 +349,18 @@ class Settings(FrozenClass):
             "wandb is not available, to install it, " "run `pip install wandb`.",
         )
 
-        self.comet_required: bool = _get_optional_value(
-            comet_required,
-            _is_comet_available,
-            "comet is not available, to install, run 'pip install comet_ml'.",
-        )
-
-        # self.wandb_required: bool = wandb_required
-
         # [extras]
-        self.use_lz4: bool = use_lz4 or False
-        self.use_pyarrow: bool = use_pyarrow or False
-        self.use_libjpeg_turbo: bool = use_libjpeg_turbo or False
+        self.use_lz4: bool = use_lz4 or os.environ.get("CATALYST_USE_LZ4", False)
+        self.use_pyarrow: bool = use_pyarrow or os.environ.get("CATALYST_USE_PYARROW", False)
+        self.use_libjpeg_turbo: bool = use_libjpeg_turbo or os.environ.get(
+            "CATALYST_USE_LIBJPEG_TURBO", False
+        )
+        self.log_batch_metrics: bool = log_batch_metrics or os.environ.get(
+            "CATALYST_LOG_BATCH_METRICS", False
+        )
+        self.log_epoch_metrics: bool = log_epoch_metrics or os.environ.get(
+            "CATALYST_LOG_EPOCH_METRICS", True
+        )
 
         # [global]
         # stages
