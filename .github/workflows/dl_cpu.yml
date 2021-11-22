@@ -63,12 +63,7 @@ jobs:
 
       - name: set minimal dependencies
         if: ${{ matrix.requirements == 'minimal' }}
-        run: |
-          python -c "req = open('./requirements/requirements.txt').read().replace('>', '=') ; open('./requirements/requirements.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-ml.txt').read().replace('>', '=') ; open('./requirements/requirements-ml.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-neptune.txt').read().replace('>', '=') ; open('./requirements/requirements-neptune.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-albu.txt').read().replace('>', '=') ; open('./requirements/requirements-albu.txt', 'w').write(req)"
+        run: $( printf "python -c \"req = open('"%s"').read().replace('>', '=') ; open('"%s"', 'w').write(req)\"\n" $(ls -d ./requirements/*) )
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
@@ -97,7 +92,7 @@ jobs:
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-albu.txt
+          pip install$( printf " -r "%s $(ls -d ./requirements/*) )
           python --version
           pip --version
           pip list
