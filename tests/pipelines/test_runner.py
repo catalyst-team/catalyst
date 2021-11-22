@@ -47,6 +47,7 @@ def train_experiment():
         profile=True,
     )
 
+
 @mark.skipif(not _is_profile_available(), reason="Torch profiler is not available")
 def test_profiler():
     train_experiment()
