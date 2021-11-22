@@ -24,10 +24,20 @@ class ILogger:
 
     @property
     def log_batch_metrics(self) -> bool:
+        """Boolean flag to log batch metrics.
+
+        Returns:
+            bool: boolean flag to log batch metrics.
+        """
         return self._log_batch_metrics
 
     @property
     def log_epoch_metrics(self) -> bool:
+        """Boolean flag to log epoch metrics.
+
+        Returns:
+            bool: boolean flag to log epoch metrics.
+        """
         return self._log_epoch_metrics
 
     def log_metrics(
