@@ -2,6 +2,8 @@
 
 import os
 
+from pytest import mark
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -9,6 +11,15 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.data import ImageToTensor
 from catalyst.contrib.datasets import MNIST
+
+
+def _is_profile_available():
+    try:
+        from torch import profiler  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
 
 
 def train_experiment():
@@ -36,7 +47,7 @@ def train_experiment():
         profile=True,
     )
 
-
+@mark.skipif(not _is_profile_available(), reason="Torch profiler is not available")
 def test_profiler():
     train_experiment()
     assert os.path.isdir("./logs/tb_profile") and not len(os.listdir("./logs/tb_profile")) == 0
