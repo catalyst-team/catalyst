@@ -2315,7 +2315,7 @@ Computes multiclass <a class="reference external" href="mailto:accuracy&#37;&#52
 <h3><a class="toc-backref" href="#id48">AUCCallback</a><a class="headerlink" href="#auccallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.auc.AUCCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.auc.</code><code class="sig-name descname">AUCCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/auc.html#AUCCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.auc.AUCCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.auc.</code><code class="sig-name descname">AUCCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/auc.html#AUCCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.auc.AUCCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.LoaderMetricCallback" title="catalyst.callbacks.metric.LoaderMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.LoaderMetricCallback</span></code></a></p>
 <p>ROC-AUC  metric callback.</p>
 <dl class="field-list simple">
@@ -2323,6 +2323,8 @@ Computes multiclass <a class="reference external" href="mailto:accuracy&#37;&#52
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_key</strong> – input key to use for auc calculation, specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
 <li><p><strong>target_key</strong> – output key to use for auc calculation, specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code>.</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
@@ -2611,7 +2613,7 @@ Loaders should contain “is_query” and “label” key.</p>
 <h3><a class="toc-backref" href="#id51">DiceCallback</a><a class="headerlink" href="#dicecallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.DiceCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">DiceCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.DiceCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">DiceCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.DiceCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
 <p>Dice metric callback.</p>
 <dl class="field-list simple">
@@ -2625,6 +2627,8 @@ Loaders should contain “is_query” and “label” key.</p>
 <li><p><strong>class_names</strong> – class names</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
@@ -2820,7 +2824,7 @@ Computes  <a class="reference external" href="mailto:HR&#37;&#52;&#48;topk">HR<s
 <h3><a class="toc-backref" href="#id54">IOUCallback</a><a class="headerlink" href="#ioucallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.IOUCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">IOUCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#IOUCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.IOUCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">IOUCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#IOUCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.IOUCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
 <p>IOU metric callback.</p>
 <dl class="field-list simple">
@@ -2834,6 +2838,8 @@ Computes  <a class="reference external" href="mailto:HR&#37;&#52;&#48;topk">HR<s
 <li><p><strong>class_names</strong> – class names</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
@@ -3078,7 +3084,7 @@ Computes multilabel <a class="reference external" href="mailto:accuracy&#37;&#52
 <h3><a class="toc-backref" href="#id57">MultilabelPrecisionRecallF1SupportCallback</a><a class="headerlink" href="#multilabelprecisionrecallf1supportcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.classification.MultilabelPrecisionRecallF1SupportCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.classification.</code><code class="sig-name descname">MultilabelPrecisionRecallF1SupportCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">num_classes: int</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/classification.html#MultilabelPrecisionRecallF1SupportCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.classification.MultilabelPrecisionRecallF1SupportCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.classification.</code><code class="sig-name descname">MultilabelPrecisionRecallF1SupportCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">num_classes: int</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/classification.html#MultilabelPrecisionRecallF1SupportCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.classification.MultilabelPrecisionRecallF1SupportCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
 <p>Multilabel PrecisionRecallF1Support metric callback.</p>
 <dl class="field-list simple">
@@ -3090,6 +3096,8 @@ Computes multilabel <a class="reference external" href="mailto:accuracy&#37;&#52
 <li><p><strong>zero_division</strong> – value to set in case of zero division during metrics
 (precision, recall) computation; should be one of 0 or 1</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
@@ -3357,7 +3365,7 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 <h3><a class="toc-backref" href="#id60">PrecisionRecallF1SupportCallback</a><a class="headerlink" href="#precisionrecallf1supportcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.classification.</code><code class="sig-name descname">PrecisionRecallF1SupportCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">num_classes: int</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/classification.html#PrecisionRecallF1SupportCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.classification.</code><code class="sig-name descname">PrecisionRecallF1SupportCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">num_classes: int</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/classification.html#PrecisionRecallF1SupportCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
 <p>Multiclass PrecisionRecallF1Support metric callback.</p>
 <dl class="field-list simple">
@@ -3369,6 +3377,8 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 <li><p><strong>zero_division</strong> – value to set in case of zero division during metrics
 (precision, recall) computation; should be one of 0 or 1</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
@@ -3927,7 +3937,7 @@ to give predictions on the valid loader.</p>
 <h3><a class="toc-backref" href="#id66">TrevskyCallback</a><a class="headerlink" href="#trevskycallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.TrevskyCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">TrevskyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#TrevskyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.TrevskyCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">TrevskyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#TrevskyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.TrevskyCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
 <p>Trevsky metric callback.</p>
 <dl class="field-list simple">
@@ -3945,6 +3955,8 @@ positive. Must be in (0, 1), if None beta = (1 - alpha)</p></li>
 <li><p><strong>class_names</strong> – class names</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>compute_per_class_metrics</strong> – boolean flag to compute per-class metrics
+(default: SETTINGS.compute_per_class_metrics or False).</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>

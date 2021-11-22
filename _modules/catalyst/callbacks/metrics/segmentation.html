@@ -313,6 +313,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">BatchMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._segmentation</span> <span class="kn">import</span> <span class="n">DiceMetric</span><span class="p">,</span> <span class="n">IOUMetric</span><span class="p">,</span> <span class="n">TrevskyMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
 
 <div class="viewcode-block" id="IOUCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.segmentation.IOUCallback">[docs]</a><span class="k">class</span> <span class="nc">IOUCallback</span><span class="p">(</span><span class="n">BatchMetricCallback</span><span class="p">):</span>
@@ -327,6 +328,8 @@
 <span class="sd">        class_names: class names</span>
 <span class="sd">        threshold: threshold for outputs binarization</span>
 <span class="sd">        log_on_batch: boolean flag to log computed metrics every batch</span>
+<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
+<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
@@ -405,6 +408,7 @@
         <span class="n">class_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -415,6 +419,7 @@
                 <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
                 <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
                 <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="p">),</span>
@@ -436,6 +441,8 @@
 <span class="sd">        class_names: class names</span>
 <span class="sd">        threshold: threshold for outputs binarization</span>
 <span class="sd">        log_on_batch: boolean flag to log computed metrics every batch</span>
+<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
+<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
@@ -514,6 +521,7 @@
         <span class="n">class_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -524,6 +532,7 @@
                 <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
                 <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
                 <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="p">),</span>
@@ -549,6 +558,8 @@
 <span class="sd">        class_names: class names</span>
 <span class="sd">        threshold: threshold for outputs binarization</span>
 <span class="sd">        log_on_batch: boolean flag to log computed metrics every batch</span>
+<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
+<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
@@ -627,6 +638,7 @@
         <span class="n">class_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -639,6 +651,7 @@
                 <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
                 <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
                 <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="p">),</span>

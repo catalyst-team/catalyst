@@ -1679,9 +1679,17 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <h2><a class="toc-backref" href="#id12">Logger</a><a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.core.logger.ILogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.logger.</code><code class="sig-name descname">ILogger</code><a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.logger.</code><code class="sig-name descname">ILogger</code><span class="sig-paren">(</span><em class="sig-param">log_batch_metrics: bool</em>, <em class="sig-param">log_epoch_metrics: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>An abstraction that syncs experiment run with monitoring tools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_batch_metrics</strong> – boolean flag to log batch metrics.</p></li>
+<li><p><strong>log_epoch_metrics</strong> – boolean flag to log epoch metrics.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Abstraction, please check out implementations for more details:</p>
 <blockquote>
 <div><ul class="simple">
@@ -1707,6 +1715,34 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dt id="catalyst.core.logger.ILogger.log_artifact">
 <code class="sig-name descname">log_artifact</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">artifact: object = None</em>, <em class="sig-param">path_to_artifact: str = None</em>, <em class="sig-param">scope: str = None</em>, <em class="sig-param">run_key: str = None</em>, <em class="sig-param">global_epoch_step: int = 0</em>, <em class="sig-param">global_batch_step: int = 0</em>, <em class="sig-param">global_sample_step: int = 0</em>, <em class="sig-param">stage_key: str = None</em>, <em class="sig-param">stage_epoch_len: int = 0</em>, <em class="sig-param">stage_epoch_step: int = 0</em>, <em class="sig-param">stage_batch_step: int = 0</em>, <em class="sig-param">stage_sample_step: int = 0</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">loader_batch_len: int = 0</em>, <em class="sig-param">loader_sample_len: int = 0</em>, <em class="sig-param">loader_batch_step: int = 0</em>, <em class="sig-param">loader_sample_step: int = 0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_artifact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_artifact" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs artifact (arbitrary file like audio, video, model weights) to the logger.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.logger.ILogger.log_batch_metrics">
+<em class="property">property </em><code class="sig-name descname">log_batch_metrics</code><a class="headerlink" href="#catalyst.core.logger.ILogger.log_batch_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean flag to log batch metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>boolean flag to log batch metrics.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.logger.ILogger.log_epoch_metrics">
+<em class="property">property </em><code class="sig-name descname">log_epoch_metrics</code><a class="headerlink" href="#catalyst.core.logger.ILogger.log_epoch_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean flag to log epoch metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>boolean flag to log epoch metrics.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

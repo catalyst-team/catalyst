@@ -317,6 +317,10 @@
 <div class="viewcode-block" id="ILogger"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.logger.ILogger">[docs]</a><span class="k">class</span> <span class="nc">ILogger</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;An abstraction that syncs experiment run with monitoring tools.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        log_batch_metrics: boolean flag to log batch metrics.</span>
+<span class="sd">        log_epoch_metrics: boolean flag to log epoch metrics.</span>
+
 <span class="sd">    Abstraction, please check out implementations for more details:</span>
 
 <span class="sd">        - :py:mod:`catalyst.loggers.console.ConsoleLogger`</span>
@@ -324,6 +328,28 @@
 <span class="sd">        - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`</span>
 <span class="sd">        - :py:mod:`catalyst.loggers.neptune.NeptuneLogger`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_batch_metrics</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">log_epoch_metrics</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_batch_metrics</span> <span class="o">=</span> <span class="n">log_batch_metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_epoch_metrics</span> <span class="o">=</span> <span class="n">log_epoch_metrics</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_batch_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Boolean flag to log batch metrics.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: boolean flag to log batch metrics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_batch_metrics</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_epoch_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Boolean flag to log epoch metrics.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: boolean flag to log epoch metrics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_epoch_metrics</span>
 
 <div class="viewcode-block" id="ILogger.log_metrics"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.logger.ILogger.log_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

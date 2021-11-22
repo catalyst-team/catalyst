@@ -311,6 +311,7 @@
   <h1>Source code for catalyst.callbacks.metrics.auc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">LoaderMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._auc</span> <span class="kn">import</span> <span class="n">AUCMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
 
 <div class="viewcode-block" id="AUCCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.auc.AUCCallback">[docs]</a><span class="k">class</span> <span class="nc">AUCCallback</span><span class="p">(</span><span class="n">LoaderMetricCallback</span><span class="p">):</span>
@@ -319,6 +320,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        input_key: input key to use for auc calculation, specifies our ``y_true``.</span>
 <span class="sd">        target_key: output key to use for auc calculation, specifies our ``y_pred``.</span>
+<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
+<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
@@ -379,10 +382,19 @@
 <span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">metric</span><span class="o">=</span><span class="n">AUCMetric</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">),</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">AUCMetric</span><span class="p">(</span>
+                <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span>
+            <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
         <span class="p">)</span></div>

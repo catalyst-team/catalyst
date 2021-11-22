@@ -341,6 +341,10 @@
 <span class="sd">        tags: A list of tags to add to the Experiment.</span>
 <span class="sd">        experiment_kwargs: Used to pass additional arguments to</span>
 <span class="sd">            the Experiment object</span>
+<span class="sd">        log_batch_metrics: boolean flag to log batch metrics</span>
+<span class="sd">            (default: SETTINGS.log_batch_metrics or False).</span>
+<span class="sd">        log_epoch_metrics: boolean flag to log epoch metrics</span>
+<span class="sd">            (default: SETTINGS.log_epoch_metrics or True).</span>
 
 <span class="sd">    Python API examples:</span>
 
@@ -406,8 +410,11 @@
         <span class="n">comet_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;online&quot;</span><span class="p">,</span>
         <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logging_frequency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">log_batch_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">,</span>
+        <span class="n">log_epoch_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">log_epoch_metrics</span><span class="p">,</span>
         <span class="o">**</span><span class="n">experiment_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">log_batch_metrics</span><span class="o">=</span><span class="n">log_batch_metrics</span><span class="p">,</span> <span class="n">log_epoch_metrics</span><span class="o">=</span><span class="n">log_epoch_metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comet_mode</span> <span class="o">=</span> <span class="n">comet_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">workspace</span> <span class="o">=</span> <span class="n">workspace</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span>
@@ -471,6 +478,10 @@
         <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs the metrics to the logger.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loader&quot;</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_epoch_metrics</span>
+        <span class="p">):</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="n">global_batch_step</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="p">,</span>
