@@ -21,8 +21,10 @@ class WandbLogger(ILogger):
         name: Name of the run in W&B to log to.
         config: Configuration Dictionary for the experiment.
         entity: Name of W&B entity(team) to log to.
-        log_batch_metrics: boolean flag to log batch metrics.
-        log_epoch_metrics: boolean flag to log epoch metrics.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     Python API examples:
 

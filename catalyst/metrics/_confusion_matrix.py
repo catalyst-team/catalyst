@@ -4,8 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst import SETTINGS
 from catalyst.metrics._metric import IMetric
+from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 

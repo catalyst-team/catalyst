@@ -231,6 +231,7 @@ class Settings(FrozenClass):
         use_libjpeg_turbo: Optional[bool] = None,
         log_batch_metrics: Optional[bool] = None,
         log_epoch_metrics: Optional[bool] = None,
+        compute_per_class_metrics: Optional[bool] = None,
         # [to remove]
         nifti_required: Optional[bool] = None,
         albu_required: Optional[bool] = None,
@@ -360,6 +361,9 @@ class Settings(FrozenClass):
         )
         self.log_epoch_metrics: bool = log_epoch_metrics or os.environ.get(
             "CATALYST_LOG_EPOCH_METRICS", True
+        )
+        self.compute_per_class_metrics: bool = compute_per_class_metrics or os.environ.get(
+            "CATALYST_COMPUTE_PER_CLASS_METRICS", True
         )
 
         # [global]

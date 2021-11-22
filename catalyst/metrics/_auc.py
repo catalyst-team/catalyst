@@ -2,10 +2,10 @@ from typing import Dict, Tuple
 
 import torch
 
-from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc, binary_auc
 from catalyst.metrics.functional._misc import process_multilabel_components
+from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 

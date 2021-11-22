@@ -30,8 +30,10 @@ class CometLogger(ILogger):
         tags: A list of tags to add to the Experiment.
         experiment_kwargs: Used to pass additional arguments to
             the Experiment object
-        log_batch_metrics: boolean flag to log batch metrics.
-        log_epoch_metrics: boolean flag to log epoch metrics.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     Python API examples:
 

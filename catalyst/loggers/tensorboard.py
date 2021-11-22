@@ -16,8 +16,10 @@ class TensorboardLogger(ILogger):
     Args:
         logdir: path to logdir for tensorboard.
         use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir.
-        log_batch_metrics: boolean flag to log batch metrics.
-        log_epoch_metrics: boolean flag to log epoch metrics.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     .. note::
         This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of

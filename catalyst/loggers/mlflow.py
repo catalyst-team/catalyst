@@ -78,8 +78,10 @@ class MLflowLogger(ILogger):
         tracking_uri: URI of tracking server against which to log run information related.
         registry_uri: Address of local or remote model registry server.
         exclude: Name of  to exclude from logging.
-        log_batch_metrics: boolean flag to log batch metrics.
-        log_epoch_metrics: boolean flag to log epoch metrics.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     Python API examples:
 

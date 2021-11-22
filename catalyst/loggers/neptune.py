@@ -57,8 +57,10 @@ class NeptuneLogger(ILogger):
           to the existing run (resume run).
           Read more about it
           `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
-        log_batch_metrics: boolean flag to log batch metrics.
-        log_epoch_metrics: boolean flag to log epoch metrics.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
         neptune_run_kwargs: Optional, additional keyword arguments to be passed directly to the
           `neptune.init() <https://docs.neptune.ai/api-reference/neptune#init>`_ function.
 
