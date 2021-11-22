@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 - Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
 - MultiDAE RecSys example ([#1356](https://github.com/catalyst-team/catalyst/pull/1356))
+- `SETTINGS.log_batch_metrics`, `SETTINGS.log_epoch_metrics`, `SETTINGS.compute_per_class_metrics` for framework-wise  Metric & Logger APIs specification ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
+- `log_batch_metrics` and `log_epoch_metrics` options for all available Loggers ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
+- `compute_per_class_metrics` option for all available multiclass/label metrics ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
 
 ### Changed
 
@@ -29,6 +32,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
   - internal functionality moved to `***._misc` modules
   - `catalyst.utils.mixup` moved to `catalyst.utils.torch`
   - `catalyst.utils.numpy` moved to `catalyst.contrib.utils.numpy`
+- default logging logic moved from "batch & epoch" to "epoch"-only to save computation time during logging; to respecify, please use:
+  - `SETTINGS.log_batch_metrics=True/False` or `os.environ["CATALYST_LOG_BATCH_METRICS"]
+  - `SETTINGS.log_epoch_metrics=True/False` or `os.environ["CATALYST_LOG_EPOCH_METRICS"]
+- default metrics computation moved from "per-class & aggregations" to "aggregations"-only to save computation time during logging; to respecify, please use:
+  - `SETTINGS.compute_per_class_metrics=True/False` or `os.environ["CATALYST_COMPUTE_PER_CLASS_METRICS"]
   
 
 ### Removed

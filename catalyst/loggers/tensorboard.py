@@ -7,14 +7,19 @@ from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
 from catalyst.loggers._misc import image_to_tensor
+from catalyst.settings import SETTINGS
 
 
 class TensorboardLogger(ILogger):
     """Tensorboard logger for parameters, metrics, images and other artifacts.
 
     Args:
-        logdir: path to logdir for tensorboard
-        use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir
+        logdir: path to logdir for tensorboard.
+        use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     .. note::
         This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
@@ -74,8 +79,15 @@ class TensorboardLogger(ILogger):
         ...
     """
 
-    def __init__(self, logdir: str, use_logdir_postfix: bool = False):
+    def __init__(
+        self,
+        logdir: str,
+        use_logdir_postfix: bool = False,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
+    ):
         """Init."""
+        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
@@ -114,18 +126,18 @@ class TensorboardLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs batch and epoch metrics to Tensorboard."""
-        if scope == "batch":
+        if scope == "batch" and self.log_batch_metrics:
             self._check_loader_key(loader_key=loader_key)
             # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_sample_step, loader_key=loader_key, suffix="/batch"
             )
-        elif scope == "loader":
+        elif scope == "loader" and self.log_epoch_metrics:
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
                 metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch"
             )
-        elif scope == "epoch":
+        elif scope == "epoch" and self.log_epoch_metrics:
             # @TODO: remove naming magic
             loader_key = "_epoch_"
             per_loader_metrics = metrics[loader_key]
