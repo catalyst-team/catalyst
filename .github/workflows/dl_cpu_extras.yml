@@ -38,7 +38,7 @@ jobs:
       
       - name: Configure poetry
         shell: bash
-        run: poetry config virtualenvs.in-project true
+        run: poetry config virtualenvs.create false --local
       
       - name: set base extras
         if: ${{ matrix.extras == 'base' }}
