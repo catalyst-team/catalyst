@@ -64,7 +64,7 @@ jobs:
         if: ${{ matrix.extras == 'ml' }}
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt
+          poetry install --extras dev,ml
           python --version
           pip --version
           pip list
