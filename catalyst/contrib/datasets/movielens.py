@@ -89,7 +89,9 @@ class MovieLens(Dataset):
         self._fetch_movies()
 
         if not self._check_exists():
-            raise RuntimeError("Dataset not found. You can use download=True to download it")
+            raise RuntimeError(
+                "Dataset not found.You can use download=True to download it"
+            )
 
         if self.train:
             data_file = self.training_file
@@ -124,7 +126,8 @@ class MovieLens(Dataset):
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
-        """Check if the path for tarining and testing data exists in processed folder."""
+        """Check if the path for tarining and testing data 
+        exists in processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
         ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
@@ -191,7 +194,9 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        interaction_matrix = torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
+        interaction_matrix = torch
+                            .sparse
+                            .FloatTensor(i, v, torch.Size(shape)).to_dense()
         return interaction_matrix
 
     def _parse(self, data):
@@ -245,62 +250,81 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (train_raw, test_raw, item_metadata_raw, genres_raw) = self._read_raw_movielens_data()
+        (train_raw, test_raw, item_metadata_raw, genres_raw) = 
+        self._read_raw_movielens_data()
 
-        num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
+        num_users, num_items = 
+        self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
 
-        train = self._build_interaction_matrix(num_users, num_items, self._parse(train_raw))
-        test = self._build_interaction_matrix(num_users, num_items, self._parse(test_raw))
+        train = self._build_interaction_matrix(num_users,
+                                            num_items,
+                                            self._parse(train_raw))
+        test = self._build_interaction_matrix(num_users,
+                                            num_items,
+                                            self._parse(test_raw))
         assert train.shape == test.shape
 
-        with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
+        with open(os.path.join(self.processed_folder, 
+                            self.training_file), "wb") as f:
             torch.save(train, f)
 
-        with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
+        with open(os.path.join(self.processed_folder,
+                            self.test_file), "wb") as f:
             torch.save(test, f)
 
 
 class MovieLens20M(Dataset):
     """
-    MovieLens data sets (ml-20m) were collected by the GroupLens Research Project
-    at the University of Minnesota.
+    MovieLens data sets (ml-20m) were collected by 
+    the GroupLens Research Project at the University of Minnesota.
 
     This data set consists of:
-    * 20,000,263 ratings (1-5) and 465,564 tag applications from 138,493 users on 27,278 movies.
+    * 20,000,263 ratings (1-5) 
+    and 465,564 tag applications from 138,493 users on 27,278 movies.
     * Each user has rated at least 20 movies.
     * Simple demographic info for the users
     (age, gender, occupation, zip)
 
-    Users were selected at random for inclusion. All selected users had rated at least 20 movies.
-    No demographic information is included. Each user is represented by an id, and no other information is provided.
+    Users were selected at random for inclusion.
+    All selected users had rated at least 20 movies.
+    No demographic information is included.
+    Each user is represented by an id, and no other information is provided.
 
     More details about the contents and use of all these files follows.
-    This and other GroupLens data sets are publicly available for download at http://grouplens.org/datasets/.
+    This and other GroupLens data sets are publicly available for download
+    at http://grouplens.org/datasets/.
 
     The data was collected through the MovieLens web site.
     (movielens.umn.edu)  between January 09, 1995 and March 31, 2015.
     This dataset was generated on October 17, 2016.
 
-    Neither the University of Minnesota nor any of the researchers involved can guarantee the correctness of the data,
-    its suitability for any particular purpose, or the validity of results based on the use of the data set.
+    Neither the University of Minnesota nor any of the researchers involved
+    can guarantee the correctness of the data, its suitability
+    for any particular purpose, or the validity of
+    results based on the use of the data set.
 
-    The data set may be used for any research purposes under the following conditions:
-    * The user may not state or imply any endorsement from the University of Minnesota
-    or the GroupLens Research Group.
+    The data set may be used for any research purposes
+    under the following conditions:
+    * The user may not state or imply any endorsement
+    from the University of Minnesota or the GroupLens Research Group.
     * The user must acknowledge the use of the data set in publications resulting
     from the use of the data set (see below for citation information).
     * The user may not redistribute the data without separate permission.
     * The user may not use this information for any commercial or revenue-bearing purposes
-    without first obtaining permission from a faculty member of the GroupLens Research Project
-    at the University of Minnesota.
-    * The executable software scripts are provided "as is" without warranty of any kind,
-    either expressed or implied, including, but not limited to,
-    the implied warranties of merchantability and fitness for a particular purpose.
-    The entire risk as to the quality and performance of them is with you. Should the program prove defective,
+    without first obtaining permission from a faculty member 
+    of the GroupLens Research Project at the University of Minnesota.
+    * The executable software scripts are provided "as is" 
+    without warranty of any kind, either expressed or implied, including,
+    but not limited to,
+    the implied warranties of merchantability
+    and fitness for a particular purpose.
+    The entire risk as to the quality and performance of them is with you.
+    Should the program prove defective,
     you assume the cost of all necessary servicing, repair or correction.
-    * In no event shall the University of Minnesota, its affiliates or employees be
-    liable to you for any damages arising out of the use or inability to use these programs
-    (including but not limited to loss of data or data being rendered inaccurate).
+    * In no event shall the University of Minnesota,
+    its affiliates or employees be liable to you for any damages
+    arising out of the use or inability to use these programs (including
+    but not limited to loss of data or data being rendered inaccurate).
 
 
     The data are contained in six files:
@@ -313,8 +337,8 @@ class MovieLens20M(Dataset):
 
     Ratings Data File Structure (ratings.csv)
     All ratings are contained in the file ratings.csv.
-    Each line of this file after the header row represents one rating of one movie by one user,
-    and has the following format:
+    Each line of this file after the header row represents
+    one rating of one movie by one user,and has the following format:
     * userId,
     * movieId,
     * rating,
@@ -331,8 +355,9 @@ class MovieLens20M(Dataset):
     * title,
     * genres
 
-    Movie titles are entered manually or imported from https://www.themoviedb.org/,
-    and include the year of release in parentheses.
+    Movie titles are entered manually or
+    imported from https://www.themoviedb.org/, and include the year
+    of release in parentheses.
     Errors and inconsistencies may exist in these titles.
 
     Links Data File Structure (links.csv)
@@ -384,15 +409,18 @@ class MovieLens20M(Dataset):
                 is already downloaded, it is not downloaded again.
             min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
-            min_items_per_user (float, optional): Minimum number of items per user
+            min_items_per_user (float, optional): 
+                Minimum number of items per user
                 to include in the interaction matrix
-            min_users_per_item (float, optional): Minimum rating to users per itemrs
+            min_users_per_item (float, optional): 
+                Minimum rating to users per itemrs
                 to include in the interaction matrix
             test_prop (float, optional): train-test split
             split (string, optional): the splittage method.
                 `users` – split by users
                 `ts` - split by timestamp
-            sample (bool, optional): If true, then use the sample of the dataset.
+            sample (bool, optional): 
+                If true, then use the sample of the dataset.
                 If true the `n_rows` shold be provide
             n_rowns (int, optional): number of rows to retrieve.
                 Availbale only with `sample = True`
@@ -419,7 +447,9 @@ class MovieLens20M(Dataset):
         self._fetch_movies(split_by=split)
 
         if not self._check_exists():
-            raise RuntimeError("Dataset not found. You can use download=True to download it")
+            raise RuntimeError(
+                "Dataset not found. You can use download=True to download it"
+                )
 
         if self.train:
             data_file = self.training_file
@@ -454,7 +484,8 @@ class MovieLens20M(Dataset):
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
-        """Check if the path for tarining and testing data exists in processed folder."""
+        """Check if the path for tarining and testing data exists in 
+            processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
         ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
@@ -479,15 +510,21 @@ class MovieLens20M(Dataset):
     def _read_raw_movielens_data(self):
         """Read the csv files with pandas.
         Returns:
-            (movies, ratings, genome_scores, genome_tags, tags): (pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame)
+            (movies, ratings, genome_scores, genome_tags, tags): 
+            (pd.DataFrame, pd.DataFrame, pd.DataFrame, 
+            pd.DataFrame, pd.DataFrame)
         """
         path = self.raw_folder
 
         if self.sample:
-            movies = pd.read_csv(path + "/ml-20m/movies.csv", nrows=self.nrows)
-            ratings = pd.read_csv(path + "/ml-20m/ratings.csv", nrows=self.nrows)
-            genome_scores = pd.read_csv(path + "/ml-20m/genome-scores.csv", nrows=self.nrows)
-            genome_tags = pd.read_csv(path + "/ml-20m/genome-tags.csv", nrows=self.nrows)
+            movies = pd.read_csv(path + "/ml-20m/movies.csv",
+                    nrows=self.nrows)
+            ratings = pd.read_csv(path + "/ml-20m/ratings.csv",
+                    nrows=self.nrows)
+            genome_scores = pd.read_csv(path + "/ml-20m/genome-scores.csv",
+                    nrows=self.nrows)
+            genome_tags = pd.read_csv(path + "/ml-20m/genome-tags.csv",
+                    nrows=self.nrows)
             tags = pd.read_csv(path + "/ml-20m/tags.csv", nrows=self.nrows)
         else:
             movies = pd.read_csv(path + "/ml-20m/movies.csv")
@@ -516,11 +553,13 @@ class MovieLens20M(Dataset):
         """
 
         csr_matrix = sp.coo_matrix(
-            (ratings["rating"].astype(np.float32), (ratings["movieId"], ratings["userId"]))
+            (ratings["rating"].astype(np.float32), 
+            (ratings["movieId"], ratings["userId"]))
         )
 
         interaction_matrix = torch.sparse.LongTensor(
-            torch.LongTensor([csr_matrix.row.tolist(), csr_matrix.col.tolist()]),
+            torch.LongTensor([csr_matrix.row.tolist(), 
+                            csr_matrix.col.tolist()]),
             torch.LongTensor(csr_matrix.data.astype(np.int32)),
         )
 
@@ -534,7 +573,8 @@ class MovieLens20M(Dataset):
         item_per_user_cut=True,
         ts_cut=False,
     ):
-        """Parses and pre-process the raw data. Substract one to shift to zero based indexing
+        """Parses and pre-process the raw data. 
+        Substract one to shift to zero based indexing
         To-do add timestamp cut
 
         Args:
@@ -545,15 +585,21 @@ class MovieLens20M(Dataset):
                 86	1	2683	 3.5	1094785650
                 61	1	1584	 3.5	1094785656
                 23	1	1079	 4.0	1094785665
-            rating_cut (bool, optional): If true, filter datafreame on the `min_rating` value
-            user_per_item_cut (bool, optional): If true, filter datafreame on the `min_users_per_item` value
-            item_per_user_cut (bool, optional): If true, filter datafreame on the `min_items_per_user` value
-            ts_cut (bool, optional): If true, filter datafreame on the `min_ts` value [TO-DO]
+            rating_cut (bool, optional): 
+                If true, filter datafreame on the `min_rating` value
+            user_per_item_cut (bool, optional):
+                If true, filter datafreame on the `min_users_per_item` value
+            item_per_user_cut (bool, optional):
+                If true, filter datafreame on the `min_items_per_user` value
+            ts_cut (bool, optional):
+                If true, filter datafreame on the `min_ts` value [TO-DO]
 
         Returns:
             ratings (pd.Dataframe): filtered `ratings` pandas DataFrame
-            users_activity (pd.DataFrame): Number of items each user interacted with
-            items_activity (pd.DataFrame): Number of users interacted with each item.
+            users_activity (pd.DataFrame):
+                Number of items each user interacted with
+            items_activity (pd.DataFrame):
+                Number of users interacted with each item.
         """
         if rating_cut:
             ratings = ratings[ratings["rating"] > self.min_rating].sort_values(
@@ -581,12 +627,16 @@ class MovieLens20M(Dataset):
         while user_not_filtered or item_not_filtered:
             ratings = ratings[
                 ratings[movie_id].isin(
-                    user_cnt_df.index[user_cnt_df["user_cnt"] >= self.min_users_per_item]
+                    user_cnt_df.index[
+                        user_cnt_df["user_cnt"] >= self.min_users_per_item
+                        ]
                 )
             ]
             ratings = ratings[
                 ratings[user_id].isin(
-                    item_cnt_df.index[item_cnt_df["item_cnt"] >= self.min_items_per_user]
+                    item_cnt_df.index[
+                        item_cnt_df["item_cnt"] >= self.min_items_per_user
+                        ]
                 )
             ]
 
@@ -603,8 +653,12 @@ class MovieLens20M(Dataset):
                 .rename(columns={"size": "item_cnt"})
             )
 
-            user_not_filtered = (user_cnt_df["user_cnt"] < self.min_users_per_item).any()
-            item_not_filtered = (item_cnt_df["item_cnt"] < self.min_items_per_user).any()
+            user_not_filtered = (
+                user_cnt_df["user_cnt"] < self.min_users_per_item
+                ).any()
+            item_not_filtered = (
+                item_cnt_df["item_cnt"] < self.min_items_per_user
+                ).any()
 
         users_activity = (
             ratings[["userId"]]
@@ -632,7 +686,8 @@ class MovieLens20M(Dataset):
                 86	1	2683	 3.5	1094785650
                 61	1	1584	 3.5	1094785656
                 23	1	1079	 4.0	1094785665
-            users_activity (pd.DataFrame): Number of items each user interacted with
+            users_activity (pd.DataFrame):
+                Number of items each user interacted with
 
         Returns:
             train_events (pd.Dataframe): pandas DataFrame for training data
@@ -662,7 +717,8 @@ class MovieLens20M(Dataset):
                 86	1	2683	 3.5	1094785650
                 61	1	1584	 3.5	1094785656
                 23	1	1079	 4.0	1094785665
-            users_activity (pd.DataFrame): Number of items each user interacted with
+            users_activity (pd.DataFrame):
+                Number of items each user interacted with
 
         Returns:
             train_events (pd.Dataframe): pandas DataFrame for training data
@@ -705,10 +761,14 @@ class MovieLens20M(Dataset):
         train = self._build_interaction_matrix(train_raw)
         test = self._build_interaction_matrix(test_raw)
 
-        with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
+        with open(os.path.join(
+                self.processed_folder, self.training_file
+            ), "wb") as f:
             torch.save(train, f)
 
-        with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
+        with open(os.path.join(
+                self.processed_folder, self.test_file
+            ), "wb") as f:
             torch.save(test, f)
 
 
