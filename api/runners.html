@@ -1002,7 +1002,7 @@ Note: Works only with python scripts. No jupyter support.</p></li>
 
 <dl class="method">
 <dt id="catalyst.runners.runner.Runner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, loaders: OrderedDict[str, DataLoader], model: torch.nn.modules.module.Module, engine: Union[IEngine, str] = None, trial: catalyst.core.trial.ITrial = None, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, loggers: Dict[str, ILogger] = None, seed: int = 42, hparams: Dict[str, Any] = None, num_epochs: int = 1, logdir: str = None, resume: str = None, valid_loader: str = None, valid_metric: str = None, minimize_valid_metric: bool = True, verbose: bool = False, timeit: bool = False, check: bool = False, overfit: bool = False, load_best_on_end: bool = False, fp16: bool = False, amp: bool = False, apex: bool = False, ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, loaders: OrderedDict[str, DataLoader], model: torch.nn.modules.module.Module, engine: Union[IEngine, str] = None, trial: catalyst.core.trial.ITrial = None, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, loggers: Dict[str, ILogger] = None, seed: int = 42, hparams: Dict[str, Any] = None, num_epochs: int = 1, logdir: str = None, resume: str = None, valid_loader: str = None, valid_metric: str = None, minimize_valid_metric: bool = True, verbose: bool = False, timeit: bool = False, check: bool = False, overfit: bool = False, profile: bool = False, load_best_on_end: bool = False, fp16: bool = False, amp: bool = False, apex: bool = False, ddp: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the train stage of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1038,6 +1038,8 @@ of training process and displays it to the console.</p></li>
 <li><p><strong>overfit</strong> – if True, then takes only one batch per loader
 for model overfitting, for advance usage please check
 <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>profile</strong> – if True, then uses ProfilerCallback, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">ProfilerCallback</span></code></p></li>
 <li><p><strong>load_best_on_end</strong> – if True, Runner will load
 best checkpoint state (model, optimizer, etc)
 according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>

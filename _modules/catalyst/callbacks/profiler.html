@@ -362,7 +362,6 @@
 <span class="sd">            from catalyst import dl</span>
 <span class="sd">            from catalyst.data import ToTensor</span>
 <span class="sd">            from catalyst.contrib.datasets import MNIST</span>
-<span class="sd">            from catalyst.contrib.layers import Flatten</span>
 
 <span class="sd">            loaders = {</span>
 <span class="sd">                &quot;train&quot;: DataLoader(</span>
@@ -375,7 +374,7 @@
 <span class="sd">                ),</span>
 <span class="sd">            }</span>
 
-<span class="sd">            model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))</span>
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))</span>
 <span class="sd">            criterion = nn.CrossEntropyLoss()</span>
 <span class="sd">            optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)</span>
 <span class="sd">            runner = dl.SupervisedRunner()</span>
@@ -433,16 +432,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On batch end action</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>  <span class="c1"># use first loader for profile</span>
-
     <span class="k">def</span> <span class="nf">_should_use_profiler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">==</span> <span class="n">loader_key</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">==</span> <span class="n">epoch</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -497,6 +486,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>  <span class="c1"># use first loader for profile</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_enter_profiler</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
