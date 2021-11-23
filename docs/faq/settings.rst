@@ -24,6 +24,7 @@ Nevertheless, there are much more availabe:
     pip install catalyst[onnx-gpu] # + onnx, onnxruntime-gpu
     pip install catalyst[onnx] # + onnx, onnxruntime
     pip install catalyst[optuna] # + optuna
+    pip install catalyst[profiler] # + profiler
     pip install catalyst[wandb] # + wandb
     pip install catalyst[all] # + catalyst[cv], catalyst[ml], catalyst[optuna]
 
