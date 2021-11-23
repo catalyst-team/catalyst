@@ -36,6 +36,10 @@ jobs:
       - name: Install poetry
         run: pip install poetry
       
+      - name: Configure poetry
+        shell: bash
+        run: poetry config virtualenvs.in-project true
+      
       - name: set base extras
         if: ${{ matrix.extras == 'base' }}
         run: |
