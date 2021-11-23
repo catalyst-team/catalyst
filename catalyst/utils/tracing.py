@@ -4,7 +4,7 @@ import logging
 import torch
 from torch import jit
 
-from catalyst.tools.forward_wrapper import ModelForwardWrapper
+from catalyst.extras.forward_wrapper import ModelForwardWrapper
 from catalyst.typing import Model
 from catalyst.utils.torch import get_nn_from_ddp_module
 

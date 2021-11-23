@@ -8,8 +8,8 @@ import numpy as np
 import torch
 import torch.utils.data as data
 
-from catalyst.contrib.datasets.functional import _check_integrity, download_and_extract_archive
-from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.datasets.misc import _check_integrity, download_and_extract_archive
 
 
 class StandardTransform(object):

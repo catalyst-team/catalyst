@@ -72,6 +72,7 @@ class CSVLogger(ILogger):
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
         """Init."""
+        super().__init__(log_batch_metrics=False, log_epoch_metrics=True)
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "logs")
         self.logdir = logdir
@@ -114,7 +115,7 @@ class CSVLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """@TODO: docs."""
+        """Logs epoch metrics to csv file."""
         if scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
                 if loader_key not in self.loggers.keys():

@@ -8,7 +8,7 @@ from pytest import mark
 
 from torch import nn
 
-from catalyst.data import Compose, Normalize, ToTensor
+from catalyst.data import Compose, ImageToTensor, NormalizeImage
 from catalyst.dl import SelfSupervisedConfigRunner
 from catalyst.registry import Registry
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
@@ -23,11 +23,11 @@ if SETTINGS.cv_required:
             torchvision.transforms.RandomVerticalFlip(),
             torchvision.transforms.RandomHorizontalFlip(),
             torchvision.transforms.ToTensor(),
-            Normalize((0.1307,), (0.3081,)),
+            NormalizeImage((0.1307,), (0.3081,)),
         ]
     )
 
-    transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+    transform_original = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
 
 
 class ProjectionHead(nn.Module):
@@ -103,7 +103,7 @@ def train_experiment(engine):
                             "batch_size": 1024,
                             "datasets": {
                                 "train": {
-                                    "_target_": "catalyst.data.dataset.SelfSupervisedDatasetWrapper",
+                                    "_target_": "catalyst.data.SelfSupervisedDatasetWrapper",
                                     "dataset": {
                                         "_target_": "catalyst.contrib.datasets.MNIST",
                                         "root": logdir,
@@ -114,7 +114,7 @@ def train_experiment(engine):
                                     "transform_original": transform_original,
                                 },
                                 "valid": {
-                                    "_target_": "catalyst.data.dataset.SelfSupervisedDatasetWrapper",
+                                    "_target_": "catalyst.data.SelfSupervisedDatasetWrapper",
                                     "dataset": {
                                         "_target_": "catalyst.contrib.datasets.MNIST",
                                         "root": logdir,

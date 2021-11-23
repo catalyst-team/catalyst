@@ -11,8 +11,8 @@ from torch.optim import Adam
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.criterion import NTXentLoss
-from catalyst.data import Compose, Normalize, ToTensor
+from catalyst.contrib.losses import NTXentLoss
+from catalyst.data import Compose, ImageToTensor, NormalizeImage
 from catalyst.data.dataset import SelfSupervisedDatasetWrapper
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
@@ -52,11 +52,11 @@ def train_experiment(device, engine=None):
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
                 torchvision.transforms.ToTensor(),
-                Normalize((0.1307,), (0.3081,)),
+                NormalizeImage((0.1307,), (0.3081,)),
             ]
         )
 
-        transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+        transform_original = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
 
         mnist = MNIST("./logdir", train=True, download=True, transform=None)
         contrastive_mnist = SelfSupervisedDatasetWrapper(

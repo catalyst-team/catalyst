@@ -111,6 +111,16 @@ class MRRMetric(TopKMetric):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"mrr01"``
+        - ``topk_args = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples

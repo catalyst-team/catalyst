@@ -24,9 +24,7 @@ Let's start with a simple script for ResNet9 model training on CIFAR10:
     from torch.utils.data import DataLoader
 
     from catalyst import dl
-    from catalyst.contrib.datasets import CIFAR10
-    from catalyst.contrib.nn import ResidualBlock
-    from catalyst.data import transforms
+    from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
 
     def conv_block(in_channels, out_channels, pool=False):
         layers = [
@@ -60,9 +58,9 @@ Let's start with a simple script for ResNet9 model training on CIFAR10:
         num_epochs = 10
 
         # data
-        transform = transforms.Compose([
-            transforms.ToTensor(), 
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        transform = Compose([
+            ImageToTensor(), 
+            NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
         train_data = CIFAR10(
             os.getcwd(), train=True, download=True, transform=transform
@@ -118,9 +116,7 @@ Just pass ``ddp=True`` flag during ``.train`` call:
     from torch.utils.data import DataLoader
 
     from catalyst import dl
-    from catalyst.contrib.datasets import CIFAR10
-    from catalyst.contrib.nn import ResidualBlock
-    from catalyst.data import transforms
+    from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
 
     def conv_block(in_channels, out_channels, pool=False):
         layers = [
@@ -153,9 +149,9 @@ Just pass ``ddp=True`` flag during ``.train`` call:
         num_epochs = 10
 
         # data
-        transform = transforms.Compose([
-            transforms.ToTensor(), 
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        transform = Compose([
+            ImageToTensor(), 
+            NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
         train_data = CIFAR10(
             os.getcwd(), train=True, download=True, transform=transform
@@ -221,9 +217,7 @@ and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
     from torch.utils.data.distributed import DistributedSampler
 
     from catalyst import dl
-    from catalyst.contrib.datasets import CIFAR10
-    from catalyst.contrib.nn import ResidualBlock
-    from catalyst.data import transforms
+    from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
 
     def conv_block(in_channels, out_channels, pool=False):
         layers = [
@@ -253,9 +247,9 @@ and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
     class CustomSupervisedRunner(dl.SupervisedRunner):
         # here is the trick:
         def get_loaders(self, stage: str):
-            transform = transforms.Compose([
-                transforms.ToTensor(), 
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transform = Compose([
+                ImageToTensor(), 
+                NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
             train_data = CIFAR10(
                 os.getcwd(), train=True, download=True, transform=transform
@@ -335,9 +329,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
     from torch.utils.data.distributed import DistributedSampler
 
     from catalyst import dl, utils
-    from catalyst.contrib.datasets import CIFAR10
-    from catalyst.contrib.nn import ResidualBlock
-    from catalyst.data import transforms
+    from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
 
     def conv_block(in_channels, out_channels, pool=False):
         layers = [
@@ -387,9 +379,9 @@ As an extra point, you could also specify the whole experiment within ``Runner``
             return 10
 
         def get_loaders(self, stage: str):
-            transform = transforms.Compose([
-                transforms.ToTensor(), 
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transform = Compose([
+                ImageToTensor(), 
+                NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
             train_data = CIFAR10(
                 os.getcwd(), train=True, download=True, transform=transform

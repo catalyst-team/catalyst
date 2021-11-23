@@ -20,7 +20,7 @@ Catalyst supports a variety of metrics storages during the experiment
 
         runner.epoch_metrics = {
             "train": {"loss": ..., "accuracy": ..., "auc": ...},
-            "valid: {"loss": ..., "accuracy": ..., "auc": ...}
+            "valid": {"loss": ..., "accuracy": ..., "auc": ...}
             "_epoch_": {"lr": ..., "momentum": ...,}
         }
 

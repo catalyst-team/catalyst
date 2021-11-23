@@ -57,6 +57,10 @@ class NeptuneLogger(ILogger):
           to the existing run (resume run).
           Read more about it
           `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
         neptune_run_kwargs: Optional, additional keyword arguments to be passed directly to the
           `neptune.init() <https://docs.neptune.ai/api-reference/neptune#init>`_ function.
 
@@ -118,8 +122,16 @@ class NeptuneLogger(ILogger):
     """
 
     def __init__(
-        self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs
+        self,
+        base_namespace=None,
+        api_token=None,
+        project=None,
+        run=None,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
+        **neptune_run_kwargs,
     ):
+        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         if base_namespace is None:
             self.base_namespace = "experiment"
         else:
@@ -176,17 +188,17 @@ class NeptuneLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs batch, epoch and loader metrics to Neptune."""
-        if scope == "batch":
+        if scope == "batch" and self.log_batch_metrics:
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
             self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=global_sample_step)
-        elif scope == "loader":
+        elif scope == "loader" and self.log_epoch_metrics:
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
             self._log_metrics(
                 metrics=_prepare_metrics(metrics),
                 neptune_path=neptune_path,
                 step=global_epoch_step,
             )
-        elif scope == "epoch":
+        elif scope == "epoch" and self.log_epoch_metrics:
             loader_key = "_epoch_"
             prepared_metrics = _prepare_metrics(metrics[loader_key])
             neptune_path = "/".join([self.base_namespace, stage_key, scope])

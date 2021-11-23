@@ -19,7 +19,7 @@ from catalyst.callbacks.metric_aggregation import MetricAggregationCallback
 from catalyst.callbacks.misc import (
     CheckRunCallback,
     EarlyStoppingCallback,
-    IBatchMetricHandlerCallback,
+    # IBatchMetricHandlerCallback,
     IEpochMetricHandlerCallback,
     TimerCallback,
     TqdmCallback,
