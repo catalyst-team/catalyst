@@ -6,9 +6,9 @@ authors = ["Your Name <you@example.com>"]
 license = "Apache License 2.0"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/catalyst-team/catalyst/issues",
-"Documentation" = "https://catalyst-team.github.io/catalyst",
-"Source Code" = "https://github.com/catalyst-team/catalyst",
+"Bug Tracker" = "https://github.com/catalyst-team/catalyst/issues"
+"Documentation" = "https://catalyst-team.github.io/catalyst"
+"Source Code" = "https://github.com/catalyst-team/catalyst"
 
 [tool.nitpick]
 style = "https://raw.githubusercontent.com/catalyst-team/codestyle/v21.09.2/styles/nitpick-style-catalyst.toml"
