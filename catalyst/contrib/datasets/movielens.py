@@ -130,7 +130,9 @@ class MovieLens(Dataset):
         exists in processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
+        ) and os.path.exists(
+            os.path.join(self.processed_folder, self.test_file)
+        )
 
     def _download(self):
         """Download and extract files/"""
@@ -194,9 +196,9 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        interaction_matrix = torch
-                            .sparse
-                            .FloatTensor(i, v, torch.Size(shape)).to_dense()
+        interaction_matrix = torch.sparse.FloatTensor(
+                            i, v, torch.Size(shape)
+                            ).to_dense()
         return interaction_matrix
 
     def _parse(self, data):
@@ -250,8 +252,12 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (train_raw, test_raw, item_metadata_raw, genres_raw) = 
-        self._read_raw_movielens_data()
+        (
+            train_raw,
+            test_raw,
+            item_metadata_raw,
+            genres_raw
+        ) = self._read_raw_movielens_data()
 
         num_users, num_items = 
         self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
@@ -307,12 +313,18 @@ class MovieLens20M(Dataset):
     under the following conditions:
     * The user may not state or imply any endorsement
     from the University of Minnesota or the GroupLens Research Group.
-    * The user must acknowledge the use of the data set in publications resulting
-    from the use of the data set (see below for citation information).
+    
+    * The user must acknowledge the use of the data set in
+    publications resulting from the use of the data set
+    (see below for citation information).
+    
     * The user may not redistribute the data without separate permission.
-    * The user may not use this information for any commercial or revenue-bearing purposes
+    
+    * The user may not use this information for any
+    commercial or revenue-bearing purposes
     without first obtaining permission from a faculty member 
     of the GroupLens Research Project at the University of Minnesota.
+    
     * The executable software scripts are provided "as is" 
     without warranty of any kind, either expressed or implied, including,
     but not limited to,
@@ -488,7 +500,9 @@ class MovieLens20M(Dataset):
             processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
+        ) and os.path.exists(
+            os.path.join(self.processed_folder, self.test_file)
+        )
 
     def _download(self):
         """Download and extract files"""
@@ -744,7 +758,13 @@ class MovieLens20M(Dataset):
             4. Save in the .pt with torch.save
         """
 
-        (movies, ratings, genome_scores, genome_tags, tags) = self._read_raw_movielens_data()
+        (
+            movies,
+            ratings,
+            genome_scores,
+            genome_tags,
+            tags
+        ) = self._read_raw_movielens_data()
 
         # TO-DO: add error handling
         ratings, users_activity, items_activity = self._parse(ratings)
