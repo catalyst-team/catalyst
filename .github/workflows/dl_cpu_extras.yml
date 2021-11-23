@@ -128,8 +128,8 @@ jobs:
           OMP_NUM_THREADS: "1"
           MKL_NUM_THREADS: "1"
         run: |
-          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" PYTHONPATH=$(shell pwd)/src/summarization_api poetry run pytest --cov=src
-         
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" PYTHONPATH=$(shell pwd)/src/summarization_api poetry run pytest .
+          pip install -e .
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
 
       - name: check examples hydra
