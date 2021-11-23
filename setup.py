@@ -54,6 +54,7 @@ extras = {
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "profiler": load_requirements("requirements/requirements-profiler.txt"),
     "wandb": load_requirements("requirements/requirements-wandb.txt"),
     # "xla": load_requirements("requirements/requirements-xla.txt"),
 }

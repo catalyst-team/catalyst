@@ -12,6 +12,7 @@ from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallbac
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.profiler import ProfilerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
@@ -192,6 +193,7 @@ class Runner(IRunner):
         self._timeit = False
         self._check = False
         self._overfit = False
+        self._profile = False
         self._load_best_on_end = False
 
     @property
@@ -304,6 +306,21 @@ class Runner(IRunner):
             callbacks["_check"] = CheckRunCallback()
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
+        if self._profile and not is_callback_exists(ProfilerCallback):
+            callbacks["_profile"] = ProfilerCallback(
+                tensorboard_path=os.path.join(self._logdir, "tb_profile"),
+                profiler_kwargs={
+                    "activities": [
+                        torch.profiler.ProfilerActivity.CPU,
+                        torch.profiler.ProfilerActivity.CUDA,
+                    ],
+                    "on_trace_ready": torch.profiler.tensorboard_trace_handler(
+                        os.path.join(self._logdir, "tb_profile")
+                    ),
+                    "with_stack": True,
+                    "with_flops": True,
+                },
+            )
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
@@ -348,6 +365,7 @@ class Runner(IRunner):
         timeit: bool = False,
         check: bool = False,
         overfit: bool = False,
+        profile: bool = False,
         load_best_on_end: bool = False,
         # engine extra params,
         fp16: bool = False,
@@ -390,6 +408,8 @@ class Runner(IRunner):
             overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
                 ``BatchOverfitCallback``
+            profile: if True, then uses ProfilerCallback, for advance usage please check
+                ``ProfilerCallback``
             load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
@@ -516,6 +536,7 @@ class Runner(IRunner):
         self._timeit = timeit
         self._check = check
         self._overfit = overfit
+        self._profile = profile
         self._load_best_on_end = load_best_on_end
         # run
         self.run()
