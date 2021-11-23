@@ -1,4 +1,4 @@
-Model checkpointing
+Checkpointing
 ==============================================================================
 
 Experiment checkpoints

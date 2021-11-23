@@ -1,5 +1,6 @@
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._auc import AUCMetric
+from catalyst.settings import SETTINGS
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -8,6 +9,8 @@ class AUCCallback(LoaderMetricCallback):
     Args:
         input_key: input key to use for auc calculation, specifies our ``y_true``.
         target_key: output key to use for auc calculation, specifies our ``y_pred``.
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -68,10 +71,19 @@ class AUCCallback(LoaderMetricCallback):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, input_key: str, target_key: str, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        input_key: str,
+        target_key: str,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """Init."""
         super().__init__(
-            metric=AUCMetric(prefix=prefix, suffix=suffix),
+            metric=AUCMetric(
+                compute_per_class_metrics=compute_per_class_metrics, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
         )

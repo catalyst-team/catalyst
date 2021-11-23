@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics._segmentation import DiceMetric, IOUMetric, TrevskyMetric
+from catalyst.settings import SETTINGS
 
 
 class IOUCallback(BatchMetricCallback):
@@ -16,6 +17,8 @@ class IOUCallback(BatchMetricCallback):
         class_names: class names
         threshold: threshold for outputs binarization
         log_on_batch: boolean flag to log computed metrics every batch
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -29,8 +32,7 @@ class IOUCallback(BatchMetricCallback):
         from torch.utils.data import DataLoader
         from catalyst import dl
         from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
+        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
 
 
         model = nn.Sequential(
@@ -95,6 +97,7 @@ class IOUCallback(BatchMetricCallback):
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         log_on_batch: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -105,6 +108,7 @@ class IOUCallback(BatchMetricCallback):
                 weights=weights,
                 class_names=class_names,
                 threshold=threshold,
+                compute_per_class_metrics=compute_per_class_metrics,
                 prefix=prefix,
                 suffix=suffix,
             ),
@@ -126,6 +130,8 @@ class DiceCallback(BatchMetricCallback):
         class_names: class names
         threshold: threshold for outputs binarization
         log_on_batch: boolean flag to log computed metrics every batch
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -139,8 +145,7 @@ class DiceCallback(BatchMetricCallback):
         from torch.utils.data import DataLoader
         from catalyst import dl
         from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
+        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
 
 
         model = nn.Sequential(
@@ -205,6 +210,7 @@ class DiceCallback(BatchMetricCallback):
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         log_on_batch: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -215,6 +221,7 @@ class DiceCallback(BatchMetricCallback):
                 weights=weights,
                 class_names=class_names,
                 threshold=threshold,
+                compute_per_class_metrics=compute_per_class_metrics,
                 prefix=prefix,
                 suffix=suffix,
             ),
@@ -240,6 +247,8 @@ class TrevskyCallback(BatchMetricCallback):
         class_names: class names
         threshold: threshold for outputs binarization
         log_on_batch: boolean flag to log computed metrics every batch
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -252,10 +261,7 @@ class TrevskyCallback(BatchMetricCallback):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -266,11 +272,11 @@ class TrevskyCallback(BatchMetricCallback):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
                 batch_size=32
             ),
         }
@@ -321,6 +327,7 @@ class TrevskyCallback(BatchMetricCallback):
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         log_on_batch: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -333,6 +340,7 @@ class TrevskyCallback(BatchMetricCallback):
                 weights=weights,
                 class_names=class_names,
                 threshold=threshold,
+                compute_per_class_metrics=compute_per_class_metrics,
                 prefix=prefix,
                 suffix=suffix,
             ),

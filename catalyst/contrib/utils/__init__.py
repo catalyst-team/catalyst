@@ -18,30 +18,7 @@ if SETTINGS.cv_required:
         mimread,
     )
 
-if SETTINGS.ml_required:
-    from catalyst.contrib.utils.pandas import (
-        dataframe_to_list,
-        folds_to_list,
-        split_dataframe_train_test,
-        split_dataframe_on_folds,
-        split_dataframe_on_stratified_folds,
-        split_dataframe_on_column_folds,
-        map_dataframe,
-        separate_tags,
-        get_dataset_labeling,
-        split_dataframe,
-        balance_classes,
-        create_dataset,
-        split_dataset_train_test,
-        create_dataframe,
-    )
-
-
-from catalyst.contrib.utils.parallel import (
-    parallel_imap,
-    tqdm_parallel_imap,
-    get_pool,
-)
+from catalyst.contrib.utils.numpy import get_one_hot
 
 if SETTINGS.ml_required:
     from catalyst.contrib.utils.report import get_classification_report
