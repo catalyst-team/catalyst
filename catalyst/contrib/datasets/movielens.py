@@ -259,8 +259,10 @@ class MovieLens(Dataset):
             genres_raw
         ) = self._read_raw_movielens_data()
 
-        num_users, num_items = 
-        self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
+        (
+            num_users,
+            num_items
+        ) = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
 
         train = self._build_interaction_matrix(num_users,
                                             num_items,
