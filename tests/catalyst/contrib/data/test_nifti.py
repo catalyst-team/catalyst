@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from catalyst.contrib.data.nifti.reader import NiftiReader
+from catalyst.contrib.data.reader_nifti import NiftiReader
 from catalyst.settings import SETTINGS
 
 if SETTINGS.nifti_required:

@@ -2,7 +2,7 @@ from typing import List, Union
 
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.utils.mixup import mixup_batch
+from catalyst.utils.torch import mixup_batch
 
 
 class MixupCallback(Callback):
@@ -37,7 +37,7 @@ class MixupCallback(Callback):
         from catalyst import dl
         from catalyst.callbacks import MixupCallback
         from catalyst.contrib.datasets import MNIST
-        from catalyst.data.transforms import ToTensor
+        from catalyst.contrib.data.transforms import ImageToTensor
 
 
         class SimpleNet(nn.Module):
@@ -56,7 +56,9 @@ class MixupCallback(Callback):
 
         class SimpleDataset(torch.utils.data.Dataset):
             def __init__(self, train: bool = False):
-                self.mnist = MNIST(os.getcwd(), train=train, download=True, transform=ToTensor())
+                self.mnist = MNIST(
+                    os.getcwd(), train=train, download=True, transform=ImageToTensor()
+                )
 
             def __len__(self) -> int:
                 return len(self.mnist)

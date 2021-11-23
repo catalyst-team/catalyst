@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import dl, utils
-from catalyst.contrib.nn.criterion import FocalLossBinary
+from catalyst.contrib.losses import FocalLossBinary
 
 
 def prepare_experiment():

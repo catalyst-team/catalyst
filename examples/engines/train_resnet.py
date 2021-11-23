@@ -10,9 +10,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl, utils
-from catalyst.contrib.datasets import CIFAR10
-from catalyst.contrib.nn import ResidualBlock
-from catalyst.data import transforms
+from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -64,8 +62,11 @@ class CustomRunner(dl.IRunner):
         return 10
 
     def get_loaders(self, stage: str):
-        transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        transform = Compose(
+            [
+                ImageToTensor(),
+                NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            ]
         )
         train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
         valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)

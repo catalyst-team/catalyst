@@ -2,10 +2,10 @@ from typing import Dict, Tuple
 
 import torch
 
-from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc, binary_auc
 from catalyst.metrics.functional._misc import process_multilabel_components
+from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 
@@ -18,6 +18,8 @@ class AUCMetric(ICallbackLoaderMetric):
 
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -127,11 +129,18 @@ class AUCMetric(ICallbackLoaderMetric):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """Init."""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self._ddp_backend = None
+        self.compute_per_class_metrics = compute_per_class_metrics
         self.scores = []
         self.targets = []
         self.reset(0, 0)
@@ -175,7 +184,10 @@ class AUCMetric(ICallbackLoaderMetric):
         macro = per_class.mean().item()
         weights = targets.sum(axis=0) / len(targets)
         weighted = (per_class * weights).sum().item()
-        return per_class, micro, macro, weighted
+        if self.compute_per_class_metrics:
+            return per_class, micro, macro, weighted
+        else:
+            return [], micro, macro, weighted
 
     def compute_key_value(self) -> Dict[str, float]:
         """Computes the AUC metric based on saved statistics and returns key-value results."""

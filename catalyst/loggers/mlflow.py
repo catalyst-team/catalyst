@@ -3,17 +3,16 @@ import re
 
 import numpy as np
 
-from mlflow.tracking.fluent import ActiveRun
-
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 from catalyst.typing import Directory, File, Union
 
 if SETTINGS.mlflow_required:
     import mlflow
+    from mlflow.tracking.fluent import ActiveRun
 
 
-def _get_or_start_run(run_name: Optional[str]) -> ActiveRun:
+def _get_or_start_run(run_name: Optional[str]) -> "ActiveRun":
     """The function of MLflow. Gets the active run and gives it a name.
     If active run does not exist, starts a new one.
 
@@ -79,6 +78,10 @@ class MLflowLogger(ILogger):
         tracking_uri: URI of tracking server against which to log run information related.
         registry_uri: Address of local or remote model registry server.
         exclude: Name of  to exclude from logging.
+        log_batch_metrics: boolean flag to log batch metrics
+            (default: SETTINGS.log_batch_metrics or False).
+        log_epoch_metrics: boolean flag to log epoch metrics
+            (default: SETTINGS.log_epoch_metrics or True).
 
     Python API examples:
 
@@ -139,7 +142,10 @@ class MLflowLogger(ILogger):
         tracking_uri: Optional[str] = None,
         registry_uri: Optional[str] = None,
         exclude: Optional[List[str]] = None,
+        log_batch_metrics: bool = SETTINGS.log_batch_metrics,
+        log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ) -> None:
+        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.experiment = experiment
         self.run = run
         self.tracking_uri = tracking_uri
@@ -181,12 +187,12 @@ class MLflowLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs batch and epoch metrics to MLflow."""
-        if scope == "batch":
+        if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
             )
-        elif scope == "epoch":
+        elif scope == "epoch" and self.log_epoch_metrics:
             for loader_key, per_loader_metrics in metrics.items():
                 self._log_metrics(
                     metrics=per_loader_metrics,

@@ -12,8 +12,8 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
+from catalyst.contrib.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
@@ -40,7 +40,7 @@ def train_experiment(device, engine=None):
 
         utils.set_global_seed(RANDOM_STATE)
         # 1. train, valid and test loaders
-        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+        transforms = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
 
         train_data = MNIST(os.getcwd(), train=True, download=True, transform=transforms)
         train_labels = train_data.targets.cpu().numpy().tolist()

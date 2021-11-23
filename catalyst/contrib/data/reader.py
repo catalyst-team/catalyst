@@ -3,7 +3,7 @@ import functools
 
 import numpy as np
 
-from catalyst.utils.numpy import get_one_hot
+from catalyst.contrib.utils.numpy import get_one_hot
 
 
 class IReader:
@@ -40,7 +40,7 @@ class IReader:
         Raises:
             NotImplementedError: you should implement it
         """
-        raise NotImplementedError("You cannot apply a transformation using `BaseReader`")
+        raise NotImplementedError("You cannot apply a transformation using `IReader`")
 
 
 class ScalarReader(IReader):

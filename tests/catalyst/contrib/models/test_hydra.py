@@ -8,8 +8,8 @@ import torch
 from torch import nn
 
 from catalyst import utils
+from catalyst.contrib.layers import Normalize
 from catalyst.contrib.models import Hydra, SequentialNet
-from catalyst.contrib.nn.modules import Normalize
 
 
 def _pop_normalization(dct):

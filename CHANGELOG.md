@@ -8,11 +8,67 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
+- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))`
+- Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
+- MultiDAE RecSys example ([#1356](https://github.com/catalyst-team/catalyst/pull/1356))
+- `SETTINGS.log_batch_metrics`, `SETTINGS.log_epoch_metrics`, `SETTINGS.compute_per_class_metrics` for framework-wise  Metric & Logger APIs specification ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
+- `log_batch_metrics` and `log_epoch_metrics` options for all available Loggers ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
+- `compute_per_class_metrics` option for all available multiclass/label metrics ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
 
 ### Changed
 
-- `CMCMetric` renamed from `<prefix>cmc<suffix><k>` to `<prefix>cmc<k><suffix>`
+- A few framework simplifications were made ([#1346](https://github.com/catalyst-team/catalyst/pull/1346)):
+  - `catalyst-contrib` scripts reduced to `collect-env` and `project-embeddings` only
+  - `catalyst-dl` scripts recuded to `run` and `tune` only
+  - `transforms.` prefix deprecated for Catalyst-based transforms
+  - `catalyst.tools` moved to `catalyst.extras`
+  - task-dependent extensions from `catalyst.data` moved to `catalyst.contrib.data`
+  - `catalyst.data.transforms` moved to `catalyst.contrib.data.transforms`
+  - `Normalize`, `ToTensor` transforms renamed to `NormalizeImage`, `ImageToTensor`
+  - metric learning extensions moved to `catalyst.contrib.data`
+  - `catalyst.contrib` moved to code-as-a-documentation development
+  - `catalyst[cv]` and `catalyst[ml]` extensions moved to flatten architecture design; examples: `catalyst.contrib.data.dataset_cv`, `catalyst.contrib.data.dataset_ml`
+  - `catalyst.contrib` moved to flatten architecture design; exampels: `catalyst.contrib.data`, `catalyst.contrib.datasets`, `catalyst.contrib.layers`, `catalyst.contrib.models`, `catalyst.contrib.optimizers`, `catalyst.contrib.schedulers`
+  - internal functionality moved to `***._misc` modules
+  - `catalyst.utils.mixup` moved to `catalyst.utils.torch`
+  - `catalyst.utils.numpy` moved to `catalyst.contrib.utils.numpy`
+- default logging logic moved from "batch & epoch" to "epoch"-only to save computation time during logging; to respecify, please use:
+  - `SETTINGS.log_batch_metrics=True/False` or `os.environ["CATALYST_LOG_BATCH_METRICS"]`
+  - `SETTINGS.log_epoch_metrics=True/False` or `os.environ["CATALYST_LOG_EPOCH_METRICS"]`
+- default metrics computation moved from "per-class & aggregations" to "aggregations"-only to save computation time during logging; to respecify, please use:
+  - `SETTINGS.compute_per_class_metrics=True/False` or `os.environ["CATALYST_COMPUTE_PER_CLASS_METRICS"]`
+  
+
+### Removed
+
+- A few framework simplifications were made ([#1346](https://github.com/catalyst-team/catalyst/pull/1346)):
+  - `catalyst.contrib.pandas`
+  - `catalyst.contrib.parallel`
+  - `catalyst.contrib.models.cv`
+  - a few `catalyst.utils.misc` functions
+  - `catalyst.extras` removed from the public documentation
+
+
+### Fixed
+
+- documentation search error (21.10 only) ([#1346](https://github.com/catalyst-team/catalyst/pull/1346))
+
+
+## [21.10] - 2021-10-30
+
+### Added
+
+- RSquareLoss ([#1313](https://github.com/catalyst-team/catalyst/pull/1313))
+- Self-Supervised example updates: ([#1305](https://github.com/catalyst-team/catalyst/pull/1305)), ([#1322](https://github.com/catalyst-team/catalyst/pull/1322)), ([#1325](https://github.com/catalyst-team/catalyst/pull/1325)), ([#1335](https://github.com/catalyst-team/catalyst/pull/1335))
+- Albert training example ([#1326](https://github.com/catalyst-team/catalyst/pull/1326))
+- YOLO-X (new) detection example and refactoring ([#1324](https://github.com/catalyst-team/catalyst/pull/1324))
+- `TopKMetric` abstraction ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
+
+### Changed
+
+- simlified readme ([#1312](https://github.com/catalyst-team/catalyst/pull/1312))
+- improved DDP tutorial ([#1327](https://github.com/catalyst-team/catalyst/pull/1327))
+- `CMCMetric` renamed from `<prefix>cmc<suffix><k>` to `<prefix>cmc<k><suffix>` ([#1330](https://github.com/catalyst-team/catalyst/pull/1330))
 
 ### Removed
 
@@ -20,7 +76,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- Zero seed error ([#1329](https://github.com/catalyst-team/catalyst/pull/1329))
+- updated codestyle issues ([#1331](https://github.com/catalyst-team/catalyst/pull/1331))
+- TopK metrics: ([#1330](https://github.com/catalyst-team/catalyst/pull/1330)), ([#1334](https://github.com/catalyst-team/catalyst/pull/1334)), ([#1339](https://github.com/catalyst-team/catalyst/pull/1339))
+- `--expdir` param for `catalyst-dl run` ([#1338](https://github.com/catalyst-team/catalyst/pull/1338))
+- ControlFlowCallback for distributed setup ([#1341](https://github.com/catalyst-team/catalyst/pull/1341))
 
 
 ## [21.09] - 2021-09-30
@@ -469,7 +529,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
 - `catalyst-dl tune` command - Optuna with Config API integration for AutoML hyperparameters optimization ([#937](https://github.com/catalyst-team/catalyst/pull/937))
 - `OptunaPruningCallback` alias for `OptunaCallback` ([#937](https://github.com/catalyst-team/catalyst/pull/937))
-- AdamP and SGDP to `catalyst.contrib.nn.criterion` ([#942](https://github.com/catalyst-team/catalyst/pull/942))
+- AdamP and SGDP to `catalyst.contrib.losses` ([#942](https://github.com/catalyst-team/catalyst/pull/942))
 
 ### Changed
 

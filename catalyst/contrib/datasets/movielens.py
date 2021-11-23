@@ -7,7 +7,7 @@ import scipy.sparse as sp
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.functional import download_and_extract_archive
+from catalyst.contrib.datasets.misc import download_and_extract_archive
 
 
 class MovieLens(Dataset):
