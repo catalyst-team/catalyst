@@ -48,6 +48,9 @@ class MovieLens(Dataset):
     If you have any further questions or comments, please contact GroupLens
     <grouplens-info@cs.umn.edu>.
     http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
+
+    .. note::
+        catalyst[ml] required for this dataset.
     """
 
     resources = (

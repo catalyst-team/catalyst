@@ -289,17 +289,14 @@ class DynamicLenBatchSampler(BatchSampler):
         >>> from torch.utils import data
         >>> from catalyst.data import DynamicLenBatchSampler
         >>> from catalyst import utils
-
         >>> dataset = data.TensorDataset(
         >>>     input_ids, input_mask, segment_ids, labels
         >>> )
-
         >>> sampler_ = data.RandomSampler(dataset)
         >>> sampler = DynamicLenBatchSampler(
         >>>     sampler_, batch_size=16, drop_last=False
         >>> )
         >>> loader = data.DataLoader(dataset, batch_sampler=sampler)
-
         >>> for batch in loader:
         >>>     tensors = utils.trim_tensors(batch)
         >>>     b_input_ids, b_input_mask, b_segment_ids, b_labels = \
