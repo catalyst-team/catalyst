@@ -75,15 +75,11 @@ def test_download_split_by_ts():
 
     # check some random file from MovieLens
     assert (
-        os.path \
-        .isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
+        os.path.isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
     )
 
     # check if data file is not Nulll
-    assert (
-        os.path \
-        .getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
-    )
+    assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
