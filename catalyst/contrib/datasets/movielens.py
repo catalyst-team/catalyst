@@ -117,17 +117,29 @@ class MovieLens(Dataset):
 
     @property
     def raw_folder(self):
-        """Create raw folder for data download"""
+        """Create raw folder for data download
+        
+        Returns:
+            raw_path (path): raw folder path
+        """
         return os.path.join(self.root, self.__class__.__name__, "raw")
 
     @property
     def processed_folder(self):
-        """Create the folder for the processed files"""
+        """Create the folder for the processed files
+        
+        Returns:
+            raw_path (path): processed folder path
+        """
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
-        """Check if the path for tarining and testing data 
-        exists in processed folder."""
+        """Check if the path for tarining and testing data
+        exists in processed folder.
+        
+        Returns:
+            raw_path (path): processed folder path
+        """
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
         ) and os.path.exists(
@@ -196,9 +208,9 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        interaction_matrix = torch.sparse.FloatTensor(
-                            i, v, torch.Size(shape)
-                            ).to_dense()
+        interaction_matrix = torch \
+                            .sparse \
+                            .FloatTensor(i, v, torch.Size(shape)).to_dense()
         return interaction_matrix
 
     def _parse(self, data):
@@ -252,24 +264,21 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (
-            train_raw,
-            test_raw,
-            item_metadata_raw,
-            genres_raw
-        ) = self._read_raw_movielens_data()
+        data = self._read_raw_movielens_data()
+        train_raw = data[0]
+        test_raw = data[1]
+        item_metadata_raw = data[2]
+        genres_raw = data[3]
 
-        (
-            num_users,
-            num_items
-        ) = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
+        train_parsed = self._parse(train_raw)
+        test_parsed = self._parse(test_raw)
 
-        train = self._build_interaction_matrix(num_users,
-                                            num_items,
-                                            self._parse(train_raw))
-        test = self._build_interaction_matrix(num_users,
-                                            num_items,
-                                            self._parse(test_raw))
+        num_users, num_items = self._get_dimensions(train_parsed, test_parsed)
+
+        train = self._build_interaction_matrix(num_users, num_items,
+                                               train_parsed)
+        test = self._build_interaction_matrix(num_users, num_items,
+                                              test_parsed)
         assert train.shape == test.shape
 
         with open(os.path.join(self.processed_folder, 
@@ -618,7 +627,7 @@ class MovieLens20M(Dataset):
                 Number of users interacted with each item.
         """
         if rating_cut:
-            ratings = ratings[ratings["rating"] > self.min_rating].sort_values(
+            ratings = ratings[ratings["rating"] >= self.min_rating].sort_values(
                 ["userId", "timestamp"]
             )
 

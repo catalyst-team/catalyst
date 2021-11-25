@@ -75,11 +75,15 @@ def test_download_split_by_ts():
 
     # check some random file from MovieLens
     assert (
-        os.path.isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
+        os.path \
+        .isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
     )
 
     # check if data file is not Nulll
-    assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
+    assert (
+        os.path \
+        .getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
+    )
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
@@ -87,26 +91,35 @@ def test_minimal_ranking():
     """
     Tets retrieveing the minimal ranking
     """
-    movielens_20m_min_two = MovieLens20M("./tmp_data", download=True, min_rating=2.0, sample=True)
+    movielens_20m_min_two = MovieLens20M(
+        "./tmp_data",
+        download=True,
+        min_rating=2.0,
+        sample=True,
+        n_rows=1000000,
+    )
 
     assert 1 not in movielens_20m_min_two[1]._values().unique()
     assert 1 not in movielens_20m_min_two[3]._values().unique()
-    assert 2 not in movielens_20m_min_two[4]._values().unique()
-    assert 2 not in movielens_20m_min_two[7]._values().unique()
     assert (
-        (3 in movielens_20m_min_two[1]._values().unique())
+        (2 in movielens_20m_min_two[1]._values().unique())
+        or 3 in movielens_20m_min_two[1]._values().unique()
         or (4 in movielens_20m_min_two[1]._values().unique())
         or (5 in movielens_20m_min_two[1]._values().unique())
+        or (len(movielens_20m_min_two[1]._values().unique()) == 0)
     )
     assert (
-        (3 in movielens_20m_min_two[7]._values().unique())
+        (2 in movielens_20m_min_two[7]._values().unique())
+        or (3 in movielens_20m_min_two[1]._values().unique())
         or (4 in movielens_20m_min_two[7]._values().unique())
         or (5 in movielens_20m_min_two[7]._values().unique())
+        or (len(movielens_20m_min_two[1]._values().unique()) == 0)
     )
     assert (
         (3 in movielens_20m_min_two[3]._values().unique())
         or (4 in movielens_20m_min_two[3]._values().unique())
         or (5 in movielens_20m_min_two[3]._values().unique())
+        or (len(movielens_20m_min_two[1]._values().unique()) == 0)
     )
 
 
@@ -121,7 +134,7 @@ def test_users_per_item_filtering():
         download=True,
         min_users_per_item=min_users_per_item,
         sample=True,
-        n_rows=100000,
+        n_rows=1000000,
     )
 
     assert (movielens_20m_min_users.users_activity["user_cnt"] >= min_users_per_item).any()
@@ -140,7 +153,7 @@ def test_items_per_user_filtering():
         min_items_per_user=min_items_per_user,
         min_users_per_item=min_users_per_item,
         sample=True,
-        n_rows=100000,
+        n_rows=1000000,
     )
 
     assert (movielens_20m_min_users.items_activity["item_cnt"] >= min_items_per_user).any()
