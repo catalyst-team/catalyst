@@ -310,7 +310,7 @@ class MovieLens20M(Dataset):
 
     The data set may be used for any research purposes
     under the following conditions:
-    
+
     The user may not state or imply any endorsement
     from the University of Minnesota or the GroupLens Research Group.
 
@@ -329,7 +329,7 @@ class MovieLens20M(Dataset):
     without warranty of any kind, either expressed or implied, including,
     but not limited to, the implied warranties of merchantability
     and fitness for a particular purpose.
-    
+
     The entire risk as to the quality and performance of them is with you.
     Should the program prove defective,
     you assume the cost of all necessary servicing, repair or correction.
@@ -751,18 +751,18 @@ class MovieLens20M(Dataset):
             2. Parse the rating dataset
             3. Split dataset into train and test
             4. Build user-item matrix interaction
-            4. Save in the .pt with torch.save
+            5. Save in the .pt with torch.save
 
         Args:
             split_by (string, optional): the splittage method.
                 `users` – split by users
                 `ts` - split by timestamp
+
         Raises:
             ValueError: If `split_by` argument is not equal `users` or `ts`
         """
         raw_data = self._read_raw_movielens_data()
 
-        movies = raw_data[0]
         ratings = raw_data[1]
 
         # TO-DO: add error handling
