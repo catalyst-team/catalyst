@@ -8,18 +8,17 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.layers import Flatten
-from catalyst.data import ImageToTensor
 
 
 def test_pruning_callback() -> None:
     """Quantize model"""
     loaders = {
         "train": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+            MNIST(os.getcwd(), train=False),
             batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+            MNIST(os.getcwd(), train=False),
             batch_size=32,
         ),
     }

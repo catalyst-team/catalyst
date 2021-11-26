@@ -142,7 +142,7 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -154,7 +154,7 @@ class CustomDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -166,7 +166,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}

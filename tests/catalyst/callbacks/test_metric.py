@@ -269,19 +269,13 @@ def test_reid_pipeline():
     with TemporaryDirectory() as logdir:
 
         # 1. train and valid loaders
-        transforms = data.Compose(
-            [data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))]
-        )
-
-        train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
+        train_dataset = MnistMLDataset(root=os.getcwd())
         sampler = data.BatchBalanceClassSampler(
             labels=train_dataset.get_labels(), num_classes=3, num_samples=10, num_batches=20
         )
         train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler, num_workers=0)
 
-        valid_dataset = MnistReIDQGDataset(
-            root=os.getcwd(), transform=transforms, gallery_fraq=0.2
-        )
+        valid_dataset = MnistReIDQGDataset(root=os.getcwd(), gallery_fraq=0.2)
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
 
         # 2. model and optimizer

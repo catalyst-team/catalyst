@@ -57,7 +57,7 @@ it's quite easy to create such complex pipeline with a few line of code:
                     batch_size=32
                 ),
                 "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(os.getcwd(), train=False),
                     batch_size=32
                 ),
             }
@@ -182,7 +182,7 @@ Due to multiprocessing setup during distrubuted training, the multistage runs lo
                     sampler=sampler, batch_size=32
                 ),
                 "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(os.getcwd(), train=False),
                     sampler=sampler, batch_size=32
                 ),
             }

@@ -40,10 +40,6 @@ class SklearnModelCallback(Callback):
             from catalyst.contrib import data, datasets, models, nn
 
             # 1. train and valid loaders
-            transforms = data.Compose([
-                data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))
-            ])
-
             train_dataset = datasets.MnistMLDataset(
                 root=os.getcwd(),
                 download=True,
@@ -129,10 +125,6 @@ class SklearnModelCallback(Callback):
             from catalyst.contrib import data, datasets, models, nn
 
             # 1. train and valid loaders
-            transforms = data.Compose([
-                data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))
-            ])
-
             train_dataset = datasets.MnistMLDataset(
                 root=os.getcwd(),
                 download=True,
