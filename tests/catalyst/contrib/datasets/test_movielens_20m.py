@@ -3,8 +3,6 @@ import shutil
 
 import pytest
 
-import torch
-
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
