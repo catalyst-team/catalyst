@@ -39,9 +39,10 @@ class MNIST(Dataset):
         download (bool, optional): If true, downloads the dataset from
             the internet and puts it in root directory. If dataset
             is already downloaded, it is not downloaded again.
-        normalize: mean and std deviation of the MNIST dataset.
+        normalize (tuple, optional): mean and std 
+            for the MNIST dataset normalization.
         numpy (bool, optional): boolean flag to return an np.ndarray,
-            rather than torch.tensor (default: False)
+            rather than torch.tensor (default: False).
 
     Raises:
         RuntimeError: If ``download is False`` and the dataset not found.
