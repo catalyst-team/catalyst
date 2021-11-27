@@ -273,6 +273,10 @@ class MnistQGDataset(QueryGalleryDataset):
 
     For this dataset we used only test part of the MNIST and only
     those images that are labeled as 5, 6, 7, 8, 9.
+
+    Args:
+        gallery_fraq: gallery size
+        **kwargs: MNIST args
     """
 
     _split = 5
@@ -285,12 +289,7 @@ class MnistQGDataset(QueryGalleryDataset):
     ]
 
     def __init__(self, gallery_fraq: Optional[float] = 0.2, **kwargs) -> None:
-        """
-        Args:
-            root: root directory for storing dataset
-            transform: transform
-            gallery_fraq: gallery size
-        """
+        """Init."""
         self._mnist = MNIST(train=False, **kwargs)
         self._filter()
 
