@@ -1004,33 +1004,37 @@ is already downloaded, it is not downloaded again</p></li>
 <h3>MNIST<a class="headerlink" href="#mnist" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.mnist.MNIST">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MNIST</code><span class="sig-paren">(</span><em class="sig-param">root</em>, <em class="sig-param">train=True</em>, <em class="sig-param">transform=None</em>, <em class="sig-param">target_transform=None</em>, <em class="sig-param">download=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MNIST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MNIST" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MNIST</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = True</em>, <em class="sig-param">normalize: tuple = (0.1307</em>, <em class="sig-param">0.3081)</em>, <em class="sig-param">numpy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MNIST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MNIST" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p><a class="reference external" href="http://yann.lecun.com/exdb/mnist/">MNIST</a> Dataset.</p>
-<dl class="method">
-<dt id="catalyst.contrib.datasets.mnist.MNIST.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root</em>, <em class="sig-param">train=True</em>, <em class="sig-param">transform=None</em>, <em class="sig-param">target_transform=None</em>, <em class="sig-param">download=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MNIST.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MNIST.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>root</strong> – Root directory of dataset where
-<code class="docutils literal notranslate"><span class="pre">MNIST/processed/training.pt</span></code>
-and  <code class="docutils literal notranslate"><span class="pre">MNIST/processed/test.pt</span></code> exist.</p></li>
-<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, creates dataset from
-<code class="docutils literal notranslate"><span class="pre">training.pt</span></code>, otherwise from <code class="docutils literal notranslate"><span class="pre">test.pt</span></code>.</p></li>
-<li><p><strong>download</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, downloads the dataset from
-the internet and puts it in root directory. If dataset
-is already downloaded, it is not downloaded again.</p></li>
-<li><p><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that
-takes in an image and returns a transformed version.</p></li>
-<li><p><strong>target_transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform
-that takes in the target and transforms it.</p></li>
-</ul>
+<p><a class="reference external" href="http://yann.lecun.com/exdb/mnist/">MNIST</a> Dataset for testing purposes.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>root: Root directory of dataset where</dt><dd><p><code class="docutils literal notranslate"><span class="pre">MNIST/processed/training.pt</span></code>
+and  <code class="docutils literal notranslate"><span class="pre">MNIST/processed/test.pt</span></code> exist.</p>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">is</span> <span class="pre">False</span></code> and the dataset not found.</p>
+<dt>train (bool, optional): If True, creates dataset from</dt><dd><p><code class="docutils literal notranslate"><span class="pre">training.pt</span></code>, otherwise from <code class="docutils literal notranslate"><span class="pre">test.pt</span></code>.</p>
+</dd>
+<dt>download (bool, optional): If true, downloads the dataset from</dt><dd><p>the internet and puts it in root directory. If dataset
+is already downloaded, it is not downloaded again.</p>
+</dd>
+<dt>normalize (tuple, optional): mean and std</dt><dd><p>for the MNIST dataset normalization.</p>
+</dd>
+<dt>numpy (bool, optional): boolean flag to return an np.ndarray,</dt><dd><p>rather than torch.tensor (default: False).</p>
 </dd>
 </dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">is</span> <span class="pre">False</span></code> and the dataset not found.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MNIST.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = True</em>, <em class="sig-param">normalize: tuple = (0.1307</em>, <em class="sig-param">0.3081)</em>, <em class="sig-param">numpy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MNIST.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MNIST.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
 </dd></dl>
 
 </dd></dl>

@@ -26,7 +26,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
         ),
     }
 
@@ -115,7 +115,7 @@ Multi-model example:
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
         ),
     }
 
@@ -210,7 +210,7 @@ Multi-optimizer example:
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
         ),
     }
 
@@ -307,7 +307,7 @@ Multi-criterion example:
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
         ),
     }
 

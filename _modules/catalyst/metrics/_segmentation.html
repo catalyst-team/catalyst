@@ -585,7 +585,7 @@
 <span class="sd">        from torch import nn</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl</span>
-<span class="sd">        from catalyst.contrib import ImageToTensor, IoULoss, MNIST</span>
+<span class="sd">        from catalyst.contrib import IoULoss, MNIST</span>
 
 <span class="sd">        model = nn.Sequential(</span>
 <span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
@@ -596,11 +596,11 @@
 
 <span class="sd">        loaders = {</span>
 <span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=True),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=False),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">        }</span>
@@ -719,7 +719,7 @@
 <span class="sd">        from torch import nn</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl</span>
-<span class="sd">        from catalyst.contrib import ImageToTensor, IoULoss, MNIST</span>
+<span class="sd">        from catalyst.contrib import IoULoss, MNIST</span>
 
 <span class="sd">        model = nn.Sequential(</span>
 <span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
@@ -730,11 +730,11 @@
 
 <span class="sd">        loaders = {</span>
 <span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=True),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=False),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">        }</span>
@@ -857,7 +857,7 @@
 <span class="sd">        from torch import nn</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl</span>
-<span class="sd">        from catalyst.contrib import ImageToTensor, IoULoss, MNIST</span>
+<span class="sd">        from catalyst.contrib import IoULoss, MNIST</span>
 
 <span class="sd">        model = nn.Sequential(</span>
 <span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
@@ -868,11 +868,11 @@
 
 <span class="sd">        loaders = {</span>
 <span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=True),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),</span>
+<span class="sd">                MNIST(os.getcwd(), train=False),</span>
 <span class="sd">                batch_size=32</span>
 <span class="sd">            ),</span>
 <span class="sd">        }</span>

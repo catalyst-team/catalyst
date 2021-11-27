@@ -25,7 +25,7 @@ Suppose you have the following pipeline with MNIST Classification:
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
        ),
     }
 
@@ -75,7 +75,7 @@ As a best practice scenario for this case:
 
         def get_loaders(self, stage: str):
             train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
-            valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+            valid_data = MNIST(os.getcwd(), train=False)
             loaders = {
                 "train": DataLoader(
                     train_data, sampler=DistributedSampler(dataset=train_data), batch_size=32

@@ -348,26 +348,20 @@
 <span class="sd">            from torch.utils.data import DataLoader</span>
 
 <span class="sd">            from catalyst import dl</span>
-<span class="sd">            from catalyst.data import ToTensor</span>
-<span class="sd">            from catalyst.contrib.datasets import MNIST</span>
-<span class="sd">            from catalyst.contrib.layers import Flatten</span>
+<span class="sd">            from catalyst.contrib import MNIST</span>
 
 <span class="sd">            loaders = {</span>
 <span class="sd">                &quot;train&quot;: DataLoader(</span>
-<span class="sd">                    MNIST(</span>
-<span class="sd">                        os.getcwd(), train=False, download=True, transform=ToTensor()</span>
-<span class="sd">                    ),</span>
+<span class="sd">                    MNIST(os.getcwd(), train=True),</span>
 <span class="sd">                    batch_size=32,</span>
 <span class="sd">                ),</span>
 <span class="sd">                &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                    MNIST(</span>
-<span class="sd">                        os.getcwd(), train=False, download=True, transform=ToTensor()</span>
-<span class="sd">                    ),</span>
+<span class="sd">                    MNIST(os.getcwd(), train=False),</span>
 <span class="sd">                    batch_size=32,</span>
 <span class="sd">                ),</span>
 <span class="sd">            }</span>
 
-<span class="sd">            model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))</span>
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))</span>
 <span class="sd">            criterion = nn.CrossEntropyLoss()</span>
 <span class="sd">            optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)</span>
 <span class="sd">            runner = dl.SupervisedRunner()</span>

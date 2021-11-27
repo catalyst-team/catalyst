@@ -345,7 +345,7 @@
 <span class="sd">        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())</span>
 <span class="sd">        train_labels = train_data.targets.cpu().numpy().tolist()</span>
 <span class="sd">        train_sampler = BalanceClassSampler(train_labels, mode=5000)</span>
-<span class="sd">        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())</span>
+<span class="sd">        valid_data = MNIST(os.getcwd(), train=False)</span>
 
 <span class="sd">        loaders = {</span>
 <span class="sd">            &quot;train&quot;: DataLoader(train_data, sampler=train_sampler, batch_size=32),</span>
@@ -462,7 +462,7 @@
 <span class="sd">        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())</span>
 <span class="sd">        train_labels = train_data.targets.cpu().numpy().tolist()</span>
 <span class="sd">        train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)</span>
-<span class="sd">        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())</span>
+<span class="sd">        valid_data = MNIST(os.getcwd(), train=False)</span>
 
 <span class="sd">        loaders = {</span>
 <span class="sd">            &quot;train&quot;: DataLoader(train_data, batch_sampler=train_sampler),</span>

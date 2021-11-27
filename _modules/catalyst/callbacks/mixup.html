@@ -348,7 +348,6 @@
 <span class="sd">        from catalyst import dl</span>
 <span class="sd">        from catalyst.callbacks import MixupCallback</span>
 <span class="sd">        from catalyst.contrib.datasets import MNIST</span>
-<span class="sd">        from catalyst.contrib.data.transforms import ImageToTensor</span>
 
 
 <span class="sd">        class SimpleNet(nn.Module):</span>
@@ -367,9 +366,7 @@
 
 <span class="sd">        class SimpleDataset(torch.utils.data.Dataset):</span>
 <span class="sd">            def __init__(self, train: bool = False):</span>
-<span class="sd">                self.mnist = MNIST(</span>
-<span class="sd">                    os.getcwd(), train=train, download=True, transform=ImageToTensor()</span>
-<span class="sd">                )</span>
+<span class="sd">                self.mnist = MNIST(os.getcwd(), train=train)</span>
 
 <span class="sd">            def __len__(self) -&gt; int:</span>
 <span class="sd">                return len(self.mnist)</span>

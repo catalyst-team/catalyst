@@ -351,10 +351,6 @@
 <span class="sd">            from catalyst.contrib import data, datasets, models, nn</span>
 
 <span class="sd">            # 1. train and valid loaders</span>
-<span class="sd">            transforms = data.Compose([</span>
-<span class="sd">                data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))</span>
-<span class="sd">            ])</span>
-
 <span class="sd">            train_dataset = datasets.MnistMLDataset(</span>
 <span class="sd">                root=os.getcwd(),</span>
 <span class="sd">                download=True,</span>
@@ -440,10 +436,6 @@
 <span class="sd">            from catalyst.contrib import data, datasets, models, nn</span>
 
 <span class="sd">            # 1. train and valid loaders</span>
-<span class="sd">            transforms = data.Compose([</span>
-<span class="sd">                data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))</span>
-<span class="sd">            ])</span>
-
 <span class="sd">            train_dataset = datasets.MnistMLDataset(</span>
 <span class="sd">                root=os.getcwd(),</span>
 <span class="sd">                download=True,</span>
