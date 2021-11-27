@@ -1,6 +1,5 @@
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 import os
-from pickle import NONE
 
 import torch
 from torch.utils.data import Dataset
@@ -135,9 +134,11 @@ class MNIST(Dataset):
         return img, target
 
     def __len__(self):
+        """Length."""
         return len(self.data)
 
     def __repr__(self):
+        """Repr."""
         head = "Dataset " + self.cache_folder
         body = ["Number of datapoints: {}".format(self.__len__())]
         if self.root is not None:
@@ -152,6 +153,7 @@ class MNIST(Dataset):
     def normalize_tensor(
         tensor: torch.Tensor, mean: float = 0.0, std: float = 1.0
     ) -> torch.Tensor:
+        """Internal tensor normalization."""
         mean = torch.as_tensor(mean, dtype=tensor.dtype, device=tensor.device)
         std = torch.as_tensor(std, dtype=tensor.dtype, device=tensor.device)
         return tensor.sub(mean).div(std)

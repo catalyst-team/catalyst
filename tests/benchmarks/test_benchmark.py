@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from typing import Any, Mapping
 from collections import OrderedDict
 import enum
