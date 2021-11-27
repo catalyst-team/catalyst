@@ -378,35 +378,42 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def __init__(
         self,
-        address: str = None,
-        port: Union[str, int] = None,
+        address: str = "127.0.0.1",
+        port: Union[str, int] = 12345,
+        num_nodes: int = 1,
+        node_rank: int = 0,
+        num_proc_per_node: int = 0,
+        process_group_kwargs: Dict[str, Any] = None,
         sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
-        process_group_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__()
-        self.address = address or "localhost"
-        self.port = port or 12345
-        self._sync_bn = sync_bn
-        self._rank = 0
-        self._device = None
+        self.address = address
+        self.port = port
+        self.node_rank = node_rank
+        self.num_proc_per_node = num_proc_per_node or torch.cuda.device_count()
+        # TODO:
+        #  it is assumed that each node has the same number of GPUs
+        #  but if replace `num_nodes`, `node_rank`, and `num_proc_per_node` params
+        #  with `number_of_inited_processes` and `num_proc` (on this device)
+        #  it will be allowed to run training on nodes with different # of GPUs
+        self._world_size = num_nodes * self.num_proc_per_node
 
-        if ddp_kwargs is None:
-            ddp_kwargs = {}
-        self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
+        self._local_rank = -1  # defined in `setup_process(...)`
+        self._device = None  # defined in `setup_process(...)`
 
-        if process_group_kwargs is None:
-            process_group_kwargs = {}
-        self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
-        # add missing arguments
-        if "backend" not in self.process_group_kwargs:
-            self.process_group_kwargs["backend"] = "nccl"
-        if "world_size" not in self.process_group_kwargs:
-            self.process_group_kwargs["world_size"] = torch.cuda.device_count()
-
+        process_group_kwargs = process_group_kwargs or {}
+        self.process_group_kwargs = {
+            "backend": "nccl",
+            "world_size": self._world_size,
+            **process_group_kwargs,
+        }
         self._backend = self.process_group_kwargs["backend"]
-        self._world_size = self.process_group_kwargs["world_size"]
+
+        self._sync_bn = sync_bn
+        ddp_kwargs = ddp_kwargs or {}
+        self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
 
     def __repr__(self):  # noqa: D105
         return (
@@ -419,7 +426,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     @property
     def rank(self) -> int:
         """Process rank for distributed training."""
-        return self._rank
+        return self._local_rank
 
     @property
     def world_size(self) -> int:
@@ -457,7 +464,9 @@ class DistributedDataParallelEngine(DeviceEngine):
             wrapped function.
         """
         return torch.multiprocessing.spawn(
-            fn, args=(self._world_size,), nprocs=self._world_size, join=True
+            fn, args=(self.world_size,),
+            nprocs=self.num_proc_per_node,
+            join=True
         )
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -467,20 +476,18 @@ class DistributedDataParallelEngine(DeviceEngine):
             rank: process rank. Default is `-1`.
             world_size: number of devices in netwok to expect for train. Default is `1`.
         """
-        self._rank = rank
-        self._world_size = world_size
-        torch.cuda.set_device(int(self._rank))
-        self._device = f"cuda:{int(self._rank)}"
+        self._local_rank = rank
+        torch.cuda.set_device(int(rank))
+        self._device = f"cuda:{int(rank)}"
 
-        self.process_group_kwargs["rank"] = rank
-        self.process_group_kwargs["world_size"] = world_size
+        dist_rank = self.node_rank * self.num_proc_per_node + rank
 
-        os.environ["RANK"] = str(self._rank)
-        os.environ["LOCAL_RANK"] = str(self._rank)
-        os.environ["WORLD_SIZE"] = str(self._world_size)
+        os.environ["RANK"] = str(dist_rank)
+        os.environ["LOCAL_RANK"] = str(rank)
+        os.environ["WORLD_SIZE"] = str(self.world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-        dist.init_process_group(**self.process_group_kwargs)
+        dist.init_process_group(rank=rank, **self.process_group_kwargs)
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
@@ -529,16 +536,19 @@ class DistributedDataParallelEngine(DeviceEngine):
             model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
         else:
             raise ValueError("Model should be ``nn.Module`` or ``dict``")
+
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
+
         # optimizer
-        optimizer = optimizer_fn()
+        optimizer = optimizer_fn(model.parameters())
         optimizer = self.sync_device(optimizer)
         # scheduler
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         dist.barrier()
+
         return model, criterion, optimizer, scheduler
 
 
