@@ -58,13 +58,13 @@ def train_experiment(device, engine=None):
 
         transform_original = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
 
-        mnist = MNIST("./logdir", train=True, download=True, normalize=None)
+        mnist = MNIST("./logdir", train=True, download=True, normalize=None, numpy=True)
         contrastive_mnist = SelfSupervisedDatasetWrapper(
             mnist, transforms=transforms, transform_original=transform_original
         )
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
-        mnist_valid = MNIST("./logdir", train=False, download=True, normalize=None)
+        mnist_valid = MNIST("./logdir", train=False, download=True, normalize=None, numpy=True)
         contrastive_valid = SelfSupervisedDatasetWrapper(
             mnist_valid, transforms=transforms, transform_original=transform_original
         )

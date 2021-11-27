@@ -41,6 +41,8 @@ class MNIST(Dataset):
             the internet and puts it in root directory. If dataset
             is already downloaded, it is not downloaded again.
         normalize: mean and std deviation of the MNIST dataset.
+        numpy (bool, optional): boolean flag to return an np.ndarray,
+            rather than torch.tensor (default: False)
 
     Raises:
         RuntimeError: If ``download is False`` and the dataset not found.
@@ -90,6 +92,7 @@ class MNIST(Dataset):
         train: bool = True,
         download: bool = True,
         normalize: tuple = (0.1307, 0.3081),
+        numpy: bool = False,
     ):
         """Init."""
         if isinstance(root, torch._six.string_classes):
@@ -99,6 +102,7 @@ class MNIST(Dataset):
         self.normalize = normalize
         if self.normalize is not None:
             assert len(self.normalize) == 2, "normalize should be (mean, variance)"
+        self.numpy = numpy
 
         if download:
             self.download()
@@ -125,6 +129,8 @@ class MNIST(Dataset):
         img, target = self.data[index].float().unsqueeze(0), int(self.targets[index])
         if self.normalize is not None:
             img = self.normalize_tensor(img, *self.normalize)
+        if self.numpy:
+            img = img.cpu().numpy()[0]
 
         return img, target
 

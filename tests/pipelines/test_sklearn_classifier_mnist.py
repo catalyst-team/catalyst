@@ -7,18 +7,19 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 
 import torch
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
 from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.losses import TripletMarginLossWithSampler
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 1
+TRAIN_EPOCH = 3
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -57,7 +58,7 @@ def train_experiment(device, engine=None):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):

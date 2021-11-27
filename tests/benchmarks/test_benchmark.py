@@ -199,7 +199,7 @@ def assert_absolute_equal(catalyst_values, torch_values, max_diff: float, norm: 
         (TestMnistRunner, 4, 3, 2, 0.1, 0.001),
     ],
 )
-@pytest.mark.skipif(IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
+@pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
     tmpdir,
     irunner: dl.IRunner,

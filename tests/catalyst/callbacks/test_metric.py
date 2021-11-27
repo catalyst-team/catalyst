@@ -220,7 +220,7 @@ def test_metric_learning_pipeline():
             labels=dataset_train.get_labels(), num_classes=3, num_samples=10, num_batches=10
         )
         train_loader = DataLoader(dataset=dataset_train, batch_sampler=sampler, num_workers=0)
-        dataset_val = datasets.MnistQGDataset(root=tmp_dir, transform=None, gallery_fraq=0.2)
+        dataset_val = datasets.MnistQGDataset(root=tmp_dir, gallery_fraq=0.2)
         val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
         model = DummyModel(num_features=28 * 28, num_classes=NUM_CLASSES)
@@ -324,4 +324,4 @@ def test_reid_pipeline():
             num_epochs=10,
         )
         assert "cmc01" in runner.loader_metrics
-        assert runner.loader_metrics["cmc01"] > 0.7
+        assert runner.loader_metrics["cmc01"] > 0.65
