@@ -66,7 +66,7 @@ class AdditiveMetric(IMetric):
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }

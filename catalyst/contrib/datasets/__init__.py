@@ -32,6 +32,7 @@ from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
     MnistQGDataset,
     MNIST,
+    PartialMNIST,
 )
 
 if SETTINGS.ml_required:

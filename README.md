@@ -61,14 +61,14 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=True)
+valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
     "train": DataLoader(train_data, batch_size=32),
     "valid": DataLoader(valid_data, batch_size=32),
@@ -247,13 +247,13 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=True)
+valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
     "train": DataLoader(train_data, batch_size=32),
     "valid": DataLoader(valid_data, batch_size=32),
@@ -649,14 +649,14 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=True)
+valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
     "train": DataLoader(train_data, batch_size=32),
     "valid": DataLoader(valid_data, batch_size=32),
@@ -703,7 +703,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib import ImageToTensor, IoULoss, MNIST
+from catalyst.contrib import IoULoss, MNIST
 
 
 model = nn.Sequential(
@@ -713,8 +713,8 @@ model = nn.Sequential(
 criterion = IoULoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
-train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=True)
+valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
     "train": DataLoader(train_data, batch_size=32),
     "valid": DataLoader(valid_data, batch_size=32),
@@ -764,7 +764,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 # [!] teacher model should be already pretrained
 teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -772,8 +772,8 @@ student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
 optimizer = optim.Adam(student.parameters(), lr=0.02)
 
-train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=True)
+valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
     "train": DataLoader(train_data, batch_size=32),
     "valid": DataLoader(valid_data, batch_size=32),
@@ -833,18 +833,13 @@ from catalyst.contrib import data, datasets, models, nn
 
 
 # 1. train and valid loaders
-transforms = data.Compose([
-    data.ImageToTensor(), 
-    data.NormalizeImage((0.1307,), (0.3081,))
-])
-
-train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
+train_dataset = datasets.MnistMLDataset(root=os.getcwd())
 sampler = BatchBalanceClassSampler(
     labels=train_dataset.get_labels(), num_classes=5, num_samples=10, num_batches=10
 )
 train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
-valid_dataset = datasets.MnistQGDataset(root=os.getcwd(), transform=transforms, gallery_fraq=0.2)
+valid_dataset = datasets.MnistQGDataset(root=os.getcwd(), gallery_fraq=0.2)
 valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
 
 # 2. model and optimizer
@@ -916,7 +911,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib import Flatten, GlobalMaxPool2d, Lambda, MNIST, ImageToTensor
+from catalyst.contrib import Flatten, GlobalMaxPool2d, Lambda, MNIST
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -947,7 +942,7 @@ optimizer = {
     "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
-train_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+train_data = MNIST(os.getcwd(), train=False)
 loaders = {"train": DataLoader(train_data, batch_size=32)}
 
 class CustomRunner(dl.Runner):
@@ -1055,7 +1050,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -1108,8 +1103,8 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+        train_data = MNIST(os.getcwd(), train=True)
+        valid_data = MNIST(os.getcwd(), train=False)
         loaders = {
             "train": DataLoader(train_data, batch_size=32),
             "valid": DataLoader(valid_data, batch_size=32),
@@ -1181,7 +1176,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 
 class CustomRunner(dl.IRunner):
@@ -1208,8 +1203,8 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+        train_data = MNIST(os.getcwd(), train=True)
+        valid_data = MNIST(os.getcwd(), train=False)
         loaders = {
             "train": DataLoader(train_data, batch_size=32),
             "valid": DataLoader(valid_data, batch_size=32),
@@ -1288,7 +1283,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 
 class CustomRunner(dl.IRunner):
@@ -1314,8 +1309,8 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+        train_data = MNIST(os.getcwd(), train=True)
+        valid_data = MNIST(os.getcwd(), train=False)
         loaders = {
             "train": DataLoader(train_data, batch_size=32),
             "valid": DataLoader(valid_data, batch_size=32),
@@ -1402,15 +1397,15 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib import ImageToTensor, MNIST
+from catalyst.contrib import MNIST
 
 
 def objective(trial):
     lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
     num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+    train_data = MNIST(os.getcwd(), train=True)
+    valid_data = MNIST(os.getcwd(), train=False)
     loaders = {
         "train": DataLoader(train_data, batch_size=32),
         "valid": DataLoader(valid_data, batch_size=32),

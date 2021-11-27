@@ -47,7 +47,7 @@ def generate_valid_labels(num: int) -> TLabelsPK:
 def test_balance_class_sampler():
     """Test for BalanceClassSampler."""
     bs = 32
-    data = MNIST(os.getcwd(), train=False, download=True)
+    data = MNIST(os.getcwd(), train=False)
     for mode in ["downsampling", "upsampling", 100, 200, 500]:
         sampler = BalanceClassSampler(data.targets.cpu().numpy().tolist(), mode=mode)
         loader = DataLoader(data, sampler=sampler, batch_size=bs)
@@ -67,7 +67,7 @@ def test_balance_class_sampler():
 
 def test_batch_balance_class_sampler():
     """Test for BatchBalanceClassSampler."""
-    data = MNIST(os.getcwd(), train=False, download=True)
+    data = MNIST(os.getcwd(), train=False)
     for num_classes in [2, 3, 5, 10]:
         for num_samples in [2, 5, 10, 50]:
             sampler = BatchBalanceClassSampler(

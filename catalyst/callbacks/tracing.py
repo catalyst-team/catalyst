@@ -38,13 +38,13 @@ class TracingCallback(Callback):
             loaders = {
                 "train": DataLoader(
                     MNIST(
-                        os.getcwd(), train=False, download=True, transform=ToTensor()
+                        os.getcwd(), train=False
                     ),
                     batch_size=32,
                 ),
                 "valid": DataLoader(
                     MNIST(
-                        os.getcwd(), train=False, download=True, transform=ToTensor()
+                        os.getcwd(), train=False
                     ),
                     batch_size=32,
                 ),
@@ -100,13 +100,13 @@ class TracingCallback(Callback):
                 loaders = {
                     "train": DataLoader(
                         MNIST(
-                            os.getcwd(), train=False, download=True, transform=ToTensor()
+                            os.getcwd(), train=False
                         ),
                         batch_size=32,
                     ),
                     "valid": DataLoader(
                         MNIST(
-                            os.getcwd(), train=False, download=True, transform=ToTensor()
+                            os.getcwd(), train=False
                         ),
                         batch_size=32,
                     ),

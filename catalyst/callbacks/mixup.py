@@ -37,7 +37,6 @@ class MixupCallback(Callback):
         from catalyst import dl
         from catalyst.callbacks import MixupCallback
         from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.data.transforms import ImageToTensor
 
 
         class SimpleNet(nn.Module):
@@ -56,9 +55,7 @@ class MixupCallback(Callback):
 
         class SimpleDataset(torch.utils.data.Dataset):
             def __init__(self, train: bool = False):
-                self.mnist = MNIST(
-                    os.getcwd(), train=train, download=True, transform=ImageToTensor()
-                )
+                self.mnist = MNIST(os.getcwd(), train=train)
 
             def __len__(self) -> int:
                 return len(self.mnist)

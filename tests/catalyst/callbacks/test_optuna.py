@@ -9,7 +9,6 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.layers import Flatten
-from catalyst.data import ImageToTensor
 from catalyst.dl import AccuracyCallback
 from catalyst.settings import SETTINGS
 
@@ -21,8 +20,8 @@ if SETTINGS.optuna_required:
 
 @pytest.mark.skipif(not (SETTINGS.optuna_required), reason="No optuna required")
 def test_optuna():
-    trainset = MNIST("./data", train=False, download=True, transform=ImageToTensor())
-    testset = MNIST("./data", train=False, download=True, transform=ImageToTensor())
+    trainset = MNIST("./data", train=False)
+    testset = MNIST("./data", train=False)
     loaders = {
         "train": DataLoader(trainset, batch_size=32),
         "valid": DataLoader(testset, batch_size=64),

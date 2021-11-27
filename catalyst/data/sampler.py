@@ -34,7 +34,7 @@ class BalanceClassSampler(Sampler):
         train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
         train_labels = train_data.targets.cpu().numpy().tolist()
         train_sampler = BalanceClassSampler(train_labels, mode=5000)
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        valid_data = MNIST(os.getcwd(), train=False)
 
         loaders = {
             "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
@@ -151,7 +151,7 @@ class BatchBalanceClassSampler(Sampler):
         train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
         train_labels = train_data.targets.cpu().numpy().tolist()
         train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
-        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        valid_data = MNIST(os.getcwd(), train=False)
 
         loaders = {
             "train": DataLoader(train_data, batch_sampler=train_sampler),
