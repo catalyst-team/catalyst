@@ -383,6 +383,9 @@ class DistributedDataParallelEngine(DeviceEngine):
         num_nodes: int = 1,
         node_rank: int = 0,
         num_proc_per_node: int = 0,
+        # num_processes: int = N,
+        # num_workers_on_node: int = K
+        # start_rank: int = 0,
         process_group_kwargs: Dict[str, Any] = None,
         sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
@@ -464,7 +467,7 @@ class DistributedDataParallelEngine(DeviceEngine):
             wrapped function.
         """
         return torch.multiprocessing.spawn(
-            fn, args=(self.world_size,),
+            fn, args=(self._world_size,),
             nprocs=self.num_proc_per_node,
             join=True
         )
@@ -484,7 +487,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         os.environ["RANK"] = str(dist_rank)
         os.environ["LOCAL_RANK"] = str(rank)
-        os.environ["WORLD_SIZE"] = str(self.world_size)
+        os.environ["WORLD_SIZE"] = str(self._world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(rank=rank, **self.process_group_kwargs)
@@ -506,7 +509,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         Returns:
             torch.Tensor with synchronized values.
         """
-        return ddp_reduce(tensor, mode, self.world_size)
+        return ddp_reduce(tensor, mode, self._world_size)
 
     def sync_metrics(self, metrics: Dict) -> Dict:
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
@@ -542,10 +545,10 @@ class DistributedDataParallelEngine(DeviceEngine):
         criterion = self.sync_device(criterion)
 
         # optimizer
-        optimizer = optimizer_fn(model.parameters())
+        optimizer = optimizer_fn(model)
         optimizer = self.sync_device(optimizer)
         # scheduler
-        scheduler = scheduler_fn()
+        scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
         dist.barrier()
 
