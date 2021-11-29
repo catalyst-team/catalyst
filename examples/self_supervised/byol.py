@@ -18,8 +18,8 @@ if __name__ == "__main__":
     # create model and optimizer
     model = nn.ModuleDict(
         {
-            "online": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
-            "target": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
+            "online": get_contrastive_model(args.feature_dim),
+            "target": get_contrastive_model(args.feature_dim),
         }
     )
     utils.set_requires_grad(model["target"], False)

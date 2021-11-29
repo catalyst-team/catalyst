@@ -22,7 +22,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # create model and optimizer
-    model = get_contrastive_model(args.feature_dim, args.arch, args.frozen)
+    model = get_contrastive_model(args.feature_dim)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
     # define criterion

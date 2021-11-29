@@ -77,6 +77,7 @@ datasets = {
                     p=0.8,
                 ),
                 torchvision.transforms.RandomGrayscale(p=0.1),
+                torchvision.transforms.RandomCrop(32),
                 # torchvision.transforms.RandomResizedCrop(
                 #     64, scale=(0.2, 1.0), ratio=(0.75, (4 / 3)), interpolation=Image.BICUBIC,
                 # ),

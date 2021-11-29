@@ -8,7 +8,7 @@ from catalyst import utils
 from catalyst.contrib import nn
 from catalyst.contrib.models import ResnetEncoder
 from catalyst.data import SelfSupervisedDatasetWrapper
-
+from resnet9 import resnet9
 
 def add_arguments(parser) -> None:
     """Function to add common arguments to argparse:
@@ -45,12 +45,6 @@ def add_arguments(parser) -> None:
     )
     parser.add_argument(
         "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
-    )
-    parser.add_argument(
-        "--arch",
-        default="resnet50",
-        type=str,
-        choices=["resnet18", "resnet34", "resnet50", "resnet101", "resnet152"],
     )
     utils.boolean_flag(parser=parser, name="frozen", default=False)
     parser.add_argument(
@@ -117,13 +111,25 @@ def get_loaders(
     transforms = datasets[dataset]["train_transform"]
     transform_original = datasets[dataset]["valid_transform"]
 
+    
+
+    if dataset == "STL10":
+        train_dataset_kwargs = {"root": "data", "split" : "train", "transform" : None, "download" : True}
+        test_dataset_kwargs = {"root": "data", "split" : "test", "transform" : None, "download" : True}
+    elif dataset == "CIFAR-10":
+        train_dataset_kwargs = {"root": "data", "train": True, "transform": None, "download": True}
+        test_dataset_kwargs = {"root": "data", "train": False, "transform": None, "download": True}
+    elif dataset == "CIFAR-100":
+        train_dataset_kwargs = {"root": "data", "train": True, "transform": None, "download": True}
+        test_dataset_kwargs = {"root": "data", "train": False, "transform": None, "download": True}
+
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        datasets[dataset]["dataset"](**train_dataset_kwargs),
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        datasets[dataset]["dataset"](**test_dataset_kwargs),
         transforms=transforms,
         transform_original=transform_original,
     )
@@ -133,10 +139,8 @@ def get_loaders(
 
     return {"train": train_loader, "valid": valid_loader}
 
-
 def get_contrastive_model(
-    feature_dim: int, arch: str = "resnet50", frozen: bool = False
-) -> ContrastiveModel:
+    feature_dim: int, out_features = 128) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
@@ -148,9 +152,9 @@ def get_contrastive_model(
     Returns:
         ContrstiveModel instance
     """
-    encoder = ResnetEncoder(arch=arch, frozen=frozen)
+    encoder = resnet9(in_channels = 3, out_features = out_features)
     projection_head = nn.Sequential(
-        nn.Linear(encoder.out_features, 512, bias=False),
+        nn.Linear(out_features, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, feature_dim, bias=True),
     )

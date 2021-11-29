@@ -22,7 +22,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # create model and optimizer
-    model = get_contrastive_model(args.feature_dim, args.arch, args.frozen)
+    model = get_contrastive_model(args.feature_dim)
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
     # define criterion with triplets sampling
