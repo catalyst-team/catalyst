@@ -4,9 +4,10 @@ from datasets import datasets
 import torch
 from torch.utils.data import DataLoader
 
+from catalyst import utils
 from catalyst.contrib import nn
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
+from catalyst.contrib.models import ResnetEncoder
+from catalyst.data import SelfSupervisedDatasetWrapper
 
 
 def add_arguments(parser) -> None:
@@ -24,19 +25,11 @@ def add_arguments(parser) -> None:
         parser: argparser like object
     """
     parser.add_argument(
-        "--feature_dim", default=128, type=int, help="Feature dim for latent vector"
-    )
-    parser.add_argument(
-        "--temperature", default=0.5, type=float, help="Temperature used in softmax"
-    )
-    parser.add_argument(
-        "--batch_size", default=512, type=int, help="Number of images in each mini-batch"
-    )
-    parser.add_argument(
-        "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
-    )
-    parser.add_argument(
-        "--num_workers", default=8, type=float, help="Number of workers to process a dataloader"
+        "--dataset",
+        default="CIFAR-10",
+        type=str,
+        choices=datasets.keys(),
+        help="Dataset: CIFAR-10, CIFAR-100 or STL10",
     )
     parser.add_argument(
         "--logdir",
@@ -45,15 +38,32 @@ def add_arguments(parser) -> None:
         help="Logs directory (tensorboard, weights, etc)",
     )
     parser.add_argument(
-        "--dataset",
-        default="CIFAR-10",
+        "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
+    )
+    parser.add_argument(
+        "--num-workers", default=1, type=float, help="Number of workers to process a dataloader"
+    )
+    parser.add_argument(
+        "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
+    )
+    parser.add_argument(
+        "--arch",
+        default="resnet50",
         type=str,
-        choices=datasets.keys(),
-        help="Dataset: CIFAR-10, CIFAR-100 or STL10",
+        choices=["resnet18", "resnet34", "resnet50", "resnet101", "resnet152"],
+    )
+    utils.boolean_flag(parser=parser, name="frozen", default=False)
+    parser.add_argument(
+        "--feature-dim", default=128, type=int, help="Feature dim for latent vector"
+    )
+    parser.add_argument(
+        "--temperature", default=0.5, type=float, help="Temperature used in softmax"
     )
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
     )
+    # utils.boolean_flag(parser=parser, name="check", default=False)
+    utils.boolean_flag(parser=parser, name="verbose", default=False)
 
 
 class ContrastiveModel(torch.nn.Module):
@@ -111,24 +121,28 @@ def get_loaders(
     )
 
     train_loader = DataLoader(train_data, batch_size=batch_size, num_workers=num_workers)
-
     valid_loader = DataLoader(valid_data, batch_size=batch_size, num_workers=num_workers)
 
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(feature_dim: int) -> ContrastiveModel:
+def get_contrastive_model(
+    feature_dim: int, arch: str = "resnet50", frozen: bool = False
+) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
         feature_dim: dimensinality of contrative projection
+        arch: Name for resnet. Have to be one of
+            resnet18, resnet34, resnet50, resnet101, resnet152
+        frozen: If frozen, sets requires_grad to False
 
     Returns:
         ContrstiveModel instance
     """
-    encoder = nn.Sequential(ResnetEncoder(arch="resnet50", frozen=False), nn.Flatten())
+    encoder = ResnetEncoder(arch=arch, frozen=frozen)
     projection_head = nn.Sequential(
-        nn.Linear(2048, 512, bias=False),
+        nn.Linear(encoder.out_features, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, feature_dim, bias=True),
     )
