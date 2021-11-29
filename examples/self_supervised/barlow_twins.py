@@ -77,4 +77,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         logdir=args.logdir,
         minimize_valid_metric=True,
+        check=args.check,
     )

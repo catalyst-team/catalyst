@@ -61,4 +61,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         minimize_valid_metric=True,
         num_epochs=args.epochs,
+        check=args.check,
     )

@@ -55,7 +55,10 @@ def add_arguments(parser) -> None:
         "--check",
         dest="check",
         action="store_true",
-        help="If used the method will run only on few batches (quick test that everything working).",
+        help=(
+            "If this flag the method will run only on few batches"
+            "(quick test that everything working)."
+        ),
     )
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
