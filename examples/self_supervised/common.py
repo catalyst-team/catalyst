@@ -108,13 +108,20 @@ def get_loaders(
     transforms = DATASETS[dataset]["train_transform"]
     transform_original = DATASETS[dataset]["valid_transform"]
 
+    try:
+        train_data = DATASETS[dataset]["dataset"](root="data", train=True, download=True)
+        valid_data = DATASETS[dataset]["dataset"](root="data", train=False, download=True)
+    except:
+        train_data = DATASETS[dataset]["dataset"](root="data", split="train", download=True)
+        valid_data = DATASETS[dataset]["dataset"](root="data", split="test", download=True)
+
     train_data = SelfSupervisedDatasetWrapper(
-        DATASETS[dataset]["dataset"](root="data", train=True, download=True),
+        train_data,
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        DATASETS[dataset]["dataset"](root="data", train=False, download=True),
+        valid_data,
         transforms=transforms,
         transform_original=transform_original,
     )
