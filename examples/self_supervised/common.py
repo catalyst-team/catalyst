@@ -8,7 +8,6 @@ from torch.utils.data import DataLoader
 
 from catalyst import utils
 from catalyst.contrib import nn
-from catalyst.contrib.models import ResnetEncoder
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 
