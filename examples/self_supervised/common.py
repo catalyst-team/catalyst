@@ -1,5 +1,7 @@
 from typing import Dict, Optional
 
+from resnet9 import resnet9
+
 from datasets import datasets
 import torch
 from torch.utils.data import DataLoader
@@ -8,7 +10,7 @@ from catalyst import utils
 from catalyst.contrib import nn
 from catalyst.contrib.models import ResnetEncoder
 from catalyst.data import SelfSupervisedDatasetWrapper
-from resnet9 import resnet9
+
 
 def add_arguments(parser) -> None:
     """Function to add common arguments to argparse:
@@ -111,11 +113,19 @@ def get_loaders(
     transforms = datasets[dataset]["train_transform"]
     transform_original = datasets[dataset]["valid_transform"]
 
-    
-
     if dataset == "STL10":
-        train_dataset_kwargs = {"root": "data", "split" : "train", "transform" : None, "download" : True}
-        test_dataset_kwargs = {"root": "data", "split" : "test", "transform" : None, "download" : True}
+        train_dataset_kwargs = {
+            "root": "data",
+            "split": "train",
+            "transform": None,
+            "download": True,
+        }
+        test_dataset_kwargs = {
+            "root": "data",
+            "split": "test",
+            "transform": None,
+            "download": True,
+        }
     elif dataset == "CIFAR-10":
         train_dataset_kwargs = {"root": "data", "train": True, "transform": None, "download": True}
         test_dataset_kwargs = {"root": "data", "train": False, "transform": None, "download": True}
@@ -139,8 +149,8 @@ def get_loaders(
 
     return {"train": train_loader, "valid": valid_loader}
 
-def get_contrastive_model(
-    feature_dim: int, out_features = 128) -> ContrastiveModel:
+
+def get_contrastive_model(feature_dim: int, out_features=128) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
@@ -152,7 +162,7 @@ def get_contrastive_model(
     Returns:
         ContrstiveModel instance
     """
-    encoder = resnet9(in_channels = 3, out_features = out_features)
+    encoder = resnet9(in_channels=3, out_features=out_features)
     projection_head = nn.Sequential(
         nn.Linear(out_features, 512, bias=False),
         nn.ReLU(inplace=True),
