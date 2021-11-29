@@ -2,7 +2,7 @@ from typing import Dict, Optional
 
 from resnet9 import resnet9
 
-from datasets import datasets
+from datasets import DATASETS
 import torch
 from torch.utils.data import DataLoader
 
@@ -29,7 +29,7 @@ def add_arguments(parser) -> None:
         "--dataset",
         default="CIFAR-10",
         type=str,
-        choices=datasets.keys(),
+        choices=DATASETS.keys(),
         help="Dataset: CIFAR-10, CIFAR-100 or STL10",
     )
     parser.add_argument(
@@ -109,8 +109,8 @@ def get_loaders(
     Returns:
         {"train":..., "valid":...}
     """
-    transforms = datasets[dataset]["train_transform"]
-    transform_original = datasets[dataset]["valid_transform"]
+    transforms = DATASETS[dataset]["train_transform"]
+    transform_original = DATASETS[dataset]["valid_transform"]
 
     if dataset == "STL10":
         train_dataset_kwargs = {
@@ -133,12 +133,12 @@ def get_loaders(
         test_dataset_kwargs = {"root": "data", "train": False, "transform": None, "download": True}
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](**train_dataset_kwargs),
+        DATASETS[dataset]["dataset"](**train_dataset_kwargs),
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](**test_dataset_kwargs),
+        DATASETS[dataset]["dataset"](**test_dataset_kwargs),
         transforms=transforms,
         transform_original=transform_original,
     )
@@ -149,7 +149,7 @@ def get_loaders(
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(feature_dim: int, out_features=128) -> ContrastiveModel:
+def get_contrastive_model(in_size: int, feature_dim: int) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
@@ -161,7 +161,7 @@ def get_contrastive_model(feature_dim: int, out_features=128) -> ContrastiveMode
     Returns:
         ContrstiveModel instance
     """
-    encoder = resnet9(in_channels=3, out_features=out_features)
+    encoder = resnet9(in_size=in_size, in_channels=3, out_features=512)
     projection_head = nn.Sequential(
         nn.Linear(out_features, 512, bias=False),
         nn.ReLU(inplace=True),

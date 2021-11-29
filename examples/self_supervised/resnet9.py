@@ -15,8 +15,9 @@ def conv_block(in_channels, out_channels, pool=False):
     return nn.Sequential(*layers)
 
 
-def resnet9(in_channels: int, out_features: int, size: int = 16):
+def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
     sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
+    in_size = in_size // 32
     return nn.Sequential(
         conv_block(in_channels, sz),
         conv_block(sz, sz2, pool=True),
@@ -25,6 +26,6 @@ def resnet9(in_channels: int, out_features: int, size: int = 16):
         conv_block(sz4, sz8, pool=True),
         ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
         nn.Sequential(
-            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8, out_features)
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8 * in_size, out_features)
         ),
     )
