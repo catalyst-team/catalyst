@@ -69,64 +69,15 @@
         <ul>
 
           <li>
-            <div class="ecosystem-dropdown">
-              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
-                Ecosystem
-              </a>
-              <div class="ecosystem-dropdown-menu">
-                <a class="nav-dropdown-item" href="https://alchemy.host">
-                  <span class=dropdown-title>Alchemy</span>
-                  <p>Experiments logging & visualization</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
-                  <span class=dropdown-title>Catalyst</span>
-                  <p>Accelerated deep learning R&D</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
-                  <span class=dropdown-title>Reaction</span>
-                  <p>Convenient deep learning models serving</p>
-                </a>
-              </div>
-            </div>
+            <a href="https://github.com/catalyst-team/catalyst">Catalyst</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/codestyle">Codestyle</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Course</a>
           </li>
 
-          <li>
-            <div class="projects-dropdown">
-              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
-                Projects
-              </a>
-              <div class="projects-dropdown-menu">
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
-                  <span class=dropdown-title>Codestyle</span>
-                  <p>Joint R&D codestyle</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
-                  <span class=dropdown-title>Catalyst.Neuro</span>
-                  <p>Catalyst.Team and TReNDS collaborative project</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
-                  <span class=dropdown-title>Classification</span>
-                  <p>Image classification pipeline with transfer learning</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
-                  <span class=dropdown-title>Detection</span>
-                  <p>Object detection pipeline</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
-                  <span class=dropdown-title>Segmentation</span>
-                  <p>Image semantic segmentation pipeline</p>
-                </a>
-                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
-                  <span class=dropdown-title>Catalyst.GAN</span>
-                  <p>GAN pipelines</p>
-                </a>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
-          </li>
         </ul>
       </div>
 
@@ -882,7 +833,7 @@ Used for per-batch logging. default: True</p></li>
 <h3><a class="toc-backref" href="#id25">RegionBasedMetric</a><a class="headerlink" href="#regionbasedmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.RegionBasedMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">RegionBasedMetric</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">metric_name: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = 0.5</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#RegionBasedMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">RegionBasedMetric</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">metric_name: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = 0.5</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#RegionBasedMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.ICallbackBatchMetric" title="catalyst.metrics._metric.ICallbackBatchMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackBatchMetric</span></code></a></p>
 <p>Logic class for all region based metrics, like IoU, Dice, Trevsky.</p>
 <dl class="field-list simple">
@@ -1068,7 +1019,7 @@ It computes mean value of accuracy and it’s approximate std value
 <h3><a class="toc-backref" href="#id29">AUCMetric</a><a class="headerlink" href="#aucmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._auc.AUCMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._auc.</code><code class="sig-name descname">AUCMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_auc.html#AUCMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._auc.AUCMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._auc.</code><code class="sig-name descname">AUCMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_auc.html#AUCMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._auc.AUCMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.ICallbackLoaderMetric" title="catalyst.metrics._metric.ICallbackLoaderMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackLoaderMetric</span></code></a></p>
 <p>AUC metric,</p>
 <dl class="field-list simple">
@@ -1450,7 +1401,7 @@ default: True</p></li>
 <h3><a class="toc-backref" href="#id33">DiceMetric</a><a class="headerlink" href="#dicemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.DiceMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">DiceMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#DiceMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.DiceMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">DiceMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#DiceMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.DiceMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="catalyst.metrics._segmentation.RegionBasedMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._segmentation.RegionBasedMetric</span></code></a></p>
 <p>Dice Metric,
 dice score = 2 * intersection / (intersection + union)) = 2 * tp / (2 * tp + fp + fn)</p>
@@ -1691,7 +1642,7 @@ Used for per-batch logging. default: True</p></li>
 <h3><a class="toc-backref" href="#id35">IOUMetric</a><a class="headerlink" href="#ioumetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.IOUMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">IOUMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#IOUMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.IOUMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">IOUMetric</code><span class="sig-paren">(</span><em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#IOUMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.IOUMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="catalyst.metrics._segmentation.RegionBasedMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._segmentation.RegionBasedMetric</span></code></a></p>
 <p>IoU Metric,
 iou score = intersection / union = tp / (tp + fp + fn).</p>
@@ -1944,7 +1895,7 @@ Computes mean value of MAP and it’s approximate std value</p>
 <h3><a class="toc-backref" href="#id37">MulticlassPrecisionRecallF1SupportMetric</a><a class="headerlink" href="#multiclassprecisionrecallf1supportmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._classification.</code><code class="sig-name descname">MulticlassPrecisionRecallF1SupportMetric</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = None</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_classification.html#MulticlassPrecisionRecallF1SupportMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._classification.</code><code class="sig-name descname">MulticlassPrecisionRecallF1SupportMetric</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = None</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_classification.html#MulticlassPrecisionRecallF1SupportMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._classification.PrecisionRecallF1SupportMetric</span></code></p>
 <p>Precision, recall, f1_score and support metrics for multiclass classification.
 Counts metrics with macro, micro and weighted average.</p>
@@ -2208,7 +2159,7 @@ It computes mean value of accuracy and it’s approximate std value
 <h3><a class="toc-backref" href="#id39">MultilabelPrecisionRecallF1SupportMetric</a><a class="headerlink" href="#multilabelprecisionrecallf1supportmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._classification.</code><code class="sig-name descname">MultilabelPrecisionRecallF1SupportMetric</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = None</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_classification.html#MultilabelPrecisionRecallF1SupportMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._classification.</code><code class="sig-name descname">MultilabelPrecisionRecallF1SupportMetric</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = None</em>, <em class="sig-param">zero_division: int = 0</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_classification.html#MultilabelPrecisionRecallF1SupportMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._classification.PrecisionRecallF1SupportMetric</span></code></p>
 <p>Precision, recall, f1_score and support metrics for multilabel classification.
 Counts metrics with macro, micro and weighted average.</p>
@@ -2727,7 +2678,7 @@ Computes mean value of NDCG and it’s approximate std value</p>
 <h3><a class="toc-backref" href="#id44">TrevskyMetric</a><a class="headerlink" href="#trevskymetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.TrevskyMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">TrevskyMetric</code><span class="sig-paren">(</span><em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#TrevskyMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.TrevskyMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._segmentation.</code><code class="sig-name descname">TrevskyMetric</code><span class="sig-paren">(</span><em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">compute_per_class_metrics: bool = False</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_segmentation.html#TrevskyMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._segmentation.TrevskyMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._segmentation.RegionBasedMetric" title="catalyst.metrics._segmentation.RegionBasedMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._segmentation.RegionBasedMetric</span></code></a></p>
 <p>Trevsky Metric,
 trevsky score = tp / (tp + fp * beta + fn * alpha)</p>
@@ -4873,30 +4824,28 @@ with shape [bs; …, 1]</p></li>
       <div class="footer-links-wrapper">
         <div class="footer-links-col">
           <ul>
-            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
-            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst#step-by-step-guide">Getting started</a></li>
+            <li><a class="nav-dropdown-item" href="https://catalyst-team.github.io/catalyst/getting_started/quickstart.html">Quickstart</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst#minimal-examples">Examples</a></li>
+            <li><a class="nav-dropdown-item" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef">Blogpost</a></li>
           </ul>
         </div>
 
         <div class="footer-links-col">
           <ul>
-            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li class="list-title"><a href="https://catalyst-team.com/#projects">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
             <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
-            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/dl-course">Course</a></li>
           </ul>
         </div>
 
         <div class="footer-links-col">
           <ul>
             <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
-            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst#acknowledgments" target="_blank">Acknowledgments</a></li>
             <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://opencollective.com/catalyst" target="_blank">Open Collective</a></li>
             <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
           </ul>
         </div>
@@ -4904,8 +4853,8 @@ with shape [bs; …, 1]</p></li>
         <div class="footer-links-col follow-us-col">
           <div class="footer-social-icons">
             <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
-            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
-            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+            <a href="https://twitter.com/CatalystTeam" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-devs/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
           </div>
         </div>
       </div>
