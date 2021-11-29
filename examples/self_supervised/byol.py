@@ -4,41 +4,31 @@ import argparse
 from common import add_arguments, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
-from torch.optim import Adam
+from torch import nn, optim
 
-from catalyst import dl
-from catalyst.contrib import nn
+from catalyst import dl, utils
 from catalyst.contrib.losses import NTXentLoss
-from catalyst.dl import SelfSupervisedRunner
-
-parser = argparse.ArgumentParser(description="Train BYOL")
-add_arguments(parser)
-
-
-def set_requires_grad(model, val):
-    for p in model.parameters():
-        p.requires_grad = val
-
 
 if __name__ == "__main__":
+    # parse args
+    parser = argparse.ArgumentParser(description="Train BYOL")
+    add_arguments(parser)
     args = parser.parse_args()
-    batch_size = args.batch_size
 
-    # 2. model and optimizer
-
+    # create model and optimizer
     model = nn.ModuleDict(
         {
-            "online": get_contrastive_model(args.feature_dim),
-            "target": get_contrastive_model(args.feature_dim),
+            "online": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
+            "target": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
         }
     )
+    utils.set_requires_grad(model["target"], False)
+    optimizer = optim.Adam(model["online"].parameters(), lr=args.learning_rate)
 
-    set_requires_grad(model["target"], False)
-    optimizer = Adam(model["online"].parameters(), lr=args.learning_rate)
-
-    # 3. criterion
+    # define criterion
     criterion = NTXentLoss(tau=args.temperature)
 
+    # and callbacks
     callbacks = [
         dl.CriterionCallback(
             input_key="online_projection_left",
@@ -69,19 +59,19 @@ if __name__ == "__main__":
         ),
     ]
 
-    runner = SelfSupervisedRunner()
-
+    # train model
+    runner = dl.SelfSupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
         loaders=get_loaders(args.dataset, args.batch_size, args.num_workers),
-        verbose=True,
+        num_epochs=args.epochs,
         logdir=args.logdir,
         valid_loader="train",
         valid_metric="loss",
         minimize_valid_metric=True,
-        num_epochs=args.epochs,
-        check=args.check,
+        verbose=args.verbose,
+        # check=args.check,
     )

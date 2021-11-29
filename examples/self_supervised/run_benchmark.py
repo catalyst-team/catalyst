@@ -3,37 +3,40 @@ import argparse
 from itertools import product
 import os
 
+from catalyst import utils
+
 METHODS = ("barlow_twins", "byol", "simCLR", "supervised_contrastive")
 DATASETS = ("CIFAR-10", "CIFAR-100", "STL10")
+ARCH = ("resnet18", "resnet34", "resnet50", "resnet101", "resnet152")
 
 BATCH_SIZE = 32
-checks = False
-
-parser = argparse.ArgumentParser(description=f"Run SSL {METHODS} benchmark on {DATASETS}")
-parser.add_argument(
-    "--check",
-    dest="check",
-    action="store_true",
-    help=(
-        "If this flag use the methods will run only on few batches"
-        "(quick test that everything working)."
-    ),
-)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=f"Run SSL {METHODS} benchmark on {DATASETS}")
+    utils.boolean_flag(
+        parser=parser,
+        name="check",
+        default=False,
+        help="If this flag is on the methods will run only an epoch.",
+    )
+    utils.boolean_flag(parser=parser, name="verbose", default=False, help="The detailed train run loggings will be shown and saved.")
     args = parser.parse_args()
 
-    for method, dataset in product(METHODS, DATASETS):
-        print(f"Start {method} on {dataset}")
+    num_epochs = 1 if args.check else 1000
+
+    for method, dataset, arch in product(METHODS, DATASETS, ARCH):
+        print(f"Start {method} on {dataset} with the model {arch}")
         cmd_parts = [
             f"python {method}.py",
             f"--dataset {dataset}",
-            f"--logdir ./logs/{method}_{dataset}",
-            f"--batch_size={BATCH_SIZE}",
+            f"--logdir ./logs/{dataset}/{method}/{arch}",
+            f"--batch-size={BATCH_SIZE}",
+            f"--arch={arch}",
+            f"--epochs={num_epochs}",
         ]
 
-        if args.check:
-            cmd_parts.append("--check")
+        if args.verbose:
+            cmd_parts.append("--verbose")
 
         cmd = " ".join(cmd_parts)
         print(f"With a command: {cmd}")

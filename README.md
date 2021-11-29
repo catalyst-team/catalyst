@@ -112,7 +112,7 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 
 features_batch = next(iter(loaders["valid"]))[0]
 # model stochastic weight averaging
-model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
+model.load_state_dict(utils.get_averaged_weights_by_path_mask(path_mask="./logs/*.pth"))
 # model tracing
 utils.trace_model(model=runner.model.cpu(), batch=features_batch)
 # model quantization

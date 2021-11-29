@@ -11,18 +11,18 @@ pip install catalyst[ml]==21.09
 
 All traing files have common command line parametrs:
 
-    --feature_dim - Feature dim for latent vector
-    --temperature - Temperature used in softmax
-    --batch_size - Number of images in each mini-batch
-    --epochs - Number of sweeps over the dataset to train
-    --num_workers - Number of workers to process a dataloader
-    --logdir - Logs directory (tensorboard, weights, etc)
     --dataset - Dataset: CIFAR-10, CIFAR-100 or STL10
-    --learning_rate - Learning rate for optimizer
+    --logdir - Logs directory (tensorboard, weights, etc)
+    --epochs - Number of sweeps over the dataset to train
+    --batch-size - Number of images in each mini-batch
+    --num-workers - Number of workers to process a dataloader
+    --feature-dim - Feature dim for latent vector
+    --temperature - Temperature used in softmax
+    --learning-rate - Learning rate for optimizer
 
 ### Extra parametrs
 
-Barlow-twins (barlow_twins.py) has an extra parametr ``--offdig_lambda`` - lambda that controls the on- and off-diagonal terms from Barlow twins loss.
+Barlow-twins (barlow_twins.py) has an extra parametr ``--offdig-lambda`` - lambda that controls the on- and off-diagonal terms from Barlow twins loss.
 
 ## Usage
 
