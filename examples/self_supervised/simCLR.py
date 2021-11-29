@@ -4,26 +4,25 @@ import argparse
 from common import add_arguments, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
-from torch.optim import Adam
+from torch import optim
 
 from catalyst import dl
 from catalyst.contrib.losses import NTXentLoss
-from catalyst.dl import SelfSupervisedRunner
-
-parser = argparse.ArgumentParser(description="Train SimCLR")
-add_arguments(parser)
 
 if __name__ == "__main__":
+    # parse args
+    parser = argparse.ArgumentParser(description="Train SimCLR")
+    add_arguments(parser)
     args = parser.parse_args()
-    batch_size = args.batch_size
 
-    # 2. model and optimizer
-    model = get_contrastive_model(args.feature_dim)
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    # create model and optimizer
+    model = get_contrastive_model(args.feature_dim, args.arch, args.frozen)
+    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    # 3. criterion
+    # define criterion
     criterion = NTXentLoss(tau=args.temperature)
 
+    # and callbacks
     callbacks = [
         dl.CriterionCallback(
             input_key="projection_left", target_key="projection_right", metric_key="loss"
@@ -46,18 +45,19 @@ if __name__ == "__main__":
         ),
     ]
 
-    runner = SelfSupervisedRunner()
-
+    # train model
+    runner = dl.SelfSupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
         loaders=get_loaders(args.dataset, args.batch_size, args.num_workers),
-        verbose=True,
+        num_epochs=args.epochs,
         logdir=args.logdir,
         valid_loader="train",
         valid_metric="loss",
         minimize_valid_metric=True,
-        num_epochs=args.epochs,
+        verbose=args.verbose,
+        # check=args.check,
     )

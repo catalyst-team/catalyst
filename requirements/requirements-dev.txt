@@ -7,6 +7,6 @@ docutils==0.17.1
 mock==3.0.5
 catalyst-codestyle==21.09.2
 black==21.8b0
-catalyst-sphinx-theme==1.1.2
+catalyst-sphinx-theme==1.2.0
 tomlkit==0.7.2
 pre-commit==2.13.0
