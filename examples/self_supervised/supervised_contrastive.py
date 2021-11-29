@@ -2,6 +2,7 @@
 import argparse
 
 from common import add_arguments, get_contrastive_model, get_loaders
+from sklearn.linear_model import LogisticRegression
 
 import torch
 from torch.optim import Adam
@@ -43,6 +44,18 @@ if __name__ == "__main__":
         ),
         dl.CriterionCallback(
             input_key="full_projection", target_key="full_targets", metric_key="loss"
+        ),
+        dl.SklearnModelCallback(
+            feature_key="full_projection",
+            target_key="full_targets",
+            train_loader="train",
+            valid_loaders="valid",
+            model_fn=LogisticRegression,
+            predict_key="sklearn_predict",
+            predict_method="predict_proba",
+            C=0.1,
+            solver="saga",
+            max_iter=200,
         ),
     ]
 

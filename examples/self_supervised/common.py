@@ -59,19 +59,18 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--temperature", default=0.5, type=float, help="Temperature used in softmax"
     )
-    # parser.add_argument(
-    #     "--check",
-    #     dest="check",
-    #     action="store_true",
-    #     help=(
-    #         "If this flag is on the method will run only on few batches"
-    #         "(quick test that everything working)."
-    #     ),
-    # )
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
     )
-    # utils.boolean_flag(parser=parser, name="check", default=False)
+    utils.boolean_flag(
+        parser=parser,
+        name="check",
+        default=False,
+        help=(
+            "If this flag is on the method will run only on few batches"
+            "(quick test that everything working)."
+        ),
+    )
     utils.boolean_flag(parser=parser, name="verbose", default=False)
 
 

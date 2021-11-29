@@ -19,7 +19,12 @@ if __name__ == "__main__":
         default=False,
         help="If this flag is on the methods will run only an epoch.",
     )
-    utils.boolean_flag(parser=parser, name="verbose", default=False, help="The detailed train run loggings will be shown and saved.")
+    utils.boolean_flag(
+        parser=parser,
+        name="verbose",
+        default=False,
+        help="The detailed train run loggings will be shown and saved.",
+    )
     args = parser.parse_args()
 
     num_epochs = 1 if args.check else 1000
