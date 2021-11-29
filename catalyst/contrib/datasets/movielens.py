@@ -100,8 +100,10 @@ class MovieLens(Dataset):
 
     def __getitem__(self, user_index):
         """Get item.
+
         Args:
             user_index (int): User index [0, 942]
+
         Returns:
             tensor: (items) item's ranking for the user with index user_index
         """
@@ -114,6 +116,7 @@ class MovieLens(Dataset):
     @property
     def raw_folder(self):
         """Create raw folder for data download
+
         Returns:
             raw_path (path): raw folder path
         """
@@ -122,6 +125,7 @@ class MovieLens(Dataset):
     @property
     def processed_folder(self):
         """Create the folder for the processed files
+
         Returns:
             raw_path (path): processed folder path
         """
@@ -130,6 +134,7 @@ class MovieLens(Dataset):
     def _check_exists(self):
         """Check if the path for tarining and testing data
         exists in processed folder.
+
         Returns:
             raw_path (path): processed folder path
         """
@@ -175,11 +180,13 @@ class MovieLens(Dataset):
 
     def _build_interaction_matrix(self, rows, cols, data):
         """Builds interaction matrix.
+
         Args:
             rows (int): rows of the oevrall dataset
             cols (int): columns of the overall dataset
             data (generator object): generator of
             the data object
+
         Returns:
             interaction_matrix (torch.sparse.Float):
             sparse user2item interaction matrix
@@ -202,8 +209,10 @@ class MovieLens(Dataset):
 
     def _parse(self, data):
         """Parses the raw data. Substract one to shift to zero based indexing
+
         Args:
             data: raw data of the dataset
+
         Yields:
             Generator iterator for parsed data
         """
@@ -217,11 +226,13 @@ class MovieLens(Dataset):
 
     def _get_dimensions(self, train_data, test_data):
         """Gets the dimensions of the raw dataset
+
         Args:
             train_data: (uid, iid, rating, timestamp)
                 Genrator for training data
             test_data: (uid, iid, rating, timestamp)
                 Genrator for testing data
+
         Returns:
             The total dimension of the dataset
         """
