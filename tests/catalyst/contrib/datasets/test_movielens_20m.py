@@ -90,7 +90,7 @@ def test_minimal_ranking():
         download=True,
         min_rating=2.0,
         sample=True,
-        n_rows=1000000,
+        n_rows=1000000
     )
 
     assert 1 not in movielens_20m_min_two[1]._values().unique()
@@ -123,12 +123,13 @@ def test_users_per_item_filtering():
     Tets retrieveing the minimal ranking
     """
     min_users_per_item = 2.0
+
     movielens_20m_min_users = MovieLens20M(
         "./tmp_data",
         download=True,
         min_users_per_item=min_users_per_item,
         sample=True,
-        n_rows=1000000,
+        n_rows=1000000
     )
 
     assert (movielens_20m_min_users.users_activity["user_cnt"] >= min_users_per_item).any()
@@ -147,7 +148,7 @@ def test_items_per_user_filtering():
         min_items_per_user=min_items_per_user,
         min_users_per_item=min_users_per_item,
         sample=True,
-        n_rows=1000000,
+        n_rows=1000000
     )
 
     assert (movielens_20m_min_users.items_activity["item_cnt"] >= min_items_per_user).any()

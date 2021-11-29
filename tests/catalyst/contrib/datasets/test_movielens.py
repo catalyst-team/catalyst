@@ -79,10 +79,14 @@ def test_minimal_ranking():
     """
     Tets retrieveing the minimal ranking
     """
-    train_data_laoder_min_two = MovieLens("./data", min_rating=2.0)
-    assert 1 not in train_data_laoder_min_two[0].unique()
-    assert 1 not in train_data_laoder_min_two[120].unique()
-    assert 3 in train_data_laoder_min_two[0].unique()
+    train_data_loader_min_two = MovieLens(
+                                    "./data",
+                                    download=True,
+                                    min_rating=2.0
+                                )
+    assert 1 not in train_data_loader_min_two[0].unique()
+    assert 1 not in train_data_loader_min_two[120].unique()
+    assert 3 in train_data_loader_min_two[0].unique()
 
 
 def teardown_module():
