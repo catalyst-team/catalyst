@@ -2,6 +2,7 @@
 import argparse
 
 from common import add_arguments, get_contrastive_model, get_loaders
+from sklearn.linear_model import LogisticRegression
 
 from datasets import DATASETS
 import torch
@@ -46,6 +47,28 @@ if __name__ == "__main__":
         ),
         dl.CriterionCallback(
             input_key="full_projection", target_key="full_targets", metric_key="loss"
+        ),
+        dl.OptimizerCallback(metric_key="loss"),
+        dl.ControlFlowCallback(
+            dl.SklearnModelCallback(
+                feature_key="full_projection",
+                target_key="full_targets",
+                train_loader="train",
+                valid_loaders="valid",
+                model_fn=LogisticRegression,
+                predict_key="sklearn_predict",
+                predict_method="predict_proba",
+                C=0.1,
+                solver="saga",
+                max_iter=200,
+            ),
+            loaders="valid",
+        ),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
         ),
     ]
 

@@ -40,22 +40,28 @@ if __name__ == "__main__":
             target_key="target_projection_right",
             metric_key="loss",
         ),
+        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.SoftUpdateCallaback(
                 target_model_key="target", source_model_key="online", tau=0.1, scope="on_batch_end"
             ),
             loaders="train",
         ),
-        dl.SklearnModelCallback(
-            feature_key="embedding_origin",
-            target_key="target",
-            train_loader="train",
-            valid_loaders="valid",
-            model_fn=LogisticRegression,
-            predict_key="sklearn_predict",
-            predict_method="predict_proba",
+        dl.ControlFlowCallback(
+            dl.SklearnModelCallback(
+                feature_key="online_embedding_origin",
+                target_key="target",
+                train_loader="train",
+                valid_loaders="valid",
+                model_fn=LogisticRegression,
+                predict_key="sklearn_predict",
+                predict_method="predict_proba",
+                C=0.1,
+                solver="saga",
+                max_iter=200,
+            ),
+            loaders="valid",
         ),
-        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
