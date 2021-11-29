@@ -5,8 +5,8 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.contrib import nn
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.data.dataset.self_supervised import SelfSupervisedDatasetWrapper
+from catalyst.contrib.models import ResnetEncoder
+from catalyst.data import SelfSupervisedDatasetWrapper
 
 
 def add_arguments(parser) -> None:
@@ -50,6 +50,12 @@ def add_arguments(parser) -> None:
         type=str,
         choices=datasets.keys(),
         help="Dataset: CIFAR-10, CIFAR-100 or STL10",
+    )
+    parser.add_argument(
+        "--check",
+        dest="check",
+        action="store_true",
+        help="If used the method will run only on few batches (quick test that everything working).",
     )
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"

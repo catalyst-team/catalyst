@@ -1,18 +1,14 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, ContrastiveModel, datasets, get_contrastive_model, get_loaders
+from common import add_arguments, get_contrastive_model, get_loaders
 
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
-import torchvision
 
 from catalyst import dl
-from catalyst.contrib import nn
 from catalyst.contrib.losses.supervised_contrastive import SupervisedContrastiveLoss
-from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.data import SelfSupervisedDatasetWrapper
 
 parser = argparse.ArgumentParser(description="Train Supervised Contrastive")
 add_arguments(parser)
