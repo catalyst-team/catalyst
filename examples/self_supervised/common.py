@@ -1,12 +1,11 @@
 from typing import Dict, Optional
 
-from datasets import datasets
+from datasets import DATASETS
 import torch
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.contrib import nn
-from catalyst.contrib.models import ResnetEncoder
+from catalyst.contrib import nn, ResidualBlock
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 
@@ -28,7 +27,7 @@ def add_arguments(parser) -> None:
         "--dataset",
         default="CIFAR-10",
         type=str,
-        choices=datasets.keys(),
+        choices=DATASETS.keys(),
         help="Dataset: CIFAR-10, CIFAR-100 or STL10",
     )
     parser.add_argument(
@@ -106,16 +105,16 @@ def get_loaders(
     Returns:
         {"train":..., "valid":...}
     """
-    transforms = datasets[dataset]["train_transform"]
-    transform_original = datasets[dataset]["valid_transform"]
+    transforms = DATASETS[dataset]["train_transform"]
+    transform_original = DATASETS[dataset]["valid_transform"]
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        DATASETS[dataset]["dataset"](root="data", train=True, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        DATASETS[dataset]["dataset"](root="data", train=False, download=True),
         transforms=transforms,
         transform_original=transform_original,
     )
@@ -126,23 +125,45 @@ def get_loaders(
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(
-    feature_dim: int, arch: str = "resnet50", frozen: bool = False
-) -> ContrastiveModel:
+def conv_block(in_channels, out_channels, pool=False):
+    layers = [
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(inplace=True),
+    ]
+    if pool:
+        layers.append(nn.MaxPool2d(2))
+    return nn.Sequential(*layers)
+
+
+def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
+    sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
+    in_size = in_size // 32
+    return nn.Sequential(
+        conv_block(in_channels, sz),
+        conv_block(sz, sz2, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz2, sz2), conv_block(sz2, sz2))),
+        conv_block(sz2, sz4, pool=True),
+        conv_block(sz4, sz8, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
+        nn.Sequential(
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8 * in_size, out_features)
+        ),
+    )
+
+
+def get_contrastive_model(in_size: int, feature_dim: int) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
         feature_dim: dimensinality of contrative projection
-        arch: Name for resnet. Have to be one of
-            resnet18, resnet34, resnet50, resnet101, resnet152
-        frozen: If frozen, sets requires_grad to False
 
     Returns:
         ContrstiveModel instance
     """
-    encoder = ResnetEncoder(arch=arch, frozen=frozen)
+    encoder = resnet9(in_size=in_size, in_channels=3, out_features=512)
     projection_head = nn.Sequential(
-        nn.Linear(encoder.out_features, 512, bias=False),
+        nn.Linear(512, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, feature_dim, bias=True),
     )

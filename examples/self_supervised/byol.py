@@ -4,6 +4,7 @@ import argparse
 from common import add_arguments, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
+from datasets import DATASETS
 from torch import nn, optim
 
 from catalyst import dl, utils
@@ -18,8 +19,12 @@ if __name__ == "__main__":
     # create model and optimizer
     model = nn.ModuleDict(
         {
-            "online": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
-            "target": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
+            "online": get_contrastive_model(
+                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+            ),
+            "target": get_contrastive_model(
+                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+            ),
         }
     )
     utils.set_requires_grad(model["target"], False)

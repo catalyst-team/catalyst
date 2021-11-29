@@ -3,9 +3,10 @@ from PIL import Image
 import torchvision
 from torchvision.datasets import CIFAR10, CIFAR100, STL10
 
-datasets = {
+DATASETS = {
     "CIFAR-10": {
         "dataset": CIFAR10,
+        "in_size": 32,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -36,6 +37,7 @@ datasets = {
     },
     "CIFAR-100": {
         "dataset": CIFAR100,
+        "in_size": 32,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -66,6 +68,7 @@ datasets = {
     },
     "STL10": {
         "dataset": STL10,
+        "in_size": 96,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
