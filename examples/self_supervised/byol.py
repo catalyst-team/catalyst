@@ -47,7 +47,7 @@ if __name__ == "__main__":
             loaders="train",
         ),
         dl.SklearnModelCallback(
-            feature_key="embedding_origin",
+            feature_key="online_embedding_origin",
             target_key="target",
             train_loader="train",
             valid_loaders="valid",
