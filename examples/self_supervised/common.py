@@ -148,6 +148,7 @@ def get_loaders(
 
     return {"train": train_loader, "valid": valid_loader}
 
+
 def get_contrastive_model(
     in_size: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
 ) -> ContrastiveModel:
