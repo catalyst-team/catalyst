@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Dict, Optional
 
 from datasets import DATASETS
@@ -45,13 +46,6 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
     )
-    parser.add_argument(
-        "--arch",
-        default="resnet50",
-        type=str,
-        choices=["resnet18", "resnet34", "resnet50", "resnet101", "resnet152"],
-    )
-    utils.boolean_flag(parser=parser, name="frozen", default=False)
     parser.add_argument(
         "--feature-dim", default=128, type=int, help="Feature dim for latent vector"
     )
@@ -145,7 +139,8 @@ def conv_block(in_channels, out_channels, pool=False):
 
 def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
     sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
-    in_size = in_size // 32
+    assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
+    out_size = (((in_size // 32) * 32) ** 2 * 2) // size
     return nn.Sequential(
         conv_block(in_channels, sz),
         conv_block(sz, sz2, pool=True),
@@ -154,25 +149,30 @@ def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
         conv_block(sz4, sz8, pool=True),
         ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
         nn.Sequential(
-            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8 * in_size, out_features)
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
         ),
     )
 
 
-def get_contrastive_model(in_size: int, feature_dim: int) -> ContrastiveModel:
+def get_contrastive_model(
+    in_size: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
+) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
+        in_size: size of an image (in_size x in_size)
         feature_dim: dimensinality of contrative projection
+        encoder_dim: dimensinality of encoder output
+        hidden_dim: dimensinality of encoder-contrative projection
 
     Returns:
         ContrstiveModel instance
     """
-    encoder = resnet9(in_size=in_size, in_channels=3, out_features=512)
+    encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_dim)
     projection_head = nn.Sequential(
-        nn.Linear(512, 512, bias=False),
+        nn.Linear(encoder_dim, hidden_dim, bias=False),
         nn.ReLU(inplace=True),
-        nn.Linear(512, feature_dim, bias=True),
+        nn.Linear(hidden_dim, feature_dim, bias=True),
     )
     model = ContrastiveModel(projection_head, encoder)
     return model

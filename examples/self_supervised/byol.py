@@ -47,20 +47,17 @@ if __name__ == "__main__":
             ),
             loaders="train",
         ),
-        dl.ControlFlowCallback(
-            dl.SklearnModelCallback(
-                feature_key="online_embedding_origin",
-                target_key="target",
-                train_loader="train",
-                valid_loaders="valid",
-                model_fn=LogisticRegression,
-                predict_key="sklearn_predict",
-                predict_method="predict_proba",
-                C=0.1,
-                solver="saga",
-                max_iter=200,
-            ),
-            loaders="valid",
+        dl.SklearnModelCallback(
+            feature_key="online_embedding_origin",
+            target_key="target",
+            train_loader="train",
+            valid_loaders="valid",
+            model_fn=LogisticRegression,
+            predict_key="sklearn_predict",
+            predict_method="predict_proba",
+            C=0.1,
+            solver="saga",
+            max_iter=200,
         ),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
