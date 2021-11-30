@@ -1,0 +1,979 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.callbacks.misc &mdash; Catalyst 21.11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Catalyst</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/codestyle">Codestyle</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Course</a>
+          </li>
+
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.11</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+</ul>
+<p><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
+</ul>
+<p><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
+</ul>
+<p><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.callbacks.misc</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.callbacks.misc</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.extras.metric_handler</span> <span class="kn">import</span> <span class="n">MetricHandler</span>
+<span class="kn">from</span> <span class="nn">catalyst.extras.time_manager</span> <span class="kn">import</span> <span class="n">TimeManager</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">is_exception</span>
+
+<span class="n">EPS</span> <span class="o">=</span> <span class="mf">1e-8</span>
+
+
+<span class="c1"># class IBatchMetricHandlerCallback(ABC, Callback):</span>
+<span class="c1">#     &quot;&quot;&quot;@TODO: docs&quot;&quot;&quot;</span>
+
+<span class="c1">#     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):</span>
+<span class="c1">#         &quot;&quot;&quot;@TODO: docs&quot;&quot;&quot;</span>
+<span class="c1">#         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)</span>
+<span class="c1">#         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)</span>
+<span class="c1">#         self.metric_key = metric_key</span>
+<span class="c1">#         self.best_score = None</span>
+
+<span class="c1">#     @abstractmethod</span>
+<span class="c1">#     def handle_score_is_better(self, runner: &quot;IRunner&quot;):</span>
+<span class="c1">#         &quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+<span class="c1">#         pass</span>
+
+<span class="c1">#     @abstractmethod</span>
+<span class="c1">#     def handle_score_is_not_better(self, runner: &quot;IRunner&quot;):</span>
+<span class="c1">#         &quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+<span class="c1">#         pass</span>
+
+<span class="c1">#     def on_loader_start(self, runner: &quot;IRunner&quot;) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+<span class="c1">#         self.best_score = None</span>
+
+<span class="c1">#     def on_batch_end(self, runner: &quot;IRunner&quot;) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+<span class="c1">#         score = runner.batch_metrics[self.metric_key]</span>
+<span class="c1">#         if self.best_score is None or self.is_better(score, self.best_score):</span>
+<span class="c1">#             self.best_score = score</span>
+<span class="c1">#             self.handle_score_is_better(runner=runner)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             self.handle_score_is_not_better(runner=runner)</span>
+
+
+<span class="k">class</span> <span class="nc">IEpochMetricHandlerCallback</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: docs&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: docs&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="n">MetricHandler</span><span class="p">(</span><span class="n">minimize</span><span class="o">=</span><span class="n">minimize</span><span class="p">,</span> <span class="n">min_delta</span><span class="o">=</span><span class="n">min_delta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">loader_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">handle_score_is_better</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">handle_score_is_not_better</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_score_is_better</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_score_is_not_better</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EarlyStoppingCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.EarlyStoppingCallback">[docs]</a><span class="k">class</span> <span class="nc">EarlyStoppingCallback</span><span class="p">(</span><span class="n">IEpochMetricHandlerCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stage early stop based on metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        patience: number of epochs with no improvement</span>
+<span class="sd">            after which training will be stopped.</span>
+<span class="sd">        loader_key: loader key for early stopping (based on metric score over the dataset)</span>
+<span class="sd">        metric_key: metric key for early stopping (based on metric score over the dataset)</span>
+<span class="sd">        minimize: if ``True`` then expected that metric should</span>
+<span class="sd">            decrease and early stopping will be performed only when metric</span>
+<span class="sd">            stops decreasing. If ``False`` then expected</span>
+<span class="sd">            that metric should increase. Default value ``True``.</span>
+<span class="sd">        min_delta: minimum change in the monitored metric</span>
+<span class="sd">            to qualify as an improvement, i.e. an absolute change</span>
+<span class="sd">            of less than min_delta, will count as no improvement,</span>
+<span class="sd">            default value is ``1e-6``.</span>
+
+<span class="sd">    Minimal working example (Notebook API):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=100,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.EarlyStoppingCallback(</span>
+<span class="sd">                    loader_key=&quot;valid&quot;,</span>
+<span class="sd">                    metric_key=&quot;loss&quot;,</span>
+<span class="sd">                    minimize=True,</span>
+<span class="sd">                    patience=3,</span>
+<span class="sd">                    min_delta=1e-2</span>
+<span class="sd">                )</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    Works even better with ``load_best_on_end=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=100,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.EarlyStoppingCallback(</span>
+<span class="sd">                    loader_key=&quot;valid&quot;,</span>
+<span class="sd">                    metric_key=&quot;loss&quot;,</span>
+<span class="sd">                    minimize=True,</span>
+<span class="sd">                    patience=3,</span>
+<span class="sd">                    min_delta=1e-2</span>
+<span class="sd">                )</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">loader_key</span><span class="o">=</span><span class="n">loader_key</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="n">metric_key</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="n">minimize</span><span class="p">,</span> <span class="n">min_delta</span><span class="o">=</span><span class="n">min_delta</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patience</span> <span class="o">=</span> <span class="n">patience</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_no_improvement_epochs</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">handle_score_is_better</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_no_improvement_epochs</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">handle_score_is_not_better</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_no_improvement_epochs</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_no_improvement_epochs</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
+            <span class="c1"># print(f&quot;Early stop at {runner.epoch} epoch&quot;)</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="TimerCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.TimerCallback">[docs]</a><span class="k">class</span> <span class="nc">TimerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Logs pipeline execution time.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[dl.TimerCallback()]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    You should see additional extra metrics, such as:</span>
+
+<span class="sd">    - ``_timer/_fps`` - number handled samples per second during run.</span>
+<span class="sd">    - ``_timer/batch_time`` - time required for single batch handling.</span>
+<span class="sd">    - ``_timer/data_time`` - time required for single batch data preparation handling.</span>
+<span class="sd">    - ``_timer/model_time`` - time required for single batch model forwarding.</span>
+
+<span class="sd">    Moreover, you could use it throught ``timeit=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            timeit=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialisation for TimerCallback.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">metric</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimeManager</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loader end hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Batch start hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
+
+        <span class="c1"># @TODO: just a trick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="s2">&quot;_timer/_fps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">EPS</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TqdmCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.TqdmCallback">[docs]</a><span class="k">class</span> <span class="nc">TqdmCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Logs the params into tqdm console.</span>
+
+<span class="sd">    Minimal working example (Notebook API):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[dl.TqdmCallback()]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    You should see a tqdm progress bar during the training.</span>
+
+<span class="sd">    Moreover, you could use it throught ``verbose=True`` flag:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init tqdm progress bar.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">total</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_len</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_len</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; * Epoch (</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="c1"># leave=True,</span>
+            <span class="c1"># ncols=0,</span>
+            <span class="c1"># file=sys.stdout,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update tqdm progress bar at the end of each batch.&quot;&quot;&quot;</span>
+        <span class="n">batch_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:3.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mf">1e-3</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">{:1.3e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cleanup and close tqdm progress bar.&quot;&quot;&quot;</span>
+        <span class="c1"># self.tqdm.visible = False</span>
+        <span class="c1"># self.tqdm.leave = True</span>
+        <span class="c1"># self.tqdm.disable = True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="TqdmCallback.on_exception"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.TqdmCallback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called if an Exception was raised.&quot;&quot;&quot;</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">exception</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Keyboard Interrupt&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="CheckRunCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.misc.CheckRunCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckRunCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Executes only a pipeline part from the run.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num_batch_steps: number of batches to iterate in epoch</span>
+<span class="sd">        num_epoch_steps: number of epoch to perform in a stage</span>
+
+<span class="sd">    Minimal working example (Notebook API):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=8,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.CheckRunCallback(num_batch_steps=3, num_epoch_steps=3)</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">num_epoch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span> <span class="o">=</span> <span class="n">num_batch_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span> <span class="o">=</span> <span class="n">num_epoch_steps</span>
+
+    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if iterated specified number of epochs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span><span class="p">:</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if iterated specified number of batches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;TimerCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TqdmCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CheckRunCallback&quot;</span><span class="p">,</span>
+    <span class="c1"># &quot;IBatchMetricHandlerCallback&quot;,</span>
+    <span class="c1"># &quot;IEpochMetricHandlerCallback&quot;,</span>
+    <span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst#step-by-step-guide">Getting started</a></li>
+            <li><a class="nav-dropdown-item" href="https://catalyst-team.github.io/catalyst/getting_started/quickstart.html">Quickstart</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst#minimal-examples">Examples</a></li>
+            <li><a class="nav-dropdown-item" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef">Blogpost</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/#projects">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/dl-course">Course</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst#acknowledgments" target="_blank">Acknowledgments</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://opencollective.com/catalyst" target="_blank">Open Collective</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/CatalystTeam" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-devs/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
