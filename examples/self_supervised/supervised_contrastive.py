@@ -29,7 +29,7 @@ if __name__ == "__main__":
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
     # define criterion with triplets sampling
-    criterion = SupervisedContrastiveLoss(tau=args.temperature)
+    criterion = SupervisedContrastiveLoss(tau=1_000_000_00)
 
     # and callbacks
     callbacks = [
@@ -48,9 +48,10 @@ if __name__ == "__main__":
         dl.CriterionCallback(
             input_key="full_projection", target_key="full_targets", metric_key="loss"
         ),
+        dl.OptimizerCallback(metric_key="loss"),
         dl.SklearnModelCallback(
-            feature_key="full_projection",
-            target_key="full_targets",
+            feature_key="embedding_origin",
+            target_key="target",
             train_loader="train",
             valid_loaders="valid",
             model_fn=LogisticRegression,
@@ -59,6 +60,12 @@ if __name__ == "__main__":
             C=0.1,
             solver="saga",
             max_iter=200,
+        ),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
         ),
     ]
 
@@ -75,6 +82,6 @@ if __name__ == "__main__":
         valid_loader="train",
         valid_metric="loss",
         minimize_valid_metric=True,
-        verbose=args.verbose,
+        verbose=True,
         # check=args.check,
     )
