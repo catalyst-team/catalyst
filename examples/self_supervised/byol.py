@@ -40,6 +40,7 @@ if __name__ == "__main__":
             target_key="target_projection_right",
             metric_key="loss",
         ),
+        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.SoftUpdateCallaback(
                 target_model_key="target", source_model_key="online", tau=0.1, scope="on_batch_end"
@@ -58,7 +59,6 @@ if __name__ == "__main__":
             solver="saga",
             max_iter=200,
         ),
-        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="target", input_key="sklearn_predict", topk_args=(1, 3)

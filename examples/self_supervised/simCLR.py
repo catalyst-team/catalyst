@@ -30,6 +30,7 @@ if __name__ == "__main__":
         dl.CriterionCallback(
             input_key="projection_left", target_key="projection_right", metric_key="loss"
         ),
+        dl.OptimizerCallback(metric_key="loss"),
         dl.SklearnModelCallback(
             feature_key="embedding_origin",
             target_key="target",
@@ -42,7 +43,6 @@ if __name__ == "__main__":
             solver="saga",
             max_iter=200,
         ),
-        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
