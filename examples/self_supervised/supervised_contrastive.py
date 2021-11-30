@@ -72,22 +72,6 @@ if __name__ == "__main__":
 
     # train model
     runner = dl.SelfSupervisedRunner()
-<<<<<<< HEAD
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        callbacks=callbacks,
-        loaders=get_loaders(args.dataset, args.batch_size, args.num_workers),
-        num_epochs=args.epochs,
-        logdir=args.logdir,
-        valid_loader="train",
-        valid_metric="loss",
-        minimize_valid_metric=True,
-        verbose=True,
-        # check=args.check,
-    )
-=======
     # runner.train(
     #     model=model,
     #     criterion=criterion,
@@ -102,4 +86,3 @@ if __name__ == "__main__":
     #     verbose=args.verbose,
     #     # check=args.check,
     # )
->>>>>>> master
