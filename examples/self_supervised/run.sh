@@ -9,7 +9,6 @@ for DATASET in "STL10" "CIFAR-10" "CIFAR-100"; do
 			--logdir="./logs/$DATASET/$METHOD" \
 			--batch-size=$BATCH_SIZE \
 			--epochs=$NUM_EPOCHS \
-			--learning-rate=$LEARNING_RATE \
-			--verbose
+			--learning-rate=$LEARNING_RATE
 	done
 done
