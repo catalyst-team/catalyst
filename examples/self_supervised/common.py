@@ -149,7 +149,7 @@ def get_loaders(
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(in_size: int, feature_dim: int) -> ContrastiveModel:
+def get_contrastive_model(in_size: int, feature_dim: int, encoder_output_dim = 512) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
@@ -161,9 +161,9 @@ def get_contrastive_model(in_size: int, feature_dim: int) -> ContrastiveModel:
     Returns:
         ContrstiveModel instance
     """
-    encoder = resnet9(in_size=in_size, in_channels=3, out_features=512)
+    encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_output_dim)
     projection_head = nn.Sequential(
-        nn.Linear(out_features, 512, bias=False),
+        nn.Linear(encoder_output_dim, 512, bias=False),
         nn.ReLU(inplace=True),
         nn.Linear(512, feature_dim, bias=True),
     )
