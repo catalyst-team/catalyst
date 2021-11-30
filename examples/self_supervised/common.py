@@ -1,12 +1,12 @@
+# flake8: noqa
 from typing import Dict, Optional
 
-from datasets import datasets
+from datasets import DATASETS
 import torch
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.contrib import nn
-from catalyst.contrib.models import ResnetEncoder
+from catalyst.contrib import nn, ResidualBlock
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 
@@ -28,7 +28,7 @@ def add_arguments(parser) -> None:
         "--dataset",
         default="CIFAR-10",
         type=str,
-        choices=datasets.keys(),
+        choices=DATASETS.keys(),
         help="Dataset: CIFAR-10, CIFAR-100 or STL10",
     )
     parser.add_argument(
@@ -46,13 +46,6 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
     )
-    parser.add_argument(
-        "--arch",
-        default="resnet50",
-        type=str,
-        choices=["resnet18", "resnet34", "resnet50", "resnet101", "resnet152"],
-    )
-    utils.boolean_flag(parser=parser, name="frozen", default=False)
     parser.add_argument(
         "--feature-dim", default=128, type=int, help="Feature dim for latent vector"
     )
@@ -106,16 +99,23 @@ def get_loaders(
     Returns:
         {"train":..., "valid":...}
     """
-    transforms = datasets[dataset]["train_transform"]
-    transform_original = datasets[dataset]["valid_transform"]
+    transforms = DATASETS[dataset]["train_transform"]
+    transform_original = DATASETS[dataset]["valid_transform"]
+
+    try:
+        train_data = DATASETS[dataset]["dataset"](root="data", train=True, download=True)
+        valid_data = DATASETS[dataset]["dataset"](root="data", train=False, download=True)
+    except:
+        train_data = DATASETS[dataset]["dataset"](root="data", split="train", download=True)
+        valid_data = DATASETS[dataset]["dataset"](root="data", split="test", download=True)
 
     train_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=True, transform=None, download=True),
+        train_data,
         transforms=transforms,
         transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        datasets[dataset]["dataset"](root="data", train=False, transform=None, download=True),
+        valid_data,
         transforms=transforms,
         transform_original=transform_original,
     )
@@ -126,25 +126,53 @@ def get_loaders(
     return {"train": train_loader, "valid": valid_loader}
 
 
+def conv_block(in_channels, out_channels, pool=False):
+    layers = [
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(inplace=True),
+    ]
+    if pool:
+        layers.append(nn.MaxPool2d(2))
+    return nn.Sequential(*layers)
+
+
+def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
+    sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
+    assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
+    out_size = (((in_size // 32) * 32) ** 2 * 2) // size
+    return nn.Sequential(
+        conv_block(in_channels, sz),
+        conv_block(sz, sz2, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz2, sz2), conv_block(sz2, sz2))),
+        conv_block(sz2, sz4, pool=True),
+        conv_block(sz4, sz8, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
+        nn.Sequential(
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
+        ),
+    )
+
+
 def get_contrastive_model(
-    feature_dim: int, arch: str = "resnet50", frozen: bool = False
+    in_size: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
 ) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
+        in_size: size of an image (in_size x in_size)
         feature_dim: dimensinality of contrative projection
-        arch: Name for resnet. Have to be one of
-            resnet18, resnet34, resnet50, resnet101, resnet152
-        frozen: If frozen, sets requires_grad to False
+        encoder_dim: dimensinality of encoder output
+        hidden_dim: dimensinality of encoder-contrative projection
 
     Returns:
         ContrstiveModel instance
     """
-    encoder = ResnetEncoder(arch=arch, frozen=frozen)
+    encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_dim)
     projection_head = nn.Sequential(
-        nn.Linear(encoder.out_features, 512, bias=False),
+        nn.Linear(encoder_dim, hidden_dim, bias=False),
         nn.ReLU(inplace=True),
-        nn.Linear(512, feature_dim, bias=True),
+        nn.Linear(hidden_dim, feature_dim, bias=True),
     )
     model = ContrastiveModel(projection_head, encoder)
     return model

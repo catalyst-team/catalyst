@@ -1,11 +1,10 @@
-from PIL import Image
-
 import torchvision
 from torchvision.datasets import CIFAR10, CIFAR100, STL10
 
-datasets = {
+DATASETS = {
     "CIFAR-10": {
         "dataset": CIFAR10,
+        "in_size": 32,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -17,9 +16,6 @@ datasets = {
                     p=0.8,
                 ),
                 torchvision.transforms.RandomGrayscale(p=0.1),
-                # torchvision.transforms.RandomResizedCrop(
-                #     64, scale=(0.2, 1.0), ratio=(0.75, (4 / 3)), interpolation=Image.BICUBIC,
-                # ),
                 torchvision.transforms.RandomHorizontalFlip(p=0.5),
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize((0.480, 0.448, 0.398), (0.277, 0.269, 0.282)),
@@ -36,6 +32,7 @@ datasets = {
     },
     "CIFAR-100": {
         "dataset": CIFAR100,
+        "in_size": 32,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -47,9 +44,6 @@ datasets = {
                     p=0.8,
                 ),
                 torchvision.transforms.RandomGrayscale(p=0.1),
-                # torchvision.transforms.RandomResizedCrop(
-                #     64, scale=(0.2, 1.0), ratio=(0.75, (4 / 3)), interpolation=Image.BICUBIC,
-                # ),
                 torchvision.transforms.RandomHorizontalFlip(p=0.5),
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize((0.480, 0.448, 0.398), (0.277, 0.269, 0.282)),
@@ -66,6 +60,7 @@ datasets = {
     },
     "STL10": {
         "dataset": STL10,
+        "in_size": 96,
         "train_transform": torchvision.transforms.Compose(
             [
                 torchvision.transforms.RandomApply(
@@ -77,9 +72,6 @@ datasets = {
                     p=0.8,
                 ),
                 torchvision.transforms.RandomGrayscale(p=0.1),
-                # torchvision.transforms.RandomResizedCrop(
-                #     64, scale=(0.2, 1.0), ratio=(0.75, (4 / 3)), interpolation=Image.BICUBIC,
-                # ),
                 torchvision.transforms.RandomHorizontalFlip(p=0.5),
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize((0.43, 0.42, 0.39), (0.27, 0.26, 0.27)),
@@ -87,8 +79,6 @@ datasets = {
         ),
         "valid_transform": torchvision.transforms.Compose(
             [
-                torchvision.transforms.Resize(70, interpolation=Image.BICUBIC),
-                torchvision.transforms.CenterCrop(64),
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize((0.43, 0.42, 0.39), (0.27, 0.26, 0.27)),
             ]

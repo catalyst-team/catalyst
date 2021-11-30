@@ -4,6 +4,7 @@ import argparse
 from common import add_arguments, get_contrastive_model, get_loaders
 from sklearn.linear_model import LogisticRegression
 
+from datasets import DATASETS
 from torch import nn, optim
 
 from catalyst import dl, utils
@@ -18,8 +19,12 @@ if __name__ == "__main__":
     # create model and optimizer
     model = nn.ModuleDict(
         {
-            "online": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
-            "target": get_contrastive_model(args.feature_dim, args.arch, args.frozen),
+            "online": get_contrastive_model(
+                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+            ),
+            "target": get_contrastive_model(
+                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+            ),
         }
     )
     utils.set_requires_grad(model["target"], False)
@@ -35,6 +40,7 @@ if __name__ == "__main__":
             target_key="target_projection_right",
             metric_key="loss",
         ),
+        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.SoftUpdateCallaback(
                 target_model_key="target", source_model_key="online", tau=0.1, scope="on_batch_end"
@@ -42,15 +48,17 @@ if __name__ == "__main__":
             loaders="train",
         ),
         dl.SklearnModelCallback(
-            feature_key="embedding_origin",
+            feature_key="online_embedding_origin",
             target_key="target",
             train_loader="train",
             valid_loaders="valid",
             model_fn=LogisticRegression,
             predict_key="sklearn_predict",
             predict_method="predict_proba",
+            C=0.1,
+            solver="saga",
+            max_iter=200,
         ),
-        dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
