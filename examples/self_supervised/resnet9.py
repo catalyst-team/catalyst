@@ -17,7 +17,8 @@ def conv_block(in_channels, out_channels, pool=False):
 
 def resnet9(in_size: int, in_channels: int, out_features: int = 512, size: int = 16):
     sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
-    out_size = (((in_size // 32) * 32)**2 * 2) // size 
+    assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
+    out_size = (((in_size // 32) * 32) ** 2 * 2) // size
     return nn.Sequential(
         conv_block(in_channels, sz),
         conv_block(sz, sz2, pool=True),
