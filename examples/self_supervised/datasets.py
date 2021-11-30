@@ -1,5 +1,3 @@
-from PIL import Image
-
 import torchvision
 from torchvision.datasets import CIFAR10, CIFAR100, STL10
 

@@ -149,14 +149,15 @@ def get_loaders(
     return {"train": train_loader, "valid": valid_loader}
 
 
-def get_contrastive_model(in_size: int, feature_dim: int, encoder_output_dim = 512) -> ContrastiveModel:
+def get_contrastive_model(
+    in_size: int, feature_dim: int, encoder_output_dim=512
+) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
+        in_size: size of an image (in_size x in_size)
         feature_dim: dimensinality of contrative projection
-        arch: Name for resnet. Have to be one of
-            resnet18, resnet34, resnet50, resnet101, resnet152
-        frozen: If frozen, sets requires_grad to False
+        encoder_output_dim: dimensinality of resnet9 output
 
     Returns:
         ContrstiveModel instance
