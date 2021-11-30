@@ -4,7 +4,6 @@ export LEARNING_RATE=0.001
 
 for DATASET in "CIFAR-10" "CIFAR-100" "STL10"; do
 	for METHOD in "barlow_twins" "byol" "simCLR" "supervised_contrastive"; do
-		echo $METHOD $DATASET
 		python $METHOD.py \
 			--dataset $DATASET \
 			--logdir="./logs/$DATASET/$METHOD/$ARCH" \
