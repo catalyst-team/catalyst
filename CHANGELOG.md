@@ -4,16 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [YY.MM.R] - YYYY-MM-DD
+## [21.11] - 2021-11-30
 
 ### Added
 
 - MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))`
 - Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
+- Smoothing dice loss to contrib ([#1344](https://github.com/catalyst-team/catalyst/pull/1344))
+- `profile` flag for `runner.train` ([#1348](https://github.com/catalyst-team/catalyst/pull/1348))
 - MultiDAE RecSys example ([#1356](https://github.com/catalyst-team/catalyst/pull/1356))
 - `SETTINGS.log_batch_metrics`, `SETTINGS.log_epoch_metrics`, `SETTINGS.compute_per_class_metrics` for framework-wise  Metric & Logger APIs specification ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
 - `log_batch_metrics` and `log_epoch_metrics` options for all available Loggers ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
 - `compute_per_class_metrics` option for all available multiclass/label metrics ([#1357](https://github.com/catalyst-team/catalyst/pull/1357))
+- pytorch benchmark script and simplified MNIST ([#1360](https://github.com/catalyst-team/catalyst/pull/1360))
 
 ### Changed
 
@@ -37,7 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
   - `SETTINGS.log_epoch_metrics=True/False` or `os.environ["CATALYST_LOG_EPOCH_METRICS"]`
 - default metrics computation moved from "per-class & aggregations" to "aggregations"-only to save computation time during logging; to respecify, please use:
   - `SETTINGS.compute_per_class_metrics=True/False` or `os.environ["CATALYST_COMPUTE_PER_CLASS_METRICS"]`
-  
+- no transformations required for MNIST contrib dataset ([#1360](https://github.com/catalyst-team/catalyst/pull/1360)
 
 ### Removed
 
@@ -52,6 +55,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - documentation search error (21.10 only) ([#1346](https://github.com/catalyst-team/catalyst/pull/1346))
+- docs examples ([#1362](https://github.com/catalyst-team/catalyst/pull/1362))
+- Self-Supervised benchmark: ([#1365](https://github.com/catalyst-team/catalyst/pull/1365)), ([#1361](https://github.com/catalyst-team/catalyst/pull/1361))
 
 
 ## [21.10] - 2021-10-30
