@@ -1,21 +1,14 @@
 # flake8: noqa
 from typing import Dict, Optional
 
-<<<<<<< HEAD
 from resnet9 import resnet9
 
-=======
->>>>>>> master
 from datasets import DATASETS
 import torch
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-<<<<<<< HEAD
 from catalyst.contrib import nn
-=======
-from catalyst.contrib import nn, ResidualBlock
->>>>>>> master
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 
@@ -55,10 +48,6 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
     )
-<<<<<<< HEAD
-    utils.boolean_flag(parser=parser, name="frozen", default=False)
-=======
->>>>>>> master
     parser.add_argument(
         "--feature-dim", default=128, type=int, help="Feature dim for latent vector"
     )
@@ -159,66 +148,23 @@ def get_loaders(
 
     return {"train": train_loader, "valid": valid_loader}
 
-
-def conv_block(in_channels, out_channels, pool=False):
-    layers = [
-        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-        nn.BatchNorm2d(out_channels),
-        nn.ReLU(inplace=True),
-    ]
-    if pool:
-        layers.append(nn.MaxPool2d(2))
-    return nn.Sequential(*layers)
-
-
-def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
-    sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
-    assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
-    out_size = (((in_size // 32) * 32) ** 2 * 2) // size
-    return nn.Sequential(
-        conv_block(in_channels, sz),
-        conv_block(sz, sz2, pool=True),
-        ResidualBlock(nn.Sequential(conv_block(sz2, sz2), conv_block(sz2, sz2))),
-        conv_block(sz2, sz4, pool=True),
-        conv_block(sz4, sz8, pool=True),
-        ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
-        nn.Sequential(
-            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
-        ),
-    )
-
-
 def get_contrastive_model(
-<<<<<<< HEAD
-    in_size: int, feature_dim: int, encoder_output_dim=512
-=======
     in_size: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
->>>>>>> master
 ) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
         in_size: size of an image (in_size x in_size)
         feature_dim: dimensinality of contrative projection
-<<<<<<< HEAD
-        encoder_output_dim: dimensinality of resnet9 output
-=======
         encoder_dim: dimensinality of encoder output
         hidden_dim: dimensinality of encoder-contrative projection
->>>>>>> master
 
     Returns:
         ContrstiveModel instance
     """
-<<<<<<< HEAD
-    encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_output_dim)
-    projection_head = nn.Sequential(
-        nn.Linear(encoder_output_dim, 512, bias=False),
-=======
     encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_dim)
     projection_head = nn.Sequential(
         nn.Linear(encoder_dim, hidden_dim, bias=False),
->>>>>>> master
         nn.ReLU(inplace=True),
         nn.Linear(hidden_dim, feature_dim, bias=True),
     )
