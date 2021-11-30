@@ -56,6 +56,7 @@ class SupervisedContrastiveLoss(nn.Module):
             computed loss
         """
         # if ||x|| = ||y|| = 1 then||x-y||^2 = 2 - 2<x,y>
+        features = torch.nn.functional.normalize(features)
         cosine_matrix = (2 - torch.cdist(features, features) ** 2) / 2
         exp_cosine_matrix = torch.exp(cosine_matrix / self.tau)
         # positive part of the loss
