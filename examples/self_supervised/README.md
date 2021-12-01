@@ -3,8 +3,8 @@
 
 To run examples you need catalyst[cv]==21.11 and catalyst[ml]==21.11
 ```
-pip install catalyst[cv]==21.09
-pip install catalyst[ml]==21.09
+pip install catalyst[cv]==21.11
+pip install catalyst[ml]==21.11
 ```
 
 ## Description
