@@ -1,7 +1,7 @@
 # Self-Supervised Learning Examples
 ## Requriments
 
-To run examples you need catalyst[cv]==21.09 and catalyst[ml]==21.09
+To run examples you need catalyst[cv]==21.11 and catalyst[ml]==21.11
 ```
 pip install catalyst[cv]==21.09
 pip install catalyst[ml]==21.09
@@ -42,5 +42,8 @@ docker build . -t train-self-supervised
 docker run train-self-supervised python3 simCLR.py --batch_size 32
 ```
 
+## Test
+
+You can test that all settled with ``run.sh``. 
 
 
