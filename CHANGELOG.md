@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- MNIST dataset for SSL banchmark ([#1368](https://github.com/catalyst-team/catalyst/pull/1368))
 
 ### Changed
 
@@ -20,14 +20,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- 
 
 
 ## [21.11] - 2021-11-30
 
 ### Added
 
-- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))`
+- MultiVAE RecSys example ([#1340](https://github.com/catalyst-team/catalyst/pull/1340))
 - Returned `resume` support - resolved [#1193](https://github.com/catalyst-team/catalyst/issues/1193) ([#1349](https://github.com/catalyst-team/catalyst/pull/1349))
 - Smoothing dice loss to contrib ([#1344](https://github.com/catalyst-team/catalyst/pull/1344))
 - `profile` flag for `runner.train` ([#1348](https://github.com/catalyst-team/catalyst/pull/1348))
