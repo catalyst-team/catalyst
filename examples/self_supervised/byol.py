@@ -20,10 +20,14 @@ if __name__ == "__main__":
     model = nn.ModuleDict(
         {
             "online": get_contrastive_model(
-                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+                in_size=DATASETS[args.dataset]["in_size"],
+                in_channels=DATASETS[args.dataset]["in_channels"],
+                feature_dim=args.feature_dim,
             ),
             "target": get_contrastive_model(
-                in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+                in_size=DATASETS[args.dataset]["in_size"],
+                in_channels=DATASETS[args.dataset]["in_channels"],
+                feature_dim=args.feature_dim,
             ),
         }
     )

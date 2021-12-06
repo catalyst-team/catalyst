@@ -24,7 +24,9 @@ if __name__ == "__main__":
 
     # create model and optimizer
     model = get_contrastive_model(
-        in_size=DATASETS[args.dataset]["in_size"], feature_dim=args.feature_dim
+        in_size=DATASETS[args.dataset]["in_size"],
+        in_channels=DATASETS[args.dataset]["in_channels"],
+        feature_dim=args.feature_dim,
     )
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
 
