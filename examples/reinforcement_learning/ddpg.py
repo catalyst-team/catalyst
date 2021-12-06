@@ -378,12 +378,14 @@ if __name__ == "__main__":
     utils.set_requires_grad(target_actor, requires_grad=False)
     utils.set_requires_grad(target_critic, requires_grad=False)
 
-    models = nn.ModuleDict({
-        "actor": actor,
-        "critic": critic,
-        "target_actor": target_actor,
-        "target_critic": target_critic,
-    })
+    models = nn.ModuleDict(
+        {
+            "actor": actor,
+            "critic": critic,
+            "target_actor": target_actor,
+            "target_critic": target_critic,
+        }
+    )
 
     criterion = torch.nn.MSELoss()
     optimizer = {
