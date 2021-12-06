@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 
 import numpy as np
 
@@ -21,6 +21,15 @@ class ILogger:
     def __init__(self, log_batch_metrics: bool, log_epoch_metrics: bool) -> None:
         self._log_batch_metrics = log_batch_metrics
         self._log_epoch_metrics = log_epoch_metrics
+
+    @property
+    def logger(self) -> Any:
+        """Internal logger/experiment/etc. from the monitoring system.
+
+        Returns:
+            Any: internal logger/experiment/etc. from the monitoring system.
+        """
+        return None
 
     @property
     def log_batch_metrics(self) -> bool:
