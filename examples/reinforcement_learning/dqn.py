@@ -318,7 +318,7 @@ if __name__ == "__main__":
 
     network, target_network = get_network(env), get_network(env)
     utils.set_requires_grad(target_network, requires_grad=False)
-    models = {"origin": network, "target": target_network}
+    models = nn.ModuleDict({"origin": network, "target": target_network})
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(network.parameters(), lr=lr)
     loaders = {
