@@ -1,7 +1,7 @@
 # Catalyst engines overview
 
 Let's check different
-DataParallel and DistributedDataParallel multi-GPU setups with Catalyst Engines. 
+DataParallel and DistributedDataParallel multi-GPU setups with Catalyst Engines.
 
 > Note: for the Albert training please install requirements with ``pip install datasets transformers``.
 
@@ -14,14 +14,27 @@ pip install catalyst
 # CV - ResNet
 CUDA_VISIBLE_DEVICES="0" python train_resnet.py --engine=de
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=dp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ddp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ddp --sync-bn
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py \
+    --engine=ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 
 # NLP - Albert
 pip install datasets transformers
 CUDA_VISIBLE_DEVICES="0" python train_albert.py --engine=de
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=dp
-CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ddp
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py \
+    --engine=ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 ```
 
 ### PyTorch AMP

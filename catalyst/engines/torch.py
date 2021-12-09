@@ -310,17 +310,29 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address: address to use for backend.
-        port: port to use for backend.
+        address: master node (rank 0)'s address, should be either the IP address or the hostname
+            of node 0, for single node multi-proc training, can simply be 127.0.0.1
+        port: master node (rank 0)'s free port that needs to be used for communication
+            during distributed training
+        world_size: the number of processes to use for distributed training.
+            Should be less or equal to the number of GPUs
+        workers_dist_rank: the rank of the first process to run on the node.
+            It should be a number between `number of initialized processes` and `world_size - 1`,
+            the other processes on the node wiil have ranks `# of initialized processes + 1`,
+            `# of initialized processes + 2`, ...,
+            `# of initialized processes + num_node_workers - 1`
+        num_node_workers: the number of processes to launch on the node.
+            For GPU training, this is recommended to be set to the number of GPUs
+            on the current node so that each process can be bound to a single GPU
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         sync_bn: boolean flag for batchnorm synchonization during disributed training.
             if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
             distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
-        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
-            More info here:
-            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
 
     Examples:
 
@@ -380,7 +392,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         self,
         address: str = "127.0.0.1",
         port: Union[str, int] = 2112,
-        world_size: int = 1,
+        world_size: Optional[int] = None,
         workers_dist_rank: int = 0,
         num_node_workers: Optional[int] = None,
         process_group_kwargs: Dict[str, Any] = None,
@@ -391,11 +403,11 @@ class DistributedDataParallelEngine(DeviceEngine):
         super().__init__()
         self.address = address
         self.port = port
-        self._world_size = world_size
         self.workers_global_rank = workers_dist_rank
         self.num_local_workers = num_node_workers
         if not self.num_local_workers and torch.cuda.is_available():
             self.num_local_workers = torch.cuda.device_count()
+        self._world_size = world_size or self.num_local_workers
 
         self._rank = -1  # defined in `setup_process(...)`
         self._device = None  # defined in `setup_process(...)`
@@ -447,32 +459,29 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
 
         Args:
-            fn (function): Function is called as the entrypoint of the
-                spawned process. This function must be defined at the top
-                level of a module so it can be pickled and spawned. This
-                is a requirement imposed by multiprocessing.
+            fn: function is called as the entrypoint of the spawned process.
+                This function must be defined at the top level of a module
+                so it can be pickled and spawned.
+                This is a requirement imposed by multiprocessing.
                 The function is called as ``fn(i, *args)``, where ``i`` is
                 the process index and ``args`` is the passed through tuple
                 of arguments.
-            *args: Arguments passed to spawn method.
-            **kwargs: Keyword-arguments passed to spawn method.
+            *args: arguments passed to spawn method
+            **kwargs: keyword-arguments passed to spawn method
 
         Returns:
             wrapped function.
         """
         return torch.multiprocessing.spawn(
-            fn,
-            args=(self._world_size,),
-            nprocs=self.num_local_workers,
-            join=True
+            fn, args=(self._world_size,), nprocs=self.num_local_workers, join=True
         )
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
         Args:
-            rank: local process rank. Default is `-1`.
-            world_size: number of devices in netwok to expect for train. Default is `1`.
+            rank: local process rank
+            world_size: number of devices in netwok to expect for train
         """
         self._rank = self.workers_global_rank + rank
 
@@ -492,14 +501,13 @@ class DistributedDataParallelEngine(DeviceEngine):
         self.barrier()
         dist.destroy_process_group()
 
-    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
+    def sync_tensor(self, tensor: torch.Tensor, mode: str = "all") -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
             tensor: tensor to sync across the processes.
             mode: tensor synchronization type,
-                should be one of 'sum' or 'mean'.
-                Default is 'mean'.
+                should be one of ``'sum'``, ``'mean'``, or ``all``.
 
         Returns:
             torch.Tensor with synchronized values.

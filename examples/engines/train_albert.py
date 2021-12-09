@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # flake8: noqa
+from typing import Optional
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from common import E2E
+from common import E2E, parse_ddp_params
 
 from datasets import load_dataset
 from torch import nn, optim
@@ -14,13 +15,14 @@ from catalyst import dl
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir: str, engine: str):
+    def __init__(self, logdir: str, engine: str, engine_params: Optional[dict] = None):
         super().__init__()
         self._logdir = logdir
         self._engine = engine
+        self._engine_params = engine_params or {}
 
     def get_engine(self):
-        return E2E[self._engine]()
+        return E2E[self._engine](**self._engine_params)
 
     def get_loggers(self):
         return {
@@ -115,7 +117,7 @@ class CustomRunner(dl.IRunner):
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
-                metric_key="accuracy",
+                metric_key="accuracy01",
                 minimize=False,
                 save_n_best=1,
             ),
@@ -136,7 +138,12 @@ if __name__ == "__main__":
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
-    args, _ = parser.parse_known_args()
+    args, unknown_args = parser.parse_known_args()
     args.logdir = args.logdir or f"logs_albert_{args.engine}".replace("-", "_")
-    runner = CustomRunner(args.logdir, args.engine)
+    if args.engine == "ddp":
+        engine_params, _ = parse_ddp_params(unknown_args)
+    else:
+        engine_params = None
+
+    runner = CustomRunner(args.logdir, args.engine, engine_params)
     runner.run()
