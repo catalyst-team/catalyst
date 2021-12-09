@@ -40,10 +40,19 @@ so you can create something new rather than write yet another train loop.
 - Part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/)
 
 <details>
-<summary>Catalyst at PyTorch Ecosystem Day</summary>
+<summary>Catalyst at PyTorch Ecosystem Day 2021</summary>
 <p>
 
 [![Catalyst poster](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/Catalyst-PTED21.png)](https://github.com/catalyst-team/catalyst)
+
+</p>
+</details>
+
+<details>
+<summary>Catalyst at PyTorch Developer Day 2021</summary>
+<p>
+
+[![Catalyst poster](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/Catalyst-PTDD21.png)](https://github.com/catalyst-team/catalyst)
 
 </p>
 </details>
@@ -213,6 +222,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [21.11](https://catalyst-team.github.io/catalyst/v21.11/index.html)
 - [21.10](https://catalyst-team.github.io/catalyst/v21.10/index.html)
 - [21.09](https://catalyst-team.github.io/catalyst/v21.09/index.html)
 - [21.08](https://catalyst-team.github.io/catalyst/v21.08/index.html)
@@ -221,15 +231,23 @@ best practices for your deep learning research and development.
 - [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
 - [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
-- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
-- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
-- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
-- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
-- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
-- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
-- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
-- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
-- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
+- <details>
+  <summary>2020 edition</summary>
+  <p>
+
+    - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
+    - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
+    - [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
+    - [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
+    - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
+    - [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) ([dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c))
+    - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
+    - [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
+    - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
+
+  </p>
+  </details>
+
 
 ### Minimal Examples
 

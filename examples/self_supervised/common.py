@@ -137,6 +137,21 @@ def conv_block(in_channels, out_channels, pool=False):
     return nn.Sequential(*layers)
 
 
+def resnet_mnist(in_size: int, in_channels: int, out_features: int, size: int = 16):
+    sz, sz2, sz4 = size, size * 2, size * 4
+    out_size = (((in_size // 16) * 16) ** 2 * 4) // size
+    return nn.Sequential(
+        conv_block(in_channels, sz),
+        conv_block(sz, sz2, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz2, sz2), conv_block(sz2, sz2))),
+        conv_block(sz2, sz4, pool=True),
+        ResidualBlock(nn.Sequential(conv_block(sz4, sz4), conv_block(sz4, sz4))),
+        nn.Sequential(
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
+        ),
+    )
+
+
 def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
     sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
     assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
@@ -155,12 +170,13 @@ def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
 
 
 def get_contrastive_model(
-    in_size: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
+    in_size: int, in_channels: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
 ) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
     Args:
         in_size: size of an image (in_size x in_size)
+        in_channels: number of channels in an image
         feature_dim: dimensinality of contrative projection
         encoder_dim: dimensinality of encoder output
         hidden_dim: dimensinality of encoder-contrative projection
@@ -168,7 +184,10 @@ def get_contrastive_model(
     Returns:
         ContrstiveModel instance
     """
-    encoder = resnet9(in_size=in_size, in_channels=3, out_features=encoder_dim)
+    try:
+        encoder = resnet9(in_size=in_size, in_channels=in_channels, out_features=encoder_dim)
+    except:
+        encoder = resnet_mnist(in_size=in_size, in_channels=in_channels, out_features=encoder_dim)
     projection_head = nn.Sequential(
         nn.Linear(encoder_dim, hidden_dim, bias=False),
         nn.ReLU(inplace=True),

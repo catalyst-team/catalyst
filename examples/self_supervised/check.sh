@@ -7,7 +7,7 @@ export NUM_EPOCHS=20
 export BATCH_SIZE=256
 export LEARNING_RATE=0.001
 
-for DATASET in "CIFAR-10" "CIFAR-100" "STL10"; do
+for DATASET in "MNIST"; do
 	for METHOD in "barlow_twins" "byol" "simCLR" "supervised_contrastive"; do
 		python $METHOD.py \
 			--dataset $DATASET \
