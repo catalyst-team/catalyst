@@ -76,6 +76,7 @@ DATASETS = {
     "STL10": {
         "dataset": datasets.STL10,
         "in_size": 96,
+        "in_channels": 3,
         "train_transform": transforms.Compose(
             [
                 transforms.RandomApply(
