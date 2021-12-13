@@ -1,10 +1,8 @@
 from typing import Any, Dict, Optional, Union
 from collections import OrderedDict
-import os
 
 import torch
 from torch import nn
-import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS

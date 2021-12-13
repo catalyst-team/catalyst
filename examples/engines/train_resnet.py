@@ -141,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
     args, unknown_args = parser.parse_known_args()
     args.logdir = args.logdir or f"logs_resnet_{args.engine}".replace("-", "_")
-    if args.engine in {"ddp", "amp-ddp", "apex-ddp"}:
+    if args.engine in {"ddp", "amp-ddp", "apex-ddp", "fs-ddp", "fs-ddp-amp", "fs-fddp"}:
         engine_params, _ = parse_ddp_params(unknown_args)
     else:
         engine_params = None

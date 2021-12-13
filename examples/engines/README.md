@@ -14,8 +14,7 @@ pip install catalyst
 # CV - ResNet
 CUDA_VISIBLE_DEVICES="0" python train_resnet.py --engine=de
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=dp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py \
-    --engine=ddp \
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ddp \
     --master_addr=127.0.0.1 \
     --master_port=2112 \
     --world_size=8 \
@@ -27,8 +26,7 @@ CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py \
 pip install datasets transformers
 CUDA_VISIBLE_DEVICES="0" python train_albert.py --engine=de
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=dp
-CUDA_VISIBLE_DEVICES="0,1" python train_albert.py \
-    --engine=ddp \
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ddp \
     --master_addr=127.0.0.1 \
     --master_port=2112 \
     --world_size=8 \
@@ -43,13 +41,24 @@ pip install torch>=1.8.0 catalyst
 
 # CV - ResNet
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-dp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-ddp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-ddp --sync-bn
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 
 # NLP - Albert
 pip install datasets transformers
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-dp
-CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-ddp
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 ```
 
 ### PyTorch XLA
@@ -76,13 +85,24 @@ pip install catalyst && install-apex
 
 # CV - ResNet
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-dp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-ddp
-CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-ddp --sync-bn
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 
 # NLP - Albert
 pip install datasets transformers
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-dp
-CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-ddp
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-ddp \
+    --master_addr=127.0.0.1 \
+    --master_port=2112 \
+    --world_size=8 \
+    --dist_rank=0 \
+    --num_workers=8 \
+    --sync-bn
 ```
 
 ### DeepSpeed
