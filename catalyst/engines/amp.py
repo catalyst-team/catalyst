@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 from torch import nn
@@ -238,17 +238,29 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """Distributed AMP multi-gpu training device engine.
 
     Args:
-        address: address to use for backend.
-        port: port to use for backend.
+        address: master node (rank 0)'s address, should be either the IP address or the hostname
+            of node 0, for single node multi-proc training, can simply be 127.0.0.1
+        port: master node (rank 0)'s free port that needs to be used for communication
+            during distributed training
+        world_size: the number of processes to use for distributed training.
+            Should be less or equal to the number of GPUs
+        workers_dist_rank: the rank of the first process to run on the node.
+            It should be a number between `number of initialized processes` and `world_size - 1`,
+            the other processes on the node wiil have ranks `# of initialized processes + 1`,
+            `# of initialized processes + 2`, ...,
+            `# of initialized processes + num_node_workers - 1`
+        num_node_workers: the number of processes to launch on the node.
+            For GPU training, this is recommended to be set to the number of GPUs
+            on the current node so that each process can be bound to a single GPU
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         sync_bn: boolean flag for batchnorm synchonization during disributed training.
             if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
             distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
-        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
-            More info here:
-            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         scaler_kwargs: parameters for `torch.cuda.amp.GradScaler`.
             Possible parameters:
             https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
@@ -311,20 +323,26 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
 
     def __init__(
         self,
-        address: str = None,
-        port: Union[str, int] = None,
+        address: str = "127.0.0.1",
+        port: Union[str, int] = 2112,
+        world_size: Optional[int] = None,
+        workers_dist_rank: int = 0,
+        num_node_workers: Optional[int] = None,
+        process_group_kwargs: Dict[str, Any] = None,
         sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
-        process_group_kwargs: Dict[str, Any] = None,
         scaler_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__(
             address=address,
             port=port,
+            world_size=world_size,
+            workers_dist_rank=workers_dist_rank,
+            num_node_workers=num_node_workers,
+            process_group_kwargs=process_group_kwargs,
             sync_bn=sync_bn,
             ddp_kwargs=ddp_kwargs,
-            process_group_kwargs=process_group_kwargs,
         )
         if scaler_kwargs is None:
             scaler_kwargs = {}
