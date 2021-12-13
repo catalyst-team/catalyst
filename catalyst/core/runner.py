@@ -810,7 +810,7 @@ class IRunner(ICallback, ILogger, ABC):
         # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
-            for self.loader_batch_step, self.batch in enumerate(self.loader):
+            for self.batch in self.loader:
                 with self.engine.autocast():
                     self._run_batch()
                 if self.need_early_stop:
