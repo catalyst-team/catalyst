@@ -412,7 +412,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         self._rank = -1  # defined in `setup_process(...)`
         self._device = None  # defined in `setup_process(...)`
 
-        process_group_kwargs = process_group_kwargs or {}
+        process_group_kwargs = copy.deepcopy(process_group_kwargs) or {}
         self.process_group_kwargs = {
             "backend": "nccl",
             "world_size": self._world_size,

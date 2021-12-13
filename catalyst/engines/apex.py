@@ -383,7 +383,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         sync_bn: boolean flag for batchnorm synchonization during disributed training.
-            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            if True, applies Apex `convert_syncbn_model`_ to the model for native torch
             distributed only. Default, False.
         ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
             More info here:
