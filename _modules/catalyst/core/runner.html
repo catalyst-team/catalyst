@@ -1072,7 +1072,7 @@
         <span class="c1"># https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_loader_start&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">):</span>
-            <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">):</span>
+            <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">:</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">autocast</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_run_batch</span><span class="p">()</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">need_early_stop</span><span class="p">:</span>
