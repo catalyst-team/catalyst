@@ -52,7 +52,7 @@ You can test that all settled with ``run.sh``.
 <summary>TITAN V JHH Special Edition</summary>
 <p>
 
-### % correctly classified samples with sklearn.LogisticRegression by learned representations.
+### % correctly classified samples with sklearn.LogisticRegression on learned representations.
 
 | accuracy01 | Barlow Twins  | BYOL          | simCLR        | Supervised Contrastive |
 |------------|---------------|---------------|---------------|------------------------|
@@ -66,8 +66,8 @@ You can test that all settled with ``run.sh``.
 | CIFAR-100  | 12.40±2.10    | *23.70±2.46*  | *22.15±2.45*  | **61.33±2.71**          |
 | STL10      | *60.08±3.68*  | 64.50±2.45    | *69.43±2.58*  | **89.57±2.02**          |
 
-- Bold - Top1 performance results
-- Italic - Top2 performance results
+- **Bold** - Top1 performance results
+- *Italic* - Top2 performance results
 
 </p>
 </details>
