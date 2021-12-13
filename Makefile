@@ -43,3 +43,8 @@ clean:
 	rm -rf build/
 	docker rmi -f catalyst:latest
 	docker rmi -f catalyst-dev:latest
+
+check:
+	catalyst-make-codestyle -l 99
+	catalyst-check-codestyle -l 99
+
