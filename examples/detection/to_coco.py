@@ -27,7 +27,7 @@ def load_annotations(file):
             {
                 "category": item["name"].lower().strip(),
                 "x1": int(item["bndbox"]["xmin"]),
-                "y1": int(item["bndbox"]["xmin"]),
+                "y1": int(item["bndbox"]["ymin"]),
                 "x2": int(item["bndbox"]["xmax"]),
                 "y2": int(item["bndbox"]["ymax"]),
             }
