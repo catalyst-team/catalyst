@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
+from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, ISchedulerCallback
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
@@ -368,6 +368,9 @@ class LRFinder(ILRUpdater):
             scale: learning rate increasing scale ("log" or "linear")
             num_steps:  number of batches to try, if None - whole loader would be used.
             optimizer_key: which optimizer key to use for learning rate scheduling
+
+        Raises:
+            NotImplementedError: if invalid scale value.
         """
         super().__init__(optimizer_key=optimizer_key)
 

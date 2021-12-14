@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
-from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
@@ -41,19 +40,13 @@ def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
         # 1. train and valid loaders
-        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
-
-        train_dataset = datasets.MnistMLDataset(
-            root=os.getcwd(), download=True, transform=transforms
-        )
+        train_dataset = datasets.MnistMLDataset(root=os.getcwd())
         sampler = data.BatchBalanceClassSampler(
             labels=train_dataset.get_labels(), num_classes=5, num_samples=10, num_batches=10
         )
         train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)
 
-        valid_dataset = datasets.MnistQGDataset(
-            root=os.getcwd(), transform=transforms, gallery_fraq=0.2
-        )
+        valid_dataset = datasets.MnistQGDataset(root=os.getcwd(), gallery_fraq=0.2)
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
 
         # 2. model and optimizer

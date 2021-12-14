@@ -6,7 +6,7 @@ import os
 # from packaging.version import parse, Version
 import torch
 
-from catalyst.tools.frozen_class import FrozenClass
+from catalyst.extras.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
 
@@ -205,12 +205,9 @@ class Settings(FrozenClass):
         self,
         # [subpackages]
         cv_required: Optional[bool] = None,
-        nifti_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
-        albu_required: Optional[bool] = None,
         hydra_required: Optional[bool] = None,
-        # nmslib_required: Optional[bool] = False,
         optuna_required: Optional[bool] = None,
         # [engines]
         amp_required: Optional[bool] = None,
@@ -232,6 +229,12 @@ class Settings(FrozenClass):
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
         use_libjpeg_turbo: Optional[bool] = None,
+        log_batch_metrics: Optional[bool] = None,
+        log_epoch_metrics: Optional[bool] = None,
+        compute_per_class_metrics: Optional[bool] = None,
+        # [to remove]
+        nifti_required: Optional[bool] = None,
+        albu_required: Optional[bool] = None,
     ):
         # True – use the package
         # None – use the package if available
@@ -242,12 +245,6 @@ class Settings(FrozenClass):
             _is_cv_available,
             "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
         )
-        self.nifti_required: bool = _get_optional_value(
-            nifti_required,
-            _is_nifti_available,
-            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
-        )
-
         self.ml_required: bool = _get_optional_value(
             ml_required,
             _is_ml_available,
@@ -255,22 +252,28 @@ class Settings(FrozenClass):
         )
 
         # [integrations]
-        self.albu_required: bool = _get_optional_value(
-            albu_required,
-            _is_albumentations_available,
-            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
-        )
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
             _is_hydra_available,
             "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
         )
-        # self.nmslib_required: bool = nmslib_required
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
             _is_optuna_available,
             "catalyst[optuna] is not available, to install it, "
             "run `pip install catalyst[optuna]`.",
+        )
+
+        # [to remove]
+        self.nifti_required: bool = _get_optional_value(
+            nifti_required,
+            _is_nifti_available,
+            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
+        )
+        self.albu_required: bool = _get_optional_value(
+            albu_required,
+            _is_albumentations_available,
+            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
         )
 
         # [engines]
@@ -324,6 +327,11 @@ class Settings(FrozenClass):
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
+        self.comet_required: bool = _get_optional_value(
+            comet_required,
+            _is_comet_available,
+            "comet is not available, to install, run 'pip install comet_ml'.",
+        )
         self.neptune_required: bool = _get_optional_value(
             neptune_required,
             _is_neptune_available,
@@ -342,18 +350,23 @@ class Settings(FrozenClass):
             "wandb is not available, to install it, " "run `pip install wandb`.",
         )
 
-        self.comet_required: bool = _get_optional_value(
-            comet_required,
-            _is_comet_available,
-            "comet is not available, to install, run 'pip install comet_ml'.",
+        # [extras]
+        self.use_lz4: bool = use_lz4 or os.environ.get("CATALYST_USE_LZ4", "0") == "1"
+        self.use_pyarrow: bool = use_pyarrow or os.environ.get("CATALYST_USE_PYARROW", "0") == "1"
+        self.use_libjpeg_turbo: bool = (
+            use_libjpeg_turbo or os.environ.get("CATALYST_USE_LIBJPEG_TURBO", "0") == "1"
         )
 
-        # self.wandb_required: bool = wandb_required
-
-        # [extras]
-        self.use_lz4: bool = use_lz4 or False
-        self.use_pyarrow: bool = use_pyarrow or False
-        self.use_libjpeg_turbo: bool = use_libjpeg_turbo or False
+        self.log_batch_metrics: bool = (
+            log_batch_metrics or os.environ.get("CATALYST_LOG_BATCH_METRICS", "0") == "1"
+        )
+        self.log_epoch_metrics: bool = (
+            log_epoch_metrics or os.environ.get("CATALYST_LOG_EPOCH_METRICS", "1") == "1"
+        )
+        self.compute_per_class_metrics: bool = (
+            compute_per_class_metrics
+            or os.environ.get("CATALYST_COMPUTE_PER_CLASS_METRICS", "0") == "1"
+        )
 
         # [global]
         # stages

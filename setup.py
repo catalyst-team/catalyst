@@ -42,6 +42,7 @@ def load_version():
 extras = {
     "albu": load_requirements("requirements/requirements-albu.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
+    "comet": load_requirements("requirements/requirements-comet.txt"),
     "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
     "dev": load_requirements("requirements/requirements-dev.txt"),
     "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
@@ -53,10 +54,11 @@ extras = {
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "profiler": load_requirements("requirements/requirements-profiler.txt"),
     "wandb": load_requirements("requirements/requirements-wandb.txt"),
     # "xla": load_requirements("requirements/requirements-xla.txt"),
 }
-extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
+extras["all"] = extras["cv"] + extras["ml"] + extras["optuna"]
 # Meta dependency groups.
 # all_deps = []
 # for group_name in extras:

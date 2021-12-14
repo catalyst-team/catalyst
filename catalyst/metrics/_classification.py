@@ -6,7 +6,6 @@ import numpy as np
 
 import torch
 
-from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -14,6 +13,7 @@ from catalyst.metrics.functional._misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
+from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 
@@ -34,6 +34,9 @@ class StatisticsMetric(ICallbackBatchMetric):
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
+
+    Raises:
+        ValueError: if mode is incorrect
 
     Examples:
 
@@ -100,11 +103,7 @@ class StatisticsMetric(ICallbackBatchMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """Init params
-
-        Raises:
-            ValueError: if mode is incorrect
-        """
+        """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         if mode == "binary":
             self.statistics_fn = get_binary_statistics
@@ -209,6 +208,8 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metrics prefix
         suffix: metrics suffix
     """
@@ -219,6 +220,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ) -> None:
@@ -230,6 +232,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             num_classes=num_classes,
             mode=mode,
         )
+        self.compute_per_class_metrics = compute_per_class_metrics
         self.zero_division = zero_division
         self.reset()
 
@@ -262,14 +265,16 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             }
             kv_metrics.update(metrics)
 
-        per_class_metrics = {
-            f"{metric_name}/class_{i:02d}": metric_value[i]
-            for metric_name, metric_value in zip(
-                ("precision", "recall", "f1", "support"), per_class
-            )
-            for i in range(self.num_classes)
-        }
-        kv_metrics.update(per_class_metrics)
+        # @TODO: rewrite this block - should be without `num_classes`
+        if self.compute_per_class_metrics:
+            per_class_metrics = {
+                f"{metric_name}/class_{i:02d}": metric_value[i]
+                for metric_name, metric_value in zip(
+                    ("precision", "recall", "f1", "support"), per_class
+                )
+                for i in range(self.num_classes)
+            }
+            kv_metrics.update(per_class_metrics)
         return kv_metrics
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[Any, Any, Any, Any]:
@@ -337,7 +342,10 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             support=self.statistics["support"],
             zero_division=self.zero_division,
         )
-        return per_class, micro, macro, weighted
+        if self.compute_per_class_metrics:
+            return per_class, micro, macro, weighted
+        else:
+            return [], micro, macro, weighted
 
     def compute_key_value(self) -> Dict[str, float]:
         """
@@ -492,6 +500,8 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -639,12 +649,14 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
         """Init MultiClassPrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
+            compute_per_class_metrics=compute_per_class_metrics,
             prefix=prefix,
             suffix=suffix,
             num_classes=num_classes,
@@ -663,6 +675,8 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -825,12 +839,14 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
         """Init MultiLabelPrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
+            compute_per_class_metrics=compute_per_class_metrics,
             prefix=prefix,
             suffix=suffix,
             num_classes=num_classes,

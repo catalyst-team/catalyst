@@ -4,45 +4,45 @@ from tqdm.auto import tqdm
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.tools.metric_handler import MetricHandler
-from catalyst.tools.time_manager import TimeManager
+from catalyst.extras.metric_handler import MetricHandler
+from catalyst.extras.time_manager import TimeManager
 from catalyst.utils.misc import is_exception
 
 EPS = 1e-8
 
 
-class IBatchMetricHandlerCallback(ABC, Callback):
-    """@TODO: docs"""
+# class IBatchMetricHandlerCallback(ABC, Callback):
+#     """@TODO: docs"""
 
-    def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
-        """@TODO: docs"""
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
-        self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
-        self.metric_key = metric_key
-        self.best_score = None
+#     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
+#         """@TODO: docs"""
+#         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+#         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
+#         self.metric_key = metric_key
+#         self.best_score = None
 
-    @abstractmethod
-    def handle_score_is_better(self, runner: "IRunner"):
-        """Event handler."""
-        pass
+#     @abstractmethod
+#     def handle_score_is_better(self, runner: "IRunner"):
+#         """Event handler."""
+#         pass
 
-    @abstractmethod
-    def handle_score_is_not_better(self, runner: "IRunner"):
-        """Event handler."""
-        pass
+#     @abstractmethod
+#     def handle_score_is_not_better(self, runner: "IRunner"):
+#         """Event handler."""
+#         pass
 
-    def on_loader_start(self, runner: "IRunner") -> None:
-        """Event handler."""
-        self.best_score = None
+#     def on_loader_start(self, runner: "IRunner") -> None:
+#         """Event handler."""
+#         self.best_score = None
 
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Event handler."""
-        score = runner.batch_metrics[self.metric_key]
-        if self.best_score is None or self.is_better(score, self.best_score):
-            self.best_score = score
-            self.handle_score_is_better(runner=runner)
-        else:
-            self.handle_score_is_not_better(runner=runner)
+#     def on_batch_end(self, runner: "IRunner") -> None:
+#         """Event handler."""
+#         score = runner.batch_metrics[self.metric_key]
+#         if self.best_score is None or self.is_better(score, self.best_score):
+#             self.best_score = score
+#             self.handle_score_is_better(runner=runner)
+#         else:
+#             self.handle_score_is_not_better(runner=runner)
 
 
 class IEpochMetricHandlerCallback(ABC, Callback):
@@ -98,6 +98,92 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
             to qualify as an improvement, i.e. an absolute change
             of less than min_delta, will count as no improvement,
             default value is ``1e-6``.
+
+    Minimal working example (Notebook API):
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=100,
+            callbacks=[
+                dl.EarlyStoppingCallback(
+                    loader_key="valid",
+                    metric_key="loss",
+                    minimize=True,
+                    patience=3,
+                    min_delta=1e-2
+                )
+            ]
+        )
+
+    Works even better with ``load_best_on_end=True`` flag:
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=100,
+            load_best_on_end=True,
+            callbacks=[
+                dl.EarlyStoppingCallback(
+                    loader_key="valid",
+                    metric_key="loss",
+                    minimize=True,
+                    patience=3,
+                    min_delta=1e-2
+                )
+            ]
+        )
+
     """
 
     def __init__(
@@ -128,7 +214,84 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
 
 
 class TimerCallback(Callback):
-    """Logs pipeline execution time."""
+    """Logs pipeline execution time.
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=1,
+            verbose=True,
+            callbacks=[dl.TimerCallback()]
+        )
+
+    You should see additional extra metrics, such as:
+
+    - ``_timer/_fps`` - number handled samples per second during run.
+    - ``_timer/batch_time`` - time required for single batch handling.
+    - ``_timer/data_time`` - time required for single batch data preparation handling.
+    - ``_timer/model_time`` - time required for single batch model forwarding.
+
+    Moreover, you could use it throught ``timeit=True`` flag:
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=1,
+            verbose=True,
+            timeit=True,
+        )
+
+    """
 
     def __init__(self):
         """Initialisation for TimerCallback."""
@@ -184,7 +347,79 @@ class TimerCallback(Callback):
 
 
 class TqdmCallback(Callback):
-    """Logs the params into tqdm console."""
+    """Logs the params into tqdm console.
+
+    Minimal working example (Notebook API):
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=1,
+            callbacks=[dl.TqdmCallback()]
+        )
+
+    You should see a tqdm progress bar during the training.
+
+    Moreover, you could use it throught ``verbose=True`` flag:
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=1,
+            verbose=True,
+        )
+
+    """
 
     def __init__(self):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
@@ -313,7 +548,7 @@ __all__ = [
     "TimerCallback",
     "TqdmCallback",
     "CheckRunCallback",
-    "IBatchMetricHandlerCallback",
-    "IEpochMetricHandlerCallback",
+    # "IBatchMetricHandlerCallback",
+    # "IEpochMetricHandlerCallback",
     "EarlyStoppingCallback",
 ]

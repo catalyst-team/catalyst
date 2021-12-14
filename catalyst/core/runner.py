@@ -9,6 +9,12 @@ import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import BatchSampler, DataLoader, Dataset, DistributedSampler
 
+from catalyst.core._misc import (
+    callback_isinstance,
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.callback import (
     Callback,
     ICallback,
@@ -18,12 +24,6 @@ from catalyst.core.callback import (
 )
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import (
-    callback_isinstance,
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
-    validate_loaders,
-)
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
     Criterion,
@@ -157,7 +157,7 @@ class IRunner(ICallback, ILogger, ABC):
                         batch_size=32
                     ),
                     "valid": DataLoader(
-                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                        MNIST(os.getcwd(), train=False),
                         batch_size=32
                     ),
                 }
@@ -601,13 +601,13 @@ class IRunner(ICallback, ILogger, ABC):
             logger.close_log(*args, **kwargs)
 
     def _setup_loaders(self) -> None:
-        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.rank) + self.global_epoch_step)
         loaders = self.get_loaders(stage=self.stage_key)
         loaders = validate_loaders(loaders)
         self.loaders = loaders
 
     def _setup_components(self) -> None:
-        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.rank) + self.global_epoch_step)
         self.model, self.criterion, self.optimizer, self.scheduler = self.engine.init_components(
             model_fn=self._get_model,
             criterion_fn=self._get_criterion,
@@ -641,7 +641,7 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def _setup_callbacks(self):
-        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.rank) + self.global_epoch_step)
         callbacks = self.get_callbacks(self.stage_key)
         callbacks = filter_callbacks_by_node(callbacks)
         callbacks = sort_callbacks_by_order(callbacks)
@@ -698,7 +698,7 @@ class IRunner(ICallback, ILogger, ABC):
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
                 raise RunnerError(f"DataLoader with name {loader_key} is empty.")
-        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.rank) + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
         """Event handler."""
@@ -716,7 +716,7 @@ class IRunner(ICallback, ILogger, ABC):
 
         if self.loader_batch_len == 0:
             raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
-        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.rank) + self.global_epoch_step)
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
@@ -810,7 +810,7 @@ class IRunner(ICallback, ILogger, ABC):
         # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
-            for self.loader_batch_step, self.batch in enumerate(self.loader):
+            for self.batch in self.loader:
                 with self.engine.autocast():
                     self._run_batch()
                 if self.need_early_stop:

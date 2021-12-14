@@ -347,7 +347,7 @@ def get_multilabel_statistics(
 
 
 def get_default_topk_args(num_classes: int) -> Sequence[int]:
-    """Calculate list params for ``Accuracy@k`` and ``mAP@k``.
+    """Calculate list params for ``Accuracy@k``.
 
     Args:
         num_classes: number of classes

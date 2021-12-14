@@ -19,15 +19,14 @@ class BatchTransformCallback(Callback):
     Preprocess your batch with specified function.
 
     Args:
-        transform (Callable, str): Function to apply. If string will get function from registry.
-        scope (str): ``"on_batch_end"`` (post-processing model output) or
+        transform: Function to apply. If string will get function from registry.
+        scope: ``"on_batch_end"`` (post-processing model output) or
             ``"on_batch_start"`` (pre-processing model input).
-        input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
-            Defaults to ``None``.
-        output_key (Union[List[str], str], optional): Keys for output.
+        input_key: Keys in batch dict to apply function. Defaults to ``None``.
+        output_key: Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
-        transform_kwargs (Dict[str, Any]): Kwargs for transform.
+        transform_kwargs: Kwargs for transform.
 
     Raises:
         TypeError: When keys is not str or a list.
@@ -73,20 +72,6 @@ class BatchTransformCallback(Callback):
                     dl.CriterionCallback(
                         input_key="logits", target_key="targets", metric_key="loss"
                     ),
-            # uncomment for extra metrics:
-            #       dl.AUCCallback(
-            #           input_key="scores", target_key="targets"
-            #       ),
-            #       dl.HitrateCallback(
-            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
-            #       ),
-            #       dl.MRRCallback(
-            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
-            #       ),
-            #       dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-            #       dl.NDCGCallback(
-            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
-            #       ),
                     dl.OptimizerCallback(metric_key="loss"),
                     dl.SchedulerCallback(),
                     dl.CheckpointCallback(
@@ -134,13 +119,13 @@ class BatchTransformCallback(Callback):
             loaders = {
                 "train": DataLoader(
                     MnistDataset(
-                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                        MNIST(os.getcwd(), train=False)
                     ),
                     batch_size=32,
                 ),
                 "valid": DataLoader(
                     MnistDataset(
-                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                        MNIST(os.getcwd(), train=False)
                     ),
                     batch_size=32,
                 ),

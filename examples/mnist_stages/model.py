@@ -2,8 +2,7 @@
 import torch
 from torch import nn
 
-from catalyst.contrib.nn import Normalize
-from catalyst.contrib.nn.modules import Flatten
+from catalyst.contrib.layers import Flatten, Normalize
 
 
 class SimpleNet(nn.Module):

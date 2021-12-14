@@ -2,7 +2,7 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from catalyst.contrib.nn.schedulers.onecycle import OneCycleLRWithWarmup
+from catalyst.contrib.schedulers.onecycle import OneCycleLRWithWarmup
 from catalyst.dl import Callback, CallbackOrder, SupervisedRunner
 
 

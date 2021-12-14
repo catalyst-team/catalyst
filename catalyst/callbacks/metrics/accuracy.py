@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Iterable, Union
 
 import torch
 
@@ -13,10 +13,7 @@ class AccuracyCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        topk_args: specifies which accuracy@K to log:
-            [1] - accuracy
-            [1, 3] - accuracy at 1 and 3
-            [1, 3, 5] - accuracy at 1, 3 and 5
+        topk_args: specifies which accuracy@K to log
         num_classes: number of classes to calculate ``topk_args`` if ``accuracy_args`` is None
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
@@ -74,6 +71,18 @@ class AccuracyCallback(BatchMetricCallback):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = None`` ---> see \
+            :py:mod:`catalyst.metrics.functional._misc.get_default_topk_args`
+        - ``topk_args = (1,)`` ---> ``"accuracy01"``
+        - ``topk_args = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -83,7 +92,7 @@ class AccuracyCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         num_classes: int = None,
         log_on_batch: bool = True,
         prefix: str = None,

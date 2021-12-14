@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Iterable, Optional, Union
 
 import numpy as np
 
@@ -6,11 +6,12 @@ import torch
 
 from catalyst.metrics._additive import AdditiveMetric
 from catalyst.metrics._metric import ICallbackBatchMetric
+from catalyst.metrics._topk_metric import TopKMetric
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional._misc import get_default_topk_args
 
 
-class AccuracyMetric(ICallbackBatchMetric):
+class AccuracyMetric(TopKMetric):
     """
     This metric computes accuracy for multiclass classification case.
     It computes mean value of accuracy and it's approximate std value
@@ -49,8 +50,6 @@ class AccuracyMetric(ICallbackBatchMetric):
 
         metric.compute_key_value()
         # {
-        #     'accuracy': 0.5,
-        #     'accuracy/std': 0.0,
         #     'accuracy01': 0.5,
         #     'accuracy01/std': 0.0,
         #     'accuracy03': 1.0,
@@ -114,6 +113,18 @@ class AccuracyMetric(ICallbackBatchMetric):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = None`` ---> see \
+            :py:mod:`catalyst.metrics.functional._misc.get_default_topk_args`
+        - ``topk_args = (1,)`` ---> ``"accuracy01"``
+        - ``topk_args = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -121,92 +132,22 @@ class AccuracyMetric(ICallbackBatchMetric):
 
     def __init__(
         self,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         num_classes: int = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init AccuracyMetric"""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
-        self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
-        self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
-        self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
-        self.additive_metrics: List[AdditiveMetric] = [
-            AdditiveMetric() for _ in range(len(self.topk_args))
-        ]
-
-    def reset(self) -> None:
-        """Reset all fields"""
-        for metric in self.additive_metrics:
-            metric.reset()
-
-    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
-        """
-        Updates metric value with accuracy for new data and return intermediate metrics values.
-
-        Args:
-            logits: tensor of logits
-            targets: tensor of targets
-
-        Returns:
-            list of accuracy@k values
-        """
-        values = accuracy(logits, targets, topk=self.topk_args)
-        values = [v.item() for v in values]
-        for value, metric in zip(values, self.additive_metrics):
-            metric.update(value, len(targets))
-        return values
-
-    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
-        """
-        Update metric value with accuracy for new data and return intermediate metrics
-        values in key-value format.
-
-        Args:
-            logits: tensor of logits
-            targets: tensor of targets
-
-        Returns:
-            dict of accuracy@k values
-        """
-        values = self.update(logits=logits, targets=targets)
-        output = {
-            f"{self.prefix}accuracy{key:02d}{self.suffix}": value
-            for key, value in zip(self.topk_args, values)
-        }
-        output[self.metric_name_mean] = output[f"{self.prefix}accuracy01{self.suffix}"]
-        return output
-
-    def compute(self) -> Tuple[List[float], List[float]]:
-        """
-        Compute accuracy for all data
-
-        Returns:
-            list of mean values, list of std values
-        """
-        means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
-        return means, stds
-
-    def compute_key_value(self) -> Dict[str, float]:
-        """
-        Compute accuracy for all data and return results in key-value format
-
-        Returns:
-            dict of metrics
-        """
-        means, stds = self.compute()
-        output_mean = {
-            f"{self.prefix}accuracy{key:02d}{self.suffix}": value
-            for key, value in zip(self.topk_args, means)
-        }
-        output_std = {
-            f"{self.prefix}accuracy{key:02d}{self.suffix}/std": value
-            for key, value in zip(self.topk_args, stds)
-        }
-        output_mean[self.metric_name_mean] = output_mean[f"{self.prefix}accuracy01{self.suffix}"]
-        output_std[self.metric_name_std] = output_std[f"{self.prefix}accuracy01{self.suffix}/std"]
-        return {**output_mean, **output_std}
+        self.topk_args = topk_args or get_default_topk_args(num_classes)
+        super().__init__(
+            metric_name="accuracy",
+            metric_function=accuracy,
+            topk_args=self.topk_args,
+            compute_on_call=compute_on_call,
+            prefix=prefix,
+            suffix=suffix,
+        )
 
 
 class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):

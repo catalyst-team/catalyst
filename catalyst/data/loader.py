@@ -131,6 +131,9 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
 
         Returns:
             next batch
+
+        Raises:
+            StopIteration: if iteration_index >= len(origin)
         """
         if self.iteration_index >= len(self.origin):
             raise StopIteration()

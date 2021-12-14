@@ -5,7 +5,7 @@ import json
 
 import numpy as np
 
-from catalyst.dl.scripts.misc import parse_config_args
+from catalyst.dl.scripts._misc import parse_config_args
 from catalyst.utils.config import _load_ordered_yaml
 
 

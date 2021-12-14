@@ -11,8 +11,8 @@ from torch.optim import Adam
 from catalyst import dl
 from catalyst.contrib import nn
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.criterion import NTXentLoss
-from catalyst.data import Compose, Normalize, ToTensor
+from catalyst.contrib.losses import NTXentLoss
+from catalyst.data import Compose, ImageToTensor, NormalizeImage
 from catalyst.data.dataset import SelfSupervisedDatasetWrapper
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
@@ -52,19 +52,19 @@ def train_experiment(device, engine=None):
                 torchvision.transforms.RandomVerticalFlip(),
                 torchvision.transforms.RandomHorizontalFlip(),
                 torchvision.transforms.ToTensor(),
-                Normalize((0.1307,), (0.3081,)),
+                NormalizeImage((0.1307,), (0.3081,)),
             ]
         )
 
-        transform_original = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+        transform_original = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
 
-        mnist = MNIST("./logdir", train=True, download=True, transform=None)
+        mnist = MNIST("./logdir", train=True, download=True, normalize=None, numpy=True)
         contrastive_mnist = SelfSupervisedDatasetWrapper(
             mnist, transforms=transforms, transform_original=transform_original
         )
         train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
 
-        mnist_valid = MNIST("./logdir", train=False, download=True, transform=None)
+        mnist_valid = MNIST("./logdir", train=False, download=True, normalize=None, numpy=True)
         contrastive_valid = SelfSupervisedDatasetWrapper(
             mnist_valid, transforms=transforms, transform_original=transform_original
         )
@@ -140,7 +140,9 @@ def train_experiment(device, engine=None):
 
         valid_path = Path(logdir) / "logs/valid.csv"
         best_accuracy = max(
-            float(row["accuracy"]) for row in read_csv(valid_path) if row["accuracy"] != "accuracy"
+            float(row["accuracy01"])
+            for row in read_csv(valid_path)
+            if row["accuracy01"] != "accuracy01"
         )
 
         assert best_accuracy > 0.6

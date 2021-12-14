@@ -64,12 +64,13 @@ class CMCMetric(AccumulativeMetric):
         from torch.optim import Adam
         from torch.utils.data import DataLoader
         from catalyst import data, dl
-        from catalyst.contrib import datasets, models, nn
-        from catalyst.data.transforms import Compose, Normalize, ToTensor
+        from catalyst.contrib import data.datasets, models, nn
 
 
         # 1. train and valid loaders
-        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+        transforms = data.Compose([
+            data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))
+        ])
 
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
@@ -147,6 +148,16 @@ class CMCMetric(AccumulativeMetric):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
+        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -173,7 +184,6 @@ class CMCMetric(AccumulativeMetric):
         self.labels_key = labels_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -227,7 +237,8 @@ class CMCMetric(AccumulativeMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 
@@ -310,7 +321,6 @@ class ReidCMCMetric(AccumulativeMetric):
         self.cids_key = cids_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
-        self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -384,7 +394,8 @@ class ReidCMCMetric(AccumulativeMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.prefix}cmc{k:02d}{self.suffix}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 

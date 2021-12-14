@@ -2,15 +2,14 @@
 import argparse
 from argparse import ArgumentParser
 import os
-from pathlib import Path
 import sys
 
-from catalyst.dl.scripts.misc import parse_args_uargs
+from catalyst.dl.scripts._misc import get_config_runner, parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.settings import SETTINGS
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
-from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
+from catalyst.utils.sys import dump_code, dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
 if SETTINGS.hydra_required:
@@ -29,22 +28,24 @@ def build_args(parser: ArgumentParser):
         dest="configs",
         required=False,
     )
-    parser.add_argument("--expdir", type=Path, default=None)
+    parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
-    # parser.add_argument(
-    #     "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
-    # )
-    # parser.add_argument(
-    #     "--autoresume",
-    #     type=str,
-    #     help=(
-    #         "try automatically resume from logdir//{best,last}_full.pth " "if --resume is empty"
-    #     ),
-    #     required=False,
-    #     choices=["best", "last"],
-    #     default=None,
-    # )
+    parser.add_argument(
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
+        help="path to latest checkpoint",
+    )
+    parser.add_argument(
+        "--autoresume",
+        type=str,
+        help=("try automatically resume from logdir/{best,last}_full.pth " "if --resume is empty"),
+        required=False,
+        choices=["best", "last"],
+        default=None,
+    )
     parser.add_argument("--seed", type=int, default=42)
     boolean_flag(
         parser,

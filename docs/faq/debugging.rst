@@ -1,4 +1,4 @@
-Model debugging
+Debugging
 ==============================================================================
 
 Pipeline debugging
@@ -39,7 +39,7 @@ After that you could stop the pipeline in the place you prefer, for example:
             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            MNIST(os.getcwd(), train=False), batch_size=32
         ),
     }
 

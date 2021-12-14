@@ -11,7 +11,6 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.data import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 if SETTINGS.optuna_required:
@@ -27,11 +26,11 @@ def train_experiment(device, engine=None):
 
             loaders = {
                 "train": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(os.getcwd(), train=False),
                     batch_size=32,
                 ),
                 "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(os.getcwd(), train=False),
                     batch_size=32,
                 ),
             }

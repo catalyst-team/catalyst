@@ -15,6 +15,7 @@ from catalyst.metrics._accumulative import AccumulativeMetric
 from catalyst.metrics._additive import AdditiveMetric, AdditiveValueMetric
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.metrics._functional_metric import FunctionalBatchMetric, FunctionalLoaderMetric
+from catalyst.metrics._topk_metric import TopKMetric
 
 from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
 from catalyst.metrics._auc import AUCMetric

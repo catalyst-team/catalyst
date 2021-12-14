@@ -1,14 +1,14 @@
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 import os
 
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.functional import (
+from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.datasets.misc import (
     download_and_extract_archive,
     read_sn3_pascalvincent_tensor,
 )
-from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
 
 
 def _read_label_file(path):
@@ -28,7 +28,25 @@ def _read_image_file(path):
 
 
 class MNIST(Dataset):
-    """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset."""
+    """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset for testing purposes.
+
+     Args:
+        root: Root directory of dataset where
+            ``MNIST/processed/training.pt``
+            and  ``MNIST/processed/test.pt`` exist.
+        train (bool, optional): If True, creates dataset from
+            ``training.pt``, otherwise from ``test.pt``.
+        download (bool, optional): If true, downloads the dataset from
+            the internet and puts it in root directory. If dataset
+            is already downloaded, it is not downloaded again.
+        normalize (tuple, optional): mean and std
+            for the MNIST dataset normalization.
+        numpy (bool, optional): boolean flag to return an np.ndarray,
+            rather than torch.tensor (default: False).
+
+    Raises:
+        RuntimeError: If ``download is False`` and the dataset not found.
+    """
 
     _repr_indent = 4
 
@@ -54,6 +72,7 @@ class MNIST(Dataset):
 
     training_file = "training.pt"
     test_file = "test.pt"
+    cache_folder = "MNIST"
     classes = [
         "0 - zero",
         "1 - one",
@@ -67,28 +86,23 @@ class MNIST(Dataset):
         "9 - nine",
     ]
 
-    def __init__(self, root, train=True, transform=None, target_transform=None, download=False):
-        """
-        Args:
-            root: Root directory of dataset where
-                ``MNIST/processed/training.pt``
-                and  ``MNIST/processed/test.pt`` exist.
-            train (bool, optional): If True, creates dataset from
-                ``training.pt``, otherwise from ``test.pt``.
-            download (bool, optional): If true, downloads the dataset from
-                the internet and puts it in root directory. If dataset
-                is already downloaded, it is not downloaded again.
-            transform (callable, optional): A function/transform that
-                takes in an image and returns a transformed version.
-            target_transform (callable, optional): A function/transform
-                that takes in the target and transforms it.
-        """
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        download: bool = True,
+        normalize: tuple = (0.1307, 0.3081),
+        numpy: bool = False,
+    ):
+        """Init."""
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
         self.root = root
         self.train = train  # training set or test set
-        self.transform = transform
-        self.target_transform = target_transform
+        self.normalize = normalize
+        if self.normalize is not None:
+            assert len(self.normalize) == 2, "normalize should be (mean, variance)"
+        self.numpy = numpy
 
         if download:
             self.download()
@@ -101,6 +115,8 @@ class MNIST(Dataset):
         else:
             data_file = self.test_file
         self.data, self.targets = torch.load(os.path.join(self.processed_folder, data_file))
+        self.data = torch.tensor(self.data)
+        self.targets = torch.tensor(self.targets)
 
     def __getitem__(self, index):
         """
@@ -110,23 +126,21 @@ class MNIST(Dataset):
         Returns:
             tuple: (image, target) where target is index of the target class.
         """
-        img, target = self.data[index].numpy(), int(self.targets[index])
-
-        if self.transform is not None:
-            img = self.transform(img)
-
-        if self.target_transform is not None:
-            target = self.target_transform(target)
+        img, target = self.data[index].float().unsqueeze(0), int(self.targets[index])
+        if self.normalize is not None:
+            img = self.normalize_tensor(img, *self.normalize)
+        if self.numpy:
+            img = img.cpu().numpy()[0]
 
         return img, target
 
     def __len__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Length."""
         return len(self.data)
 
     def __repr__(self):
-        """@TODO: Docs. Contribution is welcome."""
-        head = "Dataset " + self.__class__.__name__
+        """Repr."""
+        head = "Dataset " + self.cache_folder
         body = ["Number of datapoints: {}".format(self.__len__())]
         if self.root is not None:
             body.append("Root location: {}".format(self.root))
@@ -136,15 +150,24 @@ class MNIST(Dataset):
         lines = [head] + [" " * self._repr_indent + line for line in body]
         return "\n".join(lines)
 
+    @staticmethod
+    def normalize_tensor(
+        tensor: torch.Tensor, mean: float = 0.0, std: float = 1.0
+    ) -> torch.Tensor:
+        """Internal tensor normalization."""
+        mean = torch.as_tensor(mean, dtype=tensor.dtype, device=tensor.device)
+        std = torch.as_tensor(std, dtype=tensor.dtype, device=tensor.device)
+        return tensor.sub(mean).div(std)
+
     @property
     def raw_folder(self):
         """@TODO: Docs. Contribution is welcome."""
-        return os.path.join(self.root, self.__class__.__name__, "raw")
+        return os.path.join(self.root, self.cache_folder, "raw")
 
     @property
     def processed_folder(self):
         """@TODO: Docs. Contribution is welcome."""
-        return os.path.join(self.root, self.__class__.__name__, "processed")
+        return os.path.join(self.root, self.cache_folder, "processed")
 
     @property
     def class_to_idx(self):
@@ -215,6 +238,9 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
 
     def __init__(self, **kwargs):
         """
+        Args:
+            **kwargs: Keyword-arguments passed to ``super().__init__`` method.
+
         Raises:
             ValueError: if train argument is False (MnistMLDataset
                 should be used only for training)
@@ -248,6 +274,10 @@ class MnistQGDataset(QueryGalleryDataset):
 
     For this dataset we used only test part of the MNIST and only
     those images that are labeled as 5, 6, 7, 8, 9.
+
+    Args:
+        gallery_fraq: gallery size
+        **kwargs: MNIST args
     """
 
     _split = 5
@@ -259,16 +289,9 @@ class MnistQGDataset(QueryGalleryDataset):
         "9 - nine",
     ]
 
-    def __init__(
-        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2
-    ) -> None:
-        """
-        Args:
-            root: root directory for storing dataset
-            transform: transform
-            gallery_fraq: gallery size
-        """
-        self._mnist = MNIST(root, train=False, download=True, transform=transform)
+    def __init__(self, gallery_fraq: Optional[float] = 0.2, **kwargs) -> None:
+        """Init."""
+        self._mnist = MNIST(train=False, **kwargs)
         self._filter()
 
         self._gallery_size = int(gallery_fraq * len(self._mnist))
@@ -330,4 +353,54 @@ class MnistQGDataset(QueryGalleryDataset):
         return self._mnist.targets
 
 
-__all__ = ["MNIST", "MnistMLDataset", "MnistQGDataset"]
+class PartialMNIST(MNIST):
+    """Partial MNIST dataset.
+
+    Args:
+        num_samples: number of examples per selected class/digit. default: 100
+        classes: list selected MNIST classes. default: (0, 1, 2)
+        **kwargs: MNIST parameters
+
+    Examples:
+        >>> dataset = PartialMNIST(".", download=True)
+        >>> len(dataset)
+        300
+        >>> sorted(set([d.item() for d in dataset.targets]))
+        [0, 1, 2]
+        >>> torch.bincount(dataset.targets)
+        tensor([100, 100, 100])
+    """
+
+    def __init__(
+        self,
+        num_samples: int = 100,
+        classes: Optional[Sequence] = (0, 1, 2),
+        **kwargs,
+    ):
+        self.num_samples = num_samples
+        self.classes = sorted(classes) if classes else list(range(10))
+        super().__init__(**kwargs)
+        self.data, self.targets = self._prepare_subset(
+            self.data, self.targets, num_samples=self.num_samples, classes=self.classes
+        )
+
+    @staticmethod
+    def _prepare_subset(
+        full_data: torch.Tensor, full_targets: torch.Tensor, num_samples: int, classes: Sequence
+    ):
+        counts = {d: 0 for d in classes}
+        indexes = []
+        for idx, target in enumerate(full_targets):
+            label = target.item()
+            if counts.get(label, float("inf")) >= num_samples:
+                continue
+            indexes.append(idx)
+            counts[label] += 1
+            if all(counts[k] >= num_samples for k in counts):
+                break
+        data = full_data[indexes]
+        targets = full_targets[indexes]
+        return data, targets
+
+
+__all__ = ["MNIST", "MnistMLDataset", "MnistQGDataset", "PartialMNIST"]

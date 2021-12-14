@@ -3,6 +3,7 @@ from catalyst.metrics._classification import (
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
+from catalyst.settings import SETTINGS
 
 
 class PrecisionRecallF1SupportCallback(BatchMetricCallback):
@@ -15,6 +16,8 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -82,13 +85,18 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         num_classes: int,
         zero_division: int = 0,
         log_on_batch: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
             metric=MulticlassPrecisionRecallF1SupportMetric(
-                num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix
+                num_classes=num_classes,
+                zero_division=zero_division,
+                prefix=prefix,
+                suffix=suffix,
+                compute_per_class_metrics=compute_per_class_metrics,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -106,6 +114,8 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -179,13 +189,18 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         num_classes: int,
         zero_division: int = 0,
         log_on_batch: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
             metric=MultilabelPrecisionRecallF1SupportMetric(
-                num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix
+                num_classes=num_classes,
+                zero_division=zero_division,
+                prefix=prefix,
+                suffix=suffix,
+                compute_per_class_metrics=compute_per_class_metrics,
             ),
             input_key=input_key,
             target_key=target_key,

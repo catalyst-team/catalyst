@@ -7,7 +7,7 @@ import scipy.sparse as sp
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.functional import download_and_extract_archive
+from catalyst.contrib.datasets.misc import download_and_extract_archive
 
 
 class MovieLens(Dataset):
@@ -48,6 +48,9 @@ class MovieLens(Dataset):
     If you have any further questions or comments, please contact GroupLens
     <grouplens-info@cs.umn.edu>.
     http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
+
+    .. note::
+        catalyst[ml] required for this dataset.
     """
 
     resources = (
@@ -71,6 +74,9 @@ class MovieLens(Dataset):
                 is already downloaded, it is not downloaded again.
             min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
+
+        Raises:
+            RuntimeError: If ``download is False`` and the dataset not found.
         """
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
@@ -196,7 +202,7 @@ class MovieLens(Dataset):
         Args:
             data: raw data of the dataset
 
-        Returns:
+        Yields:
             Generator iterator for parsed data
         """
         for line in data:

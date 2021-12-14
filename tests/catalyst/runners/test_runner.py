@@ -81,7 +81,7 @@ def test_evaluation_loader_metrics() -> None:
     )
     runner_internal_metrics = runner.loader_metrics
     evaluate_loader_metrics = runner.evaluate_loader(loader=loader, callbacks=callbacks)
-    assert runner_internal_metrics["accuracy"] == evaluate_loader_metrics["accuracy"]
+    assert runner_internal_metrics["accuracy01"] == evaluate_loader_metrics["accuracy01"]
 
 
 def test_evaluation_loader_empty_model() -> None:

@@ -9,8 +9,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 
 from catalyst import dl, utils
-from catalyst.contrib.datasets import MNIST
-from catalyst.data import ToTensor
+from catalyst.contrib import MNIST
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
@@ -22,10 +21,12 @@ def train_experiment(device, engine=None):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(os.getcwd(), train=False),
+                batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(os.getcwd(), train=False),
+                batch_size=32,
             ),
         }
 
@@ -90,7 +91,7 @@ def train_experiment(device, engine=None):
                 dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))
             ],
         )
-        assert "accuracy" in metrics.keys()
+        assert "accuracy01" in metrics.keys()
 
         # model inference
         for prediction in runner.predict_loader(loader=loaders["valid"]):

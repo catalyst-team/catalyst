@@ -3,30 +3,22 @@
 from typing import Any, Dict, List
 import logging
 import os
-import random
 from tempfile import TemporaryDirectory
-import time
 
 from pytest import mark
 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, Dataset, DistributedSampler, SequentialSampler
+from torch.utils.data import DataLoader, DistributedSampler, SequentialSampler
 
 from catalyst.callbacks import (
     AccuracyCallback,
     AUCCallback,
-    CheckpointCallback,
     CriterionCallback,
-    OptimizerCallback,
     PrecisionRecallF1SupportCallback,
-    TqdmCallback,
 )
-from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.models import MnistSimpleNet
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
-from catalyst.data.transforms import ToTensor
 from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
@@ -150,7 +142,7 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -162,7 +154,7 @@ class CustomDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -174,7 +166,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+        # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}

@@ -63,17 +63,10 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: True
-          transform: &transform
-            _target_: transform.Compose
-            transforms:
-              - _target_: transform.ToTensor
-              - _target_: transform.Normalize
-                mean: [0]
-                std: [1]
           download: True
         batch_size: &batch_size 32
         sampler:
-          _target_: MiniEpochSampler
+          _target_: catalyst.data.MiniEpochSampler
           data_len: 50000
           mini_epoch_len: 35000
           drop_last: true
@@ -85,7 +78,6 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: False
-          transform: *transform
           download: True
         batch_size: *batch_size
         shuffle: false

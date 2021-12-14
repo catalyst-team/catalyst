@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
@@ -21,10 +21,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: embeddings key in output dict
         labels_key: labels key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log.
-            [1] - cmc@1
-            [1, 3] - cmc@1 and cmc@3
-            [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+        topk_args: specifies which cmc@K to log
         prefix: metric prefix
         suffix: metric suffix
 
@@ -42,12 +39,13 @@ class CMCScoreCallback(LoaderMetricCallback):
         from torch.optim import Adam
         from torch.utils.data import DataLoader
         from catalyst import data, dl
-        from catalyst.contrib import datasets, models, nn
-        from catalyst.data.transforms import Compose, Normalize, ToTensor
+        from catalyst.contrib import data, datasets, models, nn
 
 
         # 1. train and valid loaders
-        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+        transforms = data.Compose([
+            data.ImageToTensor(), data.NormalizeImage((0.1307,), (0.3081,))
+        ])
 
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
@@ -78,10 +76,11 @@ class CMCScoreCallback(LoaderMetricCallback):
                     features = self.model(images)
                     self.batch = {"embeddings": features, "targets": targets,}
                 else:
-                    images, targets, is_query = \
-                        batch["features"].float(), \
-                        batch["targets"].long(), \
+                    images, targets, is_query = (
+                        batch["features"].float(),
+                        batch["targets"].long(),
                         batch["is_query"].bool()
+                    )
                     features = self.model(images)
                     self.batch = {
                         "embeddings": features, "targets": targets, "is_query": is_query
@@ -124,6 +123,16 @@ class CMCScoreCallback(LoaderMetricCallback):
         )
 
     .. note::
+        Metric names depending on input parameters:
+
+        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
+        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+
+        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
+        ``runner.epoch_metrics``.
+
+    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -134,7 +143,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -177,7 +186,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: List[int] = None,
+        topk_args: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):

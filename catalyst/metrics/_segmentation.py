@@ -3,7 +3,6 @@ from functools import partial
 
 import torch
 
-from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -11,6 +10,7 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
+from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 
@@ -31,6 +31,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         threshold: threshold for outputs binarization
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -50,6 +52,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = 0.5,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
@@ -59,6 +62,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.metric_name = metric_name
         self.class_dim = class_dim
         self.threshold = threshold
+        self.compute_per_class_metrics = compute_per_class_metrics
         # statistics = {class_idx: {"tp":, "fn": , "fp": "tn": }}
         self.statistics = {}
         self.weights = weights
@@ -190,7 +194,10 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         if self.weights is None:
             weighted_metric = None
-        return per_class, micro_metric, macro_metric, weighted_metric
+        if self.compute_per_class_metrics:
+            return per_class, micro_metric, macro_metric, weighted_metric
+        else:
+            return [], micro_metric, macro_metric, weighted_metric
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
         """
@@ -211,6 +218,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
         if self.weights is not None:
+            # @TODO: rename this one
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
         return metrics
 
@@ -229,6 +237,8 @@ class IOUMetric(RegionBasedMetric):
         eps: epsilon to avoid zero division
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -264,10 +274,7 @@ class IOUMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -278,11 +285,11 @@ class IOUMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }
@@ -330,6 +337,7 @@ class IOUMetric(RegionBasedMetric):
         threshold: Optional[float] = None,
         eps: float = 1e-7,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
@@ -339,6 +347,7 @@ class IOUMetric(RegionBasedMetric):
             metric_fn=metric_fn,
             metric_name="iou",
             compute_on_call=compute_on_call,
+            compute_per_class_metrics=compute_per_class_metrics,
             prefix=prefix,
             suffix=suffix,
             class_dim=class_dim,
@@ -362,6 +371,8 @@ class DiceMetric(RegionBasedMetric):
         eps: epsilon to avoid zero division
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -397,10 +408,7 @@ class DiceMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -411,11 +419,11 @@ class DiceMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }
@@ -463,6 +471,7 @@ class DiceMetric(RegionBasedMetric):
         threshold: Optional[float] = None,
         eps: float = 1e-7,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
@@ -472,6 +481,7 @@ class DiceMetric(RegionBasedMetric):
             metric_fn=metric_fn,
             metric_name="dice",
             compute_on_call=compute_on_call,
+            compute_per_class_metrics=compute_per_class_metrics,
             prefix=prefix,
             suffix=suffix,
             class_dim=class_dim,
@@ -499,6 +509,8 @@ class TrevskyMetric(RegionBasedMetric):
         eps: epsilon to avoid zero division
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
+        compute_per_class_metrics: boolean flag to compute per-class metrics
+            (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metric prefix
         suffix: metric suffix
 
@@ -534,10 +546,7 @@ class TrevskyMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.nn import IoULoss
-
+        from catalyst.contrib import IoULoss, MNIST
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -548,11 +557,11 @@ class TrevskyMetric(RegionBasedMetric):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=True),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }
@@ -602,6 +611,7 @@ class TrevskyMetric(RegionBasedMetric):
         threshold: Optional[float] = None,
         eps: float = 1e-7,
         compute_on_call: bool = True,
+        compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
@@ -614,6 +624,7 @@ class TrevskyMetric(RegionBasedMetric):
             metric_fn=metric_fn,
             metric_name="trevsky",
             compute_on_call=compute_on_call,
+            compute_per_class_metrics=compute_per_class_metrics,
             prefix=prefix,
             suffix=suffix,
             class_dim=class_dim,

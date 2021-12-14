@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader
 from catalyst import dl, metrics
 from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.data import ToTensor
 
 try:
     from kornia import augmentation
@@ -69,11 +68,11 @@ def test_transform_kornia():
 
     loaders = {
         "train": DataLoader(
-            MnistDataset(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())),
+            MnistDataset(MNIST(os.getcwd(), train=False)),
             batch_size=32,
         ),
         "valid": DataLoader(
-            MnistDataset(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())),
+            MnistDataset(MNIST(os.getcwd(), train=False)),
             batch_size=32,
         ),
     }
