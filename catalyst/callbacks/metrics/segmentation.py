@@ -32,7 +32,7 @@ class IOUCallback(BatchMetricCallback):
         from torch.utils.data import DataLoader
         from catalyst import dl
         from catalyst.data import ToTensor
-        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
+        from catalyst.contrib import MNIST, IoULoss
 
 
         model = nn.Sequential(
@@ -48,7 +48,7 @@ class IOUCallback(BatchMetricCallback):
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }
@@ -145,7 +145,7 @@ class DiceCallback(BatchMetricCallback):
         from torch.utils.data import DataLoader
         from catalyst import dl
         from catalyst.data import ToTensor
-        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
+        from catalyst.contrib import MNIST, IoULoss
 
 
         model = nn.Sequential(
@@ -161,7 +161,7 @@ class DiceCallback(BatchMetricCallback):
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }
@@ -261,7 +261,7 @@ class TrevskyCallback(BatchMetricCallback):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.contrib import ImageToTensor, MNIST, IoULoss
+        from catalyst.contrib import MNIST, IoULoss
 
         model = nn.Sequential(
             nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
@@ -272,11 +272,11 @@ class TrevskyCallback(BatchMetricCallback):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor()),
+                MNIST(os.getcwd(), train=True),
                 batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32
             ),
         }

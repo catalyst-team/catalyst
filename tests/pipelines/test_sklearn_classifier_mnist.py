@@ -7,19 +7,19 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 
 import torch
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
-from catalyst.contrib.data.transforms import Compose, ImageToTensor, NormalizeImage
 from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.losses import TripletMarginLossWithSampler
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 1
+TRAIN_EPOCH = 3
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -40,17 +40,15 @@ def train_experiment(device, engine=None):
 
         utils.set_global_seed(RANDOM_STATE)
         # 1. train, valid and test loaders
-        transforms = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
-
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=transforms)
+        train_data = MNIST(os.getcwd(), train=True)
         train_labels = train_data.targets.cpu().numpy().tolist()
         train_sampler = data.BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
         train_loader = DataLoader(train_data, batch_sampler=train_sampler)
 
-        valid_dataset = MNIST(root=os.getcwd(), transform=transforms, train=False, download=True)
+        valid_dataset = MNIST(root=os.getcwd(), train=False)
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=32)
 
-        test_dataset = MNIST(root=os.getcwd(), transform=transforms, train=False, download=True)
+        test_dataset = MNIST(root=os.getcwd(), train=False)
         test_loader = DataLoader(dataset=test_dataset, batch_size=32)
 
         # 2. model and optimizer
@@ -60,7 +58,7 @@ def train_experiment(device, engine=None):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):

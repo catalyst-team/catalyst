@@ -27,7 +27,7 @@ You can easily use Optuna for hyperparameters optimization:
                 MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(os.getcwd(), train=False), batch_size=32
             ),
         }
         model = nn.Sequential(

@@ -12,7 +12,6 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.layers import Flatten, GlobalMaxPool2d, Lambda
-from catalyst.data import ImageToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
@@ -110,7 +109,7 @@ def train_experiment(device, engine=None):
         }
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+                MNIST(os.getcwd(), train=False),
                 batch_size=32,
             ),
         }

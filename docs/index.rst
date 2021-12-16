@@ -34,14 +34,14 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.contrib import ImageToTensor, MNIST
+    from catalyst.contrib import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ImageToTensor())
-    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor())
+    train_data = MNIST(os.getcwd(), train=True)
+    valid_data = MNIST(os.getcwd(), train=False)
     loaders = {
         "train": DataLoader(train_data, batch_size=32),
         "valid": DataLoader(valid_data, batch_size=32),

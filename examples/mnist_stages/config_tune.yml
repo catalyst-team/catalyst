@@ -63,13 +63,6 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: True
-          transform: &transform
-            _target_: Compose
-            transforms:
-              - _target_: ImageToTensor
-              - _target_: NormalizeImage
-                mean: [0]
-                std: [1]
           download: True
         batch_size: &batch_size 32
         sampler:
@@ -85,7 +78,6 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: False
-          transform: *transform
           download: True
         batch_size: *batch_size
         shuffle: false

@@ -28,8 +28,7 @@ Step 2 - Make python imports
     import os
     from torch import nn, optim
     from torch.utils.data import DataLoader
-    from catalyst import dl
-    from catalyst.data import ToTensor
+    from catalyst import dl, utils
     from catalyst.contrib.datasets import MNIST
 
 Step 3 - Write PyTorch code
@@ -43,12 +42,8 @@ Let's define **what** we would like to run:
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
     }
 
 Step 4 - Accelerate it with Catalyst
@@ -89,7 +84,7 @@ Let's **train** and **evaluate** your model (`supported metrics`_) with a few li
         verbose=True,
         load_best_on_end=True,
         callbacks=[
-            dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3)),
             dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
@@ -122,16 +117,14 @@ Finally, you could use a large number of model post-processing utils for product
 
     features_batch = next(iter(loaders["valid"]))[0]
     # model stochastic weight averaging
-    model.load_state_dict(
-        utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth")
-    )
+    model.load_state_dict(utils.get_averaged_weights_by_path_mask(path_mask="./logs/*.pth"))
     # model tracing
-    utils.trace_model(model=runner.model, batch=features_batch)
+    utils.trace_model(model=runner.model.cpu(), batch=features_batch)
     # model quantization
     utils.quantize_model(model=runner.model)
     # model pruning
     utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
     # onnx export
     utils.onnx_export(
-        model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True
+        model=runner.model.cpu(), batch=features_batch, file="./logs/mnist.onnx", verbose=True
     )

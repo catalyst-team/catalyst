@@ -9,7 +9,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.contrib.data import ImageToTensor
 from catalyst.contrib.datasets import MNIST
 
 
@@ -25,11 +24,11 @@ def _is_profile_available():
 def train_experiment():
     loaders = {
         "train": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+            MNIST(os.getcwd(), train=False),
             batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ImageToTensor()),
+            MNIST(os.getcwd(), train=False),
             batch_size=32,
         ),
     }

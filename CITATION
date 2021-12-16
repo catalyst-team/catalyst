@@ -1,0 +1,8 @@
+@misc{catalyst,
+    author = {Kolesnikov, Sergey},
+    title = {Catalyst - Accelerated deep learning R&D},
+    year = {2018},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/catalyst-team/catalyst}},
+}

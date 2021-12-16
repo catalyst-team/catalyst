@@ -43,3 +43,13 @@ Run the example:
 ```bash
 python multidae.py
 ```
+
+### MacridVAE
+
+Implementation based on the article [Learning Disentangled Representations for Recommendation](https://arxiv.org/pdf/1910.14238.pdf).
+Model train on `MovieLens 100K Dataset`.
+
+Run the example:
+```bash
+python macridvae.py
+```

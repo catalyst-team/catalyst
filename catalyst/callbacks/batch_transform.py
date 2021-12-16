@@ -119,13 +119,13 @@ class BatchTransformCallback(Callback):
             loaders = {
                 "train": DataLoader(
                     MnistDataset(
-                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                        MNIST(os.getcwd(), train=False)
                     ),
                     batch_size=32,
                 ),
                 "valid": DataLoader(
                     MnistDataset(
-                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                        MNIST(os.getcwd(), train=False)
                     ),
                     batch_size=32,
                 ),

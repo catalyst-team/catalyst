@@ -4,6 +4,9 @@ from catalyst.contrib.datasets.misc_cv import ImageClassificationDataset
 class Imagewang(ImageClassificationDataset):
     """
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset.
+
+    .. note::
+        catalyst[cv] required for this dataset.
     """
 
     name = "imagewang"
@@ -19,6 +22,9 @@ class Imagewang160(ImageClassificationDataset):
     """
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset
     with images resized so that the shortest size is 160 px.
+
+    .. note::
+        catalyst[cv] required for this dataset.
     """
 
     name = "imagewang-160"
@@ -34,6 +40,9 @@ class Imagewang320(ImageClassificationDataset):
     """
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset
     with images resized so that the shortest size is 320 px.
+
+    .. note::
+        catalyst[cv] required for this dataset.
     """
 
     name = "imagewang-320"

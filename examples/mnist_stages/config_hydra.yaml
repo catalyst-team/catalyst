@@ -56,15 +56,11 @@ stages:
           _target_: catalyst.contrib.datasets.MNIST
           root: ${shared.dataset_root}
           train: true
-          transform:
-            _target_: catalyst.contrib.data.transforms.ImageToTensor
           download: true
         valid:
           _target_: catalyst.contrib.datasets.MNIST
           root: ${shared.dataset_root}
           train: false
-          transform:
-            _target_: catalyst.contrib.data.transforms.ImageToTensor
           download: true
 
     criterion:

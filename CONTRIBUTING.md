@@ -127,6 +127,8 @@ package to help with code formatting issues, and a corresponding pre-commit hook
     catalyst-check-codestyle -l 99
     ```
 
+    Or you can use ```make check```
+
 - or To set the hook, please run (this requires `pre-commit` package, pinned in the [requirements-dev.txt](./requirements/requirements-dev.txt)):
     ```bash
     pre-commit install
