@@ -784,10 +784,10 @@ class MovieLens20M(Dataset):
         test = self._build_interaction_matrix(test_raw)
 
         with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
-            torch.save(train, f, _use_new_zipfile_serialization=False)
+            torch.save(train, f)
 
         with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
-            torch.save(test, f, _use_new_zipfile_serialization=False)
+            torch.save(test, f)
 
 
 __all__ = ["MovieLens", "MovieLens20M"]
