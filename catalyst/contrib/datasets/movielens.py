@@ -577,6 +577,10 @@ class MovieLens20M(Dataset):
             interaction_matrix (torch.sparse.Float):
             sparse user2item interaction matrix
         """
+        print(len(ratings["rating"]))
+        print(len(ratings["movieId"]))
+        print(len(ratings["userId"]))
+
         csr_matrix = sp.coo_matrix(
             (ratings["rating"].astype(np.float32), (ratings["movieId"], ratings["userId"]))
         )
@@ -784,10 +788,10 @@ class MovieLens20M(Dataset):
         test = self._build_interaction_matrix(test_raw)
 
         with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
-            torch.save(train, f)
+            torch.save(train, f, _use_new_zipfile_serialization=True)
 
         with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
-            torch.save(test, f)
+            torch.save(test, f, _use_new_zipfile_serialization=True)
 
 
 __all__ = ["MovieLens", "MovieLens20M"]
