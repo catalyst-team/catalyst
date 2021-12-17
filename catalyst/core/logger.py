@@ -24,12 +24,12 @@ class ILogger:
 
     @property
     def logger(self) -> Any:
-        """Internal logger/experiment/etc. from the monitoring system.
+        """Internal logger/experiment/etc. from the monitoring system. # noqa: DAR401
 
-        Returns:
+        Returns: # noqa: DAR201, DAR202
             Any: internal logger/experiment/etc. from the monitoring system.
         """
-        return None
+        raise NotImplementedError
 
     @property
     def log_batch_metrics(self) -> bool:
