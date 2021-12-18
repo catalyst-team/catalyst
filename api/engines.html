@@ -425,23 +425,35 @@ Possible parameters:
 <h3><a class="toc-backref" href="#id10">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DistributedDataParallelAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed AMP multi-gpu training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – address to use for backend.</p></li>
-<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>address</strong> – master node (rank 0)’s address, should be either the IP address or the hostname
+of node 0, for single node multi-proc training, can simply be 127.0.0.1</p></li>
+<li><p><strong>port</strong> – master node (rank 0)’s free port that needs to be used for communication
+during distributed training</p></li>
+<li><p><strong>world_size</strong> – the number of processes to use for distributed training.
+Should be less or equal to the number of GPUs</p></li>
+<li><p><strong>workers_dist_rank</strong> – the rank of the first process to run on the node.
+It should be a number between <cite>number of initialized processes</cite> and <cite>world_size - 1</cite>,
+the other processes on the node wiil have ranks <cite># of initialized processes + 1</cite>,
+<cite># of initialized processes + 2</cite>, …,
+<cite># of initialized processes + num_node_workers - 1</cite></p></li>
+<li><p><strong>num_node_workers</strong> – the number of processes to launch on the node.
+For GPU training, this is recommended to be set to the number of GPUs
+on the current node so that each process can be bound to a single GPU</p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
 if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
 distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
 More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
-<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
-More info here:
-<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
 Possible parameters:
 <a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p></li>
@@ -584,21 +596,33 @@ except models and optimizers (they will be forwared automatically).</p>
 <h3><a class="toc-backref" href="#id16">DistributedDataParallelDeepSpeedEngine</a><a class="headerlink" href="#distributeddataparalleldeepspeedengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.deepspeed.</code><code class="sig-name descname">DistributedDataParallelDeepSpeedEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">deepspeed_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">train_batch_size: int = 256</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/deepspeed.html#DistributedDataParallelDeepSpeedEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.deepspeed.</code><code class="sig-name descname">DistributedDataParallelDeepSpeedEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">train_batch_size: int = 256</em>, <em class="sig-param">deepspeed_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/deepspeed.html#DistributedDataParallelDeepSpeedEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed DeepSpeed MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – address to use for backend.</p></li>
-<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>address</strong> – master node (rank 0)’s address, should be either the IP address or the hostname
+of node 0, for single node multi-proc training, can simply be 127.0.0.1</p></li>
+<li><p><strong>port</strong> – master node (rank 0)’s free port that needs to be used for communication
+during distributed training</p></li>
+<li><p><strong>world_size</strong> – the number of processes to use for distributed training.
+Should be less or equal to the number of GPUs</p></li>
+<li><p><strong>workers_dist_rank</strong> – the rank of the first process to run on the node.
+It should be a number between <cite>number of initialized processes</cite> and <cite>world_size - 1</cite>,
+the other processes on the node wiil have ranks <cite># of initialized processes + 1</cite>,
+<cite># of initialized processes + 2</cite>, …,
+<cite># of initialized processes + num_node_workers - 1</cite></p></li>
+<li><p><strong>num_node_workers</strong> – the number of processes to launch on the node.
+For GPU training, this is recommended to be set to the number of GPUs
+on the current node so that each process can be bound to a single GPU</p></li>
 <li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
 More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
-<li><p><strong>deepspeed_kwargs</strong> – parameters for <cite>deepspeed.initialize</cite>.
-More info here: <a class="reference external" href="https://deepspeed.readthedocs.io/en/latest/initialize.html">https://deepspeed.readthedocs.io/en/latest/initialize.html</a></p></li>
 <li><p><strong>train_batch_size</strong> – shortcut for train batch size for deepspeed scaling (default: 256)
 for proper configuration, please use deepspeed_kwargs[‘config’] instead</p></li>
+<li><p><strong>deepspeed_kwargs</strong> – parameters for <cite>deepspeed.initialize</cite>.
+More info here: <a class="reference external" href="https://deepspeed.readthedocs.io/en/latest/initialize.html">https://deepspeed.readthedocs.io/en/latest/initialize.html</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -711,7 +735,7 @@ Docs for <cite>fairscale.nn.Pipe</cite>:
 <h3><a class="toc-backref" href="#id19">SharedDataParallelFairScaleEngine</a><a class="headerlink" href="#shareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
@@ -782,23 +806,35 @@ More info here:
 <h3><a class="toc-backref" href="#id20">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – address to use for backend.</p></li>
-<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>address</strong> – master node (rank 0)’s address, should be either the IP address or the hostname
+of node 0, for single node multi-proc training, can simply be 127.0.0.1</p></li>
+<li><p><strong>port</strong> – master node (rank 0)’s free port that needs to be used for communication
+during distributed training</p></li>
+<li><p><strong>world_size</strong> – the number of processes to use for distributed training.
+Should be less or equal to the number of GPUs</p></li>
+<li><p><strong>workers_dist_rank</strong> – the rank of the first process to run on the node.
+It should be a number between <cite>number of initialized processes</cite> and <cite>world_size - 1</cite>,
+the other processes on the node wiil have ranks <cite># of initialized processes + 1</cite>,
+<cite># of initialized processes + 2</cite>, …,
+<cite># of initialized processes + num_node_workers - 1</cite></p></li>
+<li><p><strong>num_node_workers</strong> – the number of processes to launch on the node.
+For GPU training, this is recommended to be set to the number of GPUs
+on the current node so that each process can be bound to a single GPU</p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
 if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
 distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.ShardedDataParallel</cite>.
 Docs for <cite>fairscale.nn.ShardedDataParallel</cite>:
 <a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html">https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</a></p></li>
-<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
-More info here:
-<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>scaler_kwargs</strong> – parameters for <cite>fairscale.optim.grad_scaler.ShardedGradScaler</cite>.
 Possible parameters:
 <a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/index.html">https://fairscale.readthedocs.io/en/latest/api/index.html</a></p></li>
@@ -859,7 +895,7 @@ Possible parameters:
 <h3><a class="toc-backref" href="#id21">FullySharedDataParallelFairScaleEngine</a><a class="headerlink" href="#fullyshareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">FullySharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#FullySharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">FullySharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#FullySharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
@@ -1025,23 +1061,35 @@ More info here:
 <h3><a class="toc-backref" href="#id25">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Distributed MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – address to use for backend.</p></li>
-<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>address</strong> – master node (rank 0)’s address, should be either the IP address or the hostname
+of node 0, for single node multi-proc training, can simply be 127.0.0.1</p></li>
+<li><p><strong>port</strong> – master node (rank 0)’s free port that needs to be used for communication
+during distributed training</p></li>
+<li><p><strong>world_size</strong> – the number of processes to use for distributed training.
+Should be less or equal to the number of GPUs</p></li>
+<li><p><strong>workers_dist_rank</strong> – the rank of the first process to run on the node.
+It should be a number between <cite>number of initialized processes</cite> and <cite>world_size - 1</cite>,
+the other processes on the node wiil have ranks <cite># of initialized processes + 1</cite>,
+<cite># of initialized processes + 2</cite>, …,
+<cite># of initialized processes + num_node_workers - 1</cite></p></li>
+<li><p><strong>num_node_workers</strong> – the number of processes to launch on the node.
+For GPU training, this is recommended to be set to the number of GPUs
+on the current node so that each process can be bound to a single GPU</p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
 if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
 distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
 More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
-<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
-More info here:
-<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 </ul>
 </dd>
 </dl>

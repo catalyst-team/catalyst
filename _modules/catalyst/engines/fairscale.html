@@ -260,7 +260,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.engines.fairscale</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -527,17 +527,29 @@
     <span class="sd">&quot;&quot;&quot;Distributed FairScale MultiGPU training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        address: address to use for backend.</span>
-<span class="sd">        port: port to use for backend.</span>
+<span class="sd">        address: master node (rank 0)&#39;s address, should be either the IP address or the hostname</span>
+<span class="sd">            of node 0, for single node multi-proc training, can simply be 127.0.0.1</span>
+<span class="sd">        port: master node (rank 0)&#39;s free port that needs to be used for communication</span>
+<span class="sd">            during distributed training</span>
+<span class="sd">        world_size: the number of processes to use for distributed training.</span>
+<span class="sd">            Should be less or equal to the number of GPUs</span>
+<span class="sd">        workers_dist_rank: the rank of the first process to run on the node.</span>
+<span class="sd">            It should be a number between `number of initialized processes` and `world_size - 1`,</span>
+<span class="sd">            the other processes on the node wiil have ranks `# of initialized processes + 1`,</span>
+<span class="sd">            `# of initialized processes + 2`, ...,</span>
+<span class="sd">            `# of initialized processes + num_node_workers - 1`</span>
+<span class="sd">        num_node_workers: the number of processes to launch on the node.</span>
+<span class="sd">            For GPU training, this is recommended to be set to the number of GPUs</span>
+<span class="sd">            on the current node so that each process can be bound to a single GPU</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
 <span class="sd">        sync_bn: boolean flag for batchnorm synchonization during disributed training.</span>
 <span class="sd">            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch</span>
 <span class="sd">            distributed only. Default, False.</span>
 <span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.</span>
 <span class="sd">            Docs for `fairscale.nn.ShardedDataParallel`:</span>
 <span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</span>
-<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
-<span class="sd">            More info here:</span>
-<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
 <span class="sd">        scaler_kwargs: parameters for `fairscale.optim.grad_scaler.ShardedGradScaler`.</span>
 <span class="sd">            Possible parameters:</span>
 <span class="sd">            https://fairscale.readthedocs.io/en/latest/api/index.html</span>
@@ -600,20 +612,26 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2112</span><span class="p">,</span>
+        <span class="n">world_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">workers_dist_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">num_node_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sync_bn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scaler_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
             <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+            <span class="n">workers_dist_rank</span><span class="o">=</span><span class="n">workers_dist_rank</span><span class="p">,</span>
+            <span class="n">num_node_workers</span><span class="o">=</span><span class="n">num_node_workers</span><span class="p">,</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span><span class="p">,</span>
             <span class="n">sync_bn</span><span class="o">=</span><span class="n">sync_bn</span><span class="p">,</span>
             <span class="n">ddp_kwargs</span><span class="o">=</span><span class="n">ddp_kwargs</span><span class="p">,</span>
-            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># @TODO: should we support scaler for each optimizer?</span>
         <span class="k">if</span> <span class="n">scaler_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
