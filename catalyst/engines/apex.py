@@ -1,10 +1,8 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 from collections import OrderedDict
-import os
 
 import torch
 from torch import nn
-import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
@@ -367,17 +365,29 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
-        address: address to use for backend.
-        port: port to use for backend.
+        address: master node (rank 0)'s address, should be either the IP address or the hostname
+            of node 0, for single node multi-proc training, can simply be 127.0.0.1
+        port: master node (rank 0)'s free port that needs to be used for communication
+            during distributed training
+        world_size: the number of processes to use for distributed training.
+            Should be less or equal to the number of GPUs
+        workers_dist_rank: the rank of the first process to run on the node.
+            It should be a number between `number of initialized processes` and `world_size - 1`,
+            the other processes on the node wiil have ranks `# of initialized processes + 1`,
+            `# of initialized processes + 2`, ...,
+            `# of initialized processes + num_node_workers - 1`
+        num_node_workers: the number of processes to launch on the node.
+            For GPU training, this is recommended to be set to the number of GPUs
+            on the current node so that each process can be bound to a single GPU
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         sync_bn: boolean flag for batchnorm synchonization during disributed training.
             if True, applies Apex `convert_syncbn_model`_ to the model for native torch
             distributed only. Default, False.
         ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
             More info here:
             https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel
-        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
-            More info here:
-            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         apex_kwargs: parameters for `apex.amp.initialize`
             except models and optimizers (they will be forwared automatically).
 
@@ -445,20 +455,26 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
 
     def __init__(
         self,
-        address: str = None,
-        port: Union[str, int] = None,
+        address: str = "127.0.0.1",
+        port: Union[str, int] = 2112,
+        world_size: Optional[int] = None,
+        workers_dist_rank: int = 0,
+        num_node_workers: Optional[int] = None,
+        process_group_kwargs: Dict[str, Any] = None,
         sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
-        process_group_kwargs: Dict[str, Any] = None,
         apex_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__(
             address=address,
             port=port,
+            world_size=world_size,
+            workers_dist_rank=workers_dist_rank,
+            num_node_workers=num_node_workers,
+            process_group_kwargs=process_group_kwargs,
             sync_bn=sync_bn,
             ddp_kwargs=None,
-            process_group_kwargs=process_group_kwargs,
         )
         self.ddp_kwargs = ddp_kwargs or {}
         self.apex_kwargs = apex_kwargs or {}
@@ -472,27 +488,6 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             f"apex_kwargs={self.apex_kwargs})"
         )
 
-    def setup_process(self, rank: int = -1, world_size: int = 1):
-        """Initialize DDP variables and processes.
-
-        Args:
-            rank: process rank. Default is `-1`.
-            world_size: number of devices in netwok to expect for train.
-                Default is `1`.
-        """
-        self._rank = rank
-        self._world_size = world_size
-
-        self.process_group_kwargs["rank"] = rank
-        self.process_group_kwargs["world_size"] = world_size
-        os.environ["MASTER_ADDR"] = str(self.address)
-        os.environ["MASTER_PORT"] = str(self.port)
-
-        dist.init_process_group(**self.process_group_kwargs)
-
-        torch.cuda.set_device(int(self._rank))
-        self._device = f"cuda:{int(self._rank)}"
-
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None
     ):
@@ -505,13 +500,13 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
 
-        optimizer = optimizer_fn()
+        optimizer = optimizer_fn(model)
         optimizer = self.sync_device(optimizer)
 
         model, optimizer = amp.initialize(model, optimizer, **self.apex_kwargs)
         model = ApexDistributedDataParallel(model, **self.ddp_kwargs)
 
-        scheduler = scheduler_fn()
+        scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
