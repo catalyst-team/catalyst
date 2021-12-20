@@ -1,7 +1,9 @@
+from importlib.metadata import version
 import itertools
 import os
 
 import numpy as np
+from packaging.version import parse, Version
 import pandas as pd
 import scipy.sparse as sp
 
@@ -447,9 +449,13 @@ class MovieLens20M(Dataset):
 
         Raises:
             RuntimeError: If ``download = False`` and the dataset not found.
+            RuntimeError: If torch version < `1.7.0`"
         """
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
+
+        if Version(version("torch")) <= Version("1.7.0"):
+            raise RuntimeError("Updated torch to >= `1.7.0`")
 
         self.root = root
         self.train = train
