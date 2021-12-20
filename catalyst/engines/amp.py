@@ -106,7 +106,7 @@ class AMPEngine(DeviceEngine):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
@@ -392,7 +392,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
