@@ -1,4 +1,3 @@
-from importlib.metadata import version
 import itertools
 import os
 
@@ -454,7 +453,7 @@ class MovieLens20M(Dataset):
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
 
-        if Version(version("torch")) <= Version("1.7.0"):
+        if Version(torch.__version__) <= Version("1.7.0"):
             raise RuntimeError("Updated torch to >= `1.7.0`")
 
         self.root = root

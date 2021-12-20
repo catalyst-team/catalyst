@@ -5,8 +5,12 @@ import pytest
 
 from catalyst.settings import SETTINGS
 
-if SETTINGS.ml_required:
+if SETTINGS.ml_required and SETTINGS.is_torch_1_7_0:
     from catalyst.contrib.datasets import MovieLens20M
+
+minversion = pytest.mark.skipif(
+    not (SETTINGS.is_torch_1_7_0), reason="No catalyst[ml] required or torch version "
+)
 
 
 def setup_module():
@@ -20,6 +24,7 @@ def setup_module():
         print("Error! Code: {c}, Message, {m}".format(c=type(e).__name__, m=str(e)))
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_download_split_by_user():
     """
@@ -50,6 +55,7 @@ def test_download_split_by_user():
     assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_download_split_by_ts():
     """
@@ -80,6 +86,7 @@ def test_download_split_by_ts():
     assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_minimal_ranking():
     """
@@ -113,6 +120,7 @@ def test_minimal_ranking():
     )
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_users_per_item_filtering():
     """
@@ -131,6 +139,7 @@ def test_users_per_item_filtering():
     assert (movielens_20m_min_users.users_activity["user_cnt"] >= min_users_per_item).any()
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_items_per_user_filtering():
     """
