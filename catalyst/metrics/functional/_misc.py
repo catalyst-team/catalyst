@@ -102,7 +102,7 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
 
 def process_multilabel_components(
     outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, int]:
     """General preprocessing for multilabel-based metrics.
 
     Args:
@@ -117,7 +117,7 @@ def process_multilabel_components(
 
     Returns:
         processed ``outputs`` and ``targets``
-        with [batch_size; num_classes] shape
+        with [batch_size; num_classes] shape and num_classes
     """
     if not torch.is_tensor(outputs):
         outputs = torch.from_numpy(outputs)
@@ -142,11 +142,13 @@ def process_multilabel_components(
             targets = F.one_hot(targets, num_classes).float()
         else:
             # binary case
+            num_classes = 2
             targets = targets.view(-1, 1)
     else:
         assert targets.dim() == 2, (
             "wrong `targets` size " "(should be 1D or 2D with one column per class)"
         )
+        num_classes = outputs.shape[-1]
 
     if weights is not None:
         assert weights.dim() == 1, "Weights dimension should be 1"
@@ -157,7 +159,7 @@ def process_multilabel_components(
 
     assert torch.equal(targets ** 2, targets), "targets should be binary (0 or 1)"
 
-    return outputs, targets, weights
+    return outputs, targets, weights, num_classes
 
 
 def get_binary_statistics(
@@ -199,8 +201,7 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None
-) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    outputs: Tensor, targets: Tensor, argmax_dim: int = -1) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,
     false negative, true positive and support
@@ -216,7 +217,7 @@ def get_multiclass_statistics(
         num_classes: int, that specifies number of classes if it known
 
     Returns:
-        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]: stats
 
     Example:
 
@@ -236,7 +237,7 @@ def get_multiclass_statistics(
         # )
     """
     outputs, targets, num_classes = process_multiclass_components(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim
     )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
@@ -254,12 +255,12 @@ def get_multiclass_statistics(
             support[class_index],
         ) = get_binary_statistics(outputs=outputs, targets=targets, label=class_index)
 
-    return tn, fp, fn, tp, support
+    return tn, fp, fn, tp, support, num_classes
 
 
 def get_multilabel_statistics(
     outputs: Tensor, targets: Tensor
-) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,
     false negative, true positive and support
@@ -272,7 +273,7 @@ def get_multilabel_statistics(
             with shape [bs; ..., 1]
 
     Returns:
-        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]: stats
 
     Examples:
 
@@ -322,9 +323,8 @@ def get_multilabel_statistics(
         # )
 
     """
-    outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _, num_classes = process_multilabel_components(outputs=outputs, targets=targets)
     assert outputs.shape == targets.shape
-    num_classes = outputs.shape[-1]
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)
@@ -340,10 +340,10 @@ def get_multilabel_statistics(
             fp[class_index],
             fn[class_index],
             tp[class_index],
-            support[class_index],
+            support[class_index]
         ) = get_binary_statistics(outputs=class_outputs, targets=class_targets, label=1)
 
-    return tn, fp, fn, tp, support
+    return tn, fp, fn, tp, support, num_classes
 
 
 def get_default_topk_args(num_classes: int) -> Sequence[int]:
