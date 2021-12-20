@@ -235,7 +235,7 @@ class APEXEngine(DeviceEngine):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
@@ -540,7 +540,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
