@@ -13,7 +13,7 @@ from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.callbacks.scheduler import ISchedulerCallback, LRFinder, SchedulerCallback
 from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
@@ -1071,6 +1071,38 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
                 loader_key=self._valid_loader, metric_key=self._valid_metric
             )
         return callbacks
+
+
+class LearningRateSearcherSupervisedRunner(SupervisedRunner):
+    def search_learning_rate(self):
+        lr_finder = LRFinder(final_lr=1e-3)
+        self.callbacks["_lr_searcher"] = lr_finder
+        # prepare everything
+        self._run_event("on_experiment_start")
+
+        try:
+            # do one stage
+            if self.engine.is_ddp:
+                # ddp-device branch
+                world_size = self.engine.world_size
+                torch.multiprocessing.spawn(
+                    self._run_stage,
+                    args=(world_size,),
+                    nprocs=world_size,
+                    join=True,
+                )
+            else:
+                # single-device branch (cpu, gpu, dp)
+                self._run_stage()
+        except KeyboardInterrupt:
+            optimal_lr = 1e-3
+            if lr_finder.optimal_lr is not None:
+                optimal_lr = lr_finder.optimal_lr
+                print(f"OPTIMAL LEARNING RATE: {optimal_lr}")
+
+        del self.callbacks["_lr_searcher"]
+
+        self._run_event("on_experiment_end")
 
 
 __all__ = ["Runner", "SupervisedRunner", "SelfSupervisedRunner"]
