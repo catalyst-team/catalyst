@@ -100,13 +100,13 @@ class AMPEngine(DeviceEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        checkpoint = {"scaler": self.scaler.state_dict()}
+        kwargs["scaler"] = self.scaler.state_dict()
         checkpoint = super().pack_checkpoint(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
@@ -386,13 +386,13 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        checkpoint = {"scaler": self.scaler.state_dict()}
+        kwargs["scaler"] = self.scaler.state_dict()
         checkpoint = super().pack_checkpoint(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
