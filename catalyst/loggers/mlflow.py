@@ -159,6 +159,11 @@ class MLflowLogger(ILogger):
         mlflow.set_experiment(self.experiment)
         _get_or_start_run(run_name=self.run)
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return mlflow
+
     @staticmethod
     def _log_metrics(metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
         for key, value in metrics.items():

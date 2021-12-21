@@ -152,6 +152,11 @@ class NeptuneLogger(ILogger):
         except (ImportError, NameError, AttributeError):
             pass
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self.run
+
     def _log_metrics(self, metrics: Dict[str, float], neptune_path: str, step: int):
         for key, value in metrics.items():
             self.run[f"{neptune_path}/{key}"].log(value=float(value), step=step)
