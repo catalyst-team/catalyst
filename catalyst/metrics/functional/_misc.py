@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 def process_multiclass_components(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    argmax_dim: int = -1,
-    num_classes: Optional[int] = None,
+        outputs: torch.Tensor,
+        targets: torch.Tensor,
+        argmax_dim: int = -1,
+        num_classes: Optional[int] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, int]:
     """
     Preprocess input in case multiclass classification task.
@@ -101,7 +101,7 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
 
 
 def process_multilabel_components(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
+        outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, int]:
     """General preprocessing for multilabel-based metrics.
 
@@ -163,7 +163,7 @@ def process_multilabel_components(
 
 
 def get_binary_statistics(
-    outputs: Tensor, targets: Tensor, label: int = 1
+        outputs: Tensor, targets: Tensor, label: int = 1
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
@@ -201,7 +201,7 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-    outputs: Tensor, targets: Tensor, argmax_dim: int = -1) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
+        outputs: Tensor, targets: Tensor, argmax_dim: int = -1) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,
     false negative, true positive and support
@@ -214,7 +214,6 @@ def get_multiclass_statistics(
             with shape [bs; ..., 1]
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
-        num_classes: int, that specifies number of classes if it known
 
     Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]: stats
@@ -259,7 +258,7 @@ def get_multiclass_statistics(
 
 
 def get_multilabel_statistics(
-    outputs: Tensor, targets: Tensor
+        outputs: Tensor, targets: Tensor
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,

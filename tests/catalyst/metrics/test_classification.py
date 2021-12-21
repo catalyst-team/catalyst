@@ -250,7 +250,7 @@ def test_multiclass_metrics(
         true_values: true values of metrics
     """
     metric = MulticlassPrecisionRecallF1SupportMetric(
-        num_classes=num_classes, zero_division=zero_division
+        zero_division=zero_division
     )
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
@@ -462,7 +462,7 @@ def test_multilabel_metrics(
         true_values: true values of metrics
     """
     metric = MultilabelPrecisionRecallF1SupportMetric(
-        num_classes=num_classes, zero_division=zero_division
+        zero_division=zero_division
     )
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
@@ -586,7 +586,7 @@ def test_update(
         true_values: true values of metrics
     """
     metric = MulticlassPrecisionRecallF1SupportMetric(
-        num_classes=num_classes, zero_division=zero_division
+        zero_division=zero_division
     )
     for outputs, targets in zip(outputs_list, targets_list):
         metric.update(outputs=outputs, targets=targets)
@@ -873,7 +873,7 @@ def test_update_key_value_multiclass(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = MulticlassPrecisionRecallF1SupportMetric(
-        num_classes=num_classes, zero_division=zero_division
+        zero_division=zero_division
     )
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
@@ -1039,7 +1039,7 @@ def test_update_key_value_multilabel(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = MultilabelPrecisionRecallF1SupportMetric(
-        num_classes=num_classes, zero_division=zero_division
+        zero_division=zero_division
     )
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)

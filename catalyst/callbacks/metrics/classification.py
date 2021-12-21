@@ -12,7 +12,6 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        num_classes: number of classes
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
@@ -82,7 +81,6 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        num_classes: int,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -92,7 +90,6 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MulticlassPrecisionRecallF1SupportMetric(
-                num_classes=num_classes,
                 zero_division=zero_division,
                 prefix=prefix,
                 suffix=suffix,
@@ -110,7 +107,6 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        num_classes: number of classes
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
@@ -186,7 +182,6 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        num_classes: int,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -196,7 +191,6 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MultilabelPrecisionRecallF1SupportMetric(
-                num_classes=num_classes,
                 zero_division=zero_division,
                 prefix=prefix,
                 suffix=suffix,

@@ -79,7 +79,7 @@ def test_get_binary_statistics(outputs, targets, tn_true, fp_true, fn_true, tp_t
 def test_get_multiclass_statistics(
     outputs, targets, tn_true, fp_true, fn_true, tp_true, support_true
 ):
-    tn, fp, fn, tp, support = get_multiclass_statistics(outputs, targets)
+    tn, fp, fn, tp, support, _ = get_multiclass_statistics(outputs, targets)
 
     assert torch.allclose(torch.tensor(tn_true).to(tn), tn)
     assert torch.allclose(torch.tensor(fp_true).to(fp), fp)
@@ -123,7 +123,7 @@ def test_get_multiclass_statistics(
 def test_get_multilabel_statistics(
     outputs, targets, tn_true, fp_true, fn_true, tp_true, support_true
 ):
-    tn, fp, fn, tp, support = get_multilabel_statistics(outputs, targets)
+    tn, fp, fn, tp, support, _ = get_multilabel_statistics(outputs, targets)
 
     assert torch.allclose(torch.tensor(tn_true).to(tn), tn)
     assert torch.allclose(torch.tensor(fp_true).to(fp), fp)

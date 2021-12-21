@@ -353,7 +353,6 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
 
 
     Args:
-        mode: one of "binary", "multiclass" and "multilabel"
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix

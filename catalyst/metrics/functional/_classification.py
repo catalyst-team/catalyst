@@ -128,8 +128,8 @@ def precision_recall_fbeta_support(
         #     tensor([4., 4.]),          # per class support
         # )
     """
-    tn, fp, fn, tp, support = get_multiclass_statistics(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes
+    tn, fp, fn, tp, support, _ = get_multiclass_statistics(
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim
     )
     # @TODO: sync between metrics
     # precision_val = _precision(tp=tp, fp=fp, eps=eps, zero_division=zero_division)
