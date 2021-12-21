@@ -79,6 +79,11 @@ class CSVLogger(ILogger):
         self.loggers = {}
         os.makedirs(self.logdir, exist_ok=True)
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self.loggers
+
     def _make_header(self, metrics: Dict[str, float], loader_key: str):
         log_line_header = "step,"
         for metric in sorted(metrics.keys()):

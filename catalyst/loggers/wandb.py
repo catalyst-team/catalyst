@@ -94,6 +94,11 @@ class WandbLogger(ILogger):
             project=self.project, name=self.name, entity=self.entity, allow_val_change=True
         )
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self.run
+
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, prefix=""):
         for key, value in metrics.items():
             self.run.log({f"{key}_{prefix}/{loader_key}": value}, step=step)
