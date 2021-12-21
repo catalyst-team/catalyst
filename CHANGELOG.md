@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - MNIST dataset for SSL banchmark ([#1368](https://github.com/catalyst-team/catalyst/pull/1368))
+- logger property for logging customization ([#1372](https://github.com/catalyst-team/catalyst/pull/1372))
 
 ### Changed
 

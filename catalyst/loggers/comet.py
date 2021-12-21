@@ -117,6 +117,11 @@ class CometLogger(ILogger):
         if tags is not None:
             self.experiment.add_tags(tags)
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self.experiment
+
     def _get_experiment(self, mode, experiment_id=None):
         if mode == "offline":
             if experiment_id is not None:

@@ -94,6 +94,11 @@ class TensorboardLogger(ILogger):
         self.loggers = {}
         os.makedirs(self.logdir, exist_ok=True)
 
+    @property
+    def logger(self):
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self.loggers
+
     def _check_loader_key(self, loader_key: str):
         if loader_key not in self.loggers.keys():
             logdir = os.path.join(self.logdir, f"{loader_key}")
