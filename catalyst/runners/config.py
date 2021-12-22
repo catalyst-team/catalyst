@@ -4,7 +4,6 @@ from copy import deepcopy
 import logging
 import os
 
-from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
@@ -287,7 +286,6 @@ class ConfigRunner(IRunner):
                 model_key: ConfigRunner._get_model_from_params(**model_params)
                 for model_key, model_params in params.items()
             }
-            model = nn.ModuleDict(model)
         else:
             model = REGISTRY.get_from_params(**params)
         return model
