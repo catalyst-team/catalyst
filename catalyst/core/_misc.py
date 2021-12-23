@@ -1,42 +1,13 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
-from copy import copy
 import warnings
 
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
+from catalyst.data.ddp_loader import prepare_ddp_loader
 from catalyst.data.sampler import DistributedSamplerWrapper
-from catalyst.utils.distributed import get_rank
-
-
-def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
-    """
-    Transfers loader to distributed mode. Experimental feature.
-
-    Args:
-        loader: pytorch dataloder
-
-    Returns:
-        DataLoader: pytorch dataloder with distributed sampler.
-    """
-    sampler = (
-        DistributedSampler(dataset=loader.dataset)
-        if getattr(loader, "sampler", None) is not None
-        else DistributedSamplerWrapper(sampler=loader.sampler)
-    )
-    loader = DataLoader(
-        dataset=copy(loader.dataset),
-        batch_size=loader.batch_size,
-        # shuffle=loader.shuffle,
-        sampler=sampler,
-        # batch_sampler=loader.batch_sampler,
-        num_workers=loader.num_workers,
-        # collate_fn=loader.collate_fn,
-        pin_memory=loader.pin_memory,
-        drop_last=loader.drop_last,
-    )
-    return loader
+from catalyst.utils.distributed import get_rank, get_world_size
 
 
 def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
@@ -61,7 +32,9 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
                     "you need ``DistributedSampler`` for your ``DataLoader``."
                     "Transferring to distributed mode. (Experimental feature)"
                 )
-                loaders[key] = _force_make_distributed_loader(value)
+                loaders[key] = prepare_ddp_loader(
+                    value, num_processes=get_world_size(), process_index=rank
+                )
     return loaders
 
 
