@@ -3,6 +3,8 @@ from catalyst.metrics._classification import (
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
+from typing import Optional
+
 from catalyst.settings import SETTINGS
 
 
@@ -12,6 +14,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
+        num_classes: number of classes
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
@@ -81,6 +84,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
+        num_classes: Optional[int] = None,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -94,6 +98,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
                 prefix=prefix,
                 suffix=suffix,
                 compute_per_class_metrics=compute_per_class_metrics,
+                num_classes=num_classes,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -107,6 +112,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
+        num_classes: number of classes
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
@@ -182,6 +188,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
+        num_classes: Optional[int] = None,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -195,6 +202,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
                 prefix=prefix,
                 suffix=suffix,
                 compute_per_class_metrics=compute_per_class_metrics,
+                num_classes=num_classes,
             ),
             input_key=input_key,
             target_key=target_key,

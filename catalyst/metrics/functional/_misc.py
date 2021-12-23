@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 def process_multiclass_components(
-        outputs: torch.Tensor,
-        targets: torch.Tensor,
-        argmax_dim: int = -1,
-        num_classes: Optional[int] = None,
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, int]:
     """
     Preprocess input in case multiclass classification task.
@@ -101,7 +101,7 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
 
 
 def process_multilabel_components(
-        outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
+    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, int]:
     """General preprocessing for multilabel-based metrics.
 
@@ -117,7 +117,7 @@ def process_multilabel_components(
 
     Returns:
         processed ``outputs`` and ``targets``
-        with [batch_size; num_classes] shape and num_classes
+        with [batch_size; num_classes] shape
     """
     if not torch.is_tensor(outputs):
         outputs = torch.from_numpy(outputs)
@@ -161,9 +161,8 @@ def process_multilabel_components(
 
     return outputs, targets, weights, num_classes
 
-
 def get_binary_statistics(
-        outputs: Tensor, targets: Tensor, label: int = 1
+    outputs: Tensor, targets: Tensor, label: int = 1
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
@@ -201,7 +200,8 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-        outputs: Tensor, targets: Tensor, argmax_dim: int = -1) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
+    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,
     false negative, true positive and support
@@ -214,9 +214,10 @@ def get_multiclass_statistics(
             with shape [bs; ..., 1]
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
+        num_classes: int, that specifies number of classes if it known
 
     Returns:
-        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]: stats
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
 
     Example:
 
@@ -236,7 +237,7 @@ def get_multiclass_statistics(
         # )
     """
     outputs, targets, num_classes = process_multiclass_components(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes
     )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
@@ -258,7 +259,7 @@ def get_multiclass_statistics(
 
 
 def get_multilabel_statistics(
-        outputs: Tensor, targets: Tensor
+    outputs: Tensor, targets: Tensor
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,
@@ -272,7 +273,7 @@ def get_multilabel_statistics(
             with shape [bs; ..., 1]
 
     Returns:
-        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]: stats
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
 
     Examples:
 
@@ -324,6 +325,7 @@ def get_multilabel_statistics(
     """
     outputs, targets, _, num_classes = process_multilabel_components(outputs=outputs, targets=targets)
     assert outputs.shape == targets.shape
+    num_classes = outputs.shape[-1]
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)
@@ -339,7 +341,7 @@ def get_multilabel_statistics(
             fp[class_index],
             fn[class_index],
             tp[class_index],
-            support[class_index]
+            support[class_index],
         ) = get_binary_statistics(outputs=class_outputs, targets=class_targets, label=1)
 
     return tn, fp, fn, tp, support, num_classes

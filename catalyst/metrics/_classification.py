@@ -25,40 +25,30 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
     """
     This metric accumulates true positive, false positive, true negative,
     false negative, support statistics from binary data.
-
-
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
-
     Raises:
         ValueError: if mode is incorrect
-
     Examples:
-
     .. code-block:: python
-
         import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
-
         # sample data
         num_samples, num_features, num_classes = int(1e4), int(1e1), 4
         X = torch.rand(num_samples, num_features)
         y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
-
         # pytorch loaders
         dataset = TensorDataset(X, y)
         loader = DataLoader(dataset, batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
-
         # model, criterion, optimizer, scheduler
         model = torch.nn.Linear(num_features, num_classes)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
         # model training
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
@@ -85,10 +75,8 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
                 dl.AUCCallback(input_key="logits", target_key="targets"),
             ],
         )
-
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
@@ -119,11 +107,9 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
     ) -> Union[Tuple[int, int, int, int, int], Tuple[Any, Any, Any, Any, Any]]:
         """
         Compute statistics from outputs and targets, update accumulated statistics with new values.
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             Tuple of int or array: true negative, false positive, false
                 negative, true positive and support statistics
@@ -149,11 +135,9 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return statistics intermediate result
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             dict of statistics for current input
         """
@@ -163,7 +147,6 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
     def compute(self) -> Dict[str, Union[int, np.array]]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
         """
@@ -172,10 +155,8 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
     def compute_key_value(self) -> Dict[str, float]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
-
         Examples:
             >>> {"tp": 3, "fp": 4, "tn": 5, "fn": 1, "support": 13}
         """
@@ -187,40 +168,31 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
     """
     This metric accumulates true positive, false positive, true negative,
     false negative, support statistics from multiclass data.
-
-
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
-
+        num_classes: number of classes
     Raises:
         ValueError: if mode is incorrect
-
     Examples:
-
     .. code-block:: python
-
         import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
-
         # sample data
         num_samples, num_features, num_classes = int(1e4), int(1e1), 4
         X = torch.rand(num_samples, num_features)
         y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
-
         # pytorch loaders
         dataset = TensorDataset(X, y)
         loader = DataLoader(dataset, batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
-
         # model, criterion, optimizer, scheduler
         model = torch.nn.Linear(num_features, num_classes)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
         # model training
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
@@ -247,10 +219,8 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
                 dl.AUCCallback(input_key="logits", target_key="targets"),
             ],
         )
-
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
@@ -259,11 +229,12 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
+        num_classes: Optional[int] = None
     ):
         """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.statistics = None
-        self.num_classes = None
+        self.num_classes = num_classes
         self._ddp_backend = None
         self.reset()
 
@@ -278,20 +249,18 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Union[Tuple[int, int, int, int, int], Tuple[Any, Any, Any, Any, Any]]:
+    ) -> Tuple[Any, Any, Any, Any, Any, int]:
         """
         Compute statistics from outputs and targets, update accumulated statistics with new values.
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             Tuple of int or array: true negative, false positive, false
                 negative, true positive and support statistics
         """
         tn, fp, fn, tp, support, num_classes = get_multiclass_statistics(
-            outputs=outputs.cpu().detach(), targets=targets.cpu().detach()
+            outputs=outputs.cpu().detach(), targets=targets.cpu().detach(), num_classes=self.num_classes
         )
 
         tn = tn.numpy()
@@ -300,33 +269,32 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         tp = tp.numpy()
         support = support.numpy()
 
-        self.num_classes = num_classes
+        if self.num_classes is None:
+            self.num_classes = num_classes
+
         self.statistics["tn"] += tn
         self.statistics["fp"] += fp
         self.statistics["fn"] += fn
         self.statistics["tp"] += tp
         self.statistics["support"] += support
 
-        return tn, fp, fn, tp, support
+        return tn, fp, fn, tp, support, self.num_classes
 
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return statistics intermediate result
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             dict of statistics for current input
         """
-        tn, fp, fn, tp, support = self.update(outputs=outputs, targets=targets)
+        tn, fp, fn, tp, support, _ = self.update(outputs=outputs, targets=targets)
         return {"fn": fn, "fp": fp, "support": support, "tn": tn, "tp": tp}
 
     def compute(self) -> Dict[str, Union[int, np.array]]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
         """
@@ -335,10 +303,8 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
     def compute_key_value(self) -> Dict[str, float]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
-
         Examples:
             >>> {"tp": np.array([1, 2, 1]), "fp": np.array([2, 1, 0]), ...}
         """
@@ -350,40 +316,31 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
     """
     This metric accumulates true positive, false positive, true negative,
     false negative, support statistics from multilabel data.
-
-
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
-
+        num_classes: number of classes
     Raises:
         ValueError: if mode is incorrect
-
     Examples:
-
     .. code-block:: python
-
         import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
-
         # sample data
         num_samples, num_features, num_classes = int(1e4), int(1e1), 4
         X = torch.rand(num_samples, num_features)
         y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
-
         # pytorch loaders
         dataset = TensorDataset(X, y)
         loader = DataLoader(dataset, batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
-
         # model, criterion, optimizer, scheduler
         model = torch.nn.Linear(num_features, num_classes)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
         # model training
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
@@ -410,10 +367,8 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
                 dl.AUCCallback(input_key="logits", target_key="targets"),
             ],
         )
-
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
@@ -422,11 +377,12 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
+        num_classes: Optional[int] = None
     ):
         """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.statistics = None
-        self.num_classes = None
+        self.num_classes = num_classes
         self._ddp_backend = None
         self.reset()
 
@@ -441,14 +397,12 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Union[Tuple[int, int, int, int, int], Tuple[Any, Any, Any, Any, Any]]:
+    ) -> Tuple[Any, Any, Any, Any, Any, int]:
         """
         Compute statistics from outputs and targets, update accumulated statistics with new values.
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             Tuple of int or array: true negative, false positive, false
                 negative, true positive and support statistics
@@ -462,34 +416,32 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         fn = fn.numpy()
         tp = tp.numpy()
         support = support.numpy()
+        if self.num_classes is None:
+            self.num_classes = num_classes
 
-        self.num_classes = num_classes
         self.statistics["tn"] += tn
         self.statistics["fp"] += fp
         self.statistics["fn"] += fn
         self.statistics["tp"] += tp
         self.statistics["support"] += support
 
-        return tn, fp, fn, tp, support
+        return tn, fp, fn, tp, support, self.num_classes
 
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return statistics intermediate result
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             dict of statistics for current input
         """
-        tn, fp, fn, tp, support = self.update(outputs=outputs, targets=targets)
+        tn, fp, fn, tp, support, _ = self.update(outputs=outputs, targets=targets)
         return {"fn": fn, "fp": fp, "support": support, "tn": tn, "tp": tp}
 
     def compute(self) -> Dict[str, Union[int, np.array]]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
         """
@@ -498,10 +450,8 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
     def compute_key_value(self) -> Dict[str, float]:
         """
         Return accumulated statistics
-
         Returns:
             dict of statistics
-
         Examples:
             >>> {"tp": np.array([1, 2, 1]), "fp": np.array([2, 1, 0]), ...}
         """
@@ -511,7 +461,6 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
 
 class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     """Precision, recall, f1_score and support metrics for binary classification.
-
     Args:
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
@@ -543,12 +492,10 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     ) -> Dict[str, float]:
         """
         Convert list of metrics to key-value
-
         Args:
             precision_value: precision value
             recall_value: recall value
             f1_value: f1 value
-
         Returns:
             dict of metrics
         """
@@ -566,11 +513,9 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[float, float, float]:
         """
         Update statistics and return metrics intermediate results
-
         Args:
             outputs: predicted labels
             targets: target labels
-
         Returns:
             tuple of intermediate metrics: precision, recall, f1 score
         """
@@ -583,11 +528,9 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return metrics intermediate results
-
         Args:
             outputs: predicted labels
             targets: target labels
-
         Returns:
             dict of intermediate metrics
         """
@@ -600,7 +543,6 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     def compute(self) -> Tuple[float, float, float]:
         """
         Compute metrics with accumulated statistics
-
         Returns:
             tuple of metrics: precision, recall, f1 score
         """
@@ -625,7 +567,6 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     def compute_key_value(self) -> Dict[str, float]:
         """
         Compute metrics with all accumulated statistics
-
         Returns:
             dict of metrics
         """
@@ -639,7 +580,6 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
 class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
     """
     Metric that can collect statistics and count precision, recall, f1_score and support with it.
-
     Args:
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
@@ -648,6 +588,7 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
             (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metrics prefix
         suffix: metrics suffix
+        num_classes: number of classes
     """
 
     def __init__(
@@ -657,21 +598,23 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
+        num_classes: Optional[int] = None
     ) -> None:
         """Init PrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
+            num_classes=num_classes
         )
         self.compute_per_class_metrics = compute_per_class_metrics
         self.zero_division = zero_division
+        self.num_classes = num_classes
         self.reset()
 
     def _convert_metrics_to_kv(self, per_class, micro, macro, weighted) -> Dict[str, float]:
         """
         Convert metrics aggregation to key-value format
-
         Args:
             per_class: per-class metrics, array of shape (4, self.num_classes)
                 of precision, recall, f1 and support metrics
@@ -681,7 +624,6 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
                 of precision, recall, f1 and support metrics
             weighted: weighted averaged metrics, array of shape (self.num_classes)
                 of precision, recall, f1 and support metrics
-
         Returns:
             dict of key-value metrics
         """
@@ -712,29 +654,28 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[Any, Any, Any, Any]:
         """
         Update statistics and return intermediate metrics results
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             tuple of metrics intermediate results with per-class, micro, macro and
                 weighted averaging
         """
-        tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
+        tn, fp, fn, tp, support, num_classes = super().update(outputs=outputs, targets=targets)
         per_class, micro, macro, weighted = get_aggregated_metrics(
             tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division
         )
+        if self.num_classes is None:
+            self.num_classes = num_classes
+
         return per_class, micro, macro, weighted
 
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return intermediate metrics results
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             dict of metrics intermediate results
         """
@@ -748,7 +689,6 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
         """
         Compute precision, recall, f1 score and support.
         Compute micro, macro and weighted average for the metrics.
-
         Returns:
             list of aggregated metrics: per-class, micro, macro and weighted averaging of
                 precision, recall, f1 score and support metrics
@@ -783,7 +723,6 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
         """
         Compute precision, recall, f1 score and support.
         Compute micro, macro and weighted average for the metrics.
-
         Returns:
             dict of metrics
         """
@@ -797,7 +736,6 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
 class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
     """
     Metric that can collect statistics and count precision, recall, f1_score and support with it.
-
     Args:
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
@@ -806,6 +744,7 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
             (default: SETTINGS.compute_per_class_metrics or False).
         prefix: metrics prefix
         suffix: metrics suffix
+        num_classes: number of classes
     """
 
     def __init__(
@@ -815,21 +754,23 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
+        num_classes: Optional[int] = None
     ) -> None:
         """Init PrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
+            num_classes=num_classes
         )
         self.compute_per_class_metrics = compute_per_class_metrics
         self.zero_division = zero_division
+        self.num_classes = num_classes
         self.reset()
 
     def _convert_metrics_to_kv(self, per_class, micro, macro, weighted) -> Dict[str, float]:
         """
         Convert metrics aggregation to key-value format
-
         Args:
             per_class: per-class metrics, array of shape (4, self.num_classes)
                 of precision, recall, f1 and support metrics
@@ -839,7 +780,6 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
                 of precision, recall, f1 and support metrics
             weighted: weighted averaged metrics, array of shape (self.num_classes)
                 of precision, recall, f1 and support metrics
-
         Returns:
             dict of key-value metrics
         """
@@ -870,29 +810,28 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[Any, Any, Any, Any]:
         """
         Update statistics and return intermediate metrics results
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             tuple of metrics intermediate results with per-class, micro, macro and
                 weighted averaging
         """
-        tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
+        tn, fp, fn, tp, support, num_classes = super().update(outputs=outputs, targets=targets)
         per_class, micro, macro, weighted = get_aggregated_metrics(
             tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division
         )
+        if self.num_classes is None:
+            self.num_classes = num_classes
+
         return per_class, micro, macro, weighted
 
     def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return intermediate metrics results
-
         Args:
             outputs: prediction values
             targets: true answers
-
         Returns:
             dict of metrics intermediate results
         """
@@ -906,7 +845,6 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
         """
         Compute precision, recall, f1 score and support.
         Compute micro, macro and weighted average for the metrics.
-
         Returns:
             list of aggregated metrics: per-class, micro, macro and weighted averaging of
                 precision, recall, f1 score and support metrics
@@ -941,7 +879,6 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
         """
         Compute precision, recall, f1 score and support.
         Compute micro, macro and weighted average for the metrics.
-
         Returns:
             dict of metrics
         """
