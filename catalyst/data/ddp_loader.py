@@ -69,7 +69,7 @@ class BatchSamplerShard(BatchSampler):
             if not self.drop_last and idx < self.num_processes:
                 initial_data += batch
             # We identify the batch to yield
-            # but wait until we are sure every process gets a full batch 
+            # but wait until we are sure every process gets a full batch
             # before actually yielding it.
             if idx % self.num_processes == self.process_index:
                 batch_to_yield = batch
