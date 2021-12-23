@@ -20,11 +20,12 @@ _PYTORCH_DATALOADER_KWARGS = {
 # https://github.com/huggingface/accelerate/blob/main/src/accelerate/data_loader.py
 class BatchSamplerShard(BatchSampler):
     """
-    Wraps a PyTorch :obj:`BatchSampler` to generate batches for one of the processes only. Instances of this class will
-    always yield a number of batches that is a round multiple of :obj:`num_processes` and that all have the same size.
-    Depending on the value of the :obj:`drop_last` attribute of the batch sampler passed, it will either stop the
-    iteration at the first batch that would be too small / not present on all processes or loop with indices from the
-    beginning.
+    Wraps a PyTorch :obj:`BatchSampler` to generate batches for one of the processes only.
+    Instances of this class will always yield a number of batches that is a round multiple
+    of :obj:`num_processes` and that all have the same size.
+    Depending on the value of the :obj:`drop_last` attribute of the batch sampler passed,
+    it will either stop the iteration at the first batch that would be too small /
+    not present on all processes or loop with indices from the beginning.
 
     Args:
         batch_sampler (:obj:`torch.utils.data.sampler.BatchSampler`):
@@ -53,20 +54,23 @@ class BatchSamplerShard(BatchSampler):
         self.drop_last = batch_sampler.drop_last
 
     def __len__(self):
+        """Docs."""
         if len(self.batch_sampler) % self.num_processes == 0:
             return len(self.batch_sampler) // self.num_processes
         length = len(self.batch_sampler) // self.num_processes
         return length if self.drop_last else length + 1
 
     def __iter__(self):
+        """Docs."""
         initial_data = []
         batch_to_yield = []
         for idx, batch in enumerate(self.batch_sampler):
             # We gather the initial indices in case we need to circle back at the end.
             if not self.drop_last and idx < self.num_processes:
                 initial_data += batch
-            # We identify the batch to yield but wait until we ar sure every process gets a full batch before actually
-            # yielding it.
+            # We identify the batch to yield
+            # but wait until we are sure every process gets a full batch 
+            # before actually yielding it.
             if idx % self.num_processes == self.process_index:
                 batch_to_yield = batch
             if (
@@ -86,7 +90,8 @@ class BatchSamplerShard(BatchSampler):
             while len(initial_data) < self.num_processes * self.batch_size:
                 initial_data += initial_data
 
-            # If the last batch seen was of the proper size, it has been yielded by its process so we move to the next
+            # If the last batch seen was of the proper size,
+            # it has been yielded by its process so we move to the next
             if len(batch) == self.batch_size:
                 batch = []
                 idx += 1
