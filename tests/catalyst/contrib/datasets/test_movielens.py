@@ -7,8 +7,12 @@ import torch
 
 from catalyst.settings import SETTINGS
 
-if SETTINGS.ml_required:
-    from catalyst.contrib.datasets import MovieLens
+if SETTINGS.ml_required and SETTINGS.is_torch_1_7_0:
+    from catalyst.contrib.datasets import MovieLens20M
+
+minversion = pytest.mark.skipif(
+    not (SETTINGS.is_torch_1_7_0), reason="No catalyst[ml] required or torch version "
+)
 
 
 def setup_module():
@@ -22,6 +26,7 @@ def setup_module():
         print("Error! Code: {c}, Message, {m}".format(c=type(e).__name__, m=str(e)))
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_download():
     """
@@ -59,6 +64,7 @@ def test_download():
     assert os.path.getsize("./data/MovieLens/raw/{}/u.info".format(filename)) > 0
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_reading():
     """
@@ -74,6 +80,7 @@ def test_reading():
     )
 
 
+@minversion
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
 def test_minimal_ranking():
     """
