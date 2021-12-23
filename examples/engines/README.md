@@ -2,6 +2,7 @@
 
 Let's check different
 DataParallel and DistributedDataParallel multi-GPU setups with Catalyst Engines.
+PS. multi-node included as well!
 
 > Note: for the Albert training please install requirements with ``pip install datasets transformers``.
 
@@ -21,12 +22,16 @@ CUDA_VISIBLE_DEVICES="0" python train_resnet.py --engine=de
 
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -43,12 +48,16 @@ CUDA_VISIBLE_DEVICES="0" python train_albert.py --engine=de
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -66,12 +75,16 @@ pip install torch>=1.8.0 catalyst
 ```bash
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=amp-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -86,12 +99,16 @@ pip install datasets transformers
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=amp-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -144,12 +161,16 @@ pip install catalyst && install-apex
 ```bash
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=apex-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -164,12 +185,16 @@ pip install datasets transformers
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-dp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-ddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=apex-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -188,12 +213,16 @@ pip install catalyst[deepspeed]
 <p>
 
 ```bash
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ds-ddp
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ds-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8
 ```
 </p>
 </details>
@@ -205,12 +234,16 @@ CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=ds-ddp \
 ```bash
 pip install datasets transformers
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ds-ddp
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ds-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -229,28 +262,36 @@ pip install torch>=1.8.0 catalyst[fairscale]
 ```bash
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-pp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-ddp --sync-bn
+
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-ddp-amp --sync-bn
+
+CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-fddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-ddp-amp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 
 CUDA_VISIBLE_DEVICES="0,1" python train_resnet.py --engine=fs-fddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>
@@ -265,28 +306,36 @@ pip install datasets transformers
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-pp
 
+# distributed training
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-ddp --sync-bn
+
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-ddp-amp --sync-bn
+
+CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-fddp --sync-bn
+
+# multi-node distributed training
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-ddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-ddp-amp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 
 CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=fs-fddp \
-    --master_addr=127.0.0.1 \
-    --master_port=2112 \
-    --world_size=8 \
-    --dist_rank=0 \
-    --num_workers=8 \
+    --master-addr=127.0.0.1 \
+    --master-port=2112 \
+    --world-size=8 \
+    --dist-rank=0 \
+    --num-workers=8 \
     --sync-bn
 ```
 </p>

@@ -44,7 +44,7 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
     """Constructs the command-line arguments for ``train_*.py --engine=ddp``."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--master_addr",
+        "--master-addr",
         default="127.0.0.1",
         type=str,
         help=(
@@ -54,7 +54,7 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
         dest="address",
     )
     parser.add_argument(
-        "--master_port",
+        "--master-port",
         default=2112,
         type=int,
         help=(
@@ -73,7 +73,7 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
         ),
     )
     parser.add_argument(
-        "--dist_rank",
+        "--dist-rank",
         default=0,
         type=int,
         help=(
@@ -84,7 +84,7 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
         dest="workers_dist_rank",
     )
     parser.add_argument(
-        "--num_workers",
+        "--num-workers",
         default=None,
         type=int,
         help=(
