@@ -1,5 +1,5 @@
 # flake8: noqa
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
 import pytest
 
@@ -231,12 +231,68 @@ EPS = 1e-5
                 "support/class_02": 3,
             },
         ),
+        (
+            torch.tensor([2, 2, 1, 1, 2, 2, 1, 2, 2, 0]),
+            torch.tensor([1, 2, 0, 2, 2, 1, 1, 2, 0, 2]),
+            0,
+            {
+                "precision/_macro": 0.277778,
+                "precision/_micro": 0.4,
+                "precision/_weighted": 0.35,
+                "precision/class_00": 0.0,
+                "precision/class_01": 0.333333,
+                "precision/class_02": 0.5,
+                "recall/_macro": 0.311111,
+                "recall/_micro": 0.4,
+                "recall/_weighted": 0.4,
+                "recall/class_00": 0.0,
+                "recall/class_01": 0.333333,
+                "recall/class_02": 0.6,
+                "f1/_macro": 0.292929,
+                "f1/_micro": 0.4,
+                "f1/_weighted": 0.372727,
+                "f1/class_00": 0.0,
+                "f1/class_01": 0.333333,
+                "f1/class_02": 0.545455,
+                "support/class_00": 2,
+                "support/class_01": 3,
+                "support/class_02": 5,
+            },
+        ),
+        (
+            torch.tensor([2, 0, 0, 0]),
+            torch.tensor([2, 2, 0, 2]),
+            0,
+            {
+                "precision/_macro": 0.444444,
+                "precision/_micro": 0.5,
+                "precision/_weighted": 0.833333,
+                "precision/class_00": 0.333333,
+                "precision/class_01": 0.0,
+                "precision/class_02": 1.0,
+                "recall/_macro": 0.444444,
+                "recall/_micro": 0.5,
+                "recall/_weighted": 0.5,
+                "recall/class_00": 1.0,
+                "recall/class_01": 0.0,
+                "recall/class_02": 0.333333,
+                "f1/_macro": 0.333333,
+                "f1/_micro": 0.5,
+                "f1/_weighted": 0.5,
+                "f1/class_00": 0.5,
+                "f1/class_01": 0.0,
+                "f1/class_02": 0.5,
+                "support/class_00": 1,
+                "support/class_01": 0,
+                "support/class_02": 3,
+            },
+        ),
     ),
 )
 def test_multiclass_metrics(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    num_classes: int,
+    num_classes: Optional[int],
     zero_division: int,
     true_values: Dict[str, float],
 ) -> None:
@@ -249,9 +305,14 @@ def test_multiclass_metrics(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MulticlassPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    if num_classes is None:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
+    else:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values:
@@ -443,12 +504,36 @@ def test_multiclass_metrics(
                 "support/class_01": 4,
             },
         ),
+        (
+            torch.tensor([[0, 1], [1, 0], [0, 1], [0, 0], [1, 1]]),
+            torch.tensor([[1, 1], [1, 1], [0, 0], [0, 1], [1, 1]]),
+            0,
+            {
+                "precision/_macro": 0.833333,
+                "precision/_micro": 0.8,
+                "precision/_weighted": 0.809524,
+                "precision/class_00": 1.0,
+                "precision/class_01": 0.666667,
+                "recall/_macro": 0.583333,
+                "recall/_micro": 0.571429,
+                "recall/_weighted": 0.571429,
+                "recall/class_00": 0.666667,
+                "recall/class_01": 0.5,
+                "f1/_macro": 0.685714,
+                "f1/_micro": 0.666667,
+                "f1/_weighted": 0.669388,
+                "f1/class_00": 0.8,
+                "f1/class_01": 0.571429,
+                "support/class_00": 3,
+                "support/class_01": 4,
+            },
+        ),
     ),
 )
 def test_multilabel_metrics(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    num_classes: int,
+    num_classes: Optional[int],
     zero_division: int,
     true_values: Dict[str, float],
 ) -> None:
@@ -461,9 +546,14 @@ def test_multilabel_metrics(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MultilabelPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    if num_classes is None:
+        metric = MultilabelPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
+    else:
+        metric = MultilabelPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values:
@@ -567,12 +657,52 @@ def test_binary_metrics(
                 "support/class_05": 2,
             },
         ),
+        (
+            [torch.tensor([1, 2, 3]), torch.tensor([0, 3, 4]), torch.tensor([4, 5])],
+            [torch.tensor([1, 2, 4]), torch.tensor([0, 3, 4]), torch.tensor([5, 5])],
+            0,
+            {
+                "precision/_macro": 0.833333,
+                "precision/_micro": 0.75,
+                "precision/_weighted": 0.8125,
+                "precision/class_00": 1.0,
+                "precision/class_01": 1.0,
+                "precision/class_02": 1.0,
+                "precision/class_03": 0.5,
+                "precision/class_04": 0.5,
+                "precision/class_05": 1.0,
+                "recall/_macro": 0.833333,
+                "recall/_micro": 0.75,
+                "recall/_weighted": 0.75,
+                "recall/class_00": 1.0,
+                "recall/class_01": 1.0,
+                "recall/class_02": 1.0,
+                "recall/class_03": 1.0,
+                "recall/class_04": 0.5,
+                "recall/class_05": 0.5,
+                "f1/_macro": 0.805556,
+                "f1/_micro": 0.75,
+                "f1/_weighted": 0.75,
+                "f1/class_00": 1.0,
+                "f1/class_01": 1.0,
+                "f1/class_02": 1.0,
+                "f1/class_03": 0.666667,
+                "f1/class_04": 0.5,
+                "f1/class_05": 0.666667,
+                "support/class_00": 1,
+                "support/class_01": 1,
+                "support/class_02": 1,
+                "support/class_03": 1,
+                "support/class_04": 2,
+                "support/class_05": 2,
+            },
+        ),
     ),
 )
 def test_update(
     outputs_list: Iterable[torch.Tensor],
     targets_list: Iterable[torch.Tensor],
-    num_classes: int,
+    num_classes: Optional[int],
     zero_division: int,
     true_values: Dict[str, float],
 ) -> None:
@@ -585,9 +715,14 @@ def test_update(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MulticlassPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    if num_classes is None:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
+    else:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
     for outputs, targets in zip(outputs_list, targets_list):
         metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
@@ -847,12 +982,143 @@ def test_update(
                 "support/class_04": 3,
             },
         ),
+        (
+            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4])],
+            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4])],
+            1,
+            [
+                {
+                    "precision/_micro": 0.75,
+                    "recall/_micro": 0.75,
+                    "f1/_micro": 0.75,
+                    "precision/_macro": 0.8,
+                    "recall/_macro": 0.9,
+                    "f1/_macro": 0.733333,
+                    "precision/_weighted": 1.0,
+                    "recall/_weighted": 0.75,
+                    "f1/_weighted": 0.833333,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 1.0,
+                    "precision/class_02": 0.0,
+                    "precision/class_03": 1.0,
+                    "precision/class_04": 1.0,
+                    "recall/class_00": 1.0,
+                    "recall/class_01": 0.5,
+                    "recall/class_02": 1.0,
+                    "recall/class_03": 1.0,
+                    "recall/class_04": 1.0,
+                    "f1/class_00": 1.0,
+                    "f1/class_01": 0.666667,
+                    "f1/class_02": 0.0,
+                    "f1/class_03": 1.0,
+                    "f1/class_04": 1.0,
+                    "support/class_00": 1,
+                    "support/class_01": 2,
+                    "support/class_02": 0,
+                    "support/class_03": 0,
+                    "support/class_04": 1,
+                },
+                {
+                    "precision/_micro": 0.75,
+                    "recall/_micro": 0.75,
+                    "f1/_micro": 0.75,
+                    "precision/_macro": 0.9,
+                    "recall/_macro": 0.8,
+                    "f1/_macro": 0.733333,
+                    "precision/_weighted": 0.875,
+                    "recall/_weighted": 0.75,
+                    "f1/_weighted": 0.666667,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 1.0,
+                    "precision/class_02": 0.5,
+                    "precision/class_03": 1.0,
+                    "precision/class_04": 1.0,
+                    "recall/class_00": 1.0,
+                    "recall/class_01": 1.0,
+                    "recall/class_02": 1.0,
+                    "recall/class_03": 1.0,
+                    "recall/class_04": 0.0,
+                    "f1/class_00": 1.0,
+                    "f1/class_01": 1.0,
+                    "f1/class_02": 0.666667,
+                    "f1/class_03": 1.0,
+                    "f1/class_04": 0.0,
+                    "support/class_00": 0,
+                    "support/class_01": 0,
+                    "support/class_02": 1,
+                    "support/class_03": 2,
+                    "support/class_04": 1,
+                },
+                {
+                    "precision/_micro": 0.75,
+                    "recall/_micro": 0.75,
+                    "f1/_micro": 0.75,
+                    "precision/_macro": 0.8,
+                    "recall/_macro": 0.8,
+                    "f1/_macro": 0.6,
+                    "precision/_weighted": 1.0,
+                    "recall/_weighted": 0.75,
+                    "f1/_weighted": 0.75,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 1.0,
+                    "precision/class_02": 1.0,
+                    "precision/class_03": 0.0,
+                    "precision/class_04": 1.0,
+                    "recall/class_00": 1.0,
+                    "recall/class_01": 1.0,
+                    "recall/class_02": 0.0,
+                    "recall/class_03": 1.0,
+                    "recall/class_04": 1.0,
+                    "f1/class_00": 1.0,
+                    "f1/class_01": 1.0,
+                    "f1/class_02": 0.0,
+                    "f1/class_03": 0.0,
+                    "f1/class_04": 1.0,
+                    "support/class_00": 1,
+                    "support/class_01": 1,
+                    "support/class_02": 1,
+                    "support/class_03": 0,
+                    "support/class_04": 1,
+                },
+            ],
+            {
+                "precision/_micro": 0.75,
+                "recall/_micro": 0.75,
+                "f1/_micro": 0.75,
+                "precision/_macro": 0.8,
+                "recall/_macro": 0.766667,
+                "f1/_macro": 0.76,
+                "precision/_weighted": 0.833333,
+                "recall/_weighted": 0.75,
+                "f1/_weighted": 0.766667,
+                "precision/class_00": 1.0,
+                "precision/class_01": 1.0,
+                "precision/class_02": 0.333333,
+                "precision/class_03": 0.666667,
+                "precision/class_04": 1.0,
+                "recall/class_00": 1.0,
+                "recall/class_01": 0.666667,
+                "recall/class_02": 0.5,
+                "recall/class_03": 1.0,
+                "recall/class_04": 0.666667,
+                "f1/class_00": 1.0,
+                "f1/class_01": 0.8,
+                "f1/class_02": 0.4,
+                "f1/class_03": 0.8,
+                "f1/class_04": 0.8,
+                "support/class_00": 2,
+                "support/class_01": 3,
+                "support/class_02": 2,
+                "support/class_03": 2,
+                "support/class_04": 3,
+            },
+        ),
     ),
 )
 def test_update_key_value_multiclass(
     outputs_list: Iterable[torch.Tensor],
     targets_list: Iterable[torch.Tensor],
-    num_classes: int,
+    num_classes: Optional[int],
     zero_division: int,
     update_true_values: Iterable[Dict[str, float]],
     compute_true_value: Dict[str, float],
@@ -872,9 +1138,14 @@ def test_update_key_value_multiclass(
         update_true_values: sequence of true intermediate metrics
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
-    metric = MulticlassPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    if num_classes is None:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
+    else:
+        metric = MulticlassPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
@@ -1013,12 +1284,135 @@ def test_update_key_value_multiclass(
                 "support/class_03": 3,
             },
         ),
+        (
+            [
+                torch.tensor([[0, 1, 0, 1], [0, 0, 0, 0], [0, 1, 1, 0]]),
+                torch.tensor([[0, 1, 1, 1], [0, 0, 0, 1], [0, 1, 0, 1]]),
+                torch.tensor([[0, 1, 0, 0], [0, 1, 0, 1]]),
+            ],
+            [
+                torch.tensor([[0, 1, 1, 1], [0, 0, 0, 0], [0, 1, 0, 1]]),
+                torch.tensor([[0, 1, 0, 0], [0, 0, 1, 1], [1, 0, 1, 0]]),
+                torch.tensor([[0, 1, 0, 0], [0, 0, 1, 0]]),
+            ],
+            1,
+            [
+                {
+                    "precision/_micro": 0.75,
+                    "recall/_micro": 0.6,
+                    "f1/_micro": 0.666667,
+                    "precision/_macro": 0.75,
+                    "recall/_macro": 0.625,
+                    "f1/_macro": 0.666667,
+                    "precision/_weighted": 0.8,
+                    "recall/_weighted": 0.6,
+                    "f1/_weighted": 0.666667,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 1.0,
+                    "precision/class_02": 0.0,
+                    "precision/class_03": 1.0,
+                    "recall/class_00": 1.0,
+                    "recall/class_01": 1.0,
+                    "recall/class_02": 0.0,
+                    "recall/class_03": 0.5,
+                    "f1/class_00": 1.0,
+                    "f1/class_01": 1.0,
+                    "f1/class_02": 0.0,
+                    "f1/class_03": 0.666667,
+                    "support/class_00": 0,
+                    "support/class_01": 2,
+                    "support/class_02": 1,
+                    "support/class_03": 2,
+                },
+                {
+                    "precision/_micro": 0.333333,
+                    "recall/_micro": 0.4,
+                    "f1/_micro": 0.363636,
+                    "precision/_macro": 0.458333,
+                    "recall/_macro": 0.5,
+                    "f1/_macro": 0.291667,
+                    "precision/_weighted": 0.366667,
+                    "recall/_weighted": 0.4,
+                    "f1/_weighted": 0.233333,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 0.5,
+                    "precision/class_02": 0.0,
+                    "precision/class_03": 0.333333,
+                    "recall/class_00": 0.0,
+                    "recall/class_01": 1.0,
+                    "recall/class_02": 0.0,
+                    "recall/class_03": 1.0,
+                    "f1/class_00": 0.0,
+                    "f1/class_01": 0.666667,
+                    "f1/class_02": 0.0,
+                    "f1/class_03": 0.5,
+                    "support/class_00": 1,
+                    "support/class_01": 1,
+                    "support/class_02": 2,
+                    "support/class_03": 1,
+                },
+                {
+                    "precision/_micro": 0.333333,
+                    "recall/_micro": 0.5,
+                    "f1/_micro": 0.4,
+                    "precision/_macro": 0.625,
+                    "recall/_macro": 0.75,
+                    "f1/_macro": 0.416667,
+                    "precision/_weighted": 0.75,
+                    "recall/_weighted": 0.5,
+                    "f1/_weighted": 0.333333,
+                    "precision/class_00": 1.0,
+                    "precision/class_01": 0.5,
+                    "precision/class_02": 1.0,
+                    "precision/class_03": 0.0,
+                    "recall/class_00": 1.0,
+                    "recall/class_01": 1.0,
+                    "recall/class_02": 0.0,
+                    "recall/class_03": 1.0,
+                    "f1/class_00": 1.0,
+                    "f1/class_01": 0.666667,
+                    "f1/class_02": 0.0,
+                    "f1/class_03": 0.0,
+                    "support/class_00": 0,
+                    "support/class_01": 1,
+                    "support/class_02": 1,
+                    "support/class_03": 0,
+                },
+            ],
+            {
+                "precision/_micro": 0.461538,
+                "recall/_micro": 0.5,
+                "f1/_micro": 0.48,
+                "precision/_macro": 0.516667,
+                "recall/_macro": 0.416667,
+                "f1/_macro": 0.325,
+                "precision/_weighted": 0.405556,
+                "recall/_weighted": 0.5,
+                "f1/_weighted": 0.391667,
+                "precision/class_00": 1.0,
+                "precision/class_01": 0.666667,
+                "precision/class_02": 0.0,
+                "precision/class_03": 0.4,
+                "recall/class_00": 0.0,
+                "recall/class_01": 1.0,
+                "recall/class_02": 0.0,
+                "recall/class_03": 0.666667,
+                "f1/class_00": 0.0,
+                "f1/class_01": 0.8,
+                "f1/class_02": 0.0,
+                "f1/class_03": 0.5,
+                "support/class_00": 1,
+                "support/class_01": 4,
+                "support/class_02": 4,
+                "support/class_03": 3,
+            },
+        ),
     ),
 )
 def test_update_key_value_multilabel(
     outputs_list: Iterable[torch.Tensor],
     targets_list: Iterable[torch.Tensor],
-    num_classes: int,
+    num_classes: Optional[int],
     zero_division: int,
     update_true_values: Iterable[Dict[str, float]],
     compute_true_value: Dict[str, float],
@@ -1038,9 +1432,14 @@ def test_update_key_value_multilabel(
         update_true_values: sequence of true intermediate metrics
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
-    metric = MultilabelPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    if num_classes is None:
+        metric = MultilabelPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
+    else:
+        metric = MultilabelPrecisionRecallF1SupportMetric(
+            zero_division=zero_division, compute_per_class_metrics=True
+        )
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:

@@ -71,7 +71,7 @@ def test_dice_metric(
     total_answers: List[Dict[str, float]],
 ):
     """Docs."""
-    metric = DiceMetric(weights=weights, class_names=class_names)
+    metric = DiceMetric(weights=weights, class_names=class_names, compute_per_class_metrics=True)
     for output, target, batch_answer, total_answer in zip(
         outputs, targets, batch_answers, total_answers
     ):
@@ -189,7 +189,7 @@ def test_iou_metric(
     total_answers: List[Dict[str, float]],
 ):
     """Docs."""
-    metric = IOUMetric(weights=weights, class_names=class_names)
+    metric = IOUMetric(weights=weights, class_names=class_names, compute_per_class_metrics=True)
     for output, target, batch_answer, total_answer in zip(
         outputs, targets, batch_answers, total_answers
     ):
@@ -308,7 +308,7 @@ def test_trevsky_metric(
     batch_answers: List[Dict[str, float]],
     total_answers: List[Dict[str, float]],
 ):
-    metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
+    metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names, compute_per_class_metrics=True)
     for output, target, batch_answer, total_answer in zip(
         outputs, targets, batch_answers, total_answers
     ):
