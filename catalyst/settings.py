@@ -5,7 +5,6 @@ import os
 
 from packaging.version import Version
 
-# from packaging.version import parse, Version
 import torch
 
 from catalyst.extras.frozen_class import FrozenClass
