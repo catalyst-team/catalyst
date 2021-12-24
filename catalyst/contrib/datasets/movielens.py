@@ -2,9 +2,7 @@ import itertools
 import os
 
 import numpy as np
-from packaging.version import parse, Version
 import pandas as pd
-import scipy.sparse as sp
 
 import torch
 from torch.utils.data import Dataset
@@ -452,9 +450,6 @@ class MovieLens20M(Dataset):
         """
         if isinstance(root, torch._six.string_classes):
             root = os.path.expanduser(root)
-
-        if Version(torch.__version__) <= Version("1.7.0"):
-            raise RuntimeError("Updated torch to >= `1.7.0`")
 
         self.root = root
         self.train = train
