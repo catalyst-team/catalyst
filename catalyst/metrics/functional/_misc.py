@@ -161,6 +161,7 @@ def process_multilabel_components(
 
     return outputs, targets, weights, num_classes
 
+
 def get_binary_statistics(
     outputs: Tensor, targets: Tensor, label: int = 1
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
@@ -323,8 +324,9 @@ def get_multilabel_statistics(
         # )
 
     """
-    outputs, targets, _, num_classes = \
-        process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _, num_classes = process_multilabel_components(
+        outputs=outputs, targets=targets
+    )
     assert outputs.shape == targets.shape
     num_classes = outputs.shape[-1]
 

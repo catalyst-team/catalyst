@@ -248,7 +248,7 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-        num_classes: Optional[int] = None
+        num_classes: Optional[int] = None,
     ):
         """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
@@ -267,7 +267,7 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         self._ddp_backend = get_backend()
 
     def update(
-            self, outputs: torch.Tensor, targets: torch.Tensor
+        self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int, int], Tuple[Any, Any, Any, Any, Any, int]]:
         """
         Compute statistics from outputs and targets, update accumulated statistics with new values.
@@ -284,7 +284,7 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         tn, fp, fn, tp, support, num_classes = get_multiclass_statistics(
             outputs=outputs.cpu().detach(),
             targets=targets.cpu().detach(),
-            num_classes=self.num_classes
+            num_classes=self.num_classes,
         )
 
         tn = tn.numpy()
@@ -413,7 +413,7 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-        num_classes: Optional[int] = None
+        num_classes: Optional[int] = None,
     ):
         """Init params"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
@@ -432,7 +432,7 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         self._ddp_backend = get_backend()
 
     def update(
-            self, outputs: torch.Tensor, targets: torch.Tensor
+        self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int, int], Tuple[Any, Any, Any, Any, Any, int]]:
         """
         Compute statistics from outputs and targets, update accumulated statistics with new values.
@@ -662,14 +662,11 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
-        num_classes: Optional[int] = None
+        num_classes: Optional[int] = None,
     ) -> None:
         """Init PrecisionRecallF1SupportMetric instance"""
         super().__init__(
-            compute_on_call=compute_on_call,
-            prefix=prefix,
-            suffix=suffix,
-            num_classes=num_classes
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix, num_classes=num_classes
         )
         self.compute_per_class_metrics = compute_per_class_metrics
         self.zero_division = zero_division
@@ -833,14 +830,11 @@ class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
         prefix: str = None,
         suffix: str = None,
-        num_classes: Optional[int] = None
+        num_classes: Optional[int] = None,
     ) -> None:
         """Init PrecisionRecallF1SupportMetric instance"""
         super().__init__(
-            compute_on_call=compute_on_call,
-            prefix=prefix,
-            suffix=suffix,
-            num_classes=num_classes
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix, num_classes=num_classes
         )
         self.compute_per_class_metrics = compute_per_class_metrics
         self.zero_division = zero_division

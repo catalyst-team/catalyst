@@ -487,9 +487,7 @@ def test_multiclass_metrics_without_num_classes(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MulticlassPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    metric = MulticlassPrecisionRecallF1SupportMetric(zero_division=zero_division)
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values:
@@ -905,9 +903,7 @@ def test_multilabel_metrics_without_num_classes(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MultilabelPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    metric = MultilabelPrecisionRecallF1SupportMetric(zero_division=zero_division)
     metric.update(outputs=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values:
@@ -1487,9 +1483,7 @@ def test_update_key_value_multiclass_without_num_classes(
         update_true_values: sequence of true intermediate metrics
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
-    metric = MulticlassPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    metric = MulticlassPrecisionRecallF1SupportMetric(zero_division=zero_division)
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
@@ -1816,9 +1810,7 @@ def test_update_key_value_multilabel_without_num_classes(
         update_true_values: sequence of true intermediate metrics
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
-    metric = MultilabelPrecisionRecallF1SupportMetric(
-        zero_division=zero_division
-    )
+    metric = MultilabelPrecisionRecallF1SupportMetric(zero_division=zero_division)
     for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
