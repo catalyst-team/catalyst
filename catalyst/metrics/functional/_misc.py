@@ -323,7 +323,8 @@ def get_multilabel_statistics(
         # )
 
     """
-    outputs, targets, _, num_classes = process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _, num_classes = \
+        process_multilabel_components(outputs=outputs, targets=targets)
     assert outputs.shape == targets.shape
     num_classes = outputs.shape[-1]
 
