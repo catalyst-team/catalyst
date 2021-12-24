@@ -1,10 +1,10 @@
+from typing import Optional
+
 from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics._classification import (
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
-from typing import Optional
-
 from catalyst.settings import SETTINGS
 
 
