@@ -3,9 +3,11 @@ import copy
 from pathlib import Path
 
 from catalyst.registry import REGISTRY
+from catalyst.typing import RunnerModel
 from catalyst.utils.config import load_config
 from catalyst.utils.misc import merge_dicts
 from catalyst.utils.sys import import_module
+from catalyst.utils.torch import load_checkpoint, unpack_checkpoint
 
 
 def parse_config_args(*, config, args, unknown_args):
@@ -135,4 +137,35 @@ def get_config_runner(expdir: Path, config: Dict):
     return runner
 
 
-__all__ = ["parse_config_args", "parse_args_uargs", "get_config_runner"]
+def get_model_from_logdir(checkpoint_path: Path, logdir: Path) -> RunnerModel:
+    """
+    Reconstructs RunnerModel instance from logdir and pack it with checkpoint. # noqa: DAR401
+
+    Args:
+        checkpoint_path: path to checkpoint
+        logdir: path to logs directory
+
+    Returns:
+        RunnerModel instance
+    """
+    if logdir is None:
+        logdir = checkpoint_path.parents[1]
+        if not logdir.exists():
+            raise RuntimeError(
+                "Can't determine the logdir by `checkpoint_path`. Specify the `logdir`."
+            )
+    config_path = logdir / "configs" / "_config.json"
+    config = load_config(config_path)
+
+    config_expdir = Path(config["args"]["expdir"])
+    expdir = logdir / "code" / config_expdir.name
+
+    runner = get_config_runner(expdir=expdir, config=config)
+    model = runner.get_model(None)
+    checkpoint = load_checkpoint(checkpoint_path)
+    unpack_checkpoint(checkpoint, model=model)
+
+    return model
+
+
+__all__ = ["parse_config_args", "parse_args_uargs", "get_config_runner", "get_model_from_logdir"]
