@@ -14,9 +14,7 @@ def build_args(parser: ArgumentParser):
     """Constructs the command-line arguments for ``catalyst-dl trace``."""
     parser.add_argument("--checkpoint-path", type=Path, required=True, help="Path to checkpoint")
     parser.add_argument("--logdir", type=Path, default=None, help="Path to logs directory")
-    parser.add_argument(
-        "--shape", nargs="+", type=int, required=True, help="Shape of the input example"
-    )
+    parser.add_argument("--shape", nargs="+", type=int, required=True, help="Shape of the input")
     parser.add_argument(
         "--method",
         type=str,

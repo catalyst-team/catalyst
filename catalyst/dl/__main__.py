@@ -2,10 +2,12 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import quantize, run, swa, trace
+from catalyst.dl.scripts import onnx, quantize, run, swa, trace
 from catalyst.settings import SETTINGS
 
-COMMANDS = OrderedDict([("run", run), ("swa", swa), ("trace", trace), ("quantize", quantize)])
+COMMANDS = OrderedDict(
+    [("run", run), ("swa", swa), ("trace", trace), ("quantize", quantize), ("onnx", onnx)]
+)
 
 
 # if SETTINGS.use_quantization:
