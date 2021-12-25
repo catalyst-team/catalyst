@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
 from collections import defaultdict
-from functools import partial
 
 import numpy as np
 
