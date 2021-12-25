@@ -40,7 +40,7 @@ def binary_average_precision(
     """
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
-    outputs, targets, weights = process_multilabel_components(
+    outputs, targets, weights, _ = process_multilabel_components(
         outputs=outputs, targets=targets, weights=weights
     )
     if outputs.numel() == 0:
