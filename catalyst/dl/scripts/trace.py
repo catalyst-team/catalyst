@@ -11,7 +11,7 @@ from catalyst.utils.tracing import trace_model
 
 
 def build_args(parser: ArgumentParser):
-    """Constructs the command-line arguments for ``catalyst-dl run``."""
+    """Constructs the command-line arguments for ``catalyst-dl trace``."""
     parser.add_argument("--checkpoint-path", type=Path, required=True, help="Path to checkpoint")
     parser.add_argument("--logdir", type=Path, default=None, help="Path to logs directory")
     parser.add_argument(

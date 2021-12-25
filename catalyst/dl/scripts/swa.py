@@ -9,7 +9,7 @@ from catalyst.utils import get_averaged_weights_by_path_mask
 
 
 def build_args(parser: ArgumentParser):
-    """Constructs the command-line arguments for ``catalyst-dl run``."""
+    """Constructs the command-line arguments for ``catalyst-dl swa``."""
     parser.add_argument(
         "--path-mask",
         type=str,
