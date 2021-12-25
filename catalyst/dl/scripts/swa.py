@@ -11,15 +11,14 @@ from catalyst.utils import get_averaged_weights_by_path_mask
 def build_args(parser: ArgumentParser):
     """Constructs the command-line arguments for ``catalyst-dl run``."""
     parser.add_argument(
-        "--path_mask",
+        "--path-mask",
         type=str,
         default="*.pth",
         help="globe-like pattern for models to average",
-        dest="path_mask",
     )
     parser.add_argument("--logdir", type=Path, default=None, help="Path to logs directory")
     parser.add_argument(
-        "--output_path", type=Path, default="./swa.pth", help="Path to save averaged model"
+        "--output-path", type=Path, default="./swa.pth", help="Path to save averaged model"
     )
 
     return parser
