@@ -174,7 +174,7 @@ def multilabel_accuracy(
         )
         # tensor(1.0)
     """
-    outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _, _ = process_multilabel_components(outputs=outputs, targets=targets)
 
     outputs = (outputs > threshold).long()
     output = (targets.long() == outputs.long()).sum().float() / np.prod(targets.shape)

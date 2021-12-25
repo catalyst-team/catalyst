@@ -1,3 +1,5 @@
+from typing import Optional
+
 from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics._classification import (
     MulticlassPrecisionRecallF1SupportMetric,
@@ -82,7 +84,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        num_classes: int,
+        num_classes: Optional[int] = None,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -92,11 +94,11 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MulticlassPrecisionRecallF1SupportMetric(
-                num_classes=num_classes,
                 zero_division=zero_division,
                 prefix=prefix,
                 suffix=suffix,
                 compute_per_class_metrics=compute_per_class_metrics,
+                num_classes=num_classes,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -186,7 +188,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        num_classes: int,
+        num_classes: Optional[int] = None,
         zero_division: int = 0,
         log_on_batch: bool = True,
         compute_per_class_metrics: bool = SETTINGS.compute_per_class_metrics,
@@ -196,11 +198,11 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MultilabelPrecisionRecallF1SupportMetric(
-                num_classes=num_classes,
                 zero_division=zero_division,
                 prefix=prefix,
                 suffix=suffix,
                 compute_per_class_metrics=compute_per_class_metrics,
+                num_classes=num_classes,
             ),
             input_key=input_key,
             target_key=target_key,
