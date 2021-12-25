@@ -262,7 +262,6 @@
   <h1>Source code for catalyst.metrics._classification</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -283,16 +282,12 @@
     <span class="kn">import</span> <span class="nn">torch_xla.core.xla_model</span> <span class="k">as</span> <span class="nn">xm</span>
 
 
-<span class="k">class</span> <span class="nc">StatisticsMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">BinaryStatisticsMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This metric accumulates true positive, false positive, true negative,</span>
-<span class="sd">    false negative, support statistics from data.</span>
-
-<span class="sd">    It can work in binary, multiclass and multilabel classification tasks.</span>
+<span class="sd">    false negative, support statistics from binary data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mode: one of &quot;binary&quot;, &quot;multiclass&quot; and &quot;multilabel&quot;</span>
-<span class="sd">        num_classes: number of classes</span>
 <span class="sd">        compute_on_call: if True, computes and returns metric value during metric call</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
@@ -301,29 +296,23 @@
 <span class="sd">        ValueError: if mode is incorrect</span>
 
 <span class="sd">    Examples:</span>
-
 <span class="sd">    .. code-block:: python</span>
-
 <span class="sd">        import torch</span>
 <span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
 <span class="sd">        from catalyst import dl</span>
-
 <span class="sd">        # sample data</span>
 <span class="sd">        num_samples, num_features, num_classes = int(1e4), int(1e1), 4</span>
 <span class="sd">        X = torch.rand(num_samples, num_features)</span>
 <span class="sd">        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)</span>
-
 <span class="sd">        # pytorch loaders</span>
 <span class="sd">        dataset = TensorDataset(X, y)</span>
 <span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
 <span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
-
 <span class="sd">        # model, criterion, optimizer, scheduler</span>
 <span class="sd">        model = torch.nn.Linear(num_features, num_classes)</span>
 <span class="sd">        criterion = torch.nn.CrossEntropyLoss()</span>
 <span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
 <span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
-
 <span class="sd">        # model training</span>
 <span class="sd">        runner = dl.SupervisedRunner(</span>
 <span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
@@ -350,34 +339,22 @@
 <span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
 <span class="sd">            ],</span>
 <span class="sd">        )</span>
-
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
-
 <span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init params&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">statistics_fn</span> <span class="o">=</span> <span class="n">get_binary_statistics</span>
-        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">statistics_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_multiclass_statistics</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">statistics_fn</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mode should be one of &#39;binary&#39;, &#39;multiclass&#39;, &#39;multilabel&#39;&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -403,8 +380,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Tuple of int or array: true negative, false positive, false</span>
 <span class="sd">                negative, true positive and support statistics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics_fn</span><span class="p">(</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_binary_statistics</span><span class="p">(</span>
             <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="p">)</span>
 
@@ -432,6 +410,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of statistics for current input</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;support&quot;</span><span class="p">:</span> <span class="n">support</span><span class="p">,</span> <span class="s2">&quot;tn&quot;</span><span class="p">:</span> <span class="n">tn</span><span class="p">,</span> <span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="n">tp</span><span class="p">}</span>
@@ -442,6 +421,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of statistics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span>
 
@@ -453,20 +433,478 @@
 <span class="sd">            dict of statistics</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; For binary mode: {&quot;tp&quot;: 3, &quot;fp&quot;: 4, &quot;tn&quot;: 5, &quot;fn&quot;: 1, &quot;support&quot;: 13}</span>
-<span class="sd">            &gt;&gt;&gt; For other modes: {&quot;tp&quot;: np.array([1, 2, 1]), &quot;fp&quot;: np.array([2, 1, 0]), ...}</span>
+<span class="sd">            &gt;&gt;&gt; {&quot;tp&quot;: 3, &quot;fp&quot;: 4, &quot;tn&quot;: 5, &quot;fn&quot;: 1, &quot;support&quot;: 13}</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
 
 
-<span class="k">class</span> <span class="nc">PrecisionRecallF1SupportMetric</span><span class="p">(</span><span class="n">StatisticsMetric</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MulticlassStatisticsMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This metric accumulates true positive, false positive, true negative,</span>
+<span class="sd">    false negative, support statistics from multiclass data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        compute_on_call: if True, computes and returns metric value during metric call</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+<span class="sd">        num_classes: number of classes</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if mode is incorrect</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+<span class="sd">        # sample data</span>
+<span class="sd">        num_samples, num_features, num_classes = int(1e4), int(1e1), 4</span>
+<span class="sd">        X = torch.rand(num_samples, num_features)</span>
+<span class="sd">        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)</span>
+<span class="sd">        # pytorch loaders</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, num_classes)</span>
+<span class="sd">        criterion = torch.nn.CrossEntropyLoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=3,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;accuracy03&quot;,</span>
+<span class="sd">            minimize_valid_metric=False,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.AccuracyCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">            ],</span>
+<span class="sd">        )</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init params&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="c1"># multiprocessing could not handle lamdas, so..</span>
+    <span class="k">def</span> <span class="nf">_mp_hack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset all the statistics.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mp_hack</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute statistics from outputs and targets, update accumulated statistics with new values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of int or array: true negative, false positive, false</span>
+<span class="sd">                negative, true positive, support statistics and num_classes</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+            <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+            <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tn&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">tn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tp&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">tp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">support</span>
+
+        <span class="k">return</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span>
+
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update statistics and return statistics intermediate result</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics for current input</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;support&quot;</span><span class="p">:</span> <span class="n">support</span><span class="p">,</span> <span class="s2">&quot;tn&quot;</span><span class="p">:</span> <span class="n">tn</span><span class="p">,</span> <span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="n">tp</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; {&quot;tp&quot;: np.array([1, 2, 1]), &quot;fp&quot;: np.array([2, 1, 0]), ...}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+
+
+<span class="k">class</span> <span class="nc">MultilabelStatisticsMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This metric accumulates true positive, false positive, true negative,</span>
+<span class="sd">    false negative, support statistics from multilabel data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        compute_on_call: if True, computes and returns metric value during metric call</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+<span class="sd">        num_classes: number of classes</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if mode is incorrect</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+<span class="sd">        # sample data</span>
+<span class="sd">        num_samples, num_features, num_classes = int(1e4), int(1e1), 4</span>
+<span class="sd">        X = torch.rand(num_samples, num_features)</span>
+<span class="sd">        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)</span>
+<span class="sd">        # pytorch loaders</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, num_classes)</span>
+<span class="sd">        criterion = torch.nn.CrossEntropyLoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=3,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;accuracy03&quot;,</span>
+<span class="sd">            minimize_valid_metric=False,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.AccuracyCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">            ],</span>
+<span class="sd">        )</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init params&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="c1"># multiprocessing could not handle lamdas, so..</span>
+    <span class="k">def</span> <span class="nf">_mp_hack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset all the statistics.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mp_hack</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute statistics from outputs and targets, update accumulated statistics with new values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of int or array: true negative, false positive, false</span>
+<span class="sd">                negative, true positive, support statistics and num_classes</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tn&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">tn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tp&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">tp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">support</span>
+
+        <span class="k">return</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span>
+
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update statistics and return statistics intermediate result</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics for current input</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;support&quot;</span><span class="p">:</span> <span class="n">support</span><span class="p">,</span> <span class="s2">&quot;tn&quot;</span><span class="p">:</span> <span class="n">tn</span><span class="p">,</span> <span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="n">tp</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of statistics</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; {&quot;tp&quot;: np.array([1, 2, 1]), &quot;fp&quot;: np.array([2, 1, 0]), ...}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+
+
+<div class="viewcode-block" id="BinaryPrecisionRecallF1Metric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.BinaryPrecisionRecallF1Metric">[docs]</a><span class="k">class</span> <span class="nc">BinaryPrecisionRecallF1Metric</span><span class="p">(</span><span class="n">BinaryStatisticsMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Precision, recall, f1_score and support metrics for binary classification.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        zero_division: value to set in case of zero division during metrics</span>
+<span class="sd">            (precision, recall) computation; should be one of 0 or 1</span>
+<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init BinaryPrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_convert_metrics_to_kv</span><span class="p">(</span>
+        <span class="n">precision_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f1_value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert list of metrics to key-value</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            precision_value: precision value</span>
+<span class="sd">            recall_value: recall value</span>
+<span class="sd">            f1_value: f1 value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of metrics</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="n">precision_value</span><span class="p">,</span>
+            <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">recall_value</span><span class="p">,</span>
+            <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">f1_value</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">kv_metrics</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset all the statistics and metrics fields.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update statistics and return metrics intermediate results</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: predicted labels</span>
+<span class="sd">            targets: target labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple of intermediate metrics: precision, recall, f1 score</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="n">get_binary_metrics</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span>
+
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update statistics and return metrics intermediate results</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: predicted labels</span>
+<span class="sd">            targets: target labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of intermediate metrics</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
+            <span class="n">precision_value</span><span class="o">=</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="o">=</span><span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span><span class="o">=</span><span class="n">f1_value</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kv_metrics</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute metrics with accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple of metrics: precision, recall, f1 score</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ddp hotfix, could be done better</span>
+        <span class="c1"># but metric must handle DDP on it&#39;s own</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">xm</span><span class="o">.</span><span class="n">mesh_reduce</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;ddp&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="n">get_binary_metrics</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tp&quot;</span><span class="p">],</span>
+            <span class="n">fp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">],</span>
+            <span class="n">fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">],</span>
+            <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute metrics with all accumulated statistics</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of metrics</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
+            <span class="n">precision_value</span><span class="o">=</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="o">=</span><span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span><span class="o">=</span><span class="n">f1_value</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kv_metrics</span></div>
+
+
+<div class="viewcode-block" id="MulticlassPrecisionRecallF1SupportMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric">[docs]</a><span class="k">class</span> <span class="nc">MulticlassPrecisionRecallF1SupportMetric</span><span class="p">(</span><span class="n">MulticlassStatisticsMetric</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metric that can collect statistics and count precision, recall, f1_score and support with it.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mode: one of &quot;binary&quot;, &quot;multiclass&quot; and &quot;multilabel&quot;</span>
-<span class="sd">        num_classes: number of classes in loader&#39;s dataset</span>
 <span class="sd">        zero_division: value to set in case of zero division during metrics</span>
 <span class="sd">            (precision, recall) computation; should be one of 0 or 1</span>
 <span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
@@ -474,28 +912,26 @@
 <span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
 <span class="sd">        prefix: metrics prefix</span>
 <span class="sd">        suffix: metrics suffix</span>
+<span class="sd">        num_classes: number of classes</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Init PrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-            <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_per_class_metrics</span> <span class="o">=</span> <span class="n">compute_per_class_metrics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_convert_metrics_to_kv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
@@ -514,6 +950,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of key-value metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">aggregation_name</span><span class="p">,</span> <span class="n">aggregated_metrics</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
@@ -550,11 +987,15 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple of metrics intermediate results with per-class, micro, macro and</span>
 <span class="sd">                weighted averaging</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
         <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">get_aggregated_metrics</span><span class="p">(</span>
             <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+
         <span class="k">return</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span>
 
     <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
@@ -567,6 +1008,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of metrics intermediate results</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
@@ -582,6 +1024,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list of aggregated metrics: per-class, micro, macro and weighted averaging of</span>
 <span class="sd">                precision, recall, f1 score and support metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># ddp hotfix, could be done better</span>
         <span class="c1"># but metric must handle DDP on it&#39;s own</span>
@@ -616,505 +1059,181 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
             <span class="n">per_class</span><span class="o">=</span><span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="o">=</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">metrics</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
 
 
-<div class="viewcode-block" id="BinaryPrecisionRecallF1Metric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.BinaryPrecisionRecallF1Metric">[docs]</a><span class="k">class</span> <span class="nc">BinaryPrecisionRecallF1Metric</span><span class="p">(</span><span class="n">StatisticsMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Precision, recall, f1_score and support metrics for binary classification.</span>
+<div class="viewcode-block" id="MultilabelPrecisionRecallF1SupportMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric">[docs]</a><span class="k">class</span> <span class="nc">MultilabelPrecisionRecallF1SupportMetric</span><span class="p">(</span><span class="n">MultilabelStatisticsMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Metric that can collect statistics and count precision, recall, f1_score and support with it.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        zero_division: value to set in case of zero division during metrics</span>
 <span class="sd">            (precision, recall) computation; should be one of 0 or 1</span>
 <span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
-<span class="sd">        prefix: metric prefix</span>
-<span class="sd">        suffix: metric suffix</span>
+<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
+<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
+<span class="sd">        prefix: metrics prefix</span>
+<span class="sd">        suffix: metrics suffix</span>
+<span class="sd">        num_classes: number of classes</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init BinaryPrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
+        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init PrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">num_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span>
-            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_per_class_metrics</span> <span class="o">=</span> <span class="n">compute_per_class_metrics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_metrics_to_kv</span><span class="p">(</span>
-        <span class="n">precision_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f1_value</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_convert_metrics_to_kv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert list of metrics to key-value</span>
+<span class="sd">        Convert metrics aggregation to key-value format</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            precision_value: precision value</span>
-<span class="sd">            recall_value: recall value</span>
-<span class="sd">            f1_value: f1 value</span>
+<span class="sd">            per_class: per-class metrics, array of shape (4, self.num_classes)</span>
+<span class="sd">                of precision, recall, f1 and support metrics</span>
+<span class="sd">            micro: micro averaged metrics, array of shape (self.num_classes)</span>
+<span class="sd">                of precision, recall, f1 and support metrics</span>
+<span class="sd">            macro: macro averaged metrics, array of shape (self.num_classes)</span>
+<span class="sd">                of precision, recall, f1 and support metrics</span>
+<span class="sd">            weighted: weighted averaged metrics, array of shape (self.num_classes)</span>
+<span class="sd">                of precision, recall, f1 and support metrics</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of metrics</span>
+<span class="sd">            dict of key-value metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="n">precision_value</span><span class="p">,</span>
-            <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">recall_value</span><span class="p">,</span>
-            <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">f1_value</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">aggregation_name</span><span class="p">,</span> <span class="n">aggregated_metrics</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;_micro&quot;</span><span class="p">,</span> <span class="s2">&quot;_macro&quot;</span><span class="p">,</span> <span class="s2">&quot;_weighted&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">aggregation_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">metric_value</span>
+                <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">),</span> <span class="n">aggregated_metrics</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">kv_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+        <span class="c1"># @TODO: rewrite this block - should be without `num_classes`</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">:</span>
+            <span class="n">per_class_metrics</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">/class_</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">metric_value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;support&quot;</span><span class="p">),</span> <span class="n">per_class</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">kv_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">per_class_metrics</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">kv_metrics</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Reset all the statistics and metrics fields.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update statistics and return metrics intermediate results</span>
+<span class="sd">        Update statistics and return intermediate metrics results</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            outputs: predicted labels</span>
-<span class="sd">            targets: target labels</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of intermediate metrics: precision, recall, f1 score</span>
+<span class="sd">            tuple of metrics intermediate results with per-class, micro, macro and</span>
+<span class="sd">                weighted averaging</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
-        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="n">get_binary_metrics</span><span class="p">(</span>
-            <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">get_aggregated_metrics</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+
+        <span class="k">return</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span>
 
     <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update statistics and return metrics intermediate results</span>
+<span class="sd">        Update statistics and return intermediate metrics results</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            outputs: predicted labels</span>
-<span class="sd">            targets: target labels</span>
+<span class="sd">            outputs: prediction values</span>
+<span class="sd">            targets: true answers</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of intermediate metrics</span>
+<span class="sd">            dict of metrics intermediate results</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
-        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
-            <span class="n">precision_value</span><span class="o">=</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="o">=</span><span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span><span class="o">=</span><span class="n">f1_value</span>
+        <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
+            <span class="n">per_class</span><span class="o">=</span><span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="o">=</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">kv_metrics</span>
+        <span class="k">return</span> <span class="n">metrics</span>
 
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute metrics with accumulated statistics</span>
+<span class="sd">        Compute precision, recall, f1 score and support.</span>
+<span class="sd">        Compute micro, macro and weighted average for the metrics.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of metrics: precision, recall, f1 score</span>
+<span class="sd">            list of aggregated metrics: per-class, micro, macro and weighted averaging of</span>
+<span class="sd">                precision, recall, f1 score and support metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># ddp hotfix, could be done better</span>
         <span class="c1"># but metric must handle DDP on it&#39;s own</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">xm</span><span class="o">.</span><span class="n">mesh_reduce</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
+                <span class="n">key_statistics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">key_statistics</span> <span class="o">=</span> <span class="n">xm</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">key_statistics</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_statistics</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;ddp&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
-                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-                <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="n">get_binary_metrics</span><span class="p">(</span>
+        <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">get_aggregated_metrics</span><span class="p">(</span>
             <span class="n">tp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tp&quot;</span><span class="p">],</span>
             <span class="n">fp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">],</span>
             <span class="n">fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">],</span>
+            <span class="n">support</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">],</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span>
 
     <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute metrics with all accumulated statistics</span>
+<span class="sd">        Compute precision, recall, f1 score and support.</span>
+<span class="sd">        Compute micro, macro and weighted average for the metrics.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of metrics</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
-            <span class="n">precision_value</span><span class="o">=</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="o">=</span><span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span><span class="o">=</span><span class="n">f1_value</span>
+        <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
+            <span class="n">per_class</span><span class="o">=</span><span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="o">=</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">kv_metrics</span></div>
-
-
-<div class="viewcode-block" id="MulticlassPrecisionRecallF1SupportMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric">[docs]</a><span class="k">class</span> <span class="nc">MulticlassPrecisionRecallF1SupportMetric</span><span class="p">(</span><span class="n">PrecisionRecallF1SupportMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Precision, recall, f1_score and support metrics for multiclass classification.</span>
-<span class="sd">    Counts metrics with macro, micro and weighted average.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        num_classes: number of classes in loader&#39;s dataset</span>
-<span class="sd">        zero_division: value to set in case of zero division during metrics</span>
-<span class="sd">            (precision, recall) computation; should be one of 0 or 1</span>
-<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
-<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
-<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
-<span class="sd">        prefix: metric prefix</span>
-<span class="sd">        suffix: metric suffix</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from catalyst import metrics</span>
-
-<span class="sd">        num_classes = 4</span>
-<span class="sd">        zero_division = 0</span>
-<span class="sd">        outputs_list = [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3])]</span>
-<span class="sd">        targets_list = [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2])]</span>
-
-<span class="sd">        metric = metrics.MulticlassPrecisionRecallF1SupportMetric(</span>
-<span class="sd">            num_classes=num_classes, zero_division=zero_division</span>
-<span class="sd">        )</span>
-<span class="sd">        metric.reset()</span>
-
-<span class="sd">        for outputs, targets in zip(outputs_list, targets_list):</span>
-<span class="sd">            metric.update(outputs=outputs, targets=targets)</span>
-
-<span class="sd">        metric.compute()</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # per class precision, recall, f1, support</span>
-<span class="sd">        #     (</span>
-<span class="sd">        #         array([1. , 1. , 0.5, 0.5]),</span>
-<span class="sd">        #         array([1.        , 0.66666667, 0.5       , 1.        ]),</span>
-<span class="sd">        #         array([0.999995  , 0.7999952 , 0.499995  , 0.66666222]),</span>
-<span class="sd">        #         array([2., 3., 2., 1.]),</span>
-<span class="sd">        #     ),</span>
-<span class="sd">        #     # micro precision, recall, f1, support</span>
-<span class="sd">        #     (0.75, 0.75, 0.7499950000333331, None),</span>
-<span class="sd">        #     # macro precision, recall, f1, support</span>
-<span class="sd">        #     (0.75, 0.7916666666666667, 0.7416618555889127, None),</span>
-<span class="sd">        #     # weighted precision, recall, f1, support</span>
-<span class="sd">        #     (0.8125, 0.75, 0.7583284778110313, None)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">        metric.compute_key_value()</span>
-<span class="sd">        # {</span>
-<span class="sd">        #     &#39;f1/_macro&#39;: 0.7416618555889127,</span>
-<span class="sd">        #     &#39;f1/_micro&#39;: 0.7499950000333331,</span>
-<span class="sd">        #     &#39;f1/_weighted&#39;: 0.7583284778110313,</span>
-<span class="sd">        #     &#39;f1/class_00&#39;: 0.9999950000249999,</span>
-<span class="sd">        #     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
-<span class="sd">        #     &#39;f1/class_02&#39;: 0.49999500004999947,</span>
-<span class="sd">        #     &#39;f1/class_03&#39;: 0.6666622222518517,</span>
-<span class="sd">        #     &#39;precision/_macro&#39;: 0.75,</span>
-<span class="sd">        #     &#39;precision/_micro&#39;: 0.75,</span>
-<span class="sd">        #     &#39;precision/_weighted&#39;: 0.8125,</span>
-<span class="sd">        #     &#39;precision/class_00&#39;: 1.0,</span>
-<span class="sd">        #     &#39;precision/class_01&#39;: 1.0,</span>
-<span class="sd">        #     &#39;precision/class_02&#39;: 0.5,</span>
-<span class="sd">        #     &#39;precision/class_03&#39;: 0.5,</span>
-<span class="sd">        #     &#39;recall/_macro&#39;: 0.7916666666666667,</span>
-<span class="sd">        #     &#39;recall/_micro&#39;: 0.75,</span>
-<span class="sd">        #     &#39;recall/_weighted&#39;: 0.75,</span>
-<span class="sd">        #     &#39;recall/class_00&#39;: 1.0,</span>
-<span class="sd">        #     &#39;recall/class_01&#39;: 0.6666666666666667,</span>
-<span class="sd">        #     &#39;recall/class_02&#39;: 0.5,</span>
-<span class="sd">        #     &#39;recall/class_03&#39;: 1.0,</span>
-<span class="sd">        #     &#39;support/class_00&#39;: 2.0,</span>
-<span class="sd">        #     &#39;support/class_01&#39;: 3.0,</span>
-<span class="sd">        #     &#39;support/class_02&#39;: 2.0,</span>
-<span class="sd">        #     &#39;support/class_03&#39;: 1.0</span>
-<span class="sd">        # }</span>
-
-<span class="sd">        metric.reset()</span>
-<span class="sd">        metric(outputs_list[0], targets_list[0])</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # per class precision, recall, f1, support</span>
-<span class="sd">        #     (</span>
-<span class="sd">        #         array([1., 1., 0., 0.]),</span>
-<span class="sd">        #         array([1. , 0.5, 0. , 0. ]),</span>
-<span class="sd">        #         array([0.999995  , 0.66666222, 0.        , 0.        ]),</span>
-<span class="sd">        #         array([1., 2., 0., 0.]),</span>
-<span class="sd">        #     ),</span>
-<span class="sd">        #     # micro precision, recall, f1, support</span>
-<span class="sd">        #     (0.6666666666666667, 0.6666666666666667, 0.6666616667041664, None),</span>
-<span class="sd">        #     # macro precision, recall, f1, support</span>
-<span class="sd">        #     (0.5, 0.375, 0.41666430556921286, None),</span>
-<span class="sd">        #     # weighted precision, recall, f1, support</span>
-<span class="sd">        #     (1.0, 0.6666666666666666, 0.7777731481762343, None)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        # sample data</span>
-<span class="sd">        num_samples, num_features, num_classes = int(1e4), int(1e1), 4</span>
-<span class="sd">        X = torch.rand(num_samples, num_features)</span>
-<span class="sd">        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)</span>
-
-<span class="sd">        # pytorch loaders</span>
-<span class="sd">        dataset = TensorDataset(X, y)</span>
-<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
-<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
-
-<span class="sd">        # model, criterion, optimizer, scheduler</span>
-<span class="sd">        model = torch.nn.Linear(num_features, num_classes)</span>
-<span class="sd">        criterion = torch.nn.CrossEntropyLoss()</span>
-<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
-<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
-
-<span class="sd">        # model training</span>
-<span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
-<span class="sd">        )</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            criterion=criterion,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            scheduler=scheduler,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            logdir=&quot;./logdir&quot;,</span>
-<span class="sd">            num_epochs=3,</span>
-<span class="sd">            valid_loader=&quot;valid&quot;,</span>
-<span class="sd">            valid_metric=&quot;accuracy03&quot;,</span>
-<span class="sd">            minimize_valid_metric=False,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            callbacks=[</span>
-<span class="sd">                dl.AccuracyCallback(</span>
-<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
-<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
-<span class="sd">            ],</span>
-<span class="sd">        )</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
-
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init MultiClassPrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
-            <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-            <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;multiclass&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="MultilabelPrecisionRecallF1SupportMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric">[docs]</a><span class="k">class</span> <span class="nc">MultilabelPrecisionRecallF1SupportMetric</span><span class="p">(</span><span class="n">PrecisionRecallF1SupportMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Precision, recall, f1_score and support metrics for multilabel classification.</span>
-<span class="sd">    Counts metrics with macro, micro and weighted average.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        num_classes: number of classes in loader&#39;s dataset</span>
-<span class="sd">        zero_division: value to set in case of zero division during metrics</span>
-<span class="sd">            (precision, recall) computation; should be one of 0 or 1</span>
-<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
-<span class="sd">        compute_per_class_metrics: boolean flag to compute per-class metrics</span>
-<span class="sd">            (default: SETTINGS.compute_per_class_metrics or False).</span>
-<span class="sd">        prefix: metric prefix</span>
-<span class="sd">        suffix: metric suffix</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from catalyst import metrics</span>
-
-<span class="sd">        num_classes = 4</span>
-<span class="sd">        zero_division = 0</span>
-<span class="sd">        outputs_list = [</span>
-<span class="sd">            torch.tensor([[0, 1, 0, 1], [0, 0, 0, 0], [0, 1, 1, 0]]),</span>
-<span class="sd">            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 1], [0, 1, 0, 1]]),</span>
-<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 1, 0, 1]]),</span>
-<span class="sd">        ]</span>
-<span class="sd">        targets_list = [</span>
-<span class="sd">            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 0], [0, 1, 0, 1]]),</span>
-<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 1], [1, 0, 1, 0]]),</span>
-<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 0]]),</span>
-<span class="sd">        ]</span>
-
-<span class="sd">        metric = metrics.MultilabelPrecisionRecallF1SupportMetric(</span>
-<span class="sd">            num_classes=num_classes, zero_division=zero_division</span>
-<span class="sd">        )</span>
-<span class="sd">        metric.reset()</span>
-
-<span class="sd">        for outputs, targets in zip(outputs_list, targets_list):</span>
-<span class="sd">            metric.update(outputs=outputs, targets=targets)</span>
-
-<span class="sd">        metric.compute()</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # per class precision, recall, f1, support</span>
-<span class="sd">        #     (</span>
-<span class="sd">        #         array([0.        , 0.66666667, 0.        , 0.4       ]),</span>
-<span class="sd">        #         array([0.        , 1.        , 0.        , 0.66666667]),</span>
-<span class="sd">        #         array([0.        , 0.7999952 , 0.        , 0.49999531]),</span>
-<span class="sd">        #         array([1., 4., 4., 3.])</span>
-<span class="sd">        #     ),</span>
-<span class="sd">        #     # micro precision, recall, f1, support</span>
-<span class="sd">        #     (0.46153846153846156, 0.5, 0.4799950080519163, None),</span>
-<span class="sd">        #     # macro precision, recall, f1, support</span>
-<span class="sd">        #     (0.2666666666666667, 0.4166666666666667, 0.32499762814318617, None),</span>
-<span class="sd">        #     # weighted precision, recall, f1, support</span>
-<span class="sd">        #     (0.32222222222222224, 0.5, 0.39166389481225283, None)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">        metric.compute_key_value()</span>
-<span class="sd">        # {</span>
-<span class="sd">        #     &#39;f1/_macro&#39;: 0.32499762814318617,</span>
-<span class="sd">        #     &#39;f1/_micro&#39;: 0.4799950080519163,</span>
-<span class="sd">        #     &#39;f1/_weighted&#39;: 0.39166389481225283,</span>
-<span class="sd">        #     &#39;f1/class_00&#39;: 0.0,</span>
-<span class="sd">        #     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
-<span class="sd">        #     &#39;f1/class_02&#39;: 0.0,</span>
-<span class="sd">        #     &#39;f1/class_03&#39;: 0.49999531254394486,</span>
-<span class="sd">        #     &#39;precision/_macro&#39;: 0.2666666666666667,</span>
-<span class="sd">        #     &#39;precision/_micro&#39;: 0.46153846153846156,</span>
-<span class="sd">        #     &#39;precision/_weighted&#39;: 0.32222222222222224,</span>
-<span class="sd">        #     &#39;precision/class_00&#39;: 0.0,</span>
-<span class="sd">        #     &#39;precision/class_01&#39;: 0.6666666666666667,</span>
-<span class="sd">        #     &#39;precision/class_02&#39;: 0.0,</span>
-<span class="sd">        #     &#39;precision/class_03&#39;: 0.4,</span>
-<span class="sd">        #     &#39;recall/_macro&#39;: 0.4166666666666667,</span>
-<span class="sd">        #     &#39;recall/_micro&#39;: 0.5,</span>
-<span class="sd">        #     &#39;recall/_weighted&#39;: 0.5,</span>
-<span class="sd">        #     &#39;recall/class_00&#39;: 0.0,</span>
-<span class="sd">        #     &#39;recall/class_01&#39;: 1.0,</span>
-<span class="sd">        #     &#39;recall/class_02&#39;: 0.0,</span>
-<span class="sd">        #     &#39;recall/class_03&#39;: 0.6666666666666667,</span>
-<span class="sd">        #     &#39;support/class_00&#39;: 1.0,</span>
-<span class="sd">        #     &#39;support/class_01&#39;: 4.0,</span>
-<span class="sd">        #     &#39;support/class_02&#39;: 4.0,</span>
-<span class="sd">        #     &#39;support/class_03&#39;: 3.0</span>
-<span class="sd">        # }</span>
-
-
-<span class="sd">        metric.reset()</span>
-<span class="sd">        metric(outputs_list[0], targets_list[0])</span>
-<span class="sd">        # (</span>
-<span class="sd">        #     # per class precision, recall, f1, support</span>
-<span class="sd">        #     (</span>
-<span class="sd">        #         array([0., 1., 0., 1.]),</span>
-<span class="sd">        #         array([0. , 1. , 0. , 0.5]),</span>
-<span class="sd">        #         array([0.        , 0.999995  , 0.        , 0.66666222]),</span>
-<span class="sd">        #         array([0., 2., 1., 2.])</span>
-<span class="sd">        #     ),</span>
-<span class="sd">        #     # micro precision, recall, f1, support</span>
-<span class="sd">        #     (0.75, 0.6, 0.6666617284316411, None),</span>
-<span class="sd">        #     # macro precision, recall, f1, support</span>
-<span class="sd">        #     (0.5, 0.375, 0.41666430556921286, None),</span>
-<span class="sd">        #     # weighted precision, recall, f1, support</span>
-<span class="sd">        #     (0.8, 0.6000000000000001, 0.6666628889107407, None)</span>
-<span class="sd">        # )</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        # sample data</span>
-<span class="sd">        num_samples, num_features, num_classes = int(1e4), int(1e1), 4</span>
-<span class="sd">        X = torch.rand(num_samples, num_features)</span>
-<span class="sd">        y = (torch.rand(num_samples, num_classes) &gt; 0.5).to(torch.float32)</span>
-
-<span class="sd">        # pytorch loaders</span>
-<span class="sd">        dataset = TensorDataset(X, y)</span>
-<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
-<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
-
-<span class="sd">        # model, criterion, optimizer, scheduler</span>
-<span class="sd">        model = torch.nn.Linear(num_features, num_classes)</span>
-<span class="sd">        criterion = torch.nn.BCEWithLogitsLoss()</span>
-<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
-<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
-
-<span class="sd">        # model training</span>
-<span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
-<span class="sd">        )</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            criterion=criterion,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            scheduler=scheduler,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            logdir=&quot;./logdir&quot;,</span>
-<span class="sd">            num_epochs=3,</span>
-<span class="sd">            valid_loader=&quot;valid&quot;,</span>
-<span class="sd">            valid_metric=&quot;accuracy&quot;,</span>
-<span class="sd">            minimize_valid_metric=False,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            callbacks=[</span>
-<span class="sd">                dl.BatchTransformCallback(</span>
-<span class="sd">                    transform=torch.sigmoid,</span>
-<span class="sd">                    scope=&quot;on_batch_end&quot;,</span>
-<span class="sd">                    input_key=&quot;logits&quot;,</span>
-<span class="sd">                    output_key=&quot;scores&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.AUCCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
-<span class="sd">                dl.MultilabelAccuracyCallback(</span>
-<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, threshold=0.5</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.MultilabelPrecisionRecallF1SupportCallback(</span>
-<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, threshold=0.5</span>
-<span class="sd">                ),</span>
-<span class="sd">            ]</span>
-<span class="sd">        )</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
-
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init MultiLabelPrecisionRecallF1SupportMetric instance&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
-            <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-            <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;multilabel&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">metrics</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>

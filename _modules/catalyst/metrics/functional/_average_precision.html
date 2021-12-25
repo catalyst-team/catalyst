@@ -302,7 +302,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># outputs - [bs; num_classes] with scores</span>
     <span class="c1"># targets - [bs; num_classes] with binary labels</span>
-    <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">process_multilabel_components</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process_multilabel_components</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>

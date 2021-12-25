@@ -390,7 +390,7 @@
 <span class="sd">        #     tensor([4., 4.]),          # per class support</span>
 <span class="sd">        # )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span>
+    <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
     <span class="p">)</span>
     <span class="c1"># @TODO: sync between metrics</span>

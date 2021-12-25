@@ -260,7 +260,9 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.callbacks.metrics.classification</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">BatchMetricCallback</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">BatchMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._classification</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">MulticlassPrecisionRecallF1SupportMetric</span><span class="p">,</span>
     <span class="n">MultilabelPrecisionRecallF1SupportMetric</span><span class="p">,</span>
@@ -344,7 +346,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
@@ -354,11 +356,11 @@
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">metric</span><span class="o">=</span><span class="n">MulticlassPrecisionRecallF1SupportMetric</span><span class="p">(</span>
-                <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
                 <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
                 <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
+                <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
@@ -448,7 +450,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">compute_per_class_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
@@ -458,11 +460,11 @@
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">metric</span><span class="o">=</span><span class="n">MultilabelPrecisionRecallF1SupportMetric</span><span class="p">(</span>
-                <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
                 <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
                 <span class="n">compute_per_class_metrics</span><span class="o">=</span><span class="n">compute_per_class_metrics</span><span class="p">,</span>
+                <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
