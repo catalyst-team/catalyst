@@ -139,7 +139,7 @@ def get_config_runner(expdir: Path, config: Dict):
 
 def get_model_from_logdir(checkpoint_path: Path, logdir: Path) -> RunnerModel:
     """
-    Reconstructs RunnerModel instance from logdir and pack it with checkpoint. # noqa: DAR401
+    Reconstructs RunnerModel instance from logdir and unpack the checkpoint in it. # noqa: DAR401
 
     Args:
         checkpoint_path: path to checkpoint
