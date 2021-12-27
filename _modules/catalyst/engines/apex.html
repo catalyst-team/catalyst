@@ -491,13 +491,13 @@
 <span class="sd">            ``criterion_state_dict``, ``optimizer_state_dict``,</span>
 <span class="sd">            ``scheduler_state_dict`` keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;amp&quot;</span><span class="p">:</span> <span class="n">amp</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()}</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
             <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
             <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">checkpoint</span><span class="p">,</span>
+            <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">checkpoint</span>
 
@@ -796,13 +796,13 @@
 <span class="sd">            ``criterion_state_dict``, ``optimizer_state_dict``,</span>
 <span class="sd">            ``scheduler_state_dict`` keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;amp&quot;</span><span class="p">:</span> <span class="n">amp</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()}</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
             <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
             <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">checkpoint</span><span class="p">,</span>
+            <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">checkpoint</span>
 
