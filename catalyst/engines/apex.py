@@ -540,7 +540,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             optimizer=optimizer,
             scheduler=scheduler,
             amp=amp.state_dict(),
-            **checkpoint,
+            **kwargs,
         )
         return checkpoint
 
