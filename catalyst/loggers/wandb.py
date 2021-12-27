@@ -25,6 +25,7 @@ class WandbLogger(ILogger):
             (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
             (default: SETTINGS.log_epoch_metrics or True).
+        kwargs: Optional, additional keyword arguments to be passed directly to the wandb.init
 
     Python API examples:
 
@@ -85,13 +86,18 @@ class WandbLogger(ILogger):
         entity: Optional[str] = None,
         log_batch_metrics: bool = SETTINGS.log_batch_metrics,
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
+        **kwargs,
     ) -> None:
         super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
         self.project = project
         self.name = name
         self.entity = entity
         self.run = wandb.init(
-            project=self.project, name=self.name, entity=self.entity, allow_val_change=True
+            project=self.project, 
+            name=self.name, 
+            entity=self.entity, 
+            allow_val_change=True, 
+            **kwargs,
         )
 
     @property
