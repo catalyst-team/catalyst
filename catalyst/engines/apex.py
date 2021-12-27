@@ -229,13 +229,13 @@ class APEXEngine(DeviceEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **checkpoint,
+            amp=amp.state_dict(),
+            **kwargs,
         )
         return checkpoint
 
@@ -534,12 +534,12 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
+            amp=amp.state_dict(),
             **checkpoint,
         )
         return checkpoint
