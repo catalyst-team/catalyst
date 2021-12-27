@@ -93,10 +93,10 @@ class WandbLogger(ILogger):
         self.name = name
         self.entity = entity
         self.run = wandb.init(
-            project=self.project, 
-            name=self.name, 
-            entity=self.entity, 
-            allow_val_change=True, 
+            project=self.project,
+            name=self.name,
+            entity=self.entity,
+            allow_val_change=True,
             **kwargs,
         )
 
