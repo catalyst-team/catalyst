@@ -695,7 +695,7 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <h2><a class="toc-backref" href="#id7">WandbLogger</a><a class="headerlink" href="#wandblogger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.loggers.wandb.WandbLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.wandb.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">project: str</em>, <em class="sig-param">name: Optional[str] = None</em>, <em class="sig-param">entity: Optional[str] = None</em>, <em class="sig-param">log_batch_metrics: bool = False</em>, <em class="sig-param">log_epoch_metrics: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/wandb.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.wandb.WandbLogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.wandb.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">project: str</em>, <em class="sig-param">name: Optional[str] = None</em>, <em class="sig-param">entity: Optional[str] = None</em>, <em class="sig-param">log_batch_metrics: bool = False</em>, <em class="sig-param">log_epoch_metrics: bool = True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/wandb.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.wandb.WandbLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Wandb logger for parameters, metrics, images and other artifacts.</p>
 <p>W&amp;B documentation: <a class="reference external" href="https://docs.wandb.com">https://docs.wandb.com</a></p>
@@ -710,6 +710,7 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 (default: SETTINGS.log_batch_metrics or False).</p></li>
 <li><p><strong>log_epoch_metrics</strong> – boolean flag to log epoch metrics
 (default: SETTINGS.log_epoch_metrics or True).</p></li>
+<li><p><strong>kwargs</strong> – Optional, additional keyword arguments to be passed directly to the wandb.init</p></li>
 </ul>
 </dd>
 </dl>

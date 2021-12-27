@@ -287,6 +287,7 @@
 <span class="sd">            (default: SETTINGS.log_batch_metrics or False).</span>
 <span class="sd">        log_epoch_metrics: boolean flag to log epoch metrics</span>
 <span class="sd">            (default: SETTINGS.log_epoch_metrics or True).</span>
+<span class="sd">        kwargs: Optional, additional keyword arguments to be passed directly to the wandb.init</span>
 
 <span class="sd">    Python API examples:</span>
 
@@ -347,13 +348,18 @@
         <span class="n">entity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_batch_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">,</span>
         <span class="n">log_epoch_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">log_epoch_metrics</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">log_batch_metrics</span><span class="o">=</span><span class="n">log_batch_metrics</span><span class="p">,</span> <span class="n">log_epoch_metrics</span><span class="o">=</span><span class="n">log_epoch_metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run</span> <span class="o">=</span> <span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-            <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="n">allow_val_change</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span>
+            <span class="n">allow_val_change</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
