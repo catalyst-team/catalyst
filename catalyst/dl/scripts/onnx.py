@@ -19,15 +19,15 @@ def build_args(parser: ArgumentParser):
         "--method", type=str, default="forward", help="Forward pass method to be converted"
     )
     parser.add_argument(
-        "--input_names", type=Iterable, default=None, help="Name of inputs in graph"
+        "--input-names", type=Iterable, default=None, help="Name of inputs in graph"
     )
     parser.add_argument(
-        "--output_names", type=Iterable, default=None, help="Name of outputs in graph"
+        "--output-names", type=Iterable, default=None, help="Name of outputs in graph"
     )
-    parser.add_argument("--dynamic_axes", type=dict, default=None, help="Axes with dynamic shapes")
-    parser.add_argument("--opset_version", type=int, default=9, help="Version of onnx opset")
+    parser.add_argument("--dynamic-axes", type=dict, default=None, help="Axes with dynamic shapes")
+    parser.add_argument("--opset-version", type=int, default=9, help="Version of onnx opset")
     parser.add_argument(
-        "--do_constant_folding",
+        "--do-constant-folding",
         type=bool,
         default=False,
         help="If True, the constant-folding optimization is applied to the model during export",
