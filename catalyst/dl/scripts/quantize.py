@@ -13,7 +13,7 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--checkpoint-path", type=Path, required=True, help="Path to checkpoint")
     parser.add_argument("--logdir", type=Path, default=None, help="Path to logs directory")
     parser.add_argument(
-        "--qconfig_spec", type=dict, default=None, help="Quantization config in PyTorch format"
+        "--qconfig-spec", type=dict, default=None, help="Quantization config in PyTorch format"
     )
     parser.add_argument(
         "--dtype",
