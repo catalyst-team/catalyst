@@ -17,7 +17,7 @@ def setup_module():
     """
     Remove the temp folder if exists
     """
-    data_path = "./data"
+    data_path = "./tmp_data"
     try:
         shutil.rmtree(data_path)
     except Exception as e:
