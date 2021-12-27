@@ -37,3 +37,6 @@ from catalyst.contrib.datasets.mnist import (
 
 if SETTINGS.ml_required:
     from catalyst.contrib.datasets.movielens import MovieLens
+
+    if SETTINGS.is_torch_1_7_0:
+        from catalyst.contrib.datasets.movielens import MovieLens20M
