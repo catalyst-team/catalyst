@@ -1,0 +1,721 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.contrib.losses.triplet &mdash; Catalyst 21.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Catalyst</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/codestyle">Codestyle</a>
+          </li>
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Course</a>
+          </li>
+
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/runner.html">Runner</a></li>
+</ul>
+<p><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
+</ul>
+<p><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+<p><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.contrib.losses.triplet</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.contrib.losses.triplet</h1><div class="highlight"><pre>
+<span></span><span class="c1"># flake8: noqa</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">TripletMarginLoss</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data._misc</span> <span class="kn">import</span> <span class="n">convert_labels2list</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.losses.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.contrib.data.sampler_inbatch</span> <span class="kn">import</span> <span class="n">IInbatchTripletSampler</span>
+
+<span class="n">TORCH_BOOL</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bool</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">__version__</span> <span class="o">&gt;</span> <span class="s2">&quot;1.1.0&quot;</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">ByteTensor</span>
+
+
+<span class="k">class</span> <span class="nc">TripletLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Triplet loss with hard positive/negative mining.</span>
+
+<span class="sd">    Adapted from: https://github.com/NegatioN/OnlineMiningTripletLoss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            margin: margin for triplet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ranking_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MarginRankingLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="n">margin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pairwise_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the 2D matrix of distances between all the embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings: tensor of shape (batch_size, embed_dim)</span>
+<span class="sd">            squared: if true, output is the pairwise squared euclidean</span>
+<span class="sd">                distance matrix. If false, output is the pairwise euclidean</span>
+<span class="sd">                distance matrix</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: pairwise matrix of size (batch_size, batch_size)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get squared L2 norm for each embedding.</span>
+        <span class="c1"># We can just take the diagonal of `dot_product`.</span>
+        <span class="c1"># This also provides more numerical stability</span>
+        <span class="c1"># (the diagonal of the result will be exactly 0).</span>
+        <span class="c1"># shape (batch_size)</span>
+        <span class="n">square</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">t</span><span class="p">())</span>
+        <span class="n">diag</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+
+        <span class="c1"># Compute the pairwise distance matrix as we have:</span>
+        <span class="c1"># ||a - b||^2 = ||a||^2  - 2 &lt;a, b&gt; + ||b||^2</span>
+        <span class="c1"># shape (batch_size, batch_size)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">diag</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">square</span> <span class="o">+</span> <span class="n">diag</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Because of computation errors, some distances</span>
+        <span class="c1"># might be negative so we put everything &gt;= 0.0</span>
+        <span class="n">distances</span><span class="p">[</span><span class="n">distances</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">squared</span><span class="p">:</span>
+            <span class="c1"># Because the gradient of sqrt is infinite</span>
+            <span class="c1"># when distances == 0.0 (ex: on the diagonal)</span>
+            <span class="c1"># we need to add a small epsilon where distances == 0.0</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span> <span class="o">+</span> <span class="n">mask</span> <span class="o">*</span> <span class="mf">1e-16</span>
+
+            <span class="n">distances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">mask</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">distances</span>
+
+    <span class="k">def</span> <span class="nf">_get_anchor_positive_triplet_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a 2D mask where mask[a, p] is True</span>
+<span class="sd">        if a and p are distinct and have same label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: tf.int32 `Tensor` with shape [batch_size]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: mask with shape [batch_size, batch_size]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices_equal</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+        <span class="c1"># labels and indices should be on</span>
+        <span class="c1"># the same device, otherwise - exception</span>
+        <span class="n">indices_equal</span> <span class="o">=</span> <span class="n">indices_equal</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">labels</span><span class="o">.</span><span class="n">is_cuda</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check that i and j are distinct</span>
+
+        <span class="n">indices_equal</span> <span class="o">=</span> <span class="n">indices_equal</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">TORCH_BOOL</span><span class="p">)</span>
+        <span class="n">indices_not_equal</span> <span class="o">=</span> <span class="o">~</span><span class="n">indices_equal</span>
+
+        <span class="c1"># Check if labels[i] == labels[j]</span>
+        <span class="c1"># Uses broadcasting where the 1st argument</span>
+        <span class="c1"># has shape (1, batch_size) and the 2nd (batch_size, 1)</span>
+        <span class="n">labels_equal</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">labels_equal</span> <span class="o">&amp;</span> <span class="n">indices_not_equal</span>
+
+    <span class="k">def</span> <span class="nf">_get_anchor_negative_triplet_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return 2D mask where mask[a, n] is True if a and n have same label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: tf.int32 `Tensor` with shape [batch_size]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: mask with shape [batch_size, batch_size]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if labels[i] != labels[k]</span>
+        <span class="c1"># Uses broadcasting where the 1st argument</span>
+        <span class="c1"># has shape (1, batch_size) and the 2nd (batch_size, 1)</span>
+        <span class="k">return</span> <span class="o">~</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_batch_hard_triplet_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the triplet loss over a batch of embeddings.</span>
+<span class="sd">        For each anchor, we get the hardest positive and</span>
+<span class="sd">        hardest negative to form a triplet.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: labels of the batch, of size (batch_size)</span>
+<span class="sd">            embeddings: tensor of shape (batch_size, embed_dim)</span>
+<span class="sd">            margin: margin for triplet loss</span>
+<span class="sd">            squared: Boolean. If true, output is the pairwise squared</span>
+<span class="sd">                     euclidean distance matrix. If false, output is the</span>
+<span class="sd">                     pairwise euclidean distance matrix.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: scalar tensor containing the triplet loss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the pairwise distance matrix</span>
+        <span class="n">pairwise_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pairwise_distances</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="n">squared</span><span class="p">)</span>
+
+        <span class="c1"># For each anchor, get the hardest positive</span>
+        <span class="c1"># First, we need to get a mask for every valid</span>
+        <span class="c1"># positive (they should have same label)</span>
+        <span class="n">mask_anchor_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_positive_triplet_mask</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+        <span class="c1"># We put to 0 any element where (a, p) is not valid</span>
+        <span class="c1"># (valid if a != p and label(a) == label(p))</span>
+        <span class="n">anchor_positive_dist</span> <span class="o">=</span> <span class="n">mask_anchor_positive</span> <span class="o">*</span> <span class="n">pairwise_dist</span>
+
+        <span class="c1"># shape (batch_size, 1)</span>
+        <span class="n">hardest_positive_dist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">anchor_positive_dist</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># For each anchor, get the hardest negative</span>
+        <span class="c1"># First, we need to get a mask for every valid negative</span>
+        <span class="c1"># (they should have different labels)</span>
+        <span class="n">mask_anchor_negative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_negative_triplet_mask</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+        <span class="c1"># We add the maximum value in each row</span>
+        <span class="c1"># to the invalid negatives (label(a) == label(n))</span>
+        <span class="n">max_anchor_negative_dist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pairwise_dist</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">anchor_negative_dist</span> <span class="o">=</span> <span class="n">pairwise_dist</span> <span class="o">+</span> <span class="n">max_anchor_negative_dist</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">1.0</span> <span class="o">-</span> <span class="n">mask_anchor_negative</span>
+        <span class="p">)</span>
+
+        <span class="c1"># shape (batch_size)</span>
+        <span class="n">hardest_negative_dist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">anchor_negative_dist</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Combine biggest d(a, p) and smallest d(a, n) into final triplet loss</span>
+        <span class="n">tl</span> <span class="o">=</span> <span class="n">hardest_positive_dist</span> <span class="o">-</span> <span class="n">hardest_negative_dist</span> <span class="o">+</span> <span class="n">margin</span>
+        <span class="n">tl</span><span class="p">[</span><span class="n">tl</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">loss</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the triplet loss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings: tensor of shape (batch_size, embed_dim)</span>
+<span class="sd">            targets: labels of the batch, of size (batch_size)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: scalar tensor containing the triplet loss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_hard_triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TripletLossV2</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            margin: margin for triplet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TripletPairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;TripletPairwiseEmbeddingLoss – proof of concept criterion.</span>
+
+<span class="sd">    Still work in progress.</span>
+
+<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            margin: margin parameter</span>
+<span class="sd">            reduction: criterion reduction type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings_pred</span><span class="p">,</span> <span class="n">embeddings_true</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Work in progress.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings_pred: predicted embeddings</span>
+<span class="sd">                with shape [batch_size, embedding_size]</span>
+<span class="sd">            embeddings_true: true embeddings</span>
+<span class="sd">                with shape [batch_size, embedding_size]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: loss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">embeddings_pred</span><span class="o">.</span><span class="n">device</span>
+        <span class="c1"># s - state space</span>
+        <span class="c1"># d - embeddings space</span>
+        <span class="c1"># a - action space</span>
+        <span class="c1"># [batch_size, embedding_size] x [batch_size, embedding_size]</span>
+        <span class="c1"># -&gt; [batch_size, batch_size]</span>
+        <span class="n">pairwise_similarity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;se,ae-&gt;sa&quot;</span><span class="p">,</span> <span class="n">embeddings_pred</span><span class="p">,</span> <span class="n">embeddings_true</span><span class="p">)</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="n">embeddings_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">negative_similarity</span> <span class="o">=</span> <span class="n">pairwise_similarity</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="n">bs</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO argsort, take k worst</span>
+        <span class="n">hard_negative_ids</span> <span class="o">=</span> <span class="n">negative_similarity</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">negative_similarities</span> <span class="o">=</span> <span class="n">pairwise_similarity</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">hard_negative_ids</span><span class="p">]</span>
+        <span class="n">positive_similarities</span> <span class="o">=</span> <span class="n">pairwise_similarity</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">-</span> <span class="n">positive_similarities</span> <span class="o">+</span> <span class="n">negative_similarities</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span> <span class="o">/</span> <span class="n">bs</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span>
+
+
+<div class="viewcode-block" id="TripletMarginLossWithSampler"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.losses.triplet.TripletMarginLossWithSampler">[docs]</a><span class="k">class</span> <span class="nc">TripletMarginLossWithSampler</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class combines in-batch sampling of triplets and</span>
+<span class="sd">    default TripletMargingLoss from PyTorch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TripletMarginLossWithSampler.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.losses.triplet.TripletMarginLossWithSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sampler_inbatch</span><span class="p">:</span> <span class="s2">&quot;IInbatchTripletSampler&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            margin: margin value</span>
+<span class="sd">            sampler_inbatch: sampler for forming triplets inside the batch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_inbatch</span> <span class="o">=</span> <span class="n">sampler_inbatch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span> <span class="o">=</span> <span class="n">TripletMarginLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="n">margin</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            features: features with shape [batch_size, features_dim]</span>
+<span class="sd">            labels: labels of samples having batch_size elements</span>
+
+<span class="sd">        Returns: loss value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels_list</span> <span class="o">=</span> <span class="n">convert_labels2list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="n">features_anchor</span><span class="p">,</span> <span class="n">features_positive</span><span class="p">,</span> <span class="n">features_negative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_inbatch</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+            <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels_list</span>
+        <span class="p">)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span><span class="p">(</span>
+            <span class="n">anchor</span><span class="o">=</span><span class="n">features_anchor</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="n">features_positive</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="n">features_negative</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;TripletLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletLossV2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletPairwiseEmbeddingLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletMarginLossWithSampler&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst#step-by-step-guide">Getting started</a></li>
+            <li><a class="nav-dropdown-item" href="https://catalyst-team.github.io/catalyst/getting_started/quickstart.html">Quickstart</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst#minimal-examples">Examples</a></li>
+            <li><a class="nav-dropdown-item" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef">Blogpost</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/#projects">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/dl-course">Course</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst#acknowledgments" target="_blank">Acknowledgments</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://opencollective.com/catalyst" target="_blank">Open Collective</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/CatalystTeam" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-devs/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
