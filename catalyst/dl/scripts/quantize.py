@@ -48,6 +48,7 @@ def main(args, _):
 
     q_model = quantize_model(model.cpu(), qconfig_spec=qconfig_spec, dtype=dtype)
     checkpoint = pack_checkpoint(model=q_model)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     save_checkpoint(checkpoint=checkpoint, path=output_path)
 
 

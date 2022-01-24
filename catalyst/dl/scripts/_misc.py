@@ -156,9 +156,12 @@ def get_model_from_logdir(checkpoint_path: Path, logdir: Path) -> RunnerModel:
             )
     config_path = logdir / "configs" / "_config.json"
     config = load_config(config_path)
+    config_expdir = config.get("args", {}).get("expdir", None)
 
-    config_expdir = Path(config["args"]["expdir"])
-    expdir = logdir / "code" / config_expdir.name
+    if config_expdir is None:
+        raise RuntimeError("No `expdir` was found in `_config.json`")
+
+    expdir = logdir / "code" / Path(config_expdir).name
 
     runner = get_config_runner(expdir=expdir, config=config)
     model = runner.get_model(None)

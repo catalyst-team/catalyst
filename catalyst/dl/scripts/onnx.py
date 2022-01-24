@@ -70,6 +70,7 @@ def main(args, _):
     model = get_model_from_logdir(checkpoint_path, logdir)
 
     batch = torch.rand(shape)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     onnx_export(
         model=model,
         file=output_path,

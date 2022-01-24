@@ -48,6 +48,7 @@ def main(args, _):
 
     batch = torch.rand(shape)
     traced_model = trace_model(model=model, batch=batch, method_name=method)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     torch.jit.save(traced_model, output_path)
 
 

@@ -40,6 +40,7 @@ def main(args, _):
 
     averaged_weights = get_averaged_weights_by_path_mask(path_mask=path_mask, logdir=logdir)
 
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(averaged_weights, output_path.as_posix())
 
 
