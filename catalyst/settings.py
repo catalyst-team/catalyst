@@ -3,7 +3,8 @@ import configparser
 import logging
 import os
 
-# from packaging.version import parse, Version
+from packaging.version import Version
+
 import torch
 
 from catalyst.extras.frozen_class import FrozenClass
@@ -12,6 +13,10 @@ logger = logging.getLogger(__name__)
 
 IS_CUDA_AVAILABLE = torch.cuda.is_available()
 NUM_CUDA_DEVICES = torch.cuda.device_count()
+
+
+def _is_torch_1_7_0():
+    return Version(torch.__version__) >= Version("1.7.0")
 
 
 def _is_apex_avalilable():
@@ -232,6 +237,8 @@ class Settings(FrozenClass):
         log_batch_metrics: Optional[bool] = None,
         log_epoch_metrics: Optional[bool] = None,
         compute_per_class_metrics: Optional[bool] = None,
+        # [versions]
+        is_torch_1_7_0: Optional[bool] = None,
         # [to remove]
         nifti_required: Optional[bool] = None,
         albu_required: Optional[bool] = None,
@@ -366,6 +373,11 @@ class Settings(FrozenClass):
         self.compute_per_class_metrics: bool = (
             compute_per_class_metrics
             or os.environ.get("CATALYST_COMPUTE_PER_CLASS_METRICS", "0") == "1"
+        )
+
+        # [versions]
+        self.is_torch_1_7_0: bool = _get_optional_value(
+            is_torch_1_7_0, _is_torch_1_7_0, "upgrade to torch >= 1.7.0."
         )
 
         # [global]

@@ -8,8 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- MNIST dataset for SSL banchmark ([#1368](https://github.com/catalyst-team/catalyst/pull/1368))
-- logger property for logging customization ([#1372](https://github.com/catalyst-team/catalyst/pull/1372))
+-
 
 ### Changed
 
@@ -21,8 +20,40 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- 
+-
 
+
+## [21.12] - 2021-12-28
+
+### Added
+
+- MNIST dataset for SSL banchmark ([#1368](https://github.com/catalyst-team/catalyst/pull/1368))
+- MoveiLens 20M dataset [#1336](https://github.com/catalyst-team/catalyst/pull/1336)
+- logger property for logging customization ([#1372](https://github.com/catalyst-team/catalyst/pull/1372))
+- MacridVAE example ([#1363](https://github.com/catalyst-team/catalyst/pull/1363))
+- SSL benchmark results ([#1374](https://github.com/catalyst-team/catalyst/pull/1374))
+- Neptune example ([#1377](https://github.com/catalyst-team/catalyst/pull/1377))
+- multi-node support for engines ([#1364](https://github.com/catalyst-team/catalyst/pull/1364))
+
+### Changed
+
+- RL examples update to last version ([#1370](https://github.com/catalyst-team/catalyst/pull/1370))
+- DDPLoaderWrapper updated to new version ([#1385](https://github.com/catalyst-team/catalyst/pull/1385))
+- `num_classes` for classification metrics became optional ([#1379](https://github.com/catalyst-team/catalyst/pull/1379))
+- colab ci/cd update to new verion
+
+### Removed
+
+-
+
+### Fixed
+
+- `requests` requirements for `catalyst[cv]` added ([#1371](https://github.com/catalyst-team/catalyst/pull/1370))
+- loader step counter ([#1374](https://github.com/catalyst-team/catalyst/pull/1374))
+- detection example data preprocessing ([#1369](https://github.com/catalyst-team/catalyst/pull/1369))
+- gradient clipping with fp16 runs ([#1378](https://github.com/catalyst-team/catalyst/pull/1378))
+- config API fix for DDP runs ([#1383](https://github.com/catalyst-team/catalyst/pull/1383))
+- checkpoint creation for fp16 engines ([#1382](https://github.com/catalyst-team/catalyst/pull/1382))
 
 ## [21.11] - 2021-11-30
 
