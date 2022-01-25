@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from typing import List, Optional, Union
+from typing import List
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -15,13 +15,13 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=Path, required=True, help="Path to logs directory")
     parser.add_argument("--pruning_fn", type=str, required=True, help="Pruning function name")
     parser.add_argument(
-        "--amount", type=Union[float, int], required=True, help="Quantity of parameters to prune"
+        "--amount", type=float, required=True, help="Quantity of parameters to prune"
     )
     parser.add_argument(
         "--keys_to_prune", type=List[str], default=None, help="List of tensors in modules to prune"
     )
     parser.add_argument(
-        "--loglayers_to_prunedir", type=List[str], default=None, help="Module names to be pruned"
+        "--layers_to_prune", type=List[str], default=None, help="Module names to be pruned"
     )
     parser.add_argument(
         "--dim", type=int, default=None, help="Dimension for structured pruning methods"
@@ -52,9 +52,9 @@ def main(args, _):
     checkpoint_path: Path = args.checkpoint_path
     logdir: Path = args.logdir
     pruning_fn: str = args.pruning_fn
-    amount: Union[float, int] = args.dtype
-    keys_to_prune: Optional[List[str]] = args.keys_to_prune
-    layers_to_prune: Optional[List[str]] = args.layers_to_prune
+    amount: float = args.amount
+    keys_to_prune: List[str] = args.keys_to_prune
+    layers_to_prune: List[str] = args.layers_to_prune
     dim: int = args.dim
     l_norm: int = args.l_norm
     output_path: Path = args.output_path
