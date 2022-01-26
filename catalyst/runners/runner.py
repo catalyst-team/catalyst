@@ -25,7 +25,7 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.runners._misc import get_loaders_from_params
-from catalyst.runners.self_supervised import ISelfSupervisedRunner
+from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,

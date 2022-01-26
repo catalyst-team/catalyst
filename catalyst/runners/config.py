@@ -24,7 +24,7 @@ from catalyst.runners._misc import (
     get_loaders_from_params,
     get_model_parameters,
 )
-from catalyst.runners.self_supervised import ISelfSupervisedRunner
+from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     RunnerCriterion,
