@@ -222,11 +222,7 @@ class WandbLogger(ILogger):
         artifact = wandb.Artifact(
             name=self.run.id + "_aritfacts",
             type="artifact",
-            metadata={
-                "stage_key": stage_key,
-                "loader_key": loader_key,
-                "scope": scope,
-            },
+            metadata={"stage_key": stage_key, "loader_key": loader_key, "scope": scope,},
         )
 
         if artifact:

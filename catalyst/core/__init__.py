@@ -5,7 +5,7 @@
 # callback
 
 from catalyst.core.engine import IEngine
-from catalyst.core.runner import IRunner, RunnerError
+from catalyst.core.runner import IRunner, IRunnerError
 from catalyst.core.callback import (
     ICallback,
     Callback,

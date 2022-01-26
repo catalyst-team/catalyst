@@ -41,10 +41,7 @@ class BatchSamplerShard(BatchSampler):
     """
 
     def __init__(
-        self,
-        batch_sampler: BatchSampler,
-        num_processes: int = 1,
-        process_index: int = 0,
+        self, batch_sampler: BatchSampler, num_processes: int = 1, process_index: int = 0,
     ):
         """Init."""
         self.batch_sampler = batch_sampler
@@ -128,9 +125,7 @@ def prepare_ddp_loader(loader: DataLoader, num_processes: int, process_index: in
         ddp_batch_sampler = None
     else:
         ddp_batch_sampler = BatchSamplerShard(
-            loader.batch_sampler,
-            num_processes=num_processes,
-            process_index=process_index,
+            loader.batch_sampler, num_processes=num_processes, process_index=process_index,
         )
     # We ignore all of those since they are all dealt with by our new_batch_sampler
     ignore_kwargs = [

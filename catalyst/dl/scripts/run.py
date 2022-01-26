@@ -32,11 +32,7 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "--resume",
-        default=None,
-        type=str,
-        metavar="PATH",
-        help="path to latest checkpoint",
+        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
     )
     parser.add_argument(
         "--autoresume",

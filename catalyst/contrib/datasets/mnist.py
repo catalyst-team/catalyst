@@ -372,10 +372,7 @@ class PartialMNIST(MNIST):
     """
 
     def __init__(
-        self,
-        num_samples: int = 100,
-        classes: Optional[Sequence] = (0, 1, 2),
-        **kwargs,
+        self, num_samples: int = 100, classes: Optional[Sequence] = (0, 1, 2), **kwargs,
     ):
         self.num_samples = num_samples
         self.classes = sorted(classes) if classes else list(range(10))

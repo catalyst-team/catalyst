@@ -531,10 +531,7 @@ class MovieLens20M(Dataset):
         url = self.resources[0]
 
         download_and_extract_archive(
-            url=url,
-            download_root=self.raw_folder,
-            filename=self.filename,
-            remove_finished=True,
+            url=url, download_root=self.raw_folder, filename=self.filename, remove_finished=True,
         )
 
     def _read_raw_movielens_data(self):

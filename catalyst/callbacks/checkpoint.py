@@ -616,9 +616,7 @@ class CheckpointCallback(ICheckpointCallback):
             self.resume = None
         elif self.load_on_stage_start is not None:
             _load_runner(
-                logdir=self.logdir,
-                runner=runner,
-                mapping=self.load_on_stage_start,
+                logdir=self.logdir, runner=runner, mapping=self.load_on_stage_start,
             )
 
     def on_epoch_end(self, runner: "IRunner") -> None:

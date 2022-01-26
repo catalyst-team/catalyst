@@ -90,35 +90,8 @@ def sort_callbacks_by_order(
     return output
 
 
-def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict, OrderedDict]:
-    """
-    Filters callbacks based on running node.
-    Deletes worker-only callbacks from ``CallbackNode.Master``
-    and master-only callbacks from ``CallbackNode.Worker``.
-
-    Args:
-        callbacks: callbacks
-
-    Returns:
-        Union: filtered callbacks dictionary.
-    """
-    # distributed run setting
-    output = callbacks.copy()
-    rank = get_rank()
-    if rank == 0:  # master node
-        # remove worker-only callbacks on master node
-        for k in list(filter(lambda c: output[c].node == CallbackNode.worker, output)):
-            del output[k]
-    elif rank > 0:  # worker node
-        # remove master-only callbacks on worker nodes
-        for k in list(filter(lambda c: output[c].node == CallbackNode.master, output)):
-            del output[k]
-    return output
-
-
 __all__ = [
     "validate_loaders",
     "sort_callbacks_by_order",
-    "filter_callbacks_by_node",
     "callback_isinstance",
 ]
