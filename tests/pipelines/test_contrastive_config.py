@@ -34,7 +34,9 @@ class ProjectionHead(nn.Module):
     def __init__(self):
         super(ProjectionHead, self).__init__()
         self.seq = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
+            nn.Linear(16, 16, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(16, 16, bias=True),
         )
 
     def forward(self, x):
@@ -159,7 +161,10 @@ def train_experiment(engine):
                                 },
                                 "loaders": "valid",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
                             "scheduler": {"_target_": "SchedulerCallback"},
                             "checkpointer": {
                                 "_target_": "CheckpointCallback",
@@ -235,7 +240,12 @@ def test_classification_on_amp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
     ),
     reason="No CUDA>=2 or AMP found or requriments are not satisfied",
 )
@@ -245,7 +255,12 @@ def test_classification_on_amp_dp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
     ),
     reason="No CUDA>=2 or AMP found or requriments are not satisfied",
 )
@@ -264,7 +279,12 @@ def test_classification_on_apex():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.apex_required,
+        ]
     ),
     reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )
@@ -274,7 +294,12 @@ def test_classification_on_apex_dp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.apex_required,
+        ]
     ),
     reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )

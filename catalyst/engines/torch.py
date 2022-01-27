@@ -64,7 +64,8 @@ class DistributedDataParallelEngine(IEngine):
 
     def mean_reduce_ddp_metrics(self, metrics: Dict):
         metrics = {
-            k: self._mean_reduce(torch.tensor(v, device=self.device)) for k, v in metrics.items()
+            k: self._mean_reduce(torch.tensor(v, device=self.device))
+            for k, v in metrics.items()
         }
         return metrics
 

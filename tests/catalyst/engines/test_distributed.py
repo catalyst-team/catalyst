@@ -42,7 +42,8 @@ class CustomRunner(IRunner):
 
     def get_engine(self):
         return DistributedDataParallelEngine(
-            port=DDP_ADDRESS + random.randint(1, 100), process_group_kwargs={"backend": "nccl"}
+            port=DDP_ADDRESS + random.randint(1, 100),
+            process_group_kwargs={"backend": "nccl"},
         )
 
     def get_callbacks(self, stage: str):
@@ -53,7 +54,11 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
@@ -143,7 +148,10 @@ def test_config_ddp_engine():
                                 "input_key": "logits",
                                 "target_key": "targets",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
                             "test_nn_parallel_distributed_data_parallel": {
                                 "_target_": "DistributedDataParallelTypeChecker"
                             },

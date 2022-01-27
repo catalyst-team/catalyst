@@ -68,12 +68,10 @@ def test_transform_kornia():
 
     loaders = {
         "train": DataLoader(
-            MnistDataset(MNIST(os.getcwd(), train=False)),
-            batch_size=32,
+            MnistDataset(MNIST(os.getcwd(), train=False)), batch_size=32,
         ),
         "valid": DataLoader(
-            MnistDataset(MNIST(os.getcwd(), train=False)),
-            batch_size=32,
+            MnistDataset(MNIST(os.getcwd(), train=False)), batch_size=32,
         ),
     }
 

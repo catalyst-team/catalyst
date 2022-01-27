@@ -179,14 +179,22 @@ class ISelfSupervisedRunner(IRunner):
     def _process_input(self, batch: Mapping[str, Any], **kwargs):
 
         if self.is_kv_model:
-            encoders = [(encoder_name, self.model[encoder_name]) for encoder_name in self.model]
+            encoders = [
+                (encoder_name, self.model[encoder_name]) for encoder_name in self.model
+            ]
         else:
             encoders = [("", self.model)]
 
         for (encoder_name, encoder) in encoders:
-            embedding1, projection1 = encoder(batch[f"{self._augemention_prefix}_left"], **kwargs)
-            embedding2, projection2 = encoder(batch[f"{self._augemention_prefix}_right"], **kwargs)
-            origin_embeddings, projection_origin = encoder(batch[self._input_key], **kwargs)
+            embedding1, projection1 = encoder(
+                batch[f"{self._augemention_prefix}_left"], **kwargs
+            )
+            embedding2, projection2 = encoder(
+                batch[f"{self._augemention_prefix}_right"], **kwargs
+            )
+            origin_embeddings, projection_origin = encoder(
+                batch[self._input_key], **kwargs
+            )
             prefix = f"{encoder_name}_" if encoder_name else ""
             batch = {
                 **batch,

@@ -118,9 +118,9 @@ class BalanceBatchSampler(Sampler):
             num_samples_exists = len(all_cls_inds)
 
             if num_samples_exists < self._k:
-                selected_inds = random.sample(all_cls_inds, k=num_samples_exists) + random.choices(
-                    all_cls_inds, k=self._k - num_samples_exists
-                )
+                selected_inds = random.sample(
+                    all_cls_inds, k=num_samples_exists
+                ) + random.choices(all_cls_inds, k=self._k - num_samples_exists)
             else:
                 selected_inds = random.sample(all_cls_inds, k=self._k)
 
@@ -219,7 +219,8 @@ class DynamicBalanceClassSampler(Sampler):
             key: value / self.min_class_size for key, value in samples_per_class.items()
         }
         self.label2idxes = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
         }
 
         if isinstance(mode, int):

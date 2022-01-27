@@ -88,7 +88,9 @@ class WandbLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **kwargs,
     ) -> None:
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         self.project = project
         self.name = name
         self.entity = entity
@@ -105,7 +107,9 @@ class WandbLogger(ILogger):
         """Internal logger/experiment/etc. from the monitoring system."""
         return self.run
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, prefix=""):
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str, prefix=""
+    ):
         for key, value in metrics.items():
             self.run.log({f"{key}_{prefix}/{loader_key}": value}, step=step)
 
@@ -135,11 +139,17 @@ class WandbLogger(ILogger):
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="batch"
+                metrics=metrics,
+                step=global_sample_step,
+                loader_key=loader_key,
+                prefix="batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
             self._log_metrics(
-                metrics=metrics, step=global_sample_step, loader_key=loader_key, prefix="epoch"
+                metrics=metrics,
+                step=global_sample_step,
+                loader_key=loader_key,
+                prefix="epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             loader_key = "_epoch_"

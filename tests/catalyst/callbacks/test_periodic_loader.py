@@ -44,7 +44,10 @@ def test_multiple_stages_with_magic_callback():
                 and runner.epoch > 1
                 and self._after_first_validation
             ):
-                msg = f"Epochs (epoch={runner.epoch}) " "without valid loader can't be best!"
+                msg = (
+                    f"Epochs (epoch={runner.epoch}) "
+                    "without valid loader can't be best!"
+                )
                 assert not runner.is_best_valid, msg
             else:
                 assert runner.valid_metrics[runner.valid_metric] is not None
@@ -852,7 +855,9 @@ def test_loading_best_state_at_end_with_custom_scores():
         "train": {i: i * 0.1 for i in range(1, 11)},
         "valid": {
             i: v
-            for i, v in enumerate([0.05, 0.1, 0.15, 0.15, 0.2, 0.18, 0.22, 0.11, 0.13, 0.12], 1)
+            for i, v in enumerate(
+                [0.05, 0.1, 0.15, 0.15, 0.2, 0.18, 0.22, 0.11, 0.13, 0.12], 1
+            )
         },
     }
 
@@ -870,7 +875,10 @@ def test_loading_best_state_at_end_with_custom_scores():
         minimize_valid_metric=False,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="metric", minimize=True, valid=period
+                valid_loader_key="valid",
+                valid_metric_key="metric",
+                minimize=True,
+                valid=period,
             ),
             CheckRunCallback(num_epoch_steps=n_epochs),
             Metric(metrics),
@@ -940,11 +948,18 @@ def test_multiple_best_checkpoints():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=period
+                valid_loader_key="valid",
+                valid_metric_key="loss",
+                minimize=True,
+                valid=period,
             ),
             CheckRunCallback(num_epoch_steps=n_epochs),
             CheckpointCallback(
-                logdir=logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                logdir=logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
         ],
     )

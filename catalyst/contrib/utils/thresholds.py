@@ -40,7 +40,10 @@ def get_baseline_thresholds(
 
 
 def get_binary_threshold(
-    scores: np.ndarray, labels: np.ndarray, objective: METRIC_FN, num_thresholds: int = 100
+    scores: np.ndarray,
+    labels: np.ndarray,
+    objective: METRIC_FN,
+    num_thresholds: int = 100,
 ) -> Tuple[float, float]:
     """Finds best threshold for binary classification task based on cross-validation estimates.
 
@@ -101,7 +104,9 @@ def get_multiclass_thresholds(
 
     for threshold in sorted(classes_by_threshold):
         for class_index in classes_by_threshold[threshold]:
-            metric_value = objective(labels[:, class_index], scores[:, class_index] >= threshold)
+            metric_value = objective(
+                labels[:, class_index], scores[:, class_index] >= threshold
+            )
             if metric_value > metrics[class_index]:
                 metrics[class_index] = metric_value
                 thresholds[class_index] = threshold
@@ -109,7 +114,9 @@ def get_multiclass_thresholds(
     return metrics, thresholds
 
 
-def get_multilabel_thresholds(scores: np.ndarray, labels: np.ndarray, objective: METRIC_FN):
+def get_multilabel_thresholds(
+    scores: np.ndarray, labels: np.ndarray, objective: METRIC_FN
+):
     """Finds best thresholds for multilabel classification task.
 
     Args:
@@ -127,7 +134,9 @@ def get_multilabel_thresholds(scores: np.ndarray, labels: np.ndarray, objective:
 
     for class_index in range(num_classes):
         best_metric, best_threshold = get_binary_threshold(
-            labels=labels[:, class_index], scores=scores[:, class_index], objective=objective
+            labels=labels[:, class_index],
+            scores=scores[:, class_index],
+            objective=objective,
         )
         metrics[class_index] = best_metric
         thresholds[class_index] = best_threshold
@@ -262,7 +271,9 @@ def get_thresholds_greedy(
             current_thresholds = thresholds.copy()
             class_scores = []
             class_thresholds = np.linspace(
-                scores[:, class_index].min(), scores[:, class_index].max(), num=num_thresholds
+                scores[:, class_index].min(),
+                scores[:, class_index].max(),
+                num=num_thresholds,
             )
 
             for threshold in class_thresholds:
@@ -398,7 +409,10 @@ def get_best_multilabel_thresholds(
         if isinstance(baseline_thresholds, (int, float)):
             baseline_thresholds = [baseline_thresholds] * num_classes
         metric_value, thresholds_value = get_multilabel_thresholds_greedy(
-            labels=labels, scores=scores, objective=objective, thresholds=baseline_thresholds
+            labels=labels,
+            scores=scores,
+            objective=objective,
+            thresholds=baseline_thresholds,
         )
         if metric_value > best_metric:
             best_metric = metric_value
@@ -437,7 +451,10 @@ def get_best_multiclass_thresholds(
         if isinstance(baseline_thresholds, (int, float)):
             baseline_thresholds = [baseline_thresholds] * num_classes
         metric_value, thresholds_value = get_multiclass_thresholds_greedy(
-            labels=labels, scores=scores, objective=objective, thresholds=baseline_thresholds
+            labels=labels,
+            scores=scores,
+            objective=objective,
+            thresholds=baseline_thresholds,
         )
         if metric_value > best_metric:
             best_metric = metric_value

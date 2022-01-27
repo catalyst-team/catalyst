@@ -31,7 +31,10 @@ def train_experiment(device, engine=None):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss",
         )
         callbacks = [
             dl.BatchTransformCallback(
@@ -40,7 +43,9 @@ def train_experiment(device, engine=None):
                 input_key="logits",
                 output_key="scores",
             ),
-            dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+            dl.MultilabelAccuracyCallback(
+                input_key="scores", target_key="targets", threshold=0.5
+            ),
             dl.MultilabelPrecisionRecallF1SupportCallback(
                 input_key="scores", target_key="targets", num_classes=num_classes
             ),
@@ -49,7 +54,11 @@ def train_experiment(device, engine=None):
             engine is None
             or not isinstance(
                 engine,
-                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+                (
+                    dl.AMPEngine,
+                    dl.DataParallelAMPEngine,
+                    dl.DistributedDataParallelAMPEngine,
+                ),
             )
         ):
             callbacks.append(dl.AUCCallback(input_key="scores", target_key="targets"))
@@ -80,23 +89,31 @@ def test_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -118,7 +135,9 @@ def test_on_amp_ddp():
 
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_on_apex():
     train_experiment(None, dl.APEXEngine())
 

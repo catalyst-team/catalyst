@@ -37,7 +37,9 @@ def get_convolution_net(
             "stride": stride,
             "groups": group,
         }
-        for bias, kernel_size, stride, group in zip(use_bias, kernel_sizes, strides, groups)
+        for bias, kernel_size, stride, group in zip(
+            use_bias, kernel_sizes, strides, groups
+        )
     ]
 
     if dropout_rate is not None:
@@ -45,7 +47,8 @@ def get_convolution_net(
             {"module": nn.Dropout2d, "p": dropout_rate}
             if isinstance(dropout_rate, float)
             else [
-                {"module": nn.Dropout2d, "p": p} if p is not None else None for p in dropout_rate
+                {"module": nn.Dropout2d, "p": p} if p is not None else None
+                for p in dropout_rate
             ]
         )
     else:
@@ -87,7 +90,10 @@ def get_linear_net(
         dropout_fn = (
             {"module": nn.Dropout, "p": dropout_rate}
             if isinstance(dropout_rate, float)
-            else [{"module": nn.Dropout, "p": p} if p is not None else None for p in dropout_rate]
+            else [
+                {"module": nn.Dropout, "p": p} if p is not None else None
+                for p in dropout_rate
+            ]
         )
     else:
         dropout_fn = None

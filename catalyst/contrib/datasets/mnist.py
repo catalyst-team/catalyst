@@ -4,7 +4,10 @@ import os
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.data.dataset_ml import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 from catalyst.contrib.datasets.misc import (
     download_and_extract_archive,
     read_sn3_pascalvincent_tensor,
@@ -108,13 +111,17 @@ class MNIST(Dataset):
             self.download()
 
         if not self._check_exists():
-            raise RuntimeError("Dataset not found. You can use download=True to download it")
+            raise RuntimeError(
+                "Dataset not found. You can use download=True to download it"
+            )
 
         if self.train:
             data_file = self.training_file
         else:
             data_file = self.test_file
-        self.data, self.targets = torch.load(os.path.join(self.processed_folder, data_file))
+        self.data, self.targets = torch.load(
+            os.path.join(self.processed_folder, data_file)
+        )
         self.data = torch.tensor(self.data)
         self.targets = torch.tensor(self.targets)
 
@@ -383,7 +390,10 @@ class PartialMNIST(MNIST):
 
     @staticmethod
     def _prepare_subset(
-        full_data: torch.Tensor, full_targets: torch.Tensor, num_samples: int, classes: Sequence
+        full_data: torch.Tensor,
+        full_targets: torch.Tensor,
+        num_samples: int,
+        classes: Sequence,
     ):
         counts = {d: 0 for d in classes}
         indexes = []

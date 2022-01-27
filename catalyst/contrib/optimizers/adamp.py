@@ -152,7 +152,9 @@ class AdamP(Optimizer):
                 exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
                 exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
 
-                denom = (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(group["eps"])
+                denom = (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(
+                    group["eps"]
+                )
                 step_size = group["lr"] / bias_correction1
 
                 if nesterov:

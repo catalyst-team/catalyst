@@ -147,7 +147,9 @@ class TracingCallback(Callback):
         model = runner.engine.sync_device(runner.model)
         batch = tuple(runner.batch[key] for key in self.input_key)
         batch = runner.engine.sync_device(batch)
-        traced_model = trace_model(model=model, batch=batch, method_name=self.method_name)
+        traced_model = trace_model(
+            model=model, batch=batch, method_name=self.method_name
+        )
         torch.jit.save(traced_model, self.filename)
 
 

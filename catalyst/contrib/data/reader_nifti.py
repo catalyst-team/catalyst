@@ -15,7 +15,10 @@ class NiftiReader(IReader):
     """
 
     def __init__(
-        self, input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None
+        self,
+        input_key: str,
+        output_key: Optional[str] = None,
+        rootpath: Optional[str] = None,
     ):
         """
         Args:

@@ -46,7 +46,11 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "test_nn_module": ModuleTypeChecker(),
             "test_device": DeviceCheckCallback(self._device, logger=logger),
@@ -120,7 +124,10 @@ def train_from_config(device):
                                 "input_key": "logits",
                                 "target_key": "targets",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
                             "test_nn_module": {"_target_": "ModuleTypeChecker"},
                             "test_device": {
                                 "_target_": "DeviceCheckCallback",
@@ -130,7 +137,10 @@ def train_from_config(device):
                                 "_target_": "LossMinimizationCallback",
                                 "key": "loss",
                             },
-                            "test_logits_type": {"_target_": "TensorTypeChecker", "key": "logits"},
+                            "test_logits_type": {
+                                "_target_": "TensorTypeChecker",
+                                "key": "logits",
+                            },
                         },
                     },
                 },

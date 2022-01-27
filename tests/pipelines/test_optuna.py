@@ -25,17 +25,14 @@ def train_experiment(device, engine=None):
             num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
             loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
+                "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+                "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
             }
             model = nn.Sequential(
-                nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+                nn.Flatten(),
+                nn.Linear(784, num_hidden),
+                nn.ReLU(),
+                nn.Linear(num_hidden, 10),
             )
             optimizer = torch.optim.Adam(model.parameters(), lr=lr)
             criterion = nn.CrossEntropyLoss()
@@ -51,7 +48,10 @@ def train_experiment(device, engine=None):
                 loaders=loaders,
                 callbacks={
                     "optuna": dl.OptunaPruningCallback(
-                        loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
+                        loader_key="valid",
+                        metric_key="accuracy01",
+                        minimize=False,
+                        trial=trial,
                     ),
                     "accuracy": dl.AccuracyCallback(
                         input_key="logits", target_key="targets", num_classes=10
@@ -79,7 +79,8 @@ def test_on_cpu():
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.optuna_required), reason="CUDA device is not available"
+    not (IS_CUDA_AVAILABLE and SETTINGS.optuna_required),
+    reason="CUDA device is not available",
 )
 def test_on_torch_cuda0():
     train_experiment("cuda:0")

@@ -52,7 +52,11 @@ class PeriodicLoaderCallback(Callback):
     """
 
     def __init__(
-        self, valid_loader_key: str, valid_metric_key: str, minimize: bool = True, **kwargs
+        self,
+        valid_loader_key: str,
+        valid_metric_key: str,
+        minimize: bool = True,
+        **kwargs,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.internal)
@@ -66,7 +70,8 @@ class PeriodicLoaderCallback(Callback):
         for loader, period in kwargs.items():
             if not isinstance(period, (int, float)):
                 raise TypeError(
-                    "Expected loader period type is int/float " f"but got {type(period)}!"
+                    "Expected loader period type is int/float "
+                    f"but got {type(period)}!"
                 )
             period = int(period)
             if period < 0:
@@ -86,13 +91,17 @@ class PeriodicLoaderCallback(Callback):
         for name, loader in runner.loaders.items():
             self.loaders[name] = loader
         # stage validation loader
-        is_loaders_match = all(loader in runner.loaders for loader in self.loader_periods.keys())
+        is_loaders_match = all(
+            loader in runner.loaders for loader in self.loader_periods.keys()
+        )
         is_same_loaders_number = len(self.loader_periods) == len(runner.loaders)
         if is_same_loaders_number and is_loaders_match:
             # find potential epoch with zero loaders
             zero_loaders_epochs = list(
                 filter(
-                    lambda n: all((p == 0 or n % p != 0) for p in self.loader_periods.values()),
+                    lambda n: all(
+                        (p == 0 or n % p != 0) for p in self.loader_periods.values()
+                    ),
                     range(1, runner.stage_epoch_len + 1),
                 )
             )
@@ -102,7 +111,8 @@ class PeriodicLoaderCallback(Callback):
 
         if self.loader_periods.get(self.valid_loader, 1) < 1:
             raise ValueError(
-                f"Period for a validation loader ('{self.valid_loader}') " "should be > 0!"
+                f"Period for a validation loader ('{self.valid_loader}') "
+                "should be > 0!"
             )
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -145,7 +155,9 @@ class PeriodicLoaderCallback(Callback):
         """
         if self.valid_loader not in runner.loaders:
             runner.epoch_metrics[self.valid_loader] = {
-                self.valid_metric: float("+inf") if self.minimize_metric else float("-inf")
+                self.valid_metric: float("+inf")
+                if self.minimize_metric
+                else float("-inf")
             }
 
 

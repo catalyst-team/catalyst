@@ -118,13 +118,18 @@ class MixupCallback(Callback):
         use ControlFlowCallback in order to evaluate model(see example)
     """
 
-    def __init__(self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True):
+    def __init__(
+        self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True
+    ):
         """Init."""
         assert isinstance(keys, (str, list, tuple)), (
             f"keys must be str of list[str]," f" get: {type(keys)}"
         )
         assert alpha >= 0, "alpha must be>=0"
-        assert mode in ("add", "replace"), f"mode must be in 'add', 'replace', get: {mode}"
+        assert mode in (
+            "add",
+            "replace",
+        ), f"mode must be in 'add', 'replace', get: {mode}"
         super().__init__(order=CallbackOrder.Internal)
         if isinstance(keys, str):
             keys = [keys]

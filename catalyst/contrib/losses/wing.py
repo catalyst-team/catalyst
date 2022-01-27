@@ -66,7 +66,9 @@ class WingLoss(nn.Module):
             @TODO: Docs. Contribution is welcome.
         """
         super().__init__()
-        self.loss_fn = partial(wing_loss, width=width, curvature=curvature, reduction=reduction)
+        self.loss_fn = partial(
+            wing_loss, width=width, curvature=curvature, reduction=reduction
+        )
 
     def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """

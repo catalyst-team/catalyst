@@ -74,7 +74,9 @@ def main(cfg: DictConfig):
 
     if get_rank() <= 0:
         dump_environment(logdir=runner.logdir, config=cfg)
-        dump_code(expdir=hydra.utils.to_absolute_path(cfg.args.expdir), logdir=runner.logdir)
+        dump_code(
+            expdir=hydra.utils.to_absolute_path(cfg.args.expdir), logdir=runner.logdir
+        )
 
     runner.run()
 

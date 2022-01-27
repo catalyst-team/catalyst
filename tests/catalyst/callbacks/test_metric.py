@@ -109,7 +109,12 @@ class ReIDCustomRunner(dl.SupervisedRunner):
         (
             ["test_1", "test_2", "test_3"],
             ["test_4"],
-            {"test_1": "test_1", "test_2": "test_2", "test_3": "test_3", "test_4": "test_4"},
+            {
+                "test_1": "test_1",
+                "test_2": "test_2",
+                "test_3": "test_3",
+                "test_4": "test_4",
+            },
         ),
         (
             {"test_1": "test_2", "test_3": "test_4"},
@@ -119,7 +124,12 @@ class ReIDCustomRunner(dl.SupervisedRunner):
         (
             {"test_1": "test_2", "test_3": "test_4"},
             {"test_5": "test_6", "test_7": "test_8"},
-            {"test_1": "test_2", "test_3": "test_4", "test_5": "test_6", "test_7": "test_8"},
+            {
+                "test_1": "test_2",
+                "test_3": "test_4",
+                "test_5": "test_6",
+                "test_7": "test_8",
+            },
         ),
     ),
 )
@@ -130,7 +140,9 @@ def test_format_keys(
 ) -> None:
     """Check MetricCallback converts keys correctly"""
     accuracy = AccuracyMetric()
-    callback = BatchMetricCallback(metric=accuracy, input_key=input_key, target_key=target_key)
+    callback = BatchMetricCallback(
+        metric=accuracy, input_key=input_key, target_key=target_key
+    )
     assert callback._keys == keys
 
 
@@ -149,7 +161,9 @@ def test_classification_pipeline():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters())
 
-    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets")
+    runner = dl.SupervisedRunner(
+        input_key="features", output_key="logits", target_key="targets"
+    )
     with TemporaryDirectory() as logdir:
         runner.train(
             model=model,
@@ -217,9 +231,14 @@ def test_metric_learning_pipeline():
     with TemporaryDirectory() as tmp_dir:
         dataset_train = datasets.MnistMLDataset(root=tmp_dir, download=True)
         sampler = data.BatchBalanceClassSampler(
-            labels=dataset_train.get_labels(), num_classes=3, num_samples=10, num_batches=10
+            labels=dataset_train.get_labels(),
+            num_classes=3,
+            num_samples=10,
+            num_batches=10,
         )
-        train_loader = DataLoader(dataset=dataset_train, batch_sampler=sampler, num_workers=0)
+        train_loader = DataLoader(
+            dataset=dataset_train, batch_sampler=sampler, num_workers=0
+        )
         dataset_val = datasets.MnistQGDataset(root=tmp_dir, gallery_fraq=0.2)
         val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
@@ -227,7 +246,9 @@ def test_metric_learning_pipeline():
         optimizer = Adam(model.parameters(), lr=0.001)
 
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         callbacks = OrderedDict(
             {
@@ -271,9 +292,14 @@ def test_reid_pipeline():
         # 1. train and valid loaders
         train_dataset = MnistMLDataset(root=os.getcwd())
         sampler = data.BatchBalanceClassSampler(
-            labels=train_dataset.get_labels(), num_classes=3, num_samples=10, num_batches=20
+            labels=train_dataset.get_labels(),
+            num_classes=3,
+            num_samples=10,
+            num_batches=20,
         )
-        train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler, num_workers=0)
+        train_loader = DataLoader(
+            dataset=train_dataset, batch_sampler=sampler, num_workers=0
+        )
 
         valid_dataset = MnistReIDQGDataset(root=os.getcwd(), gallery_fraq=0.2)
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
@@ -284,7 +310,9 @@ def test_reid_pipeline():
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.AllTripletsSampler(max_output_triplets=1000)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         callbacks = [
@@ -305,7 +333,10 @@ def test_reid_pipeline():
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+                valid_loader_key="valid",
+                valid_metric_key="cmc01",
+                minimize=False,
+                valid=2,
             ),
         ]
 

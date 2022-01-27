@@ -62,7 +62,9 @@ class PruningCallback(Callback):
                 "You disabled pruning pruning both on epoch and stage end."
                 "Model won't be pruned by this callback."
             )
-        self.remove_reparametrization_on_stage_end = remove_reparametrization_on_stage_end
+        self.remove_reparametrization_on_stage_end = (
+            remove_reparametrization_on_stage_end
+        )
         self.keys_to_prune = keys_to_prune
         self.amount = amount
         self.layers_to_prune = layers_to_prune

@@ -45,7 +45,9 @@ def boolean_flag(
     names = ["--" + name]
     if shorthand is not None:
         names.append("-" + shorthand)
-    parser.add_argument(*names, action="store_true", default=default, dest=dest, help=help)
+    parser.add_argument(
+        *names, action="store_true", default=default, dest=dest, help=help
+    )
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 
@@ -281,7 +283,9 @@ def _make_hashable(o):
     if isinstance(o, (tuple, list)):
         return tuple(((type(o).__name__, _make_hashable(e)) for e in o))
     if isinstance(o, dict):
-        return tuple(sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items()))
+        return tuple(
+            sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items())
+        )
     if isinstance(o, (set, frozenset)):
         return tuple(sorted((type(o).__name__, _make_hashable(e)) for e in o))
     return o
@@ -349,7 +353,9 @@ def make_tuple(tuple_like):
     Returns:
         tuple or list
     """
-    tuple_like = tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
+    tuple_like = (
+        tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
+    )
     return tuple_like
 
 

@@ -168,7 +168,9 @@ def get_aggregated_metrics(
     for i in range(num_classes):
         precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)
         recall_values[i] = recall(tp=tp[i], fn=fn[i], zero_division=zero_division)
-        f1_values[i] = f1score(precision_value=precision_values[i], recall_value=recall_values[i])
+        f1_values[i] = f1score(
+            precision_value=precision_values[i], recall_value=recall_values[i]
+        )
 
     per_class = (
         precision_values,

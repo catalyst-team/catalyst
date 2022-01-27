@@ -64,7 +64,9 @@ class SoftUpdateCallaback(Callback):
         """
         if runner.is_train_loader and self.scope == "on_batch_end":
             soft_update(
-                runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
+                runner.model[self.target_model_key],
+                runner.model[self.source_model_key],
+                self.tau,
             )
 
     def on_batch_start(self, runner: "IRunner") -> None:
@@ -75,7 +77,9 @@ class SoftUpdateCallaback(Callback):
         """
         if runner.is_train_loader and self.scope == "on_batch_start":
             soft_update(
-                runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
+                runner.model[self.target_model_key],
+                runner.model[self.source_model_key],
+                self.tau,
             )
 
     def on_epoch_end(self, runner: "IRunner") -> None:
@@ -86,7 +90,9 @@ class SoftUpdateCallaback(Callback):
         """
         if runner.is_train_loader and self.scope == "on_epoch_end":
             soft_update(
-                runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
+                runner.model[self.target_model_key],
+                runner.model[self.source_model_key],
+                self.tau,
             )
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -97,7 +103,9 @@ class SoftUpdateCallaback(Callback):
         """
         if runner.is_train_loader and self.scope == "on_epoch_start":
             soft_update(
-                runner.model[self.target_model_key], runner.model[self.source_model_key], self.tau
+                runner.model[self.target_model_key],
+                runner.model[self.source_model_key],
+                self.tau,
             )
 
 

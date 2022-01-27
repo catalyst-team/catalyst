@@ -32,12 +32,19 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
+        help="path to latest checkpoint",
     )
     parser.add_argument(
         "--autoresume",
         type=str,
-        help=("try automatically resume from logdir/{best,last}_full.pth " "if --resume is empty"),
+        help=(
+            "try automatically resume from logdir/{best,last}_full.pth "
+            "if --resume is empty"
+        ),
         required=False,
         choices=["best", "last"],
         default=None,
@@ -62,7 +69,10 @@ def build_args(parser: ArgumentParser):
         help="Run in half-precision mode",
     )
     boolean_flag(
-        parser, "ddp", default=os.getenv("USE_DDP", "0") == "1", help="Run in distributed mode"
+        parser,
+        "ddp",
+        default=os.getenv("USE_DDP", "0") == "1",
+        help="Run in distributed mode",
     )
     boolean_flag(parser, "verbose", default=None)
     boolean_flag(parser, "timeit", default=None)

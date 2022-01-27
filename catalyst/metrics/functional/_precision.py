@@ -56,7 +56,11 @@ def precision(
         # tensor([0.5000, 0.5000]
     """
     precision_score, _, _, _, = precision_recall_fbeta_support(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, eps=eps, num_classes=num_classes
+        outputs=outputs,
+        targets=targets,
+        argmax_dim=argmax_dim,
+        eps=eps,
+        num_classes=num_classes,
     )
     return precision_score
 

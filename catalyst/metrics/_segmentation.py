@@ -78,7 +78,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
-            self.class_names = [f"class_{idx:02d}" for idx in range(len(self.statistics))]
+            self.class_names = [
+                f"class_{idx:02d}" for idx in range(len(self.statistics))
+            ]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
                 f"the number of weights must be equal to the number of classes, got weights"
@@ -149,7 +151,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             weighted_metric = 0
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"
+            ] = weighted_metric
         return metrics
 
     def compute(self):
@@ -187,7 +191,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
             for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+                total_statistics[stats_name] = (
+                    total_statistics.get(stats_name, 0) + value
+                )
 
         macro_metric /= len(self.statistics)
         micro_metric = self.metric_fn(**total_statistics)
@@ -219,7 +225,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
         if self.weights is not None:
             # @TODO: rename this one
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"
+            ] = weighted_metric
         return metrics
 
 

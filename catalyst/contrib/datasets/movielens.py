@@ -270,8 +270,12 @@ class MovieLens(Dataset):
 
         num_users, num_items = self._get_dimensions(train_parsed, test_parsed)
 
-        train = self._build_interaction_matrix(num_users, num_items, self._parse(train_raw))
-        test = self._build_interaction_matrix(num_users, num_items, self._parse(test_raw))
+        train = self._build_interaction_matrix(
+            num_users, num_items, self._parse(train_raw)
+        )
+        test = self._build_interaction_matrix(
+            num_users, num_items, self._parse(test_raw)
+        )
         assert train.shape == test.shape
 
         with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
@@ -531,7 +535,10 @@ class MovieLens20M(Dataset):
         url = self.resources[0]
 
         download_and_extract_archive(
-            url=url, download_root=self.raw_folder, filename=self.filename, remove_finished=True,
+            url=url,
+            download_root=self.raw_folder,
+            filename=self.filename,
+            remove_finished=True,
         )
 
     def _read_raw_movielens_data(self):
@@ -547,7 +554,9 @@ class MovieLens20M(Dataset):
         if self.sample:
             movies = pd.read_csv(path + "/ml-20m/movies.csv", nrows=self.nrows)
             ratings = pd.read_csv(path + "/ml-20m/ratings.csv", nrows=self.nrows)
-            genome_scores = pd.read_csv(path + "/ml-20m/genome-scores.csv", nrows=self.nrows)
+            genome_scores = pd.read_csv(
+                path + "/ml-20m/genome-scores.csv", nrows=self.nrows
+            )
             genome_tags = pd.read_csv(path + "/ml-20m/genome-tags.csv", nrows=self.nrows)
             tags = pd.read_csv(path + "/ml-20m/tags.csv", nrows=self.nrows)
         else:
@@ -576,7 +585,10 @@ class MovieLens20M(Dataset):
             sparse user2item interaction matrix
         """
         csr_matrix = sp.coo_matrix(
-            (ratings["rating"].astype(np.float32), (ratings["movieId"], ratings["userId"]))
+            (
+                ratings["rating"].astype(np.float32),
+                (ratings["movieId"], ratings["userId"]),
+            )
         )
 
         interaction_matrix = torch.sparse.LongTensor(

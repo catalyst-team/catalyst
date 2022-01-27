@@ -39,7 +39,9 @@ def test_hitrate():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    hitrate_at1, hitrate_at2, hitrate_at3, hitrate_at4 = hitrate(y_pred_torch, y_true_torch, k)
+    hitrate_at1, hitrate_at2, hitrate_at3, hitrate_at4 = hitrate(
+        y_pred_torch, y_true_torch, k
+    )
 
     assert hitrate_at1 == 0.0
     assert hitrate_at2 == 0.25

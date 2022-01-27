@@ -64,7 +64,9 @@ def _mlflow_log_params_dict(
             except mlflow.exceptions.MlflowException:
                 continue
         else:
-            raise ValueError(f"Unknown type of logging value: type({value})={type(value)}")
+            raise ValueError(
+                f"Unknown type of logging value: type({value})={type(value)}"
+            )
 
 
 class MLflowLogger(ILogger):
@@ -145,7 +147,9 @@ class MLflowLogger(ILogger):
         log_batch_metrics: bool = SETTINGS.log_batch_metrics,
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ) -> None:
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         self.experiment = experiment
         self.run = run
         self.tracking_uri = tracking_uri
@@ -195,7 +199,10 @@ class MLflowLogger(ILogger):
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics,
+                step=global_batch_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             for loader_key, per_loader_metrics in metrics.items():
@@ -269,8 +276,12 @@ class MLflowLogger(ILogger):
             stage_params = hparams.get("stages", {}).get(stage_key, {})
             _mlflow_log_params_dict(stage_params, log_type="param", exclude=self.exclude)
 
-            experiment_params = {key: value for key, value in hparams.items() if key != "stages"}
-            _mlflow_log_params_dict(experiment_params, log_type="param", exclude=self.exclude)
+            experiment_params = {
+                key: value for key, value in hparams.items() if key != "stages"
+            }
+            _mlflow_log_params_dict(
+                experiment_params, log_type="param", exclude=self.exclude
+            )
 
     def log_artifact(
         self,

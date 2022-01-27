@@ -55,14 +55,18 @@ def train_experiment(device, engine=None):
         # 2. model, optimizer and scheduler
         hidden_size, out_features = 20, 16
         model = nn.Sequential(
-            nn.Linear(num_features, hidden_size), nn.ReLU(), nn.Linear(hidden_size, out_features)
+            nn.Linear(num_features, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, out_features),
         )
         optimizer = Adam(model.parameters(), lr=LR)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):

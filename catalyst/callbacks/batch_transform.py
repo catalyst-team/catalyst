@@ -210,7 +210,9 @@ class BatchTransformCallback(Callback):
         output_key = output_key or input_key
         if output_key is not None:
             if input_key is None:
-                raise TypeError("You should define input_key in " "case if output_key is not None")
+                raise TypeError(
+                    "You should define input_key in " "case if output_key is not None"
+                )
             if not isinstance(output_key, (list, str)):
                 raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
@@ -220,7 +222,9 @@ class BatchTransformCallback(Callback):
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
         else:
-            raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start"]')
+            raise TypeError(
+                'Expected scope to be on of the ["on_batch_end", "on_batch_start"]'
+            )
         self.input_key = input_key
         self.output_key = output_key
         self.transform = transform
@@ -228,7 +232,9 @@ class BatchTransformCallback(Callback):
     def _handle_value(self, runner):
         batch_in = [runner.batch[key] for key in self.input_key]
         batch_out = self.transform(*batch_in)
-        runner.batch.update(**{key: value for key, value in zip(self.output_key, batch_out)})
+        runner.batch.update(
+            **{key: value for key, value in zip(self.output_key, batch_out)}
+        )
 
     def _handle_key_value(self, runner):
         runner.batch = self.transform(runner.batch)

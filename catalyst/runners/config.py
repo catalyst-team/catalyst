@@ -9,7 +9,8 @@ from torch.utils.data import DataLoader, Dataset
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
-from catalyst.core._misc import callback_isinstance
+from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
+from catalyst.core.misc import callback_isinstance
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
@@ -24,7 +25,6 @@ from catalyst.runners._misc import (
     get_loaders_from_params,
     get_model_parameters,
 )
-from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     RunnerCriterion,
@@ -37,7 +37,7 @@ from catalyst.typing import (
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class ConfigRunner(IRunner):
@@ -242,14 +242,22 @@ class ConfigRunner(IRunner):
         Returns:
             Dict of samplers
         """
-        samplers_params = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
+        samplers_params = get_by_keys(
+            self._stage_config, stage, "loaders", "samplers", default={}
+        )
         samplers = REGISTRY.get_from_params(**samplers_params)
         return OrderedDict(samplers)
 
-    def _get_loaders_from_params(self, **params) -> "Optional[OrderedDict[str, DataLoader]]":
+    def _get_loaders_from_params(
+        self, **params
+    ) -> "Optional[OrderedDict[str, DataLoader]]":
         """Creates dataloaders from ``**params`` parameters."""
         loaders = dict(REGISTRY.get_from_params(**params))
-        return loaders if all(isinstance(dl, DataLoader) for dl in loaders.values()) else None
+        return (
+            loaders
+            if all(isinstance(dl, DataLoader) for dl in loaders.values())
+            else None
+        )
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
@@ -295,13 +303,17 @@ class ConfigRunner(IRunner):
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
         model: RunnerModel = (
-            self._get_model_from_params(**model_params) if self.model is None else self.model
+            self._get_model_from_params(**model_params)
+            if self.model is None
+            else self.model
         )
         return model
 
     def get_criterion(self, stage: str) -> RunnerCriterion:
         """Returns the criterion for a given stage."""
-        criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
+        criterion_params = get_by_keys(
+            self._stage_config, stage, "criterion", default={}
+        )
         criterion = REGISTRY.get_from_params(**criterion_params)
         return criterion or None
 
@@ -337,7 +349,9 @@ class ConfigRunner(IRunner):
 
         # instantiate optimizer
         # use `shared_params` to pass model params to the nested optimizers
-        optimizer = REGISTRY.get_from_params(**params, shared_params={"params": model_params})
+        optimizer = REGISTRY.get_from_params(
+            **params, shared_params={"params": model_params}
+        )
         return optimizer
 
     def get_optimizer(self, model: RunnerModel, stage: str) -> RunnerOptimizer:
@@ -354,7 +368,9 @@ class ConfigRunner(IRunner):
         if "optimizer" not in self._stage_config[stage]:
             return None
 
-        optimizer_params = get_by_keys(self._stage_config, stage, "optimizer", default={})
+        optimizer_params = get_by_keys(
+            self._stage_config, stage, "optimizer", default={}
+        )
         optimizer_params = deepcopy(optimizer_params)
         is_key_value = optimizer_params.pop("_key_value", False)
 
@@ -372,7 +388,9 @@ class ConfigRunner(IRunner):
         return optimizer
 
     @staticmethod
-    def _get_scheduler_from_params(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
+    def _get_scheduler_from_params(
+        *, optimizer: RunnerOptimizer, **params
+    ) -> RunnerScheduler:
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
@@ -395,13 +413,19 @@ class ConfigRunner(IRunner):
         """Returns the scheduler for a given stage."""
         if "scheduler" not in self._stage_config[stage]:
             return None
-        scheduler_params = get_by_keys(self._stage_config, stage, "scheduler", default={})
-        scheduler = self._get_scheduler_from_params(optimizer=optimizer, **scheduler_params)
+        scheduler_params = get_by_keys(
+            self._stage_config, stage, "scheduler", default={}
+        )
+        scheduler = self._get_scheduler_from_params(
+            optimizer=optimizer, **scheduler_params
+        )
         return scheduler
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
-        callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
+        callbacks_params = get_by_keys(
+            self._stage_config, stage, "callbacks", default={}
+        )
         callbacks = OrderedDict(REGISTRY.get_from_params(**callbacks_params))
 
         is_callback_exists = lambda callback_fn: any(

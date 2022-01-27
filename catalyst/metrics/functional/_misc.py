@@ -40,13 +40,16 @@ def process_multiclass_components(
     if outputs.dim() == targets.dim() + 1:
         # looks like we have scores/probabilities in our outputs
         # let's convert them to final model predictions
-        num_classes = max(outputs.shape[argmax_dim], int(targets.max().detach().item() + 1))
+        num_classes = max(
+            outputs.shape[argmax_dim], int(targets.max().detach().item() + 1)
+        )
         outputs = torch.argmax(outputs, dim=argmax_dim)
     if num_classes is None:
         # as far as we expect the outputs/targets tensors to be int64
         # we could find number of classes as max available number
         num_classes = max(
-            int(outputs.max().detach().item() + 1), int(targets.max().detach().item() + 1)
+            int(outputs.max().detach().item() + 1),
+            int(targets.max().detach().item() + 1),
         )
 
     if outputs.dim() == 1:
@@ -74,7 +77,9 @@ def process_multiclass_components(
     return outputs, targets, num_classes
 
 
-def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def process_recsys_components(
+    outputs: torch.Tensor, targets: torch.Tensor
+) -> torch.Tensor:
     """
     General pre-processing for calculation recsys metrics
 
@@ -201,7 +206,10 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None
+    outputs: Tensor,
+    targets: Tensor,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, int]:
     """
     Computes the number of true negative, false positive,

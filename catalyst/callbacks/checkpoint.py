@@ -439,7 +439,9 @@ class CheckpointCallback(ICheckpointCallback):
                 "requires both `loader_key` and `metric_key` specified."
             )
             self._use_model_selection = True
-            self.minimize = minimize if minimize is not None else True  # loss-oriented selection
+            self.minimize = (
+                minimize if minimize is not None else True
+            )  # loss-oriented selection
         else:
             self._use_model_selection = False
             self.minimize = False  # epoch-num-oriented selection
@@ -556,11 +558,15 @@ class CheckpointCallback(ICheckpointCallback):
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = Path(last_item[1])
-            last_filepaths = last_filepath.parent.glob(last_filepath.name.replace(".pth", "*"))
+            last_filepaths = last_filepath.parent.glob(
+                last_filepath.name.replace(".pth", "*")
+            )
             for filepath in last_filepaths:
                 os.remove(filepath)
 
-    def _prepare_metrics_log(self, last_epoch_score: float, last_epoch_metrics: Dict) -> Dict:
+    def _prepare_metrics_log(
+        self, last_epoch_score: float, last_epoch_metrics: Dict
+    ) -> Dict:
         top_best_checkpoints = [
             (Path(filepath).stem, {**epoch_metrics, **{"_score_": score}})
             for (score, filepath, _, _, epoch_metrics) in self.top_best_metrics
@@ -662,7 +668,9 @@ class CheckpointCallback(ICheckpointCallback):
             # truncate checkpoints
             self._truncate_checkpoints()
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            metrics_log = self._prepare_metrics_log(
+                float(score), dict(runner.epoch_metrics)
+            )
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -696,12 +704,17 @@ class CheckpointCallback(ICheckpointCallback):
             )
             # add metrics to records
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            metrics_log = self._prepare_metrics_log(
+                float(score), dict(runner.epoch_metrics)
+            )
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
             log_message += f"{checkpoint_path}\t{score:3.4f}"
         else:
             log_message += "\n".join(
-                [f"{filepath}\t{score:3.4f}" for score, filepath, _, _, _ in self.top_best_metrics]
+                [
+                    f"{filepath}\t{score:3.4f}"
+                    for score, filepath, _, _, _ in self.top_best_metrics
+                ]
             )
         print(log_message)
 

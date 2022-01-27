@@ -56,7 +56,9 @@ def test_bpr_loss():
 
     neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     log_gamma = float(torch.log(torch.Tensor([loss.gamma])))
-    assert float(loss.forward(pos, neg)) == pytest.approx(-log_gamma, 0.001)  # log of 0 with gamma
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        -log_gamma, 0.001
+    )  # log of 0 with gamma
 
 
 def test_warp_loss():
@@ -87,7 +89,9 @@ def test_warp_loss():
     outputs = torch.Tensor([[0.5, 0, 0.5, 1]])
     targets = torch.Tensor([[0, 0, 0, 1]])
     loss_value = float(loss.forward(outputs, targets))
-    assert loss_value == pytest.approx(0.5493, 0.001) or loss_value == pytest.approx(0, 0.001)
+    assert loss_value == pytest.approx(0.5493, 0.001) or loss_value == pytest.approx(
+        0, 0.001
+    )
 
 
 def test_logistic_loss():
@@ -99,10 +103,14 @@ def test_logistic_loss():
     assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # neg relu of 1
 
     pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
-    assert float(loss.forward(pos, neg)) == pytest.approx(0.5, 0.001)  # relu of large negative
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        0.5, 0.001
+    )  # relu of large negative
 
     neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
-    assert float(loss.forward(pos, neg)) == pytest.approx(1.5, 0.001)  # nerelu of large positive
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        1.5, 0.001
+    )  # nerelu of large positive
 
 
 def test_hinge_loss():
@@ -117,10 +125,14 @@ def test_hinge_loss():
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of 1
 
     pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
-    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        0, 0.001
+    )  # relu of large negative
 
     neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
-    assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        1001, 0.001
+    )  # nerelu of large positive
 
 
 def test_adaptive_hinge_loss():
@@ -130,25 +142,43 @@ def test_adaptive_hinge_loss():
 
     rand = torch.rand(1000)
     ones = torch.ones(1000)
-    assert float(loss.forward(rand, rand.unsqueeze(0))) == pytest.approx(1, 0.001)  # relu of 0
-    assert float(loss.forward(rand, torch.stack((rand, rand)))) == pytest.approx(1, 0.001)
-    assert float(loss.forward(ones, torch.stack((rand, ones)))) == pytest.approx(1, 0.001)
+    assert float(loss.forward(rand, rand.unsqueeze(0))) == pytest.approx(
+        1, 0.001
+    )  # relu of 0
+    assert float(loss.forward(rand, torch.stack((rand, rand)))) == pytest.approx(
+        1, 0.001
+    )
+    assert float(loss.forward(ones, torch.stack((rand, ones)))) == pytest.approx(
+        1, 0.001
+    )
 
     pos, neg = torch.Tensor([1, 1, 1, 1]), torch.Tensor([0, 0, 0, 0]).unsqueeze(0)
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of 1
 
-    pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0]).unsqueeze(0)
-    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
+    pos, neg = (
+        torch.Tensor([1000, 1000, 1000, 1000]),
+        torch.Tensor([0, 0, 0, 0]).unsqueeze(0),
+    )
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        0, 0.001
+    )  # relu of large negative
 
-    pos, neg = torch.Tensor([0, 0, 0, 0]), torch.Tensor([1000, 1000, 1000, 1000]).unsqueeze(0)
-    assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
+    pos, neg = (
+        torch.Tensor([0, 0, 0, 0]),
+        torch.Tensor([1000, 1000, 1000, 1000]).unsqueeze(0),
+    )
+    assert float(loss.forward(pos, neg)) == pytest.approx(
+        1001, 0.001
+    )  # nerelu of large positive
 
 
 def test_roc_star_loss():
     from catalyst.contrib.losses.recsys import RocStarLoss
 
     params = dict(sample_size=5, sample_size_gamma=5, update_gamma_each=1)
-    const_history = torch.Tensor([[0], [1], [0], [0], [1], [1], [0], [1], [0], [1]])  # rand seq
+    const_history = torch.Tensor(
+        [[0], [1], [0], [0], [1], [1], [0], [1], [0], [1]]
+    )  # rand seq
 
     outputs = torch.Tensor([[0], [1], [0], [1], [0]])
     targets = torch.Tensor([[1], [0], [1], [0], [1]])
@@ -263,7 +293,10 @@ def test_barlow_twins_loss(
     ),
 )
 def test_ntxent_loss(
-    embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, tau: float, true_value: float
+    embeddings_left: torch.Tensor,
+    embeddings_right: torch.Tensor,
+    tau: float,
+    true_value: float,
 ):
     """
     Test NTXent Loss
@@ -458,7 +491,11 @@ base_targets_2 = torch.stack([base_targets_2, base_targets_2])[None, :, :, :]
     ),
 )
 def test_smoothing_dice_loss(
-    features: torch.Tensor, targets: torch.Tensor, mode: str, weights: List[int], true_value: float
+    features: torch.Tensor,
+    targets: torch.Tensor,
+    mode: str,
+    weights: List[int],
+    true_value: float,
 ):
     """
     Test smoothing dice loss

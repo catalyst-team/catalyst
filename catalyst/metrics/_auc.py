@@ -178,7 +178,9 @@ class AUCMetric(ICallbackLoaderMetric):
             scores = torch.cat(all_gather(scores))
             targets = torch.cat(all_gather(targets))
 
-        scores, targets, _, _ = process_multilabel_components(outputs=scores, targets=targets)
+        scores, targets, _, _ = process_multilabel_components(
+            outputs=scores, targets=targets
+        )
         per_class = auc(scores=scores, targets=targets)
         micro = binary_auc(scores=scores.view(-1), targets=targets.view(-1))[0]
         macro = per_class.mean().item()

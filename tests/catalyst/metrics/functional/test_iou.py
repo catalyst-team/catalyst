@@ -32,9 +32,15 @@ def test_iou():
     # check 0.5: half overlap
     top_left = torch.zeros(shape)
     top_left[:, :, :half_size, :half_size] = 1
-    assert torch.isclose(iou(top_left, left, class_dim=1, mode="per-class"), torch.Tensor([[0.5]]))
-    assert torch.isclose(iou(top_left, left, class_dim=1, mode="micro"), torch.Tensor([[0.5]]))
-    assert torch.isclose(iou(top_left, left, class_dim=1, mode="macro"), torch.Tensor([[0.5]]))
+    assert torch.isclose(
+        iou(top_left, left, class_dim=1, mode="per-class"), torch.Tensor([[0.5]])
+    )
+    assert torch.isclose(
+        iou(top_left, left, class_dim=1, mode="micro"), torch.Tensor([[0.5]])
+    )
+    assert torch.isclose(
+        iou(top_left, left, class_dim=1, mode="macro"), torch.Tensor([[0.5]])
+    )
 
     # check multiclass: 0, 0, 1, 1, 1, 0.5
     a = torch.cat([empty, left, empty, full, left, top_left], dim=1)

@@ -8,7 +8,11 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines import (
+    DataParallelEngine,
+    DeviceEngine,
+    DistributedDataParallelEngine,
+)
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 from catalyst.utils.distributed import all_gather, mean_reduce, sum_reduce
 
@@ -32,7 +36,9 @@ def _sum_reduce(rank: int, world_size: int) -> None:
     to_sreduce = torch.tensor(rank + 1, dtype=torch.float).to(rank)
     actual = sum_reduce(to_sreduce)
 
-    assert actual == torch.tensor((world_size * (world_size + 1)) // 2, dtype=torch.float).to(rank)
+    assert actual == torch.tensor(
+        (world_size * (world_size + 1)) // 2, dtype=torch.float
+    ).to(rank)
 
     _cleanup()
 
@@ -55,7 +61,9 @@ def _all_gather(rank, world_size):
     actual = all_gather(to_gather)
     actual = torch.cat(actual)
 
-    expected = torch.cat([torch.ones(3, dtype=torch.int) * (i + 1) for i in range(world_size)])
+    expected = torch.cat(
+        [torch.ones(3, dtype=torch.int) * (i + 1) for i in range(world_size)]
+    )
 
     assert torch.all(actual.eq(expected))
 

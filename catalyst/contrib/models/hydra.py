@@ -25,7 +25,10 @@ class Hydra(nn.Module):
     normalize_keyword = "normalize_output"
 
     def __init__(
-        self, heads: nn.ModuleDict, encoder: nn.Module = None, embedders: nn.ModuleDict = None
+        self,
+        heads: nn.ModuleDict,
+        encoder: nn.Module = None,
+        embedders: nn.ModuleDict = None,
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
@@ -157,7 +160,9 @@ class Hydra(nn.Module):
             assert in_features is not None
             encoder = None
 
-        heads = Hydra.parse_head_params(head_params=heads_params_copy, in_features=in_features)
+        heads = Hydra.parse_head_params(
+            head_params=heads_params_copy, in_features=in_features
+        )
         assert isinstance(heads, nn.ModuleDict)
 
         embedders = {}
@@ -166,7 +171,9 @@ class Hydra(nn.Module):
                 if isinstance(head_params, int):
                     head_params = {"num_embeddings": head_params}
                 need_normalize = head_params.pop(Hydra.normalize_keyword, False)
-                block = [("embedding", nn.Embedding(embedding_dim=in_features, **head_params))]
+                block = [
+                    ("embedding", nn.Embedding(embedding_dim=in_features, **head_params))
+                ]
                 if need_normalize:
                     block.append(("normalize", Normalize()))
 

@@ -13,7 +13,9 @@ class SupervisedContrastiveLoss(nn.Module):
         https://arxiv.org/pdf/2004.11362.pdf
     """
 
-    def __init__(self, tau: float, reduction: str = "mean", pos_aggregation="in") -> None:
+    def __init__(
+        self, tau: float, reduction: str = "mean", pos_aggregation="in"
+    ) -> None:
         """
         Args:
             tau: temperature
@@ -40,7 +42,9 @@ class SupervisedContrastiveLoss(nn.Module):
         self.pos_aggregation = pos_aggregation
 
         if self.reduction not in ["none", "mean", "sum"]:
-            raise ValueError(f"Reduction should be: mean, sum, none. But got - {self.reduction}!")
+            raise ValueError(
+                f"Reduction should be: mean, sum, none. But got - {self.reduction}!"
+            )
         if self.pos_aggregation not in ["in", "out"]:
             raise ValueError(
                 f"Positive aggregation should be: in or out. But got - {self.pos_aggregation}!"
@@ -60,21 +64,28 @@ class SupervisedContrastiveLoss(nn.Module):
         cosine_matrix = (2 - torch.cdist(features, features) ** 2) / 2
         exp_cosine_matrix = torch.exp(cosine_matrix / self.tau)
         # positive part of the loss
-        pos_place = targets.repeat(targets.shape[0], 1) == targets.reshape(targets.shape[0], 1)
+        pos_place = targets.repeat(targets.shape[0], 1) == targets.reshape(
+            targets.shape[0], 1
+        )
         # aggregation of postive pairs
 
         number_of_positives = pos_place.sum(dim=1) - 1
 
         assert (
             number_of_positives == 0
-        ).sum().item() == 0, "There must be at least one positive example for each sample!"
+        ).sum().item() == 0, (
+            "There must be at least one positive example for each sample!"
+        )
 
         if self.pos_aggregation == "in":
-            pos_loss = (exp_cosine_matrix * pos_place).sum(dim=1) - self.exp_self_similarity
+            pos_loss = (exp_cosine_matrix * pos_place).sum(
+                dim=1
+            ) - self.exp_self_similarity
             pos_loss = torch.log(pos_loss) - torch.log(number_of_positives.float())
         elif self.pos_aggregation == "out":
             pos_loss = (
-                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1) - self.self_similarity
+                (torch.log(exp_cosine_matrix) * pos_place).sum(dim=1)
+                - self.self_similarity
             ) / number_of_positives
 
         # neg part of the loss

@@ -5,7 +5,10 @@ from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
+    from catalyst.contrib.utils.visualization import (
+        plot_confusion_matrix,
+        render_figure_to_array,
+    )
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner

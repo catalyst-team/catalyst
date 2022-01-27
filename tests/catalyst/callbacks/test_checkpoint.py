@@ -12,7 +12,11 @@ from torch.utils.data import DataLoader, TensorDataset
 
 # local
 import catalyst.dl as dl
-from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines import (
+    DataParallelEngine,
+    DeviceEngine,
+    DistributedDataParallelEngine,
+)
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 if NUM_CUDA_DEVICES > 1:
@@ -101,7 +105,9 @@ class CustomRunner(dl.IRunner):
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "test_model_load": CheckModelStateLoadAfterStages("second", self._logdir, "best.pth"),
+            "test_model_load": CheckModelStateLoadAfterStages(
+                "second", self._logdir, "best.pth"
+            ),
         }
         if stage == "first":
             callbacks["checkpoint"] = dl.CheckpointCallback(
@@ -164,7 +170,10 @@ class CustomRunner(dl.IRunner):
     [
         "cpu",
         pytest.param(
-            "cuda", marks=pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA is not available")
+            "cuda",
+            marks=pytest.mark.skipif(
+                not IS_CUDA_AVAILABLE, reason="CUDA is not available"
+            ),
         ),
     ],
 )
@@ -253,7 +262,9 @@ def test_files_existence(tmpdir):
     assert os.path.isfile(tmpdir + "/last_full.pth")
 
 
-@pytest.mark.parametrize(("to_load", "exp_loaded"), [("best", "model"), ("best_full", "full")])
+@pytest.mark.parametrize(
+    ("to_load", "exp_loaded"), [("best", "model"), ("best_full", "full")]
+)
 def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
     # experiment_setup
     n_epochs = 5
@@ -280,7 +291,10 @@ def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
 @pytest.mark.parametrize(
     ("to_load", "exp_loaded"),
     [
-        ({"model": "best", "criterion": "best", "optimizer": "last"}, "model, criterion"),
+        (
+            {"model": "best", "criterion": "best", "optimizer": "last"},
+            "model, criterion",
+        ),
         (
             {"model": "best", "criterion": "best", "optimizer": "best"},
             "model, criterion, optimizer",
@@ -334,7 +348,8 @@ def test_load_empty(to_load, capsys, tmpdir):
 
 
 @pytest.mark.parametrize(
-    "to_load", ["best", {"model": "not_existing_file.pth", "criterion": "not_existing_file.pth"}]
+    "to_load",
+    ["best", {"model": "not_existing_file.pth", "criterion": "not_existing_file.pth"}],
 )
 def test_resume_with_missing_file(to_load, tmpdir):
     n_epochs = 5

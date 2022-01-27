@@ -32,7 +32,9 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError("%r cannot be used to seed a numpy.random.RandomState instance" % seed)
+    raise ValueError(
+        "%r cannot be used to seed a numpy.random.RandomState instance" % seed
+    )
 
 
 def make_blobs(
@@ -115,7 +117,9 @@ def make_blobs(
 
         if isinstance(centers, numbers.Integral):
             n_centers = centers
-            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
+            centers = generator.uniform(
+                center_box[0], center_box[1], size=(n_centers, n_features)
+            )
 
         else:
             centers = np.array(centers)  # check_array(centers)
@@ -126,12 +130,15 @@ def make_blobs(
         # Set n_centers by looking at [n_samples] arg
         n_centers = len(n_samples)
         if centers is None:
-            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
+            centers = generator.uniform(
+                center_box[0], center_box[1], size=(n_centers, n_features)
+            )
         try:
             assert len(centers) == n_centers
         except TypeError as e:
             raise ValueError(
-                "Parameter `centers` must be array-like. " "Got {!r} instead".format(centers)
+                "Parameter `centers` must be array-like. "
+                "Got {!r} instead".format(centers)
             ) from e
         except AssertionError as e:
             raise ValueError(
@@ -484,7 +491,9 @@ class OPTTensorTypeChecker(Callback):
     def on_batch_end(self, runner):
         """Docs."""
         check_tensor = (
-            runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+            runner.batch_metrics[self.key]
+            if self.use_batch_metrics
+            else runner.batch[self.key]
         )
         assert check_tensor.dtype == self.expected_type, (
             f"Wrong types for {self.opt_level} - actual is "
@@ -499,7 +508,9 @@ class ModuleTypeChecker(Callback):
         super().__init__(CallbackOrder.Internal)
 
     def _check_fn(self, model):
-        assert isinstance(model, nn.Module), f"Expected nn.Module but got - '{type(model)}' !"
+        assert isinstance(
+            model, nn.Module
+        ), f"Expected nn.Module but got - '{type(model)}' !"
 
     def on_stage_start(self, runner):
         self._check_fn(runner.model)

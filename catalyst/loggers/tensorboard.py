@@ -87,7 +87,9 @@ class TensorboardLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ):
         """Init."""
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
@@ -104,7 +106,9 @@ class TensorboardLogger(ILogger):
             logdir = os.path.join(self.logdir, f"{loader_key}")
             self.loggers[loader_key] = SummaryWriter(logdir)
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""
+    ):
         for key, value in metrics.items():
             self.loggers[loader_key].add_scalar(f"{key}{suffix}", float(value), step)
 
@@ -135,12 +139,18 @@ class TensorboardLogger(ILogger):
             self._check_loader_key(loader_key=loader_key)
             # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_sample_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics,
+                step=global_sample_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch"
+                metrics=metrics,
+                step=global_epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             # @TODO: remove naming magic
@@ -181,7 +191,9 @@ class TensorboardLogger(ILogger):
         assert loader_key is not None
         self._check_loader_key(loader_key=loader_key)
         tensor = image_to_tensor(image)
-        self.loggers[loader_key].add_image(f"{tag}/{scope}", tensor, global_step=global_epoch_step)
+        self.loggers[loader_key].add_image(
+            f"{tag}/{scope}", tensor, global_step=global_epoch_step
+        )
 
     def flush_log(self) -> None:
         """Flushes the loggers."""

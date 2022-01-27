@@ -101,7 +101,10 @@ class AccuracyCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=AccuracyMetric(
-                topk_args=topk_args, num_classes=num_classes, prefix=prefix, suffix=suffix
+                topk_args=topk_args,
+                num_classes=num_classes,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -185,7 +188,9 @@ class MultilabelAccuracyCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=MultilabelAccuracyMetric(threshold=threshold, prefix=prefix, suffix=suffix),
+            metric=MultilabelAccuracyMetric(
+                threshold=threshold, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,

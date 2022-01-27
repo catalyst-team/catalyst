@@ -42,7 +42,9 @@ def train_experiment(device, engine=None):
         # 1. train, valid and test loaders
         train_data = MNIST(os.getcwd(), train=True)
         train_labels = train_data.targets.cpu().numpy().tolist()
-        train_sampler = data.BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
+        train_sampler = data.BatchBalanceClassSampler(
+            train_labels, num_classes=10, num_samples=4
+        )
         train_loader = DataLoader(train_data, batch_sampler=train_sampler)
 
         valid_dataset = MNIST(root=os.getcwd(), train=False)
@@ -52,13 +54,17 @@ def train_experiment(device, engine=None):
         test_loader = DataLoader(dataset=test_dataset, batch_size=32)
 
         # 2. model and optimizer
-        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True))
+        model = nn.Sequential(
+            nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True)
+        )
         optimizer = Adam(model.parameters(), lr=LR)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):

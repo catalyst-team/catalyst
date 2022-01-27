@@ -8,13 +8,18 @@ import numpy as np
 import torch
 import torch.utils.data as data
 
-from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.data.dataset_ml import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 from catalyst.contrib.datasets.misc import _check_integrity, download_and_extract_archive
 
 
 class StandardTransform(object):
     def __init__(
-        self, transform: Optional[Callable] = None, target_transform: Optional[Callable] = None
+        self,
+        transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
     ) -> None:
         self.transform = transform
         self.target_transform = target_transform
@@ -37,7 +42,9 @@ class StandardTransform(object):
         if self.transform is not None:
             body += self._format_transform_repr(self.transform, "Transform: ")
         if self.target_transform is not None:
-            body += self._format_transform_repr(self.target_transform, "Target transform: ")
+            body += self._format_transform_repr(
+                self.target_transform, "Target transform: "
+            )
 
         return "\n".join(body)
 
@@ -60,7 +67,8 @@ class VisionDataset(data.Dataset):
         has_separate_transform = transform is not None or target_transform is not None
         if has_transforms and has_separate_transform:
             raise ValueError(
-                "Only transforms or transform/target_transform can " "be passed as argument"
+                "Only transforms or transform/target_transform can "
+                "be passed as argument"
             )
 
         # for backwards-compatibility
@@ -146,7 +154,9 @@ class CIFAR10(VisionDataset):
         download: bool = False,
     ) -> None:
 
-        super(CIFAR10, self).__init__(root, transform=transform, target_transform=target_transform)
+        super(CIFAR10, self).__init__(
+            root, transform=transform, target_transform=target_transform
+        )
 
         self.train = train  # training set or test set
 
@@ -155,7 +165,8 @@ class CIFAR10(VisionDataset):
 
         if not self._check_integrity():
             raise RuntimeError(
-                "Dataset not found or corrupted." + " You can use download=True to download it"
+                "Dataset not found or corrupted."
+                + " You can use download=True to download it"
             )
 
         if self.train:
@@ -233,7 +244,9 @@ class CIFAR10(VisionDataset):
         if self._check_integrity():
             print("Files already downloaded and verified")
             return
-        download_and_extract_archive(self.url, self.root, filename=self.filename, md5=self.tgz_md5)
+        download_and_extract_archive(
+            self.url, self.root, filename=self.filename, md5=self.tgz_md5
+        )
 
     def extra_repr(self) -> str:
         return "Split: {}".format("Train" if self.train is True else "Test")

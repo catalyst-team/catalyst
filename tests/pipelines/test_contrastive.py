@@ -56,24 +56,36 @@ def train_experiment(device, engine=None):
             ]
         )
 
-        transform_original = Compose([ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))])
+        transform_original = Compose(
+            [ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))]
+        )
 
         mnist = MNIST("./logdir", train=True, download=True, normalize=None, numpy=True)
         contrastive_mnist = SelfSupervisedDatasetWrapper(
             mnist, transforms=transforms, transform_original=transform_original
         )
-        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
+        train_loader = torch.utils.data.DataLoader(
+            contrastive_mnist, batch_size=BATCH_SIZE
+        )
 
-        mnist_valid = MNIST("./logdir", train=False, download=True, normalize=None, numpy=True)
+        mnist_valid = MNIST(
+            "./logdir", train=False, download=True, normalize=None, numpy=True
+        )
         contrastive_valid = SelfSupervisedDatasetWrapper(
             mnist_valid, transforms=transforms, transform_original=transform_original
         )
-        valid_loader = torch.utils.data.DataLoader(contrastive_valid, batch_size=BATCH_SIZE)
+        valid_loader = torch.utils.data.DataLoader(
+            contrastive_valid, batch_size=BATCH_SIZE
+        )
 
         # 2. model and optimizer
-        encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True))
+        encoder = nn.Sequential(
+            nn.Flatten(), nn.Linear(28 * 28, 16), nn.LeakyReLU(inplace=True)
+        )
         projection_head = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
+            nn.Linear(16, 16, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(16, 16, bias=True),
         )
 
         class ContrastiveModel(torch.nn.Module):
@@ -97,7 +109,9 @@ def train_experiment(device, engine=None):
         callbacks = [
             dl.ControlFlowCallback(
                 dl.CriterionCallback(
-                    input_key="projection_left", target_key="projection_right", metric_key="loss"
+                    input_key="projection_left",
+                    target_key="projection_right",
+                    metric_key="loss",
                 ),
                 loaders="train",
             ),
@@ -199,7 +213,12 @@ def test_on_amp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
     ),
     reason="No CUDA>=2 or AMP found or requriments are not satisfied",
 )
@@ -209,7 +228,12 @@ def test_on_amp_dp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.amp_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
     ),
     reason="No CUDA>=2 or AMP found or requriments are not satisfied",
 )
@@ -228,7 +252,12 @@ def test_on_apex():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.apex_required,
+        ]
     ),
     reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )
@@ -238,7 +267,12 @@ def test_on_apex_dp():
 
 @mark.skipif(
     not all(
-        [requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2, SETTINGS.apex_required]
+        [
+            requirements_satisfied,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.apex_required,
+        ]
     ),
     reason="No CUDA>=2 or Apex found or requriments are not satisfied",
 )

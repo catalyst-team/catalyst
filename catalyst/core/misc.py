@@ -1,41 +1,7 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
-import warnings
 
-from torch.utils.data import DataLoader, DistributedSampler
-
-from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
-from catalyst.data.ddp_loader import prepare_ddp_loader
-from catalyst.data.sampler import DistributedSamplerWrapper
-from catalyst.utils.distributed import get_rank, get_world_size
-
-
-def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
-    """
-    Check pytorch dataloaders for distributed setup.
-    Transfers them to distributed mode if necessary.
-    (Experimental feature)
-
-    Args:
-        loaders: dictionary with pytorch dataloaders
-
-    Returns:
-        Dict[str, DataLoader]: dictionary
-            with pytorch dataloaders (with distributed samplers if necessary)
-    """
-    rank = get_rank()
-    if rank >= 0:
-        for key, value in loaders.items():
-            if not isinstance(value.sampler, (DistributedSampler, DistributedSamplerWrapper)):
-                warnings.warn(
-                    "With distributed training setup, "
-                    "you need ``DistributedSampler`` for your ``DataLoader``."
-                    "Transferring to distributed mode. (Experimental feature)"
-                )
-                loaders[key] = prepare_ddp_loader(
-                    value, num_processes=get_world_size(), process_index=rank
-                )
-    return loaders
+from catalyst.core.callback import Callback, CallbackWrapper
 
 
 def _get_original_callback(callback: Callback) -> Callback:
@@ -84,14 +50,14 @@ def sort_callbacks_by_order(
         output = OrderedDict([(i, value) for i, value in enumerate(output)])
     else:
         raise TypeError(
-            f"Callbacks must be either Dict/OrderedDict or list, " f"got {type(callbacks)}"
+            f"Callbacks must be either Dict/OrderedDict or list, "
+            f"got {type(callbacks)}"
         )
 
     return output
 
 
 __all__ = [
-    "validate_loaders",
     "sort_callbacks_by_order",
     "callback_isinstance",
 ]

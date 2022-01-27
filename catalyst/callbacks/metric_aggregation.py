@@ -141,7 +141,8 @@ class MetricAggregationCallback(Callback):
                 )
         elif not callable(mode):
             raise NotImplementedError(
-                "mode must be `sum`, `mean` " "or `weighted_sum` or `weighted_mean` or be Callable"
+                "mode must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
         assert scope in ("batch", "loader")
@@ -159,7 +160,9 @@ class MetricAggregationCallback(Callback):
             self.aggregation_fn = _sum_aggregation
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
-                self.metrics = {key: weight / weights_sum for key, weight in metrics.items()}
+                self.metrics = {
+                    key: weight / weights_sum for key, weight in metrics.items()
+                }
         elif mode == "mean":
             self.aggregation_fn = _mean_aggregation
         elif callable(mode):
@@ -169,7 +172,9 @@ class MetricAggregationCallback(Callback):
         if self.metrics is not None:
             try:
                 if self.mode == "weighted_sum":
-                    result = [metrics[key] * value for key, value in self.metrics.items()]
+                    result = [
+                        metrics[key] * value for key, value in self.metrics.items()
+                    ]
                 else:
                     result = [metrics[key] for key in self.metrics]
             except KeyError:

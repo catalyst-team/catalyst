@@ -4,7 +4,12 @@ from abc import ABC, abstractmethod
 import torch
 
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, ISchedulerCallback
+from catalyst.core.callback import (
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    ISchedulerCallback,
+)
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
@@ -132,7 +137,10 @@ class SchedulerCallback(ISchedulerCallback):
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]]
+        self,
+        metrics_dict: dict,
+        lr_list: List[float],
+        momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)
@@ -151,7 +159,9 @@ class SchedulerCallback(ISchedulerCallback):
 
         if momentum is not None:
             momentum_key = (
-                f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
+                f"momentum/{self.scheduler_key}"
+                if self.scheduler_key is not None
+                else "momentum"
             )
             metrics_dict[momentum_key] = momentum
 
@@ -162,7 +172,9 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         lr_list, momentum_list = self._scheduler_step(scheduler=self.scheduler)
-        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics, lr_list, momentum_list)
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.batch_metrics, lr_list, momentum_list
+        )
 
     def make_epoch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics

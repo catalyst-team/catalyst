@@ -128,32 +128,40 @@ class Callback(ICallback):
     """
 
     def __init__(self, order: int):
-        """Callback initializer."""
+        """Init."""
         self.order = order
 
 
 class ICriterionCallback(Callback):
     """Criterion callback interface, abstraction over criterion step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Metric)
 
 
 class IBackwardCallback(Callback):
     """Backward callback interface, abstraction over backward step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Backward)
 
 
 class IOptimizerCallback(Callback):
     """Optimizer callback interface, abstraction over optimizer step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Optimizer)
 
 
 class ISchedulerCallback(Callback):
     """Scheduler callback interface, abstraction over scheduler step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Scheduler)
 
 
 class CallbackWrapper(Callback):
@@ -170,9 +178,7 @@ class CallbackWrapper(Callback):
         """Init."""
         if base_callback is None or not isinstance(base_callback, Callback):
             raise ValueError(f"Expected callback but got - {type(base_callback)}!")
-        super().__init__(
-            order=base_callback.order, node=base_callback.node, scope=base_callback.scope
-        )
+        super().__init__(order=base_callback.order)
         self.callback = base_callback
         self._is_enabled = enable_callback
 
@@ -225,9 +231,7 @@ class CallbackWrapper(Callback):
 __all__ = [
     "ICallback",
     "Callback",
-    "CallbackNode",
     "CallbackOrder",
-    "CallbackScope",
     "ICriterionCallback",
     "IBackwardCallback",
     "IOptimizerCallback",

@@ -212,13 +212,17 @@ def get_loaders_from_params(
 
         if "batch_sampler" in loader_params:
             if distributed:
-                raise ValueError("batch_sampler option is mutually " "exclusive with distributed")
+                raise ValueError(
+                    "batch_sampler option is mutually " "exclusive with distributed"
+                )
 
             for k in ("batch_size", "shuffle", "sampler", "drop_last"):
                 loader_params.pop(k, None)
 
         if "worker_init_fn" not in loader_params:
-            loader_params["worker_init_fn"] = partial(_worker_init_fn, initial_seed=initial_seed)
+            loader_params["worker_init_fn"] = partial(
+                _worker_init_fn, initial_seed=initial_seed
+            )
 
         loaders[name] = DataLoader(**loader_params)
 

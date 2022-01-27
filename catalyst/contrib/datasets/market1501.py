@@ -5,7 +5,10 @@ import numpy as np
 
 import torch
 
-from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.data.dataset_ml import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 from catalyst.contrib.utils.image import imread
 
 
@@ -18,7 +21,9 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     """
 
     def __init__(
-        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None
+        self,
+        root: str,
+        transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
     ):
         """
         Market1501 dataset for train stage of reid task.
@@ -45,7 +50,9 @@ class Market1501MLDataset(MetricLearningTrainDataset):
             images for training and their labels
         """
         filenames = list(data_dir.glob("*.jpg"))
-        data = torch.from_numpy(np.array([imread(filename) for filename in filenames])).float()
+        data = torch.from_numpy(
+            np.array([imread(filename) for filename in filenames])
+        ).float()
         targets = torch.from_numpy(
             np.array([int(filename.name.split("_")[0]) for filename in filenames])
         )
@@ -78,7 +85,9 @@ class Market1501QGDataset(QueryGalleryDataset):
     """Market1501QGDataset is a dataset for test stage of reid pipeline"""
 
     def __init__(
-        self, root: str, transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None
+        self,
+        root: str,
+        transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
     ):
         """
         Market1501 dataset for testing stage of reid task.
@@ -101,7 +110,10 @@ class Market1501QGDataset(QueryGalleryDataset):
         self.pids = np.concatenate([gallery_pids, query_pids])
         self.cids = np.concatenate([gallery_cids, query_cids])
         self._is_query = torch.cat(
-            [torch.zeros(size=(self._gallery_size,)), torch.ones(size=(self._query_size,))]
+            [
+                torch.zeros(size=(self._gallery_size,)),
+                torch.ones(size=(self._query_size,)),
+            ]
         )
 
     @property
@@ -139,9 +151,13 @@ class Market1501QGDataset(QueryGalleryDataset):
         # Gallery dataset contains good, junk and distractor images;
         # junk ones (marked as -1) should be neglected during evaluation.
         filenames = list(data_dir.glob("[!-]*.jpg"))
-        data = torch.from_numpy(np.array([imread(filename) for filename in filenames])).float()
+        data = torch.from_numpy(
+            np.array([imread(filename) for filename in filenames])
+        ).float()
         pids = np.array([int(filename.name.split("_")[0]) for filename in filenames])
-        cids = np.array([int(filename.name.split("_")[1][1:2]) for filename in filenames])
+        cids = np.array(
+            [int(filename.name.split("_")[1][1:2]) for filename in filenames]
+        )
         return data, pids, cids
 
     def __getitem__(self, index: int) -> Dict[str, Any]:

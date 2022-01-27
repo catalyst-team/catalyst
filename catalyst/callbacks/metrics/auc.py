@@ -82,7 +82,9 @@ class AUCCallback(LoaderMetricCallback):
         """Init."""
         super().__init__(
             metric=AUCMetric(
-                compute_per_class_metrics=compute_per_class_metrics, prefix=prefix, suffix=suffix
+                compute_per_class_metrics=compute_per_class_metrics,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,

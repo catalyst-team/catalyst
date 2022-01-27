@@ -17,7 +17,9 @@ class HuberLossV0(nn.Module):
         self.clip_delta = clip_delta
         self.reduction = reduction or "none"
 
-    def forward(self, output: torch.Tensor, target: torch.Tensor, weights=None) -> torch.Tensor:
+    def forward(
+        self, output: torch.Tensor, target: torch.Tensor, weights=None
+    ) -> torch.Tensor:
         """@TODO: Docs. Contribution is welcome."""
         diff = target - output
         diff_abs = torch.abs(diff)
@@ -50,7 +52,10 @@ class CategoricalRegressionLoss(nn.Module):
         self.z = torch.linspace(start=self.v_min, end=self.v_max, steps=self.num_atoms)
 
     def forward(
-        self, logits_t: torch.Tensor, logits_tp1: torch.Tensor, atoms_target_t: torch.Tensor
+        self,
+        logits_t: torch.Tensor,
+        logits_tp1: torch.Tensor,
+        atoms_target_t: torch.Tensor,
     ) -> torch.Tensor:
         """Compute the loss
 
@@ -95,8 +100,12 @@ class QuantileRegressionLoss(nn.Module):
         """
         atoms_diff = targets[:, None, :] - outputs[:, :, None]
         delta_atoms_diff = atoms_diff.lt(0).to(torch.float32).detach()
-        huber_weights = torch.abs(self.tau[None, :, None] - delta_atoms_diff) / self.num_atoms
-        loss = self.criterion(outputs[:, :, None], targets[:, None, :], huber_weights).mean()
+        huber_weights = (
+            torch.abs(self.tau[None, :, None] - delta_atoms_diff) / self.num_atoms
+        )
+        loss = self.criterion(
+            outputs[:, :, None], targets[:, None, :], huber_weights
+        ).mean()
         return loss
 
 
@@ -117,4 +126,9 @@ class RSquareLoss(nn.Module):
         return 1.0 - F.mse_loss(outputs, targets, reduction="mean") / var_y
 
 
-__all__ = ["HuberLossV0", "CategoricalRegressionLoss", "QuantileRegressionLoss", "RSquareLoss"]
+__all__ = [
+    "HuberLossV0",
+    "CategoricalRegressionLoss",
+    "QuantileRegressionLoss",
+    "RSquareLoss",
+]

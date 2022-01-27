@@ -154,7 +154,15 @@ class NormalizeImage(object):
 
     def __repr__(self):
         """@TODO: Docs. Contribution is welcome."""
-        return self.__class__.__name__ + "(mean={0}, std={1})".format(self.mean, self.std)
+        return self.__class__.__name__ + "(mean={0}, std={1})".format(
+            self.mean, self.std
+        )
 
 
-__all__ = ["Compose", "NormalizeImage", "ImageToTensor", "image_to_tensor", "normalize_image"]
+__all__ = [
+    "Compose",
+    "NormalizeImage",
+    "ImageToTensor",
+    "image_to_tensor",
+    "normalize_image",
+]

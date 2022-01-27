@@ -48,11 +48,19 @@ def test_download_split_by_user():
 
     # check some random file from MovieLens
     assert (
-        os.path.isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
+        os.path.isfile(
+            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+        )
+        is True
     )
 
     # check if data file is not Nulll
-    assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
+    assert (
+        os.path.getsize(
+            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+        )
+        > 0
+    )
 
 
 @minversion
@@ -79,11 +87,19 @@ def test_download_split_by_ts():
 
     # check some random file from MovieLens
     assert (
-        os.path.isfile("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) is True
+        os.path.isfile(
+            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+        )
+        is True
     )
 
     # check if data file is not Nulll
-    assert os.path.getsize("./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)) > 0
+    assert (
+        os.path.getsize(
+            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+        )
+        > 0
+    )
 
 
 @minversion
@@ -136,7 +152,9 @@ def test_users_per_item_filtering():
         n_rows=1000000,
     )
 
-    assert (movielens_20m_min_users.users_activity["user_cnt"] >= min_users_per_item).any()
+    assert (
+        movielens_20m_min_users.users_activity["user_cnt"] >= min_users_per_item
+    ).any()
 
 
 @minversion
@@ -156,7 +174,9 @@ def test_items_per_user_filtering():
         n_rows=1000000,
     )
 
-    assert (movielens_20m_min_users.items_activity["item_cnt"] >= min_items_per_user).any()
+    assert (
+        movielens_20m_min_users.items_activity["item_cnt"] >= min_items_per_user
+    ).any()
 
 
 def teardown_module():

@@ -153,7 +153,9 @@ class OptimizerCallback(IOptimizerCallback):
         """Event handler."""
         if runner.is_train_loader:
             self._accumulation_counter += 1
-            need_gradient_step = self._accumulation_counter % self.accumulation_steps == 0
+            need_gradient_step = (
+                self._accumulation_counter % self.accumulation_steps == 0
+            )
 
             loss = runner.batch_metrics[self.metric_key]
             runner.engine.backward_loss(loss, self.model, self.optimizer)
@@ -173,10 +175,12 @@ class OptimizerCallback(IOptimizerCallback):
         # hotfix for gradinet clipping with fp16
         if hasattr(runner.engine, "scaler"):
             scaler_state = runner.engine.scaler.state_dict()
-            runner.batch_metrics[f"{self._prefix_gradient}/scale"] = scaler_state["scale"] or 1.0
-            runner.batch_metrics[f"{self._prefix_gradient}/growth_tracker"] = scaler_state[
-                "_growth_tracker"
-            ]
+            runner.batch_metrics[f"{self._prefix_gradient}/scale"] = (
+                scaler_state["scale"] or 1.0
+            )
+            runner.batch_metrics[
+                f"{self._prefix_gradient}/growth_tracker"
+            ] = scaler_state["_growth_tracker"]
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler."""

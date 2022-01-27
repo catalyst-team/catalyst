@@ -11,7 +11,9 @@ if TYPE_CHECKING:
 
 
 class _EpochFilterFn:
-    def __init__(self, epochs: Union[int, float, Sequence[int]], reverse_condition: bool):
+    def __init__(
+        self, epochs: Union[int, float, Sequence[int]], reverse_condition: bool
+    ):
         if not isinstance(epochs, (int, float, list, tuple)):
             raise ValueError(
                 "'epochs' should be int/float/Sequence[int]! " f"(got {type(epochs)})"
@@ -106,7 +108,8 @@ class _ArgsFilterFn:
             raise ValueError("'filter_fn' should be a callable!")
         if filter_fn.__code__.co_argcount != 3:
             raise ValueError(
-                "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
+                "Filter function should have three arguments - "
+                "'stage', 'epoch' and 'loader'!"
             )
         self.filter_fn = filter_fn
 
@@ -342,7 +345,11 @@ class ControlFlowCallback(CallbackWrapper):
         """
         stage = runner.stage_key
         loader = runner.loader_key
-        epoch = runner.global_epoch_step if self.use_global_epochs else runner.stage_epoch_step
+        epoch = (
+            runner.global_epoch_step
+            if self.use_global_epochs
+            else runner.stage_epoch_step
+        )
 
         if self.filter_fn is not None:
             self._is_enabled = self.filter_fn(stage, epoch, loader)

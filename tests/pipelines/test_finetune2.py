@@ -56,14 +56,8 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
         }
         return loaders
 
@@ -71,7 +65,9 @@ class CustomRunner(dl.IRunner):
         model = (
             utils.get_nn_from_ddp_module(self.model)
             if self.model is not None
-            else nn.Sequential(nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
+            else nn.Sequential(
+                nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10)
+            )
         )
         if stage == "train_freezed":
             # freeze layer
@@ -122,7 +118,11 @@ class CustomRunner(dl.IRunner):
                 input_key="logits", target_key="targets", num_classes=10
             ),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
         }
         if SETTINGS.ml_required:
@@ -165,12 +165,16 @@ def test_finetune2_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_finetune2_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_finetune2_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
@@ -183,7 +187,9 @@ def test_finetune2_on_torch_dp():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_finetune2_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -204,7 +210,9 @@ def test_finetune2_on_amp_dp():
 #     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_finetune2_on_apex():
     train_experiment(None, dl.APEXEngine())
 

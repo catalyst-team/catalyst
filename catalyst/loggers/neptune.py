@@ -131,7 +131,9 @@ class NeptuneLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **neptune_run_kwargs,
     ):
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         if base_namespace is None:
             self.base_namespace = "experiment"
         else:
@@ -141,7 +143,9 @@ class NeptuneLogger(ILogger):
         self._neptune_run_kwargs = neptune_run_kwargs
         if run is None:
             self.run = neptune.init(
-                project=self._project, api_token=self._api_token, **self._neptune_run_kwargs
+                project=self._project,
+                api_token=self._api_token,
+                **self._neptune_run_kwargs,
             )
         else:
             self.run = run
@@ -195,7 +199,9 @@ class NeptuneLogger(ILogger):
         """Logs batch, epoch and loader metrics to Neptune."""
         if scope == "batch" and self.log_batch_metrics:
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
-            self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=global_sample_step)
+            self._log_metrics(
+                metrics=metrics, neptune_path=neptune_path, step=global_sample_step
+            )
         elif scope == "loader" and self.log_epoch_metrics:
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
             self._log_metrics(
@@ -209,7 +215,9 @@ class NeptuneLogger(ILogger):
             neptune_path = "/".join([self.base_namespace, stage_key, scope])
             if prepared_metrics:
                 self._log_metrics(
-                    metrics=prepared_metrics, neptune_path=neptune_path, step=global_epoch_step
+                    metrics=prepared_metrics,
+                    neptune_path=neptune_path,
+                    step=global_epoch_step,
                 )
         elif scope == "stage":
             neptune_path = "/".join([self.base_namespace, stage_key])
@@ -247,7 +255,9 @@ class NeptuneLogger(ILogger):
             )
             self._log_image(image, neptune_path)
         elif scope == "epoch":
-            neptune_path = "/".join([self.base_namespace, stage_key, scope, "_images", tag])
+            neptune_path = "/".join(
+                [self.base_namespace, stage_key, scope, "_images", tag]
+            )
             self._log_image(image, neptune_path)
         elif scope == "stage":
             neptune_path = "/".join([self.base_namespace, stage_key, "_images", tag])
@@ -348,7 +358,12 @@ class NeptuneLogger(ILogger):
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == "experiment" or scope is None:
             neptune_path = "/".join(
-                [self.base_namespace, "_artifacts", "epoch-" + str(global_epoch_step), tag]
+                [
+                    self.base_namespace,
+                    "_artifacts",
+                    "epoch-" + str(global_epoch_step),
+                    tag,
+                ]
             )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
 

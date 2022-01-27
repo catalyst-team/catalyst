@@ -12,7 +12,9 @@ if SETTINGS.nifti_required:
 
 
 @pytest.mark.skipif(not SETTINGS.nifti_required, reason="Niftly is not available")
-@pytest.mark.parametrize("input_key, output_key", [("images", None), ("images", "outputs")])
+@pytest.mark.parametrize(
+    "input_key, output_key", [("images", None), ("images", "outputs")]
+)
 def test_nifti_reader(input_key, output_key):
     """Minimal test for getting images from a nifti file"""
     test_annotations_dict = {input_key: example_filename}

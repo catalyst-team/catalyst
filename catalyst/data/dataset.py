@@ -135,7 +135,9 @@ class SelfSupervisedDatasetWrapper(Dataset):
         else:
             sample = self.dataset[idx]
 
-        transformed_sample = self.transform_original(sample) if self.transform_original else sample
+        transformed_sample = (
+            self.transform_original(sample) if self.transform_original else sample
+        )
         aug_1 = self.transform_left(sample)
         aug_2 = self.transform_right(sample)
 

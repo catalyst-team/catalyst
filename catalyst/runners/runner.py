@@ -14,7 +14,8 @@ from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallbac
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
+from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner, IRunnerError
@@ -25,7 +26,6 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.runners._misc import get_loaders_from_params
-from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
@@ -204,7 +204,9 @@ class Runner(IRunner):
     @property
     def name(self) -> str:
         """Returns run name."""
-        return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
+        return (
+            "experiment" if self._trial is None else f"experiment_{self._trial.number}"
+        )
 
     @property
     def hparams(self) -> Dict:
@@ -276,7 +278,8 @@ class Runner(IRunner):
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
-            if callable(self._optimizer) and not isinstance(self._optimizer, optim.Optimizer)
+            if callable(self._optimizer)
+            and not isinstance(self._optimizer, optim.Optimizer)
             else self._optimizer
         )
 
@@ -510,7 +513,9 @@ class Runner(IRunner):
                 assert logits.detach().cpu().numpy().shape[-1] == 10
         """
         # experiment setup
-        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self._engine = engine or get_available_engine(
+            fp16=fp16, ddp=ddp, amp=amp, apex=apex
+        )
         self._trial = trial
         self._loggers = loggers
         # the data
@@ -687,7 +692,9 @@ class Runner(IRunner):
             for logits in runner.predict_loader(loader=loaders["valid"], resume="./logs/best.pth"):
                 assert logits.detach().cpu().numpy().shape[-1] == 10
         """
-        self.engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self.engine = engine or get_available_engine(
+            fp16=fp16, ddp=ddp, amp=amp, apex=apex
+        )
 
         if model is not None:
             self.model = model
@@ -880,15 +887,21 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
-            callbacks["_criterion"] = CriterionCallback(
-                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key
-            )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
-            ISchedulerCallback
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(
+            ICriterionCallback
         ):
+            callbacks["_criterion"] = CriterionCallback(
+                input_key=self._output_key,
+                target_key=self._target_key,
+                metric_key=self._loss_key,
+            )
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(
+            IOptimizerCallback
+        ):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(
+            self._scheduler, (Scheduler, ReduceLROnPlateau)
+        ) and not is_callback_exists(ISchedulerCallback):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric
             )
@@ -1056,17 +1069,21 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(
+            ICriterionCallback
+        ):
             callbacks["_criterion"] = CriterionCallback(
                 input_key=f"{self.loss_mode_prefix}_left",
                 target_key=f"{self.loss_mode_prefix}_right",
                 metric_key=self._loss_key,
             )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
-            ISchedulerCallback
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(
+            IOptimizerCallback
         ):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(
+            self._scheduler, (Scheduler, ReduceLROnPlateau)
+        ) and not is_callback_exists(ISchedulerCallback):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric
             )

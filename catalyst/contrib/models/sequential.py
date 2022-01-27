@@ -28,7 +28,9 @@ def _layer_fn(layer_fn, f_in, f_out, **kwargs):
 
 def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
     normalization_fn = REGISTRY.get_if_str(normalization_fn)
-    normalization_fn = normalization_fn(f_out, **kwargs) if normalization_fn is not None else None
+    normalization_fn = (
+        normalization_fn(f_out, **kwargs) if normalization_fn is not None else None
+    )
     return normalization_fn
 
 

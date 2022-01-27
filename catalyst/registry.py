@@ -1,9 +1,8 @@
 import logging
 
-from catalyst.settings import SETTINGS
 import hydra_slayer
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 REGISTRY = hydra_slayer.Registry()
 Registry = REGISTRY.add
@@ -13,15 +12,6 @@ def _data_loader(r: hydra_slayer.Registry):
     from catalyst import data as m
 
     r.add_from_module(m)
-
-    if SETTINGS.albu_required:
-        import albumentations as m
-
-        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
-
-        from albumentations import pytorch as p
-
-        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
 
 REGISTRY.late_add(_data_loader)
@@ -39,7 +29,9 @@ REGISTRY.late_add(_datasets_loader)
 def _samplers_loader(r: hydra_slayer.Registry):
     from torch.utils.data import sampler as s
 
-    factories = {k: v for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"}
+    factories = {
+        k: v for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"
+    }
     r.add(**factories)
 
 
@@ -95,11 +87,6 @@ def _optimizers_loader(r: hydra_slayer.Registry):
     from catalyst.contrib import optimizers as m
 
     r.add_from_module(m)
-
-    if SETTINGS.fairscale_required:
-        from fairscale import optim as m2
-
-        r.add_from_module(m2, prefix=["fairscale."])
 
 
 REGISTRY.late_add(_optimizers_loader)

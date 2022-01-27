@@ -40,7 +40,11 @@ if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model
 
 if SETTINGS.pruning_required:
-    from catalyst.utils.pruning import prune_model, remove_reparametrization, get_pruning_fn
+    from catalyst.utils.pruning import (
+        prune_model,
+        remove_reparametrization,
+        get_pruning_fn,
+    )
 
 if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model

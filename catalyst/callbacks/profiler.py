@@ -113,9 +113,9 @@ class ProfilerCallback(Callback):
 
         self.profiler_kwargs = {} if profiler_kwargs is None else profiler_kwargs
         if tensorboard_path is not None and "on_trace_ready" not in profiler_kwargs:
-            self.profiler_kwargs["on_trace_ready"] = torch.profiler.tensorboard_trace_handler(
-                tensorboard_path
-            )
+            self.profiler_kwargs[
+                "on_trace_ready"
+            ] = torch.profiler.tensorboard_trace_handler(tensorboard_path)
         self.export_chrome_trace_path = export_chrome_trace_path
         self.export_stacks_kwargs = export_stacks_kwargs
         self.profiler = None
@@ -149,7 +149,10 @@ class ProfilerCallback(Callback):
         if self.stats is None:
             self.profiler.__exit__(None, None, None)
 
-            if "on_trace_ready" not in self.profiler_kwargs and self.export_chrome_trace_path:
+            if (
+                "on_trace_ready" not in self.profiler_kwargs
+                and self.export_chrome_trace_path
+            ):
                 self.profiler.export_chrome_trace(self.export_chrome_trace_path)
 
             if self.export_stacks_kwargs is not None:
@@ -163,7 +166,9 @@ class ProfilerCallback(Callback):
                 with open(artifact_path, "w") as f:
                     f.write(table_txt)
                 runner.log_artifact(
-                    tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path
+                    tag="profiler",
+                    artifact="profiler.txt",
+                    path_to_artifact=artifact_path,
                 )
 
             print(table_txt)

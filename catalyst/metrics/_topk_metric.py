@@ -33,7 +33,9 @@ class TopKMetric(ICallbackBatchMetric):
         self.metric_name = metric_name
         self.metric_function = metric_function
         self.topk_args = topk_args or (1,)
-        self.metrics: List[AdditiveMetric] = [AdditiveMetric() for _ in range(len(self.topk_args))]
+        self.metrics: List[AdditiveMetric] = [
+            AdditiveMetric() for _ in range(len(self.topk_args))
+        ]
 
     def reset(self) -> None:
         """Reset all fields"""
@@ -57,7 +59,9 @@ class TopKMetric(ICallbackBatchMetric):
             metric.update(value, len(targets))
         return values
 
-    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, logits: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with value for new data and return intermediate metrics
         values in key-value format.

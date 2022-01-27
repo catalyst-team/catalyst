@@ -14,7 +14,10 @@ class ListDataset(Dataset):
     """General purpose dataset class with several data sources `list_data`."""
 
     def __init__(
-        self, list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None
+        self,
+        list_data: List[Dict],
+        open_fn: Callable,
+        dict_transform: Optional[Callable] = None,
     ):
         """
         Args:
@@ -30,7 +33,9 @@ class ListDataset(Dataset):
         """
         self.data = list_data
         self.open_fn = open_fn
-        self.dict_transform = dict_transform if dict_transform is not None else lambda x: x
+        self.dict_transform = (
+            dict_transform if dict_transform is not None else lambda x: x
+        )
 
     def __getitem__(self, index: int) -> Any:
         """Gets element of the dataset.
@@ -117,7 +122,9 @@ class NumpyDataset(Dataset):
         super().__init__()
         self.data = numpy_data
         self.key = numpy_key
-        self.dict_transform = dict_transform if dict_transform is not None else lambda x: x
+        self.dict_transform = (
+            dict_transform if dict_transform is not None else lambda x: x
+        )
 
     def __getitem__(self, index: int) -> Any:
         """Gets element of the dataset.
@@ -182,7 +189,8 @@ class PathsDataset(ListDataset):
                 parameters.
         """
         list_data = [
-            {features_key: filename, target_key: label_fn(filename)} for filename in filenames
+            {features_key: filename, target_key: label_fn(filename)}
+            for filename in filenames
         ]
 
         super().__init__(list_data=list_data, open_fn=open_fn, **list_dataset_params)

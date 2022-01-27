@@ -62,7 +62,9 @@ def test_accuracy():
         "train": MNIST("./data", train=False),
         "valid": MNIST("./data", train=False),
     }
-    dataloaders = {k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()}
+    dataloaders = {
+        k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()
+    }
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     runner = SupervisedRunner()
     runner.train(

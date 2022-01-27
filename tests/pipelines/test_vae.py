@@ -71,14 +71,8 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
         }
         return loaders
 
@@ -93,7 +87,11 @@ class CustomRunner(dl.IRunner):
         return {
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
         }
 
@@ -110,7 +108,9 @@ class CustomRunner(dl.IRunner):
         x_, loc, log_scale = self.model(x, deterministic=not self.is_train_loader)
 
         loss_ae = F.mse_loss(x_, x)
-        loss_kld = (-0.5 * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)).mean()
+        loss_kld = (
+            -0.5 * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)
+        ).mean()
         loss = loss_ae + loss_kld * 0.01
 
         self.batch_metrics = {"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss}
@@ -145,7 +145,9 @@ def test_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_cuda1():
     train_experiment("cuda:1")
 
@@ -165,7 +167,9 @@ def test_on_torch_cuda1():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -186,7 +190,9 @@ def test_on_amp():
 #     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_on_apex():
     train_experiment(None, dl.APEXEngine())
 

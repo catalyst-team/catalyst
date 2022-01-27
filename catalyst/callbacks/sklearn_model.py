@@ -219,7 +219,9 @@ class SklearnModelCallback(Callback):
             base = f"sklearn.{base}"
             model_fn = getattr(importlib.import_module(base), clf)
 
-        assert hasattr(model_fn(), predict_method), "The classifier must have the predict method!"
+        assert hasattr(
+            model_fn(), predict_method
+        ), "The classifier must have the predict method!"
 
         self._train_loader = train_loader
         if isinstance(valid_loaders, str):
@@ -269,7 +271,9 @@ class SklearnModelCallback(Callback):
             # classifier predict
             classifier_predict = getattr(self.model, self.predict_method)
             predictions = classifier_predict(features)
-            runner.batch[self.predict_key] = torch.tensor(predictions, device=runner.engine.device)
+            runner.batch[self.predict_key] = torch.tensor(
+                predictions, device=runner.engine.device
+            )
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """

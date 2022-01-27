@@ -11,7 +11,9 @@ from catalyst.utils.torch import detach_tensor
 
 def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
     @functools.wraps(metric_fn)
-    def _wrapper(value: torch.Tensor, *args: Any, **kwargs: Any) -> Union[float, np.ndarray]:
+    def _wrapper(
+        value: torch.Tensor, *args: Any, **kwargs: Any
+    ) -> Union[float, np.ndarray]:
         np_tensor = detach_tensor(value)
         value = metric_fn(np_tensor, *args, **kwargs)
 

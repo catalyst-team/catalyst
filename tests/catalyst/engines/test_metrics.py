@@ -19,7 +19,11 @@ from catalyst.callbacks import (
 )
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
-from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines.torch import (
+    DataParallelEngine,
+    DeviceEngine,
+    DistributedDataParallelEngine,
+)
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -48,7 +52,10 @@ class CustomSampler(SequentialSampler):
     def __iter__(self):
         indices = list(range(len(self.data_source)))
         # indices = indices[self.rank:self.total_size:self.num_replicas]
-        indices = indices[0 : len(self.data_source) : 2] + indices[1 : len(self.data_source) : 2]
+        indices = (
+            indices[0 : len(self.data_source) : 2]
+            + indices[1 : len(self.data_source) : 2]
+        )
         return iter(indices)
 
 
@@ -109,7 +116,9 @@ class IRunnerMixin(IRunner):
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "accuracy": AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,)),
+            "accuracy": AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1,)
+            ),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
             "classification": PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=4
@@ -144,7 +153,9 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
         dataset = TwoBlobsDataset()
         # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
+        loader = DataLoader(
+            dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler
+        )
         return {"valid": loader}
 
 
@@ -156,7 +167,9 @@ class CustomDPRunner(IRunnerMixin, IRunner):
         dataset = TwoBlobsDataset()
         # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomSampler(data_source=dataset)
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
+        loader = DataLoader(
+            dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler
+        )
         return {"valid": loader}
 
 
@@ -168,7 +181,9 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
         dataset = TwoBlobsDataset()
         # dataset = MNIST(os.getcwd(), train=False)
         sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
+        loader = DataLoader(
+            dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler
+        )
         return {"valid": loader}
 
 
@@ -226,7 +241,10 @@ def train_device_config_runner(logdir, device):
                             "input_key": "logits",
                             "target_key": "targets",
                         },
-                        "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                        "optimizer": {
+                            "_target_": "OptimizerCallback",
+                            "metric_key": "loss",
+                        },
                     },
                 },
             },
@@ -237,7 +255,8 @@ def train_device_config_runner(logdir, device):
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2), reason="Number of CUDA devices is not 2"
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2),
+    reason="Number of CUDA devices is not 2",
 )
 def test_device_and_ddp_metrics():
     # we have to keep dataset_len, num_gpu and batch size synced

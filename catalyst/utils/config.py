@@ -19,7 +19,9 @@ def construct_mapping(loader, node):
     return OrderedDict(loader.construct_pairs(node))
 
 
-OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping)
+OrderedLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+)
 OrderedLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
     re.compile(

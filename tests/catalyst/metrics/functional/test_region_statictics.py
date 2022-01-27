@@ -13,7 +13,11 @@ def test_segmentation_statistics():
     empty = torch.zeros(shape)
     full = torch.ones(shape)
     tp, fp, fn = get_segmentation_statistics(empty, full, class_dim=1)
-    assert tp == torch.tensor([0.0]) and fp == torch.tensor([0.0]) and fn == torch.tensor([16.0])
+    assert (
+        tp == torch.tensor([0.0])
+        and fp == torch.tensor([0.0])
+        and fn == torch.tensor([16.0])
+    )
 
     # check 0: no overlap
     left = torch.ones(shape)
@@ -21,21 +25,41 @@ def test_segmentation_statistics():
     right = torch.ones(shape)
     right[:, :, :, :half_size] = 0
     tp, fp, fn = get_segmentation_statistics(left, right, class_dim=1)
-    assert tp == torch.tensor([0.0]) and fp == torch.tensor([8.0]) and fn == torch.tensor([8.0])
+    assert (
+        tp == torch.tensor([0.0])
+        and fp == torch.tensor([8.0])
+        and fn == torch.tensor([8.0])
+    )
 
     # check 1: both empty, both full, complete overlap
     tp, fp, fn = get_segmentation_statistics(empty, empty, class_dim=1)
-    assert tp == torch.tensor([0.0]) and fp == torch.tensor([0.0]) and fn == torch.tensor([0.0])
+    assert (
+        tp == torch.tensor([0.0])
+        and fp == torch.tensor([0.0])
+        and fn == torch.tensor([0.0])
+    )
     tp, fp, fn = get_segmentation_statistics(full, full, class_dim=1)
-    assert tp == torch.tensor([16.0]) and fp == torch.tensor([0.0]) and fn == torch.tensor([0.0])
+    assert (
+        tp == torch.tensor([16.0])
+        and fp == torch.tensor([0.0])
+        and fn == torch.tensor([0.0])
+    )
     tp, fp, fn = get_segmentation_statistics(left, left, class_dim=1)
-    assert tp == torch.tensor([8.0]) and fp == torch.tensor([0.0]) and fn == torch.tensor([0.0])
+    assert (
+        tp == torch.tensor([8.0])
+        and fp == torch.tensor([0.0])
+        and fn == torch.tensor([0.0])
+    )
 
     # check 0.5: half overlap
     top_left = torch.zeros(shape)
     top_left[:, :, :half_size, :half_size] = 1
     tp, fp, fn = get_segmentation_statistics(left, top_left, class_dim=1)
-    assert tp == torch.tensor([4.0]) and fp == torch.tensor([4.0]) and fn == torch.tensor([0.0])
+    assert (
+        tp == torch.tensor([4.0])
+        and fp == torch.tensor([4.0])
+        and fn == torch.tensor([0.0])
+    )
 
     # check multiclass
     a = torch.cat([empty, left, empty, full, left, top_left], dim=1)

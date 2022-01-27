@@ -78,9 +78,9 @@ def test_aggregation_2():
 
     def aggregation_function(metrics, runner):
         epoch = runner.stage_epoch_step
-        loss = (3 / 2 - epoch / 2) * metrics["loss_focal"] + (1 / 2 * epoch - 1 / 2) * metrics[
-            "loss_bce"
-        ]
+        loss = (3 / 2 - epoch / 2) * metrics["loss_focal"] + (
+            1 / 2 * epoch - 1 / 2
+        ) * metrics["loss_bce"]
         return loss
 
     runner.train(

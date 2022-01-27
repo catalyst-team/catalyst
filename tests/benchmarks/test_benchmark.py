@@ -33,7 +33,9 @@ class TestMnistRunner(dl.Runner):
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         return {
             "train": DataLoader(
-                contrib.MNIST(DATA_ROOT, train=True, download=True), batch_size=128, num_workers=1
+                contrib.MNIST(DATA_ROOT, train=True, download=True),
+                batch_size=128,
+                num_workers=1,
             )
         }
 
@@ -66,7 +68,9 @@ def _get_used_memory():
     return used_memory
 
 
-def run_pytorch(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10):
+def run_pytorch(
+    irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10
+):
     device = torch.device(device)
     utils.set_global_seed(idx)
 
@@ -107,7 +111,9 @@ def run_pytorch(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs:
     return epoch_scores[-1], epoch_losses[-1], _get_used_memory()
 
 
-def run_catalyst(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10):
+def run_catalyst(
+    irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10
+):
     utils.set_global_seed(idx)
     stage: str = "train"
     loader = irunner.get_loaders(stage)["train"]
@@ -140,7 +146,9 @@ def run_catalyst(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs
     )
 
 
-def score_runs(irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epochs: int = 10):
+def score_runs(
+    irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epochs: int = 10
+):
     hist_scores = []
     hist_losses = []
     hist_time = []
@@ -180,7 +188,9 @@ def score_runs(irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epoch
     }
 
 
-def assert_relative_equal(catalyst_values, torch_values, max_diff: float, norm: float = 1):
+def assert_relative_equal(
+    catalyst_values, torch_values, max_diff: float, norm: float = 1
+):
     diffs = np.asarray(catalyst_values) - np.mean(torch_values)
     diffs = diffs / norm
     diffs = diffs / np.mean(torch_values)
@@ -189,17 +199,19 @@ def assert_relative_equal(catalyst_values, torch_values, max_diff: float, norm: 
     ), f"Catalyst diff {diffs} worse than PyTorch (threshold {max_diff})"
 
 
-def assert_absolute_equal(catalyst_values, torch_values, max_diff: float, norm: float = 1):
+def assert_absolute_equal(
+    catalyst_values, torch_values, max_diff: float, norm: float = 1
+):
     diffs = np.asarray(catalyst_values) - np.mean(torch_values)
     diffs = diffs / norm
-    assert np.mean(diffs) < max_diff, f"Catalyst {diffs} worse than PyTorch (threshold {max_diff})"
+    assert (
+        np.mean(diffs) < max_diff
+    ), f"Catalyst {diffs} worse than PyTorch (threshold {max_diff})"
 
 
 @pytest.mark.parametrize(
     "irunner,num_epochs,num_runs,precision,max_diff_time,max_diff_memory",
-    [
-        (TestMnistRunner, 4, 3, 2, 0.1, 0.001),
-    ],
+    [(TestMnistRunner, 4, 3, 2, 0.1, 0.001),],
 )
 @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
@@ -217,26 +229,33 @@ def test_benchmark(
     _ = irunner.get_loaders(None)
 
     # score runs
-    pytorch = score_runs(irunner, mode=RunMode.pytorch, num_epochs=num_epochs, num_runs=num_runs)
-    catalyst = score_runs(irunner, mode=RunMode.catalyst, num_epochs=num_epochs, num_runs=num_runs)
+    pytorch = score_runs(
+        irunner, mode=RunMode.pytorch, num_epochs=num_epochs, num_runs=num_runs
+    )
+    catalyst = score_runs(
+        irunner, mode=RunMode.catalyst, num_epochs=num_epochs, num_runs=num_runs
+    )
 
     # check performance
-    print(f"Scores are for... \n PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}")
+    print(
+        f"Scores are for... \n PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}"
+    )
     for catalyst_, pytorch_ in zip(catalyst["scores"], pytorch["scores"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
 
     # check loss
-    print(f"Losses are for... \n PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}")
+    print(
+        f"Losses are for... \n PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}"
+    )
     for catalyst_, pytorch_ in zip(catalyst["losses"], pytorch["losses"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
 
     # check time
-    print(f"Times are for... \n PyTorch: {pytorch['time']} \n Catalyst: {catalyst['time']}")
+    print(
+        f"Times are for... \n PyTorch: {pytorch['time']} \n Catalyst: {catalyst['time']}"
+    )
     assert_absolute_equal(
-        catalyst["time"],
-        pytorch["time"],
-        norm=num_epochs,
-        max_diff=max_diff_time,
+        catalyst["time"], pytorch["time"], norm=num_epochs, max_diff=max_diff_time,
     )
 
     # check memory
@@ -244,4 +263,6 @@ def test_benchmark(
         print(
             f"Memory usages are for... \n PyTorch: {pytorch['memory']} \n Catalyst: {catalyst['memory']}"
         )
-        assert_relative_equal(catalyst["memory"], pytorch["memory"], max_diff=max_diff_memory)
+        assert_relative_equal(
+            catalyst["memory"], pytorch["memory"], max_diff=max_diff_memory
+        )

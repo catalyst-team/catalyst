@@ -152,7 +152,11 @@ class CustomRunner(dl.IRunner):
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "check_freezed": CheckRequiresGrad("layer1", "train_freezed", False),
             "check_unfreezed": CheckRequiresGrad("layer1", "train_unfreezed", True),
@@ -185,12 +189,16 @@ def test_finetune_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_finetune_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_finetune_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
@@ -203,7 +211,9 @@ def test_finetune_on_torch_dp():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_finetune_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -224,7 +234,9 @@ def test_finetune_on_amp_dp():
 #     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_finetune_on_apex():
     train_experiment(None, dl.APEXEngine())
 

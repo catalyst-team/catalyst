@@ -89,7 +89,9 @@ class MetricCallback(IMetricCallback):
         }
 
     @staticmethod
-    def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
+    def _convert_keys_to_kv(
+        keys: Union[str, Iterable[str], Dict[str, str]]
+    ) -> Dict[str, str]:
         """
         Convert keys to key-value format
 
@@ -246,10 +248,15 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         """Init."""
         assert isinstance(metric, FunctionalBatchMetric)
         super().__init__(
-            metric=metric, input_key=input_key, target_key=target_key, log_on_batch=log_on_batch
+            metric=metric,
+            input_key=input_key,
+            target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
-    def _get_value_inputs(self, runner: "IRunner") -> Tuple[float, torch.Tensor, torch.Tensor]:
+    def _get_value_inputs(
+        self, runner: "IRunner"
+    ) -> Tuple[float, torch.Tensor, torch.Tensor]:
         """Get data from batch in value input case
 
         Args:
@@ -258,7 +265,11 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         Returns:
             tuple of tensor of inputs and tensor of targets
         """
-        return runner.batch_size, runner.batch[self.input_key], runner.batch[self.target_key]
+        return (
+            runner.batch_size,
+            runner.batch[self.input_key],
+            runner.batch[self.target_key],
+        )
 
     def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
         """Get data from batch in key-value input case

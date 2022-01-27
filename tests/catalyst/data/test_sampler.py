@@ -78,7 +78,9 @@ def test_batch_balance_class_sampler():
             loader = DataLoader(data, batch_sampler=sampler)
             for _, y in loader:
                 stats = Counter(y.cpu().numpy().tolist())
-                assert len(stats) == num_classes, f"Each batch shoud contain {num_classes} classes"
+                assert (
+                    len(stats) == num_classes
+                ), f"Each batch shoud contain {num_classes} classes"
                 assert all(
                     n == num_samples for n in stats.values()
                 ), f"Each class shoud contain {num_samples} instances"

@@ -23,7 +23,9 @@ def _is_torch_distributed_initialized() -> bool:
 
 
 def _is_xla_distributed_initialized() -> bool:
-    return SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
+    return (
+        SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
+    )
 
 
 def _is_slurm_available():
@@ -43,9 +45,15 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
 
     if SETTINGS.fairscale_required:
-        from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
+        from fairscale.nn.data_parallel import (
+            FullyShardedDataParallel,
+            ShardedDataParallel,
+        )
 
-        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel)
+        parallel_wrappers = parallel_wrappers + (
+            ShardedDataParallel,
+            FullyShardedDataParallel,
+        )
 
     if SETTINGS.deepspeed_required:
         from deepspeed import DeepSpeedEngine, PipelineEngine
@@ -252,7 +260,9 @@ def all_gather(data: Any) -> List[Any]:
         tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
 
     if local_size != max_size:
-        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
+        padding = torch.empty(
+            size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
+        )
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 

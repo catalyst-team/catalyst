@@ -38,18 +38,15 @@ def train_experiment(device, engine=None):
         teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         model = {"teacher": teacher, "student": student}
-        criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
+        criterion = {
+            "cls": nn.CrossEntropyLoss(),
+            "kl": nn.KLDivLoss(reduction="batchmean"),
+        }
         optimizer = optim.Adam(student.parameters(), lr=0.02)
 
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True),
-                batch_size=32,
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32,),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
         }
 
         runner = DistilRunner()
@@ -65,10 +62,16 @@ def train_experiment(device, engine=None):
             verbose=False,
             callbacks=[
                 dl.AccuracyCallback(
-                    input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"
+                    input_key="t_logits",
+                    target_key="targets",
+                    num_classes=2,
+                    prefix="teacher_",
                 ),
                 dl.AccuracyCallback(
-                    input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"
+                    input_key="s_logits",
+                    target_key="targets",
+                    num_classes=2,
+                    prefix="student_",
                 ),
                 dl.CriterionCallback(
                     input_key="s_logits",
@@ -107,23 +110,31 @@ def test_distillation_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_distillation_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_distillation_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_distillation_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_distillation_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -145,7 +156,9 @@ def test_distillation_on_amp_ddp():
 
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_distillation_on_apex():
     train_experiment(None, dl.APEXEngine())
 

@@ -2,7 +2,11 @@ from typing import Callable, Dict, Iterable
 
 import torch
 
-from catalyst.metrics import AccumulativeMetric, ICallbackBatchMetric, ICallbackLoaderMetric
+from catalyst.metrics import (
+    AccumulativeMetric,
+    ICallbackBatchMetric,
+    ICallbackLoaderMetric,
+)
 from catalyst.metrics._additive import AdditiveMetric
 
 
@@ -81,7 +85,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         self.additive_metric.update(float(value), batch_size)
         return value
 
-    def update_key_value(self, batch_size: int, *args, **kwargs) -> Dict[str, torch.Tensor]:
+    def update_key_value(
+        self, batch_size: int, *args, **kwargs
+    ) -> Dict[str, torch.Tensor]:
         """
         Calculate metric and update average metric
 

@@ -42,7 +42,10 @@ class TestSwa(unittest.TestCase):
         torch.save(weights, str("./checkpoints/swa_weights.pth"))
         model = Net()
         model.load_state_dict(
-            torch.load("./checkpoints/swa_weights.pth", map_location=lambda storage, loc: storage)
+            torch.load(
+                "./checkpoints/swa_weights.pth",
+                map_location=lambda storage, loc: storage,
+            )
         )
         self.assertEqual(float(model.fc.weight.data[0][0]), 3.5)
         self.assertEqual(float(model.fc.weight.data[0][1]), 3.5)

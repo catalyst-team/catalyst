@@ -76,7 +76,9 @@ def dump_code(logdir: Union[str, Path], expdir: Union[str, Path] = None):
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
     """Decode bytes values in the dictionary to UTF-8."""
-    result = {k: v.decode("UTF-8") if type(v) == bytes else v for k, v in dictionary.items()}
+    result = {
+        k: v.decode("UTF-8") if type(v) == bytes else v for k, v in dictionary.items()
+    }
     return result
 
 
@@ -158,7 +160,9 @@ def _list_conda_packages() -> str:
         with open(os.devnull, "w") as devnull:
             try:
                 result = (
-                    subprocess.check_output("conda list --export".split(), stderr=devnull)
+                    subprocess.check_output(
+                        "conda list --export".split(), stderr=devnull
+                    )
                     .strip()
                     .decode("UTF-8")
                 )
@@ -181,7 +185,9 @@ def _list_conda_packages() -> str:
     return result
 
 
-def dump_environment(logdir: str, config: Any = None, configs_path: List[str] = None) -> None:
+def dump_environment(
+    logdir: str, config: Any = None, configs_path: List[str] = None
+) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir.
 

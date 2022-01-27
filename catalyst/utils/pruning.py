@@ -46,12 +46,14 @@ def get_pruning_fn(
         if "unstructured" not in pruning_fn:
             if dim is None:
                 raise ValueError(
-                    "If you are using structured pruning you" "need to specify dim in args"
+                    "If you are using structured pruning you"
+                    "need to specify dim in args"
                 )
             if pruning_fn == "ln_structured":
                 if l_norm is None:
                     raise ValueError(
-                        "If you are using ln_unstructured you" "need to specify l_norm in args"
+                        "If you are using ln_unstructured you"
+                        "need to specify l_norm in args"
                     )
                 pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
             else:

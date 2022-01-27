@@ -82,7 +82,9 @@ class ConfusionMatrixMetric(IMetric):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+    def __init__(
+        self, num_classes: int, normalized: bool = False, compute_on_call: bool = True
+    ):
         """Constructs a confusion matrix for a multiclass classification problems."""
         super().__init__(compute_on_call=compute_on_call)
         self.num_classes = num_classes

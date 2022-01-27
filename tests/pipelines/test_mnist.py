@@ -20,21 +20,20 @@ def train_experiment(device, engine=None):
         optimizer = optim.Adam(model.parameters(), lr=0.02)
 
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32,
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
         }
 
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss",
         )
         callbacks = [
-            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+            dl.AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            ),
             dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
@@ -49,14 +48,20 @@ def train_experiment(device, engine=None):
             engine is None
             or not isinstance(
                 engine,
-                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+                (
+                    dl.AMPEngine,
+                    dl.DataParallelAMPEngine,
+                    dl.DistributedDataParallelAMPEngine,
+                ),
             )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
         if SETTINGS.onnx_required:
             callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
         if SETTINGS.pruning_required:
-            callbacks.append(dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5))
+            callbacks.append(
+                dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5)
+            )
         if SETTINGS.quantization_required:
             callbacks.append(dl.QuantizationCallback(logdir=logdir))
         if engine is None or not isinstance(engine, dl.DistributedDataParallelEngine):
@@ -88,7 +93,9 @@ def train_experiment(device, engine=None):
             model=runner.model,
             loader=loaders["valid"],
             callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))
+                dl.AccuracyCallback(
+                    input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+                )
             ],
         )
         assert "accuracy01" in metrics.keys()
@@ -115,7 +122,9 @@ def train_experiment(device, engine=None):
             utils.quantize_model(model=runner.model)
         # model pruning
         if SETTINGS.pruning_required:
-            utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+            utils.prune_model(
+                model=runner.model, pruning_fn="l1_unstructured", amount=0.8
+            )
         # model tracing
         utils.trace_model(model=runner.model, batch=features_batch)
 
@@ -130,12 +139,16 @@ def test_mnist_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_mnist_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_mnist_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
@@ -148,7 +161,9 @@ def test_mnist_on_torch_dp():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_mnist_on_amp():
     train_experiment(None, dl.AMPEngine())
 

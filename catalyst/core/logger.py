@@ -49,9 +49,11 @@ class ILogger:
         """
         return self._log_epoch_metrics
 
-    def log_metrics(
+    def log_artifact(
         self,
-        metrics: Dict[str, float],
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
         scope: str = None,
         # experiment info
         run_key: str = None,
@@ -65,7 +67,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs metrics to the logger."""
+        """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
         pass
 
     def log_image(
@@ -88,21 +90,13 @@ class ILogger:
         """Logs image to the logger."""
         pass
 
-    def log_hparams(
-        self,
-        hparams: Dict,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-    ) -> None:
+    def log_hparams(self, hparams: Dict, scope: str = None) -> None:
         """Logs hyperparameters to the logger."""
         pass
 
-    def log_artifact(
+    def log_metrics(
         self,
-        tag: str,
-        artifact: object = None,
-        path_to_artifact: str = None,
+        metrics: Dict[str, float],
         scope: str = None,
         # experiment info
         run_key: str = None,
@@ -116,7 +110,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
+        """Logs metrics to the logger."""
         pass
 
     def flush_log(self) -> None:

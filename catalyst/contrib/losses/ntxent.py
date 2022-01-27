@@ -48,7 +48,9 @@ class NTXentLoss(nn.Module):
         self.reduction = reduction
 
         if self.reduction not in ["none", "mean", "sum"]:
-            raise ValueError(f"Reduction should be: mean, sum, none. But got - {self.reduction}!")
+            raise ValueError(
+                f"Reduction should be: mean, sum, none. But got - {self.reduction}!"
+            )
 
     def forward(self, features1: torch.Tensor, features2: torch.Tensor) -> torch.Tensor:
         """

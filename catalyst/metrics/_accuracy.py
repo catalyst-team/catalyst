@@ -282,7 +282,9 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
         super().update(value=metric, num_samples=np.prod(targets.shape))
         return metric
 
-    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with accuracy for new data and return intermediate metric
         value in key-value format.

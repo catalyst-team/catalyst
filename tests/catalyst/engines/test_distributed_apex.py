@@ -61,7 +61,11 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             # "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
@@ -139,7 +143,10 @@ def train_from_config(port, logdir, opt_lvl):
                             "input_key": "logits",
                             "target_key": "targets",
                         },
-                        "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                        "optimizer": {
+                            "_target_": "OptimizerCallback",
+                            "metric_key": "loss",
+                        },
                         # "test_nn_parallel_distributed_data_parallel": {
                         #     "_target_": "DistributedDataParallelTypeChecker"
                         # },
@@ -171,7 +178,9 @@ def train_from_config(port, logdir, opt_lvl):
 def test_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, opt_level, DDP_ADDRESS + random.randint(1, 100))
+            runner = CustomRunner(
+                logdir, opt_level, DDP_ADDRESS + random.randint(1, 100)
+            )
             runner.run()
 
 

@@ -83,10 +83,14 @@ class CarvanaOneCarDataset(Dataset):
         """
         directory = Path(root) / "CarvanaOneCarDataset"
         if download and not directory.exists():
-            _download_file_from_google_drive(DATASET_IDX, f"{root}/CarvanaOneCarDataset.zip")
+            _download_file_from_google_drive(
+                DATASET_IDX, f"{root}/CarvanaOneCarDataset.zip"
+            )
             _extract_archive(f"{root}/CarvanaOneCarDataset.zip", f"{root}/", True)
         if not directory.exists():
-            raise RuntimeError("Dataset not found. You can use download=True to download it")
+            raise RuntimeError(
+                "Dataset not found. You can use download=True to download it"
+            )
         split = "train" if train else "test"
         mask_path = directory / f"{split}_masks"
         image_path = directory / f"{split}_images"

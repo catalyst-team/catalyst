@@ -78,9 +78,9 @@ class AccumulativeMetric(ICallbackLoaderMetric):
         bs = 0
         for field_name in self.keys:
             bs = kwargs[field_name].shape[0]
-            self.storage[field_name][self.collected_samples : self.collected_samples + bs, ...] = (
-                kwargs[field_name].detach().cpu()
-            )
+            self.storage[field_name][
+                self.collected_samples : self.collected_samples + bs, ...
+            ] = (kwargs[field_name].detach().cpu())
         self.collected_samples += bs
         self.collected_batches += 1
 

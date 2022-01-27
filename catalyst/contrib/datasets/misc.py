@@ -188,4 +188,8 @@ def read_sn3_pascalvincent_tensor(path, strict=True):
     return torch.from_numpy(parsed.astype(m[2], copy=False)).view(*s)
 
 
-__all__ = ["download_and_extract_archive", "download_url", "read_sn3_pascalvincent_tensor"]
+__all__ = [
+    "download_and_extract_archive",
+    "download_url",
+    "read_sn3_pascalvincent_tensor",
+]

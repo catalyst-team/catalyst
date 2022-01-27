@@ -1,4 +1,14 @@
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Tuple, TYPE_CHECKING, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Tuple,
+    TYPE_CHECKING,
+    Union,
+)
 import collections
 import os
 import re
@@ -48,7 +58,9 @@ def _nonlinearity2name(nonlinearity):
     return nonlinearity
 
 
-def get_optimal_inner_init(nonlinearity: nn.Module, **kwargs) -> Callable[[nn.Module], None]:
+def get_optimal_inner_init(
+    nonlinearity: nn.Module, **kwargs
+) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
     based on their activation function (nonlinearity).
@@ -442,7 +454,9 @@ def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]])
     """
     if isinstance(requires_grad, dict):
         for name, param in model.named_parameters():
-            assert name in requires_grad, f"Parameter `{name}` does not exist in requires_grad"
+            assert (
+                name in requires_grad
+            ), f"Parameter `{name}` does not exist in requires_grad"
             param.requires_grad = requires_grad[name]
     else:
         requires_grad = bool(requires_grad)
@@ -479,7 +493,8 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
 
     input_args = [_rand_sample(input_shape) for input_shape in input_shapes_args]
     input_kwargs = {
-        key: _rand_sample(input_shape) for key, input_shape in input_shapes_kwargs.items()
+        key: _rand_sample(input_shape)
+        for key, input_shape in input_shapes_kwargs.items()
     }
 
     output_t = net(*input_args, **input_kwargs)

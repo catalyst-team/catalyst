@@ -60,7 +60,10 @@ class ImageFolderDataset(PathsDataset):
                 [
                     ImageReader(input_key="image", rootpath=rootpath),
                     ScalarReader(
-                        input_key=target_key, output_key=target_key, dtype=int, default_value=-1
+                        input_key=target_key,
+                        output_key=target_key,
+                        dtype=int,
+                        default_value=-1,
                     ),
                 ]
             ),

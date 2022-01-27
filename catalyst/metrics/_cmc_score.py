@@ -214,7 +214,9 @@ class CMCMetric(AccumulativeMetric):
         gallery_embeddings = embeddings[~query_mask]
         gallery_labels = labels[~query_mask]
 
-        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(torch.bool)
+        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
+            torch.bool
+        )
 
         metrics = []
         for k in self.topk_args:
@@ -370,7 +372,9 @@ class ReidCMCMetric(AccumulativeMetric):
         available_samples = ~(pid_conformity_matrix * cid_conformity_matrix).bool()
 
         if (available_samples.max(dim=1).values == 0).any():
-            raise ValueError("There is a sample in query that has no relevant samples in gallery.")
+            raise ValueError(
+                "There is a sample in query that has no relevant samples in gallery."
+            )
 
         metrics = []
         for k in self.topk_args:

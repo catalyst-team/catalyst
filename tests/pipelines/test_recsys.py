@@ -36,12 +36,22 @@ def train_experiment(device, engine=None):
                 transform=torch.sigmoid,
                 scope="on_batch_end",
             ),
-            dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+            dl.CriterionCallback(
+                input_key="logits", target_key="targets", metric_key="loss"
+            ),
             dl.AUCCallback(input_key="scores", target_key="targets"),
-            dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-            dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-            dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-            dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            dl.HitrateCallback(
+                input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            dl.MRRCallback(
+                input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            dl.MAPCallback(
+                input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            dl.NDCGCallback(
+                input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            ),
             dl.OptimizerCallback(metric_key="loss"),
             dl.SchedulerCallback(),
             dl.CheckpointCallback(
@@ -52,14 +62,21 @@ def train_experiment(device, engine=None):
             engine is None
             or not isinstance(
                 engine,
-                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+                (
+                    dl.AMPEngine,
+                    dl.DataParallelAMPEngine,
+                    dl.DistributedDataParallelAMPEngine,
+                ),
             )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss",
         )
         runner.train(
             engine=engine or dl.DeviceEngine(device),
@@ -84,23 +101,31 @@ def test_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
 def test_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
 def test_on_amp():
     train_experiment(None, dl.AMPEngine())
 
@@ -122,7 +147,9 @@ def test_on_amp_ddp():
 
 
 # APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found"
+)
 def test_on_apex():
     train_experiment(None, dl.APEXEngine())
 

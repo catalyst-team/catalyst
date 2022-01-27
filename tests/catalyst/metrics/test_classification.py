@@ -528,8 +528,12 @@ def test_multiclass_metrics_without_num_classes(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]
+            ),
+            torch.tensor(
+                [[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]
+            ),
             4,
             0,
             {
@@ -561,8 +565,12 @@ def test_multiclass_metrics_without_num_classes(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]
+            ),
+            torch.tensor(
+                [[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]
+            ),
             4,
             1,
             {
@@ -739,8 +747,12 @@ def test_multilabel_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]
+            ),
+            torch.tensor(
+                [[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]
+            ),
             0,
             {
                 "precision/_macro": 0.625,
@@ -771,8 +783,12 @@ def test_multilabel_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]
+            ),
+            torch.tensor(
+                [[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]
+            ),
             1,
             {
                 "precision/_macro": 0.875,
@@ -1156,8 +1172,16 @@ def test_update(
             },
         ),
         (
-            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4])],
-            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4])],
+            [
+                torch.tensor([0, 1, 2, 4]),
+                torch.tensor([2, 3, 3, 2]),
+                torch.tensor([0, 1, 3, 4]),
+            ],
+            [
+                torch.tensor([0, 1, 1, 4]),
+                torch.tensor([2, 3, 3, 4]),
+                torch.tensor([0, 1, 2, 4]),
+            ],
             5,
             1,
             [
@@ -1315,7 +1339,9 @@ def test_update_key_value_multiclass(
     metric = MulticlassPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
             assert key in intermediate_metrics
@@ -1330,8 +1356,16 @@ def test_update_key_value_multiclass(
     "outputs_list,targets_list,zero_division,update_true_values,compute_true_value",
     (
         (
-            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4])],
-            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4])],
+            [
+                torch.tensor([0, 1, 2, 4]),
+                torch.tensor([2, 3, 3, 2]),
+                torch.tensor([0, 1, 3, 4]),
+            ],
+            [
+                torch.tensor([0, 1, 1, 4]),
+                torch.tensor([2, 3, 3, 4]),
+                torch.tensor([0, 1, 2, 4]),
+            ],
             1,
             [
                 {
@@ -1484,7 +1518,9 @@ def test_update_key_value_multiclass_without_num_classes(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = MulticlassPrecisionRecallF1SupportMetric(zero_division=zero_division)
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
             assert key in intermediate_metrics
@@ -1650,7 +1686,9 @@ def test_update_key_value_multilabel(
     metric = MultilabelPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
             assert key in intermediate_metrics
@@ -1811,7 +1849,9 @@ def test_update_key_value_multilabel_without_num_classes(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = MultilabelPrecisionRecallF1SupportMetric(zero_division=zero_division)
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
             assert key in intermediate_metrics
@@ -1859,7 +1899,9 @@ def test_update_key_value_binary(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = BinaryPrecisionRecallF1Metric(zero_division=zero_division)
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
         intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
         for key in update_true_value:
             assert key in intermediate_metrics

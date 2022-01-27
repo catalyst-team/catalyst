@@ -280,7 +280,8 @@ class Settings(FrozenClass):
         self.albu_required: bool = _get_optional_value(
             albu_required,
             _is_albumentations_available,
-            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
+            "catalyst[albu] is not available, to install it, "
+            "run `pip install catalyst[albu]`.",
         )
 
         # [engines]
@@ -359,7 +360,9 @@ class Settings(FrozenClass):
 
         # [extras]
         self.use_lz4: bool = use_lz4 or os.environ.get("CATALYST_USE_LZ4", "0") == "1"
-        self.use_pyarrow: bool = use_pyarrow or os.environ.get("CATALYST_USE_PYARROW", "0") == "1"
+        self.use_pyarrow: bool = use_pyarrow or os.environ.get(
+            "CATALYST_USE_PYARROW", "0"
+        ) == "1"
         self.use_libjpeg_turbo: bool = (
             use_libjpeg_turbo or os.environ.get("CATALYST_USE_LIBJPEG_TURBO", "0") == "1"
         )
@@ -547,7 +550,8 @@ class MergedConfigParser:
     def _normalize_value(self, option, value):
         final_value = option.normalize(value, self.config_finder.local_directory)
         logger.debug(
-            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'"
+            f"{value} has been normalized to {final_value}"
+            f" for option '{option.config_name}'"
         )
         return final_value
 

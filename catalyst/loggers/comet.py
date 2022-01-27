@@ -103,7 +103,9 @@ class CometLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **experiment_kwargs: Dict,
     ) -> None:
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         self.comet_mode = comet_mode
         self.workspace = workspace
         self.project_name = project_name
@@ -133,7 +135,9 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.OfflineExperiment(
-                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs
+                workspace=self.workspace,
+                project_name=self.project_name,
+                **self.experiment_kwargs,
             )
 
         else:
@@ -146,7 +150,9 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.Experiment(
-                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs
+                workspace=self.workspace,
+                project_name=self.project_name,
+                **self.experiment_kwargs,
             )
 
     def log_metrics(

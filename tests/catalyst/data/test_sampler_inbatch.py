@@ -60,7 +60,9 @@ def distmats_and_labels() -> List[Tuple[Tensor, List[int]]]:
     return list(zip(distmats, labels_list))
 
 
-def check_all_triplets_number(labels: List[int], num_selected_tri: int, max_tri: int) -> None:
+def check_all_triplets_number(
+    labels: List[int], num_selected_tri: int, max_tri: int
+) -> None:
     """
     Checks that the selection strategy for all triplets
     returns the correct number of triplets.
@@ -145,9 +147,13 @@ def test_all_triplets_sampler(features_and_labels) -> None:
     for _, labels in features_and_labels:
         ids_a, ids_p, ids_n = sampler._sample(labels=labels)
 
-        check_all_triplets_number(labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a))
+        check_all_triplets_number(
+            labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a)
+        )
 
-        check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
+        check_triplets_consistency(
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+        )
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
@@ -161,7 +167,9 @@ def test_hard_sampler_from_features(features_and_labels) -> None:
     for features, labels in features_and_labels:
         ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)
 
-        check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
+        check_triplets_consistency(
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+        )
 
         assert len(ids_a) == len(labels)
 
@@ -176,13 +184,21 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:
     sampler = HardTripletsSampler(norm_required=True)
 
     for distmat, labels in distmats_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=distmat, labels=labels)
-
-        check_triplets_are_hardest(
-            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels, distmat=distmat
+        ids_a, ids_p, ids_n = sampler._sample_from_distmat(
+            distmat=distmat, labels=labels
         )
 
-        check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
+        check_triplets_are_hardest(
+            ids_anchor=ids_a,
+            ids_pos=ids_p,
+            ids_neg=ids_n,
+            labels=labels,
+            distmat=distmat,
+        )
+
+        check_triplets_consistency(
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+        )
 
         assert len(labels) == len(ids_a)
 
@@ -195,7 +211,12 @@ def test_hard_sampler_manual() -> None:
     labels = [0, 0, 1, 1]
 
     dist_mat = torch.tensor(
-        [[0.0, 0.3, 0.2, 0.4], [0.3, 0.0, 0.4, 0.8], [0.2, 0.4, 0.0, 0.5], [0.4, 0.8, 0.5, 0.0]]
+        [
+            [0.0, 0.3, 0.2, 0.4],
+            [0.3, 0.0, 0.4, 0.8],
+            [0.2, 0.4, 0.0, 0.5],
+            [0.4, 0.8, 0.5, 0.0],
+        ]
     )
 
     gt = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
@@ -205,7 +226,9 @@ def test_hard_sampler_manual() -> None:
     ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=dist_mat, labels=labels)
     predict = set(zip(ids_a, ids_p, ids_n))
 
-    check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
+    check_triplets_consistency(
+        ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+    )
 
     assert len(labels) == len(ids_a)
     assert predict == gt
@@ -227,7 +250,9 @@ def test_hard_sampler_manual() -> None:
         ],
         [
             [1, 2, 3],
-            torch.tensor([[True, False, False], [False, True, False], [False, False, True]]),
+            torch.tensor(
+                [[True, False, False], [False, True, False], [False, False, True]]
+            ),
         ],
         [
             [1, 1, 1, 1, 2, 2, 2, 2],
@@ -305,7 +330,8 @@ def test_cluster_count_intra_class_distances(
         ],
         [
             torch.tensor(
-                [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]], dtype=torch.float
+                [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]],
+                dtype=torch.float,
             ),
             torch.tensor(
                 [[0, 9, 16, 25], [9, 0, 25, 34], [16, 25, 0, 41], [25, 34, 41, 0]],

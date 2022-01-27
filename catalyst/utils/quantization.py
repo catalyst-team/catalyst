@@ -8,7 +8,9 @@ from catalyst.utils.torch import get_nn_from_ddp_module
 
 
 def quantize_model(
-    model: Model, qconfig_spec: Dict = None, dtype: Union[str, Optional[torch.dtype]] = "qint8"
+    model: Model,
+    qconfig_spec: Dict = None,
+    dtype: Union[str, Optional[torch.dtype]] = "qint8",
 ) -> Model:
     """Function to quantize model weights.
 

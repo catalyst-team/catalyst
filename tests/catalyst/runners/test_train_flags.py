@@ -19,7 +19,11 @@ if SETTINGS.apex_required:
     )
 
 if SETTINGS.amp_required:
-    from catalyst.engines import AMPEngine, DataParallelAMPEngine, DistributedDataParallelAMPEngine
+    from catalyst.engines import (
+        AMPEngine,
+        DataParallelAMPEngine,
+        DistributedDataParallelAMPEngine,
+    )
 
 
 class DummyDataset:
@@ -122,7 +126,9 @@ def test_dp_apex_arg():
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
 
 
-@pytest.mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs")
+@pytest.mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs"
+)
 def test_ddp_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
@@ -138,7 +144,9 @@ def test_ddp_amp_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelAMPEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, fp16=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, fp16=True
+        )
 
 
 @pytest.mark.skipif(
@@ -149,4 +157,6 @@ def test_ddp_apex_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelAPEXEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, apex=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, apex=True
+        )

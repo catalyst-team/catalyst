@@ -68,10 +68,12 @@ def test_reading():
     test_file = "test.pt"
     processed_folder = "data/MovieLens/processed"
 
-    assert torch.load(os.path.join(processed_folder, test_file)).size() == torch.Size([943, 1682])
-    assert torch.load(os.path.join(processed_folder, training_file)).size() == torch.Size(
+    assert torch.load(os.path.join(processed_folder, test_file)).size() == torch.Size(
         [943, 1682]
     )
+    assert torch.load(
+        os.path.join(processed_folder, training_file)
+    ).size() == torch.Size([943, 1682])
 
 
 @pytest.mark.skipif(not (SETTINGS.ml_required), reason="No catalyst[ml] required")
