@@ -15,11 +15,10 @@ from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
-from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, IRunnerError
-from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
@@ -164,7 +163,6 @@ class Runner(IRunner):
         """Init."""
         super().__init__(*args, **kwargs)
         # the core
-        self._trial: ITrial = None
         self._engine: IEngine = self.engine
         self._model: RunnerModel = self.model
         # the data
@@ -226,10 +224,6 @@ class Runner(IRunner):
     def get_stage_len(self, stage: str) -> int:
         """Returns the stage length in epochs for a given stage."""
         return self._num_epochs
-
-    def get_trial(self) -> ITrial:
-        """Returns the trial for a run."""
-        return self._trial
 
     def get_engine(self) -> IEngine:
         """Returns the engine for a run."""
@@ -344,7 +338,6 @@ class Runner(IRunner):
         # the core
         model: Model,
         engine: Union["IEngine", str] = None,
-        trial: ITrial = None,
         # the components
         criterion: Criterion = None,
         optimizer: Optimizer = None,

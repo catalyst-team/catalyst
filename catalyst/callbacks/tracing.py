@@ -3,7 +3,7 @@ from pathlib import Path
 
 import torch
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackOrder
 from catalyst.utils.tracing import trace_model
 
 if TYPE_CHECKING:
@@ -128,7 +128,7 @@ class TracingCallback(Callback):
                     logdir="./logs",
                 )
         """
-        super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.External)
         if logdir is not None:
             self.filename = str(Path(logdir) / filename)
         else:

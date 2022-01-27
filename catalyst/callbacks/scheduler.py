@@ -4,12 +4,7 @@ from abc import ABC, abstractmethod
 import torch
 
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core.callback import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    ISchedulerCallback,
-)
+from catalyst.core.callback import Callback, CallbackOrder, ISchedulerCallback
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
@@ -109,7 +104,7 @@ class SchedulerCallback(ISchedulerCallback):
         metric_key: str = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.scheduler)
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
                 "For metric reduction `SchedulerCallback` "
@@ -263,7 +258,7 @@ class ILRUpdater(ABC, Callback):
             optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
-        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.scheduler)
         self.init_lr = 0
         self.optimizer_key = optimizer_key
         self.optimizer = None

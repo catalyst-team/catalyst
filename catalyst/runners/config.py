@@ -10,9 +10,9 @@ from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.contrib.runners.self_supervised import ISelfSupervisedRunner
-from catalyst.core.misc import callback_isinstance
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import IEngine

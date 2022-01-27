@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import shutil
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.extras.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
@@ -423,7 +423,7 @@ class CheckpointCallback(ICheckpointCallback):
         use_runner_logdir: bool = False,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external)
         possible_states = _default_states.union([None])
         assert save_n_best >= 0
         if save_n_best == 0:

@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 
 
@@ -104,7 +104,7 @@ class ProfilerCallback(Callback):
         export_chrome_trace_path: str = None,
         export_stacks_kwargs: Dict[str, Any] = None,
     ):
-        super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.Internal)
 
         self.loader_key = loader_key
         self.epoch = epoch

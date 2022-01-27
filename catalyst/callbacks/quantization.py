@@ -3,7 +3,7 @@ from pathlib import Path
 
 import torch
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackOrder
 from catalyst.utils import quantize_model
 
 if TYPE_CHECKING:
@@ -78,7 +78,7 @@ class QuantizationCallback(Callback):
     ):
         """Init."""
         super().__init__(
-            order=CallbackOrder.ExternalExtra, node=CallbackNode.master
+            order=CallbackOrder.ExternalExtra
         )  # External Extra for applying
         # after CheckpointCallback; node master for saving.
         self.qconfig_spec = qconfig_spec

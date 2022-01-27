@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from tqdm.auto import tqdm
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.extras.metric_handler import MetricHandler
 from catalyst.extras.time_manager import TimeManager
@@ -16,7 +16,7 @@ EPS = 1e-8
 
 #     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
 #         """@TODO: docs"""
-#         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+#         super().__init__(order=CallbackOrder.external)
 #         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
 #         self.metric_key = metric_key
 #         self.best_score = None
@@ -56,7 +56,7 @@ class IEpochMetricHandlerCallback(ABC, Callback):
         min_delta: float = 1e-6,
     ):
         """@TODO: docs"""
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.loader_key = loader_key
         self.metric_key = metric_key
@@ -302,7 +302,7 @@ class TimerCallback(Callback):
 
     def __init__(self):
         """Initialisation for TimerCallback."""
-        super().__init__(order=CallbackOrder.metric + 1, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.metric + 1)
         self.timer = TimeManager()
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -429,7 +429,7 @@ class TqdmCallback(Callback):
     """
 
     def __init__(self):
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
+        super().__init__(order=CallbackOrder.external)
         self.tqdm: tqdm = None
         self.step = 0
 
@@ -528,7 +528,7 @@ class CheckRunCallback(Callback):
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 3):
         """Init."""
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 

@@ -28,12 +28,13 @@ from catalyst.callbacks.mixup import MixupCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.core.callback import (
     Callback,
-    CallbackList,
-    CallbackNode,
     CallbackOrder,
-    CallbackScope,
     CallbackWrapper,
     ICallback,
+    IBackwardCallback,
+    ICriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
 )
 from catalyst.settings import SETTINGS
 

@@ -9,10 +9,6 @@ import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler
 
-from catalyst.core.misc import (
-    callback_isinstance,
-    sort_callbacks_by_order,
-)
 from catalyst.core.callback import (
     Callback,
     IBackwardCallback,
@@ -23,6 +19,7 @@ from catalyst.core.callback import (
 )
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.typing import (
     Criterion,
     Device,
@@ -44,7 +41,7 @@ LOADER_METRICS = Dict[str, float]  # {"loss": 1.7}
 # {"train": {"loss": 1.7}, "valid": {"loss": 1.7}}
 EPOCH_METRICS = Dict[str, LOADER_METRICS]
 # {0: {"train": {}, "valid": {}}, 1: {...}}
-EXPERIMENT_METRICS = Dict[int, EPOCH_METRICS]  
+EXPERIMENT_METRICS = Dict[int, EPOCH_METRICS]
 
 
 @lru_cache(maxsize=42)
@@ -162,7 +159,7 @@ class IRunner(ICallback, ILogger, ABC):
         # extra
         self.exception: Exception = None
         self.need_early_stop: bool = False
-        self._rank: int = -1
+        self._local_rank: int = -1
         self._world_size: int = -1
 
     @property
@@ -295,22 +292,22 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def _get_model(self) -> Model:
+    def _setup_model(self) -> Model:
         self.model = self.get_model()
         return self.model
 
-    def _get_criterion(self) -> Criterion:
+    def _setup_criterion(self) -> Criterion:
         self.criterion = self.get_criterion()
         return self.criterion
 
-    def _get_optimizer(self, model: Model = None) -> Optimizer:
+    def _setup_optimizer(self, model: Model = None) -> Optimizer:
         if model is not None:
             self.model = model
         # assert self.model is not None, "You need to setup model first"
         self.optimizer = self.get_optimizer(model=self.model)
         return self.optimizer
 
-    def _get_scheduler(self, optimizer: Optimizer = None) -> Scheduler:
+    def _setup_scheduler(self, optimizer: Optimizer = None) -> Scheduler:
         if optimizer is not None:
             self.optimizer = optimizer
         # assert self.optimizer is not None, "You need to setup optimizer first"
@@ -357,18 +354,18 @@ class IRunner(ICallback, ILogger, ABC):
             logger.close_log(*args, **kwargs)
 
     def _setup_loaders(self) -> None:
-        set_global_seed(self.seed + max(0, self.engine.rank) + self.epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
         loaders = self.get_loaders()
         self.loaders = {
             key: self.engine.prepare(value) for key, value in loaders.items()
         }
 
     def _setup_components(self) -> None:
-        set_global_seed(self.seed + max(0, self.engine.rank) + self.epoch_step)
-        self.model = self._get_model()
-        self.criterion = self._get_criterion()
-        self.optimizer = self._get_optimizer(model=self.model)
-        self.scheduler = self._get_scheduler(optimizer=self.optimizer)
+        set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
+        self.model = self._setup_model()
+        self.criterion = self._setup_criterion()
+        self.optimizer = self._setup_optimizer(model=self.model)
+        self.scheduler = self._setup_scheduler(optimizer=self.optimizer)
         self.model, self.optimizer = self.engine.prepare(self.model, self.optimizer)
 
     def _check_callbacks(self):
@@ -409,7 +406,7 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def _setup_callbacks(self):
-        set_global_seed(self.seed + max(0, self.engine.rank) + self.epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
         self.callbacks = sort_callbacks_by_order(self.get_callbacks())
         self._check_callbacks()
 
@@ -421,9 +418,9 @@ class IRunner(ICallback, ILogger, ABC):
         self.exception: Exception = None
         self.need_early_stop: bool = False
 
-        self.engine = self.get_engine()
-        if self.engine.is_ddp:
-            self.engine.setup_process(rank=self._rank, world_size=self._world_size)
+        # self.engine = self.get_engine()
+        # import ipdb; ipdb.set_trace()
+        self.engine.setup(local_rank=self._local_rank, world_size=self._world_size)
         if self.engine.is_local_main_process:
             self.loggers = self.get_loggers()
             self.log_hparams(hparams=self.hparams)
@@ -443,7 +440,7 @@ class IRunner(ICallback, ILogger, ABC):
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
                 raise IRunnerError(f"DataLoader with name {loader_key} is empty.")
-        set_global_seed(self.seed + max(0, self.engine.rank) + self.epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
         """Event handler."""
@@ -461,7 +458,7 @@ class IRunner(ICallback, ILogger, ABC):
 
         if self.loader_batch_len == 0:
             raise IRunnerError(f"DataLoader with name {self.loader_key} is empty.")
-        set_global_seed(self.seed + max(0, self.engine.rank) + self.epoch_step)
+        set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
@@ -477,19 +474,17 @@ class IRunner(ICallback, ILogger, ABC):
             self.batch_size = len(self.batch[0])
 
         # we have an batch per each worker...
-        self.global_batch_step += self.engine.world_size
-        self.stage_batch_step += self.engine.world_size
-        self.loader_batch_step += self.engine.world_size
-        self.global_sample_step += self.batch_size * self.engine.world_size
-        self.stage_sample_step += self.batch_size * self.engine.world_size
-        self.loader_sample_step += self.batch_size * self.engine.world_size
+        self.batch_step += self.engine.num_processes
+        self.loader_batch_step += self.engine.num_processes
+        self.sample_step += self.batch_size * self.engine.num_processes
+        self.loader_sample_step += self.batch_size * self.engine.num_processes
         self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         # batch-metrics sync under ddp setup is too computation heavy
-        if not self.engine.is_ddp:
-            self.log_metrics(metrics=self.batch_metrics, scope="batch")
+        # if not self.engine.is_ddp:
+        self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
@@ -557,13 +552,13 @@ class IRunner(ICallback, ILogger, ABC):
             self._run_event("on_epoch_end")
 
     def _run_local(self, local_rank: int = -1, world_size: int = 1) -> None:
-        self._rank, self._world_size = local_rank, world_size
+        self._local_rank, self._world_size = local_rank, world_size
         self._run_event("on_experiment_start")
         self._run_experiment()
         self._run_event("on_experiment_end")
 
     def _run(self) -> None:
-        assert self.engine is not None
+        self.engine = self.get_engine()
         self.engine.spawn(self._run_local)
 
     def run(self) -> "IRunner":

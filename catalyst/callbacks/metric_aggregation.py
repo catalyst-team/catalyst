@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -121,7 +121,7 @@ class MetricAggregationCallback(Callback):
         multiplier: float = 1.0,
     ) -> None:
         """Init."""
-        super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.metric_aggregation)
 
         if metric_key is None or not isinstance(metric_key, str):
             raise ValueError("prefix must be str")

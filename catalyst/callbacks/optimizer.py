@@ -2,7 +2,7 @@ from typing import Callable, Dict, TYPE_CHECKING, Union
 from functools import partial
 import logging
 
-from catalyst.core.callback import CallbackNode, CallbackOrder, IOptimizerCallback
+from catalyst.core.callback import CallbackOrder, IOptimizerCallback
 from catalyst.registry import REGISTRY
 from catalyst.utils import get_optimizer_momentum_list
 from catalyst.utils.misc import get_attr
@@ -103,7 +103,7 @@ class OptimizerCallback(IOptimizerCallback):
         grad_clip_params: Dict = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.optimizer)
         self.metric_key = metric_key
         self.model_key = model_key
         self.optimizer_key = optimizer_key

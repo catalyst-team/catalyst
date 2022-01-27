@@ -1,7 +1,7 @@
 from typing import Dict, Iterable, List, TYPE_CHECKING, Union
 from pathlib import Path
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackOrder
 from catalyst.utils import onnx_export
 
 if TYPE_CHECKING:
@@ -79,7 +79,7 @@ class OnnxCallback(Callback):
         verbose: bool = False,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.ExternalExtra)
         if logdir is not None:
             self.filename = str(Path(logdir) / filename)
         else:

@@ -1,6 +1,6 @@
 from typing import Dict, List, TYPE_CHECKING
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
@@ -100,7 +100,7 @@ class ConfusionMatrixCallback(Callback):
         plot_params: Dict = None,
     ):
         """Callback initialisation."""
-        super().__init__(CallbackOrder.metric, CallbackNode.all)
+        super().__init__(CallbackOrder.metric)
         assert num_classes is not None or class_names is not None
         self.prefix = prefix or "confusion_matrix"
         self.input_key = input_key

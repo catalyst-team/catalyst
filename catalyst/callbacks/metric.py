@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
@@ -60,7 +60,7 @@ class MetricCallback(IMetricCallback):
         target_key: Union[str, Iterable[str], Dict[str, str]],
     ):
         """Init MetricCallback"""
-        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.metric)
         self.metric = metric
         assert isinstance(metric, IMetric)
         self._metric_update_method = self.metric.update
