@@ -94,7 +94,7 @@ def train_experiment(device, engine=None):
                     loader_key="valid",
                     metric_key="loss",
                     minimize=True,
-                    save_n_best=3,
+                    topk=3,
                 ),
             ],
         )

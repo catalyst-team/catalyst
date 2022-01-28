@@ -385,7 +385,7 @@ class DeviceCheckCallback(Callback):
         self.device = torch.device(assert_device)
         self.logger = logging.getLogger(__name__) if logger is None else logger
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_experiment_start(self, runner: "IRunner"):
         """Docs."""
         model_device = next(runner.model.parameters()).device
         self.logger.warning(
@@ -512,7 +512,7 @@ class ModuleTypeChecker(Callback):
             model, nn.Module
         ), f"Expected nn.Module but got - '{type(model)}' !"
 
-    def on_stage_start(self, runner):
+    def on_experiment_start(self, runner):
         self._check_fn(runner.model)
 
     def on_batch_start(self, runner):

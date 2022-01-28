@@ -87,14 +87,14 @@ def train_experiment(device, engine=None):
                 loader_key="valid",
                 metric_key="one_accuracy01",
                 minimize=False,
-                save_n_best=1,
+                topk=1,
             ),
             dl.CheckpointCallback(
                 "./logs/two",
                 loader_key="valid",
                 metric_key="two_accuracy03",
                 minimize=False,
-                save_n_best=3,
+                topk=3,
             ),
         ]
         if SETTINGS.ml_required:

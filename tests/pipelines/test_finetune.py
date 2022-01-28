@@ -156,7 +156,7 @@ class CustomRunner(dl.IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
             ),
             "check_freezed": CheckRequiresGrad("layer1", "train_freezed", False),
             "check_unfreezed": CheckRequiresGrad("layer1", "train_unfreezed", True),

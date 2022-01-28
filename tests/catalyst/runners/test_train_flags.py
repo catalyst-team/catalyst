@@ -68,8 +68,8 @@ def get_loaders():
 class CustomRunner(Runner):
     _expected_engine = None
 
-    def on_stage_start(self, runner: "IRunner"):
-        super().on_stage_start(runner)
+    def on_experiment_start(self, runner: "IRunner"):
+        super().on_experiment_start(runner)
         assert not self._expected_engine is None, "Expected engine is None!"
 
         assert isinstance(

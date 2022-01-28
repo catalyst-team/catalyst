@@ -59,7 +59,7 @@ class CustomRunner(IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
             ),
             "test_nn_parallel_data_parallel": DataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),

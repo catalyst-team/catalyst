@@ -16,7 +16,7 @@ from torch import nn
 from torch.utils.data.dataloader import DataLoader
 
 from catalyst import contrib, dl, utils
-from catalyst.typing import Criterion, Model, Optimizer
+from catalyst.typing import TorchCriterion, TorchModel, TorchOptimizer
 
 DATA_ROOT = "."
 IS_BENCHMARK_REQUIRED = os.environ.get("BENCHMARK_REQUIRED", "0") == "1"
@@ -39,7 +39,7 @@ class TestMnistRunner(dl.Runner):
             )
         }
 
-    def get_model(self, stage: str) -> Model:
+    def get_model(self, stage: str) -> TorchModel:
         return nn.Sequential(
             nn.Flatten(),
             nn.Linear(in_features=28 * 28, out_features=128),
@@ -49,10 +49,10 @@ class TestMnistRunner(dl.Runner):
             nn.Linear(in_features=128, out_features=10),
         )
 
-    def get_criterion(self, stage: str) -> Criterion:
+    def get_criterion(self, stage: str) -> TorchCriterion:
         return nn.CrossEntropyLoss()
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
+    def get_optimizer(self, stage: str, model: TorchModel) -> TorchOptimizer:
         return torch.optim.Adam(model.parameters(), lr=0.02)
 
     def handle_batch(self, batch: Mapping[str, Any]) -> None:

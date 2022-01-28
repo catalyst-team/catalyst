@@ -50,7 +50,7 @@ class CustomRunner(IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
             ),
             "test_nn_module": ModuleTypeChecker(),
             "test_device": DeviceCheckCallback(self._device, logger=logger),

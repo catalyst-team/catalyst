@@ -65,7 +65,7 @@ class CustomRunner(IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
             ),
             # "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),

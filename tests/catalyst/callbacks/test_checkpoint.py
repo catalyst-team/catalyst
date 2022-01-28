@@ -115,7 +115,7 @@ class CustomRunner(dl.IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
             )
         elif stage == "second":
             callbacks["checkpoint"] = dl.CheckpointCallback(
@@ -123,7 +123,7 @@ class CustomRunner(dl.IRunner):
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
-                save_n_best=3,
+                topk=3,
                 load_on_stage_start="best",
             )
         return callbacks
@@ -241,11 +241,7 @@ def test_files_existence(tmpdir):
     n_epochs = 5
     callbacks = [
         dl.CheckpointCallback(
-            logdir=tmpdir,
-            loader_key="valid",
-            metric_key="loss",
-            minimize=True,
-            save_n_best=2,
+            logdir=tmpdir, loader_key="valid", metric_key="loss", minimize=True, topk=2,
         ),
         dl.CheckRunCallback(num_epoch_steps=n_epochs),
     ]
@@ -274,7 +270,7 @@ def test_load_str_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
             loader_key="valid",
             metric_key="loss",
             minimize=True,
-            save_n_best=2,
+            topk=2,
             load_on_stage_end=to_load,
         ),
         dl.CheckRunCallback(num_epoch_steps=n_epochs),
@@ -310,7 +306,7 @@ def test_load_dict_on_stage_end(to_load, exp_loaded, capsys, tmpdir):
             loader_key="valid",
             metric_key="loss",
             minimize=True,
-            save_n_best=2,
+            topk=2,
             load_on_stage_end=to_load,
         ),
         dl.CheckRunCallback(num_epoch_steps=n_epochs),
@@ -333,7 +329,7 @@ def test_load_empty(to_load, capsys, tmpdir):
             loader_key="valid",
             metric_key="loss",
             minimize=True,
-            save_n_best=2,
+            topk=2,
             load_on_stage_start=to_load,
             load_on_stage_end=to_load,
             resume=to_load,
@@ -359,7 +355,7 @@ def test_resume_with_missing_file(to_load, tmpdir):
             loader_key="valid",
             metric_key="loss",
             minimize=True,
-            save_n_best=2,
+            topk=2,
             load_on_stage_start=to_load,
             load_on_stage_end=to_load,
             resume="best",

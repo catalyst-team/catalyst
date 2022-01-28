@@ -17,7 +17,7 @@ from catalyst.callbacks import (
     CriterionCallback,
     PrecisionRecallF1SupportCallback,
 )
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
+from catalyst.core.callback import Callback, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
 from catalyst.engines.torch import (
     DataParallelEngine,
@@ -61,7 +61,7 @@ class CustomSampler(SequentialSampler):
 
 class CounterCallback(Callback):
     def __init__(self):
-        super().__init__(CallbackOrder.external, CallbackNode.all, CallbackScope.stage)
+        super().__init__(CallbackOrder.external)
         self.counter = 0
         self.counter2 = [0] * 4
         self.counter3 = 0
