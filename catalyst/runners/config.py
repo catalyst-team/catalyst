@@ -31,8 +31,8 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
-    Sampler,
-    Scheduler,
+    TorchSampler,
+    TorchScheduler,
 )
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
@@ -232,7 +232,7 @@ class ConfigRunner(IRunner):
         datasets = REGISTRY.get_from_params(**datasets_params)
         return OrderedDict(datasets)
 
-    def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
+    def get_samplers(self, stage: str) -> "OrderedDict[str, TorchSampler]":
         """
         Returns samplers for a given stage.
 
@@ -395,7 +395,7 @@ class ConfigRunner(IRunner):
 
         is_key_value = params.pop("_key_value", False)
         if is_key_value:
-            scheduler: Dict[str, Scheduler] = {}
+            scheduler: Dict[str, TorchScheduler] = {}
             for key, scheduler_params in params.items():
                 scheduler_params = deepcopy(scheduler_params)
                 optimizer_key = scheduler_params.pop("_optimizer", None)

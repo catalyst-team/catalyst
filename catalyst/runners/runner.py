@@ -27,14 +27,14 @@ from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.runners._misc import get_loaders_from_params
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
-    Criterion,
-    Model,
-    Optimizer,
     RunnerCriterion,
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
-    Scheduler,
+    TorchCriterion,
+    TorchModel,
+    TorchOptimizer,
+    TorchScheduler,
 )
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.torch import get_available_engine
@@ -251,7 +251,7 @@ class Runner(IRunner):
         self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
         return self._loaders
 
-    def get_model(self, stage: str) -> Model:
+    def get_model(self, stage: str) -> TorchModel:
         """Returns the model for a given stage."""
         model = (
             self._model()
@@ -260,7 +260,7 @@ class Runner(IRunner):
         )
         return model
 
-    def get_criterion(self, stage: str) -> Criterion:
+    def get_criterion(self, stage: str) -> TorchCriterion:
         """Returns the criterion for a given stage."""
         return (
             self._criterion()
@@ -268,7 +268,7 @@ class Runner(IRunner):
             else self._criterion
         )
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
+    def get_optimizer(self, stage: str, model: TorchModel) -> TorchOptimizer:
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
@@ -277,7 +277,7 @@ class Runner(IRunner):
             else self._optimizer
         )
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
+    def get_scheduler(self, stage: str, optimizer: TorchOptimizer) -> TorchScheduler:
         """Returns the scheduler for a given stage."""
         return (
             self._scheduler(optimizer)
@@ -336,12 +336,12 @@ class Runner(IRunner):
         # the data
         loaders: "OrderedDict[str, DataLoader]",
         # the core
-        model: Model,
+        model: TorchModel,
         engine: Union["IEngine", str] = None,
         # the components
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
+        criterion: TorchCriterion = None,
+        optimizer: TorchOptimizer = None,
+        scheduler: TorchScheduler = None,
         # the callbacks
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         # the loggers
@@ -562,7 +562,7 @@ class Runner(IRunner):
         self,
         *,
         loader: DataLoader,
-        model: Model = None,
+        model: TorchModel = None,
         engine: Union["IEngine", str] = None,
         seed: int = 42,
         # extra info
@@ -708,7 +708,7 @@ class Runner(IRunner):
         self,
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        model: Optional[Model] = None,
+        model: Optional[TorchModel] = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict[str, Any]:
@@ -880,7 +880,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(
+        if isinstance(self._criterion, TorchCriterion) and not is_callback_exists(
             ICriterionCallback
         ):
             callbacks["_criterion"] = CriterionCallback(
@@ -888,12 +888,12 @@ class SupervisedRunner(ISupervisedRunner, Runner):
                 target_key=self._target_key,
                 metric_key=self._loss_key,
             )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(
+        if isinstance(self._optimizer, TorchOptimizer) and not is_callback_exists(
             IOptimizerCallback
         ):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
         if isinstance(
-            self._scheduler, (Scheduler, ReduceLROnPlateau)
+            self._scheduler, (TorchScheduler, ReduceLROnPlateau)
         ) and not is_callback_exists(ISchedulerCallback):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric
@@ -1062,7 +1062,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(
+        if isinstance(self._criterion, TorchCriterion) and not is_callback_exists(
             ICriterionCallback
         ):
             callbacks["_criterion"] = CriterionCallback(
@@ -1070,12 +1070,12 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
                 target_key=f"{self.loss_mode_prefix}_right",
                 metric_key=self._loss_key,
             )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(
+        if isinstance(self._optimizer, TorchOptimizer) and not is_callback_exists(
             IOptimizerCallback
         ):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
         if isinstance(
-            self._scheduler, (Scheduler, ReduceLROnPlateau)
+            self._scheduler, (TorchScheduler, ReduceLROnPlateau)
         ) and not is_callback_exists(ISchedulerCallback):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric

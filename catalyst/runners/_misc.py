@@ -9,7 +9,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.settings import SETTINGS
-from catalyst.typing import Model, Sampler
+from catalyst.typing import TorchModel, TorchSampler
 from catalyst.utils.distributed import get_distributed_params, get_rank
 from catalyst.utils.misc import merge_dicts, set_global_seed
 from catalyst.utils.torch import process_model_params
@@ -49,7 +49,7 @@ def do_lr_linear_scaling(
 
 
 def get_model_parameters(
-    models: Union[Model, Dict[str, Model]],
+    models: Union[TorchModel, Dict[str, TorchModel]],
     models_keys: Any,
     layerwise_params: Dict[str, dict],
     no_bias_weight_decay: bool,
@@ -106,7 +106,7 @@ def get_loaders_from_params(
     drop_last: bool = False,
     per_gpu_scaling: bool = False,
     loaders_params: Dict[str, Any] = None,
-    samplers: "OrderedDict[str, Sampler]" = None,
+    samplers: "OrderedDict[str, TorchSampler]" = None,
     datasets: "OrderedDict[str, Union[Dataset, dict]]" = None,
     initial_seed: int = 42,
 ) -> "OrderedDict[str, DataLoader]":
@@ -161,7 +161,7 @@ def get_loaders_from_params(
         loader_params = loaders_params.pop(name, {})
         assert isinstance(loader_params, dict), f"{loader_params} should be Dict"
 
-        sampler: Sampler = None
+        sampler: TorchSampler = None
         if isinstance(datasource, dict) and "sampler" in datasource:
             sampler = datasource.pop("sampler", None)
         sampler = samplers.pop(name, sampler)

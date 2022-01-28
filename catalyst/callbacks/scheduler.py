@@ -5,7 +5,7 @@ import torch
 
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackOrder, ISchedulerCallback
-from catalyst.typing import Optimizer
+from catalyst.typing import TorchOptimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
 
@@ -274,12 +274,12 @@ class ILRUpdater(ABC, Callback):
         pass
 
     @staticmethod
-    def _update_lr(optimizer: Optimizer, new_lr: float) -> None:
+    def _update_lr(optimizer: TorchOptimizer, new_lr: float) -> None:
         for pg in optimizer.param_groups:
             pg["lr"] = new_lr
 
     @staticmethod
-    def _update_momentum(optimizer: Optimizer, new_momentum: float) -> None:
+    def _update_momentum(optimizer: TorchOptimizer, new_momentum: float) -> None:
         if "betas" in optimizer.param_groups[0]:
             for pg in optimizer.param_groups:
                 pg["betas"] = (new_momentum, pg["betas"][1])
@@ -287,7 +287,7 @@ class ILRUpdater(ABC, Callback):
             for pg in optimizer.param_groups:
                 pg["momentum"] = new_momentum
 
-    def _update_optimizer(self, optimizer: Optimizer) -> Tuple[float, float]:
+    def _update_optimizer(self, optimizer: TorchOptimizer) -> Tuple[float, float]:
         new_lr = self.calc_lr()
         if new_lr is not None:
             self._update_lr(optimizer, new_lr)

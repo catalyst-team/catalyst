@@ -56,7 +56,6 @@ class ILogger:
         path_to_artifact: str = None,
         scope: str = None,
         # experiment info
-        run_key: str = None,
         epoch_step: int = 0,
         batch_step: int = 0,
         sample_step: int = 0,
@@ -76,7 +75,6 @@ class ILogger:
         image: np.ndarray,
         scope: str = None,
         # experiment info
-        run_key: str = None,
         epoch_step: int = 0,
         batch_step: int = 0,
         sample_step: int = 0,
@@ -99,7 +97,6 @@ class ILogger:
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
         epoch_step: int = 0,
         batch_step: int = 0,
         sample_step: int = 0,

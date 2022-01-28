@@ -5,14 +5,14 @@ import torch
 from torch import jit
 
 from catalyst.extras.forward_wrapper import ModelForwardWrapper
-from catalyst.typing import Model
+from catalyst.typing import TorchModel
 from catalyst.utils.torch import get_nn_from_ddp_module
 
 logger = logging.getLogger(__name__)
 
 
 def trace_model(
-    model: Model,
+    model: TorchModel,
     batch: Union[Tuple[torch.Tensor], torch.Tensor],
     method_name: str = "forward",
 ) -> jit.ScriptModule:

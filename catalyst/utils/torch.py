@@ -22,13 +22,13 @@ from torch.backends import cudnn
 
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from catalyst.typing import (
-    Device,
-    Model,
-    Optimizer,
     RunnerCriterion,
+    RunnerDevice,
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    TorchModel,
+    TorchOptimizer,
 )
 from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.misc import maybe_recursive_call, merge_dicts
@@ -135,7 +135,7 @@ def get_optimizable_params(model_or_params):
     return master_params
 
 
-def get_optimizer_momentum(optimizer: Optimizer) -> float:
+def get_optimizer_momentum(optimizer: TorchOptimizer) -> float:
     """Get momentum of current optimizer.
 
     Args:
@@ -149,7 +149,7 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     return betas[0] if betas is not None else momentum
 
 
-def get_optimizer_momentum_list(optimizer: Optimizer) -> List[Union[float, None]]:
+def get_optimizer_momentum_list(optimizer: TorchOptimizer) -> List[Union[float, None]]:
     """Get list of optimizer momentums (for each param group)
 
     Args:
@@ -168,7 +168,7 @@ def get_optimizer_momentum_list(optimizer: Optimizer) -> List[Union[float, None]
     return result
 
 
-def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
+def set_optimizer_momentum(optimizer: TorchOptimizer, value: float, index: int = 0):
     """Set momentum of ``index`` 'th param group of optimizer to ``value``.
 
     Args:
@@ -308,7 +308,8 @@ def get_available_gpus():
 
 
 def any2device(
-    value: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module], device: Device
+    value: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module],
+    device: RunnerDevice,
 ) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
     """
     Move tensor, list of tensors, list of list of tensors,
@@ -362,7 +363,7 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
 
 
 def process_model_params(
-    model: Model,
+    model: TorchModel,
     layerwise_params: Dict[str, dict] = None,
     no_bias_weight_decay: bool = True,
     lr_scaling: float = 1.0,
@@ -417,7 +418,7 @@ def process_model_params(
     return model_params
 
 
-def get_requires_grad(model: Model):
+def get_requires_grad(model: TorchModel):
     """Gets the ``requires_grad`` value for all model parameters.
 
     Example::
@@ -437,7 +438,7 @@ def get_requires_grad(model: Model):
     return requires_grad
 
 
-def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]]):
+def set_requires_grad(model: TorchModel, requires_grad: Union[bool, Dict[str, bool]]):
     """Sets the ``requires_grad`` value for all model parameters.
 
     Example::
@@ -464,7 +465,7 @@ def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]])
             param.requires_grad = requires_grad
 
 
-def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
+def get_network_output(net: TorchModel, *input_shapes_args, **input_shapes_kwargs):
     """For each input shape returns an output tensor
 
     Examples:
