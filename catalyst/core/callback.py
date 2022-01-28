@@ -132,12 +132,18 @@ class Callback(ICallback):
         self.order = order
 
 
-class ICriterionCallback(Callback):
-    """Criterion callback interface, abstraction over criterion step."""
+class IMetricCallback(Callback):
+    """Metric callback interface, abstraction over metric step."""
 
     def __init__(self):
         """Init."""
         super().__init__(order=CallbackOrder.Metric)
+
+
+class ICriterionCallback(IMetricCallback):
+    """Criterion callback interface, abstraction over criterion step."""
+
+    pass
 
 
 class IBackwardCallback(Callback):
@@ -232,6 +238,7 @@ __all__ = [
     "ICallback",
     "Callback",
     "CallbackOrder",
+    "IMetricCallback",
     "ICriterionCallback",
     "IBackwardCallback",
     "IOptimizerCallback",

@@ -78,7 +78,7 @@ class PeriodicLoaderCallback(Callback):
                 raise ValueError(f"Period should be >= 0, but got - {period}!")
             self.loader_periods[loader] = period
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Collect information about loaders.
 
         Args:

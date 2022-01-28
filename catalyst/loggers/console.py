@@ -22,21 +22,20 @@ class ConsoleLogger(ILogger):
         super().__init__(log_batch_metrics=False, log_epoch_metrics=True)
         self._log_hparams = log_hparams
 
+    def log_hparams(self, hparams: Dict, scope: str = None) -> None:
+        """Logs hyperparameters to the console."""
+        if scope == "experiment" and self._log_hparams:
+            print(f"Hparams: {hparams}")
+
     def log_metrics(
         self,
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -46,33 +45,14 @@ class ConsoleLogger(ILogger):
     ) -> None:
         """Logs loader and epoch metrics to stdout."""
         if scope == "loader":
-            prefix = f"{loader_key} ({stage_epoch_step}/{stage_epoch_len}) "
+            prefix = f"{loader_key} ({epoch_step}/{num_epochs}) "
             msg = prefix + _format_metrics(metrics)
             print(msg)
         elif scope == "epoch":
             # @TODO: trick to save pure epoch-based metrics, like lr/momentum
-            prefix = f"* Epoch ({stage_epoch_step}/{stage_epoch_len}) "
+            prefix = f"* Epoch ({epoch_step}/{num_epochs}) "
             msg = prefix + _format_metrics(metrics["_epoch_"])
             print(msg)
-
-    def log_hparams(
-        self,
-        hparams: Dict,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        stage_key: str = None,
-    ) -> None:
-        """Logs hyperparameters to the console.
-
-        Args:
-            hparams: Parameters to log.
-            scope: On which scope log parameters.
-            run_key: Experiment info.
-            stage_key: Stage info.
-        """
-        if scope == "experiment" and self._log_hparams:
-            print(f"Hparams ({run_key}): {hparams}")
 
 
 __all__ = ["ConsoleLogger"]

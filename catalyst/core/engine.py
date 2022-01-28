@@ -18,7 +18,7 @@ class IEngine(Accelerator):
         pass
 
     def mean_reduce_ddp_metrics(self, metrics: Dict):
-        pass
+        return metrics
 
 
 __all__ = ["IEngine"]

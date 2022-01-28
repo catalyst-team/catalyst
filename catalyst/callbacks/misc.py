@@ -72,7 +72,7 @@ class IEpochMetricHandlerCallback(ABC, Callback):
         """Event handler."""
         pass
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self.best_score = None
 
@@ -87,7 +87,7 @@ class IEpochMetricHandlerCallback(ABC, Callback):
 
 
 class EarlyStoppingCallback(IEpochMetricHandlerCallback):
-    """Stage early stop based on metric.
+    """Early stop based on metric.
 
     Args:
         patience: number of epochs with no improvement
@@ -438,7 +438,7 @@ class TqdmCallback(Callback):
         self.step = 0
         self.tqdm = tqdm(
             total=runner.loader_batch_len,
-            desc=f"{runner.stage_epoch_step}/{runner.stage_epoch_len}"
+            desc=f"{runner.epoch_step}/{runner.num_epochs}"
             f" * Epoch ({runner.loader_key})",
             # leave=True,
             # ncols=0,
@@ -485,7 +485,7 @@ class CheckRunCallback(Callback):
 
     Args:
         num_batch_steps: number of batches to iterate in epoch
-        num_epoch_steps: number of epoch to perform in a stage
+        num_epoch_steps: number of epoch to perform in an experiment
 
     Minimal working example (Notebook API):
 
@@ -538,7 +538,7 @@ class CheckRunCallback(Callback):
         Args:
             runner: current runner
         """
-        if runner.stage_epoch_step >= self.num_epoch_steps:
+        if runner.epoch_step >= self.num_epoch_steps:
             runner.need_early_stop = True
 
     def on_batch_end(self, runner: "IRunner"):

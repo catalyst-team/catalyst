@@ -98,21 +98,20 @@ class CSVLogger(ILogger):
         log_line_csv = log_line_csv[:-1] + "\n"  # replace last "," with new line
         self.loggers[loader_key].write(log_line_csv)
 
+    def log_hparams(self, hparams: Dict, scope: str = None) -> None:
+        """Logs hyperparameters to the logger."""
+        if scope == "experiment":
+            save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
+
     def log_metrics(
         self,
-        metrics: Dict[str, Any],
+        metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -129,33 +128,18 @@ class CSVLogger(ILogger):
                     )
                     self._make_header(metrics=per_loader_metrics, loader_key=loader_key)
                 self._log_metrics(
-                    metrics=per_loader_metrics,
-                    step=stage_epoch_step,
-                    loader_key=loader_key,
+                    metrics=per_loader_metrics, step=epoch_step, loader_key=loader_key,
                 )
-
-    def log_hparams(
-        self,
-        hparams: Dict,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        stage_key: str = None,
-    ) -> None:
-        """@TODO: docs."""
-        if scope == "experiment":
-            save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
 
     def flush_log(self) -> None:
         """Flushes the logger."""
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self, scope: str = None) -> None:
+    def close_log(self) -> None:
         """Closes the logger."""
-        if scope is None or scope == "experiment":
-            for logger in self.loggers.values():
-                logger.close()
+        for logger in self.loggers.values():
+            logger.close()
 
 
 __all__ = ["CSVLogger"]

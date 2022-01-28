@@ -88,7 +88,7 @@ class QuantizationCallback(Callback):
         else:
             self.filename = filename
 
-    def on_stage_end(self, runner: "IRunner") -> None:
+    def on_experiment_end(self, runner: "IRunner") -> None:
         """Event handler."""
         q_model = quantize_model(
             runner.model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype

@@ -137,7 +137,7 @@ class TracingCallback(Callback):
 
         self.input_key = [input_key] if isinstance(input_key, str) else input_key
 
-    def on_stage_end(self, runner: "IRunner") -> None:
+    def on_experiment_end(self, runner: "IRunner") -> None:
         """
         On stage end action.
 
@@ -146,7 +146,7 @@ class TracingCallback(Callback):
         """
         model = runner.engine.sync_device(runner.model)
         batch = tuple(runner.batch[key] for key in self.input_key)
-        batch = runner.engine.sync_device(batch)
+        # batch = runner.engine.sync_device(batch)
         traced_model = trace_model(
             model=model, batch=batch, method_name=self.method_name
         )

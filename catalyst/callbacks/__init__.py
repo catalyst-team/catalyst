@@ -12,7 +12,7 @@ from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.metric import (
     BatchMetricCallback,
     FunctionalBatchMetricCallback,
-    IMetricCallback,
+    _IMetricCallback,
     LoaderMetricCallback,
 )
 from catalyst.callbacks.metric_aggregation import MetricAggregationCallback

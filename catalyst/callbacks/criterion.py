@@ -107,7 +107,7 @@ class CriterionCallback(FunctionalMetricCallback, ICriterionCallback):
     def _metric_fn(self, *args, **kwargs):
         return self.criterion(*args, **kwargs)
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_experiment_start(self, runner: "IRunner"):
         """Checks that the current stage has correct criterion.
 
         Args:

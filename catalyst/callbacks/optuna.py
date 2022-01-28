@@ -69,7 +69,7 @@ class OptunaPruningCallback(Callback):
         self.best_score = None
         self.trial = trial
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_experiment_start(self, runner: "IRunner"):
         """
         On stage start hook.
         Takes ``optuna_trial`` from ``Experiment`` for future usage if needed.

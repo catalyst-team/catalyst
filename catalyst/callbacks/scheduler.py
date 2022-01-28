@@ -189,7 +189,7 @@ class SchedulerCallback(ISchedulerCallback):
             runner.epoch_metrics["_epoch_"], lr_list, momentum_list
         )
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Stage start hook.
 
         Args:
@@ -317,7 +317,7 @@ class ILRUpdater(ABC, Callback):
             runner.batch_metrics["lr"] = lr
             runner.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Stage start hook.
 
         Args:

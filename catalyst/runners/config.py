@@ -195,7 +195,7 @@ class ConfigRunner(IRunner):
             engine = REGISTRY.get_from_params(**engine_params)
         else:
             engine = get_available_engine(
-                fp16=self._fp16, ddp=self._ddp, amp=self._amp, apex=self._apex
+                fp16=self._fp16, ddp=self._ddp, fp16=self._amp, apex=self._apex
             )
         return engine
 

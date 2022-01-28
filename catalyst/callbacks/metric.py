@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.callback import IMetricCallback
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
 
 
-class IMetricCallback(Callback, ABC):
+class _IMetricCallback(IMetricCallback, ABC):
     """Metric callback interface, abstraction over metric step."""
 
     @abstractmethod
@@ -43,7 +43,7 @@ class IMetricCallback(Callback, ABC):
         pass
 
 
-class MetricCallback(IMetricCallback):
+class _MetricCallback(_IMetricCallback):
     """
     MetricCallback is a base implementation of callback that updates metrics over batch or loader.
 
@@ -60,7 +60,7 @@ class MetricCallback(IMetricCallback):
         target_key: Union[str, Iterable[str], Dict[str, str]],
     ):
         """Init MetricCallback"""
-        super().__init__(order=CallbackOrder.metric)
+        super().__init__()
         self.metric = metric
         assert isinstance(metric, IMetric)
         self._metric_update_method = self.metric.update
@@ -168,7 +168,7 @@ class MetricCallback(IMetricCallback):
         return self._metric_update_method(**kv_inputs)
 
 
-class BatchMetricCallback(MetricCallback):
+class BatchMetricCallback(_MetricCallback):
     """BatchMetricCallback implements batch-based metrics update and computation over loader
 
     Args:
@@ -217,7 +217,7 @@ class BatchMetricCallback(MetricCallback):
             runner: current runner
         """
         metrics = self.metric.compute_key_value()
-        metrics = runner.engine.sync_metrics(metrics)
+        metrics = runner.engine.mean_reduce_ddp_metrics(metrics)
         runner.loader_metrics.update(metrics)
 
 
@@ -287,7 +287,7 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         return kv_inputs
 
 
-class LoaderMetricCallback(MetricCallback):
+class LoaderMetricCallback(_MetricCallback):
     """LoaderMetricCallback implements loader-based metrics update and computation over loader
 
     Args:
@@ -335,7 +335,8 @@ class LoaderMetricCallback(MetricCallback):
 
 
 __all__ = [
-    "IMetricCallback",
+    "_IMetricCallback",
+    "_MetricCallback",
     "BatchMetricCallback",
     "FunctionalBatchMetricCallback",
     "LoaderMetricCallback",

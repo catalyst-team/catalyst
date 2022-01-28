@@ -103,7 +103,7 @@ class OptimizerCallback(IOptimizerCallback):
         grad_clip_params: Dict = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.optimizer)
+        super().__init__()
         self.metric_key = metric_key
         self.model_key = model_key
         self.optimizer_key = optimizer_key
@@ -142,7 +142,7 @@ class OptimizerCallback(IOptimizerCallback):
         stats = {self._prefix_lr: lr_list[0], self._prefix_momentum: momentum_list[0]}
         return stats
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self.model = get_attr(runner, key="model", inner_key=self.model_key)
         self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
@@ -158,29 +158,20 @@ class OptimizerCallback(IOptimizerCallback):
             )
 
             loss = runner.batch_metrics[self.metric_key]
-            runner.engine.backward_loss(loss, self.model, self.optimizer)
+            runner.engine.backward(loss)
 
-            if self.grad_clip_fn is not None:
-                # hotfix for gradinet clipping with fp16
-                if hasattr(runner.engine, "scaler"):
-                    runner.engine.scaler.unscale_(self.optimizer)
-                norm = self.grad_clip_fn(self.model.parameters())
-                runner.batch_metrics[f"{self._prefix_gradient}/norm"] = norm
+            # if self.grad_clip_fn is not None:
+            #     # hotfix for gradinet clipping with fp16
+            #     if hasattr(runner.engine, "scaler"):
+            #         runner.engine.scaler.unscale_(self.optimizer)
+            #     norm = self.grad_clip_fn(self.model.parameters())
+            #     runner.batch_metrics[f"{self._prefix_gradient}/norm"] = norm
 
             if need_gradient_step:
-                runner.engine.optimizer_step(loss, self.model, self.optimizer)
-                runner.engine.zero_grad(loss, self.model, self.optimizer)
+                self.optimizer.step()
+                self.optimizer.zero_grad()
 
         runner.batch_metrics.update(self._get_lr_momentum_stats())
-        # hotfix for gradinet clipping with fp16
-        if hasattr(runner.engine, "scaler"):
-            scaler_state = runner.engine.scaler.state_dict()
-            runner.batch_metrics[f"{self._prefix_gradient}/scale"] = (
-                scaler_state["scale"] or 1.0
-            )
-            runner.batch_metrics[
-                f"{self._prefix_gradient}/growth_tracker"
-            ] = scaler_state["_growth_tracker"]
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler."""

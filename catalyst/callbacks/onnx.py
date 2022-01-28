@@ -94,15 +94,10 @@ class OnnxCallback(Callback):
         self.do_constant_folding = do_constant_folding
         self.verbose = verbose
 
-    def on_stage_end(self, runner: "IRunner") -> None:
-        """
-        On stage end action.
-
-        Args:
-            runner: runner for experiment
-        """
+    def on_experiment_end(self, runner: "IRunner") -> None:
+        """Event handler."""
         model = runner.model
-        batch = runner.engine.sync_device(runner.batch[self.input_key])
+        batch = runner.batch[self.input_key]
         onnx_export(
             model=model,
             file=self.filename,

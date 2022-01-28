@@ -197,76 +197,35 @@ def get_device() -> torch.device:
 
 
 def get_available_engine(
-    fp16: bool = False, ddp: bool = False, amp: bool = False, apex: bool = False
+    cpu: bool = False, fp16: bool = False, ddp: bool = False,
 ) -> "IEngine":
     """Returns available engine based on given arguments.
 
     Args:
-        fp16 (bool): option to use fp16 for training. Default is `False`.
+        cpu (bool): option to use cpu for training. Default is `False`.
         ddp (bool): option to use DDP for training. Default is `False`.
         amp (bool): option to use APEX for training. Default is `False`.
-        apex (bool): option to use APEX for training. Default is `False`.
 
     Returns:
         IEngine which match requirements.
     """
     from catalyst.engines.torch import (
+        CPUEngine,
         DataParallelEngine,
-        DeviceEngine,
         DistributedDataParallelEngine,
+        GPUEngine,
     )
 
-    if fp16 and not amp and not apex:
-        amp = SETTINGS.amp_required or (SETTINGS.amp_required and SETTINGS.apex_required)
-        apex = SETTINGS.apex_required and (not SETTINGS.amp_required)
-
-    if amp:
-        assert (
-            SETTINGS.amp_required
-        ), "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`."
-        assert not apex, "Could not use both apex and amp engines"
-        from catalyst.engines.amp import (
-            AMPEngine,
-            DataParallelAMPEngine,
-            DistributedDataParallelAMPEngine,
-        )
-
-    if apex:
-        assert (
-            SETTINGS.apex_required
-        ), "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`."
-        assert not amp, "Could not use both apex and amp engines"
-        from catalyst.engines.apex import (
-            APEXEngine,
-            DataParallelAPEXEngine,
-            DistributedDataParallelAPEXEngine,
-        )
-
-    is_multiple_gpus = NUM_CUDA_DEVICES > 1
-    if not IS_CUDA_AVAILABLE:
-        return DeviceEngine("cpu")
-    elif is_multiple_gpus:
+    if cpu or not torch.cuda.is_available():
+        return CPUEngine()
+    is_multiple_gpus = torch.cuda.device_count() > 1
+    if is_multiple_gpus:
         if ddp:
-            if amp:
-                return DistributedDataParallelAMPEngine()
-            elif apex:
-                return DistributedDataParallelAPEXEngine()
-            else:
-                return DistributedDataParallelEngine()
+            return DistributedDataParallelEngine(fp16=fp16)
         else:
-            if amp:
-                return DataParallelAMPEngine()
-            elif apex:
-                return DataParallelAPEXEngine()
-            else:
-                return DataParallelEngine()
+            return DataParallelEngine(fp16=fp16)
     else:
-        if amp:
-            return AMPEngine()
-        elif apex:
-            return APEXEngine()
-        else:
-            return DeviceEngine("cuda")
+        return GPUEngine(fp16=fp16)
 
 
 def get_available_gpus():

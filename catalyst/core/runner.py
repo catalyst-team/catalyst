@@ -141,13 +141,14 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def num_epochs(self) -> int:
-        """Returns number of epochs for an experiment."""
+        """Returns the number of epochs in the experiment."""
         return 1
 
     @property
     def _log_defaults(self) -> Dict:
         return {
             # experiment info
+            "num_epochs": self.num_epochs,
             "epoch_step": self.epoch_step,
             "batch_step": self.batch_step,
             "sample_step": self.sample_step,
@@ -191,92 +192,37 @@ class IRunner(ICallback, ILogger, ABC):
 
     @abstractmethod
     def get_engine(self) -> IEngine:
-        """Returns the engine for the run."""
-        return None
+        """Returns the engine for the experiment."""
+        pass
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """Returns the loggers for the run."""
+        """Returns the loggers for the experiment."""
         return {}
 
     @abstractmethod
     def get_loaders(self) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for an experiment.
-
-        Returns:  # noqa: DAR201, DAR202
-            OrderedDict[str, DataLoader]: Ordered dictionary
-                with loaders for current stage and epoch.
-
-        """
+        """Returns the loaders for the experiment."""
         pass
 
     @abstractmethod
     def get_model(self) -> RunnerModel:
-        """Returns the model for an experiment.
-
-        Example::
-
-            >>> runner.get_model()
-            Sequential(
-             : Linear(in_features=784, out_features=128, bias=True)
-             : Linear(in_features=128, out_features=10, bias=True)
-            )
-
-        Returns:  # noqa: DAR201, DAR202
-            Model: model for a given stage.
-        """
+        """Returns the model for the experiment."""
         pass
 
     def get_criterion(self) -> Optional[RunnerCriterion]:
-        """Returns the criterion for an experiment.
-
-        Example::
-
-            >>> runner.get_criterion()
-            nn.CrossEntropyLoss()
-
-        Returns:  # noqa: DAR201, DAR202
-            Criterion: criterion for a given stage.
-        """
+        """Returns the criterion for the experiment."""
         return None
 
     def get_optimizer(self, model: RunnerModel) -> Optional[RunnerOptimizer]:
-        """Returns the optimizer for a model.
-
-        Example::
-
-            >>> runner.get_optimizer(model=model)
-            torch.optim.Adam(model.parameters())
-
-        Args:
-            model: model to optimize with stage optimizer
-
-        Returns:  # noqa: DAR201, DAR202
-            Optimizer: optimizer for a given stage and model.
-        """
+        """Returns the optimizer for the experiment."""
         return None
 
     def get_scheduler(self, optimizer: RunnerOptimizer) -> Optional[RunnerScheduler]:
-        """Returns the scheduler for an optimizer.
-
-        Example::
-            >>> runner.get_scheduler(optimizer=optimizer)
-            torch.optim.lr_scheduler.StepLR(optimizer)
-
-        Args:
-            optimizer: optimizer to schedule with stage scheduler
-
-        Returns:  # noqa: DAR201, DAR202
-            Scheduler: scheduler for a given stage and optimizer.
-        """
+        """Returns the scheduler for the experiment."""
         return None
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
-        """Returns callbacks for an experiment.
-
-        Returns:
-            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
-            with callbacks for current stage.
-        """
+        """Returns the callbacks for the experiment."""
         return {}
 
     def _setup_loaders(self) -> None:
@@ -390,8 +336,8 @@ class IRunner(ICallback, ILogger, ABC):
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         # batch-metrics sync under ddp setup is too computation heavy
-        if self.engine.distributed_type == DistributedType.NO:
-            self.log_metrics(metrics=self.batch_metrics, scope="batch")
+        # if self.engine.distributed_type == DistributedType.NO: # @TODO: recheck
+        self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
