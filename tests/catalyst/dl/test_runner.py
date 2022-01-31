@@ -36,10 +36,7 @@ def test_epoch_increasing():
     y = torch.randint(0, 5, size=[num_samples])
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {
-        "train": loader,
-        "valid": loader,
-    }
+    loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 5)
@@ -48,12 +45,11 @@ def test_epoch_increasing():
     runner = SupervisedRunner()
 
     callbacks = [
-        IncreaseCheckerCallback("global_epoch_step"),
-        IncreaseCheckerCallback("global_batch_step"),
-        IncreaseCheckerCallback("global_sample_step"),
+        IncreaseCheckerCallback("epoch_step"),
+        IncreaseCheckerCallback("batch_step"),
+        IncreaseCheckerCallback("sample_step"),
     ]
 
-    # first stage
     runner.train(
         model=model,
         criterion=criterion,
@@ -65,65 +61,4 @@ def test_epoch_increasing():
         callbacks=callbacks,
     )
 
-    # # second stage
-    # runner.train(
-    #     model=model,
-    #     criterion=criterion,
-    #     optimizer=optimizer,
-    #     loaders=loaders,
-    #     logdir=logdir,
-    #     num_epochs=3,
-    #     verbose=False,
-    #     callbacks=callbacks,
-    # )
-    #
-    # # third stage
-    # runner.train(
-    #     model=model,
-    #     criterion=criterion,
-    #     optimizer=optimizer,
-    #     loaders=loaders,
-    #     logdir=logdir,
-    #     num_epochs=4,
-    #     verbose=False,
-    #     callbacks=callbacks,
-    # )
-
     shutil.rmtree(logdir, ignore_errors=True)
-
-    # # new exp
-    # runner = SupervisedRunner()
-    #
-    # # first stage
-    # runner.train(
-    #     model=model,
-    #     criterion=criterion,
-    #     optimizer=optimizer,
-    #     loaders=loaders,
-    #     logdir=logdir,
-    #     num_epochs=2,
-    #     verbose=False,
-    #     callbacks=[
-    #         IncreaseCheckerCallback("global_epoch_step"),
-    #         IncreaseCheckerCallback("global_batch_step"),
-    #         IncreaseCheckerCallback("global_sample_step"),
-    #     ],
-    # )
-    #
-    # # second stage
-    # runner.train(
-    #     model=model,
-    #     criterion=criterion,
-    #     optimizer=optimizer,
-    #     loaders=loaders,
-    #     logdir=logdir,
-    #     num_epochs=3,
-    #     verbose=False,
-    #     callbacks=[
-    #         IncreaseCheckerCallback("global_epoch_step", 2),
-    #         IncreaseCheckerCallback("global_batch_step", 626),
-    #         IncreaseCheckerCallback("global_sample_step", 20_000),
-    #     ],
-    # )
-    #
-    # shutil.rmtree(logdir, ignore_errors=True)

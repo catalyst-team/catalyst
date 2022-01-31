@@ -81,7 +81,8 @@ class TracingCallback(Callback):
             input_key: input key from ``runner.batch`` to use for model tracing
             logdir: path to folder for saving
             filename: filename
-            method_name: Model's method name that will be used as entrypoint during tracing
+            method_name: Model's method name 
+                that will be used as entrypoint during tracing
 
         Example:
             .. code-block:: python
@@ -138,12 +139,7 @@ class TracingCallback(Callback):
         self.input_key = [input_key] if isinstance(input_key, str) else input_key
 
     def on_experiment_end(self, runner: "IRunner") -> None:
-        """
-        On stage end action.
-
-        Args:
-            runner: runner for experiment
-        """
+        """Event handler."""
         model = runner.engine.sync_device(runner.model)
         batch = tuple(runner.batch[key] for key in self.input_key)
         # batch = runner.engine.sync_device(batch)

@@ -36,7 +36,7 @@ class SoftUpdateCallaback(Callback):
         Raises:
             TypeError: if invalid scope
         """
-        super().__init__(order=CallbackOrder.Metric)
+        super().__init__(order=CallbackOrder.External)
         self.target_model_key = target_model_key
         self.source_model_key = source_model_key
         self.tau = tau
@@ -56,13 +56,9 @@ class SoftUpdateCallaback(Callback):
                     "on_epoch_start"]"""
             )
 
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if runner.is_train_loader and self.scope == "on_batch_end":
+    def on_epoch_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        if runner.is_train_loader and self.scope == "on_epoch_start":
             soft_update(
                 runner.model[self.target_model_key],
                 runner.model[self.source_model_key],
@@ -70,11 +66,7 @@ class SoftUpdateCallaback(Callback):
             )
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """On batch start action.
-
-        Args:
-            runner: runner for the experiment.
-        """
+        """Event handler."""
         if runner.is_train_loader and self.scope == "on_batch_start":
             soft_update(
                 runner.model[self.target_model_key],
@@ -82,26 +74,18 @@ class SoftUpdateCallaback(Callback):
                 self.tau,
             )
 
-    def on_epoch_end(self, runner: "IRunner") -> None:
-        """On epoch end action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if runner.is_train_loader and self.scope == "on_epoch_end":
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """Event handler."""
+        if runner.is_train_loader and self.scope == "on_batch_end":
             soft_update(
                 runner.model[self.target_model_key],
                 runner.model[self.source_model_key],
                 self.tau,
             )
 
-    def on_epoch_start(self, runner: "IRunner") -> None:
-        """On epoch start action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if runner.is_train_loader and self.scope == "on_epoch_start":
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """Event handler."""
+        if runner.is_train_loader and self.scope == "on_epoch_end":
             soft_update(
                 runner.model[self.target_model_key],
                 runner.model[self.source_model_key],

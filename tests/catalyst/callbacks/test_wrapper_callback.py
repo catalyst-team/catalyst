@@ -1,5 +1,4 @@
 # flake8: noqa
-import random
 import unittest
 from unittest.mock import Mock
 
@@ -22,7 +21,7 @@ class RaiserCallback(Callback):
 
 class TestWrapperCallback(unittest.TestCase):
     def test_enabled(self):
-        runner = Mock(stage="stage1", loader_key="train", epoch=1)
+        runner = Mock(loader_key="train", epoch=1)
 
         orders = (
             CallbackOrder.Internal,
@@ -36,8 +35,8 @@ class TestWrapperCallback(unittest.TestCase):
         events = (
             "on_loader_start",
             "on_loader_end",
-            "on_stage_start",
-            "on_stage_end",
+            "on_experiment_start",
+            "on_experiment_end",
             "on_epoch_start",
             "on_epoch_end",
             "on_batch_start",
@@ -54,7 +53,7 @@ class TestWrapperCallback(unittest.TestCase):
                     wrapper.__getattribute__(event)(runner)
 
     def test_disabled(self):
-        runner = Mock(stage="stage1", loader_key="train", epoch=1)
+        runner = Mock(loader_key="train", epoch=1)
 
         orders = (
             CallbackOrder.Internal,
@@ -68,8 +67,8 @@ class TestWrapperCallback(unittest.TestCase):
         events = (
             "on_loader_start",
             "on_loader_end",
-            "on_stage_start",
-            "on_stage_end",
+            "on_experiment_start",
+            "on_experiment_end",
             "on_epoch_start",
             "on_epoch_end",
             "on_batch_start",

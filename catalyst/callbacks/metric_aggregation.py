@@ -189,7 +189,7 @@ class MetricAggregationCallback(Callback):
         else:
             metrics_list = self._get_metrics_list(metrics)
             metrics_list = [
-                torch.tensor(v, device=runner.device, dtype=torch.float32)
+                torch.tensor(v, device=runner.engine.device, dtype=torch.float32)
                 if not isinstance(v, torch.Tensor)
                 else v.float()
                 for v in metrics_list
@@ -218,6 +218,4 @@ class MetricAggregationCallback(Callback):
         self._process_metrics("loader", runner.loader_metrics, runner)
 
 
-__all__ = [
-    "MetricAggregationCallback",
-]
+__all__ = ["MetricAggregationCallback"]

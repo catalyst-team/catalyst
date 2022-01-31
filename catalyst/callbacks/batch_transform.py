@@ -240,20 +240,12 @@ class BatchTransformCallback(Callback):
         runner.batch = self.transform(runner.batch)
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """On batch start action.
-
-        Args:
-            runner: runner for the experiment.
-        """
+        """Event handler."""
         if self.scope == "on_batch_start":
             self._handle_batch(runner)
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action.
-
-        Args:
-            runner: runner for the experiment.
-        """
+        """Event handler."""
         if self.scope == "on_batch_end":
             self._handle_batch(runner)
 

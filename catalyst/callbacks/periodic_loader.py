@@ -90,7 +90,7 @@ class PeriodicLoaderCallback(Callback):
         # store pointers to data loader objects
         for name, loader in runner.loaders.items():
             self.loaders[name] = loader
-        # stage validation loader
+        # experiment validation loader
         is_loaders_match = all(
             loader in runner.loaders for loader in self.loader_periods.keys()
         )
@@ -102,7 +102,7 @@ class PeriodicLoaderCallback(Callback):
                     lambda n: all(
                         (p == 0 or n % p != 0) for p in self.loader_periods.values()
                     ),
-                    range(1, runner.stage_epoch_len + 1),
+                    range(1, runner.epoch_len + 1),
                 )
             )
             if len(zero_loaders_epochs) > 0:
@@ -131,16 +131,16 @@ class PeriodicLoaderCallback(Callback):
         Raises:
             ValueError: if there are no loaders in epoch
         """
-        epoch_num = runner.stage_epoch_step
+        epoch_step = runner.epoch_step
         # loaders to use in current epoch
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
             period = self.loader_periods.get(name, 1)
             # ignore loaders where period - 0
-            if period > 0 and epoch_num % period == 0:
+            if period > 0 and epoch_step % period == 0:
                 epoch_loaders[name] = loader
         if len(epoch_loaders) == 0:
-            raise ValueError(f"There is no loaders in epoch {epoch_num}!")
+            raise ValueError(f"There is no loaders in epoch {epoch_step}!")
         # first_loader = next(iter(epoch_loaders.keys()))
         # runner.valid_loader = (
         #     self.valid_loader if self.valid_loader in epoch_loaders else first_loader

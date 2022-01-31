@@ -16,7 +16,8 @@ class OnnxCallback(Callback):
         input_key: input key from ``runner.batch`` to use for onnx export
         logdir: path to folder for saving
         filename: filename
-        method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
+        method_name (str, optional): Forward pass method to be converted. 
+            Defaults to "forward".
         input_names (Iterable, optional): name of inputs in graph. Defaults to None.
         output_names (List[str], optional): name of outputs in graph. Defaults to None.
         dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
@@ -50,7 +51,9 @@ class OnnxCallback(Callback):
                 ),
             }
 
-            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            model = nn.Sequential(
+                nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10)
+            )
             criterion = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
             runner = dl.SupervisedRunner()
@@ -79,7 +82,7 @@ class OnnxCallback(Callback):
         verbose: bool = False,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.ExternalExtra)
+        super().__init__(order=CallbackOrder.External + 1)
         if logdir is not None:
             self.filename = str(Path(logdir) / filename)
         else:

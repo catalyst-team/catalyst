@@ -27,7 +27,7 @@ def hitrate(
     Add up all of the hits for all users and then divide by number of users
 
     Compute top-N recommendation for each user in the training stage
-    and intentionally remove one of this items fro the training data.
+    and intentionally remove one of this items from the training data.
 
     Args:
         outputs (torch.Tensor):

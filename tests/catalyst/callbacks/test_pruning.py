@@ -68,7 +68,7 @@ def test_parametrization():
         loaders={"train": dataloader},
         callbacks=[
             PruningCallback(
-                l1_unstructured, amount=0.5, remove_reparametrization_on_stage_end=False
+                l1_unstructured, amount=0.5, remove_reparametrization_on_end=False
             )
         ],
         num_epochs=1,

@@ -38,7 +38,8 @@ class CheckpointCallback(ICheckpointCallback):
             "model",
             "runner",
         ), "`CheckpointCallback` could work only in `model` or `runner` modes."
-        assert mode == "model", "TODO"
+        assert mode == "model", NotImplementedError("work in progress")
+        assert resume is None, NotImplementedError("work in progress")
 
         if minimize is not None:
             assert metric_key is not None, "please define the metric to track"
@@ -61,6 +62,7 @@ class CheckpointCallback(ICheckpointCallback):
         os.makedirs(self.logdir, exist_ok=True)
 
     def save(self, runner: "IRunner", obj: Any, logprefix: str) -> str:
+        """Save handler."""
         logpath = f"{logprefix}.pth"
         if isinstance(obj, torch.nn.Module):
             runner.engine.wait_for_everyone()
@@ -104,6 +106,7 @@ class CheckpointCallback(ICheckpointCallback):
         self._storage: List[Checkpoint] = []
 
     def on_epoch_end_best(self, runner: "IRunner") -> None:
+        """Event handler."""
         if self.loader_key is not None:
             score = runner.epoch_metrics[self.loader_key][self.metric_key]
         else:
@@ -114,13 +117,13 @@ class CheckpointCallback(ICheckpointCallback):
         self.save(runner, self._storage[0].obj, best_logprefix)
 
     def on_epoch_end_last(self, runner: "IRunner") -> None:
+        """Event handler."""
         self._handle_epoch(runner=runner, score=runner.epoch_step)
 
     def on_experiment_end(self, runner: "IRunner") -> None:
         """Event handler."""
         if runner.engine.process_index == 0:
-            # let's log Top-N base metrics
-            log_message = "Top best models:\n"
+            log_message = "Top models:\n"
             log_message += "\n".join(
                 [
                     f"{checkpoint.logpath}\t{checkpoint.metric:3.4f}"

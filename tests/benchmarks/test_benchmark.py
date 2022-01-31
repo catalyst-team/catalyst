@@ -30,7 +30,7 @@ class RunMode(str, enum.Enum):
 
 
 class TestMnistRunner(dl.Runner):
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self) -> "OrderedDict[str, DataLoader]":
         return {
             "train": DataLoader(
                 contrib.MNIST(DATA_ROOT, train=True, download=True),
@@ -39,7 +39,7 @@ class TestMnistRunner(dl.Runner):
             )
         }
 
-    def get_model(self, stage: str) -> TorchModel:
+    def get_model(self) -> TorchModel:
         return nn.Sequential(
             nn.Flatten(),
             nn.Linear(in_features=28 * 28, out_features=128),
@@ -49,10 +49,10 @@ class TestMnistRunner(dl.Runner):
             nn.Linear(in_features=128, out_features=10),
         )
 
-    def get_criterion(self, stage: str) -> TorchCriterion:
+    def get_criterion(self) -> TorchCriterion:
         return nn.CrossEntropyLoss()
 
-    def get_optimizer(self, stage: str, model: TorchModel) -> TorchOptimizer:
+    def get_optimizer(self, model: TorchModel) -> TorchOptimizer:
         return torch.optim.Adam(model.parameters(), lr=0.02)
 
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
@@ -74,11 +74,10 @@ def run_pytorch(
     device = torch.device(device)
     utils.set_global_seed(idx)
 
-    stage: str = "train"
-    loader = irunner.get_loaders(stage)["train"]
-    model = irunner.get_model(stage).to(device)
-    criterion = irunner.get_criterion(stage)
-    optimizer = irunner.get_optimizer(stage, model)
+    loader = irunner.get_loaders()["train"]
+    model = irunner.get_model().to(device)
+    criterion = irunner.get_criterion()
+    optimizer = irunner.get_optimizer(model)
 
     epoch_scores = []
     epoch_losses = []
@@ -115,11 +114,10 @@ def run_catalyst(
     irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10
 ):
     utils.set_global_seed(idx)
-    stage: str = "train"
-    loader = irunner.get_loaders(stage)["train"]
-    model = irunner.get_model(stage).to(device)
-    criterion = irunner.get_criterion(stage)
-    optimizer = irunner.get_optimizer(stage, model)
+    loader = irunner.get_loaders()["train"]
+    model = irunner.get_model().to(device)
+    criterion = irunner.get_criterion()
+    optimizer = irunner.get_optimizer(model)
 
     runner = dl.SupervisedRunner()
     runner.train(

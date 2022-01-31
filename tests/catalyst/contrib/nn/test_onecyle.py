@@ -19,7 +19,7 @@ class LRCheckerCallback(Callback):
             assert self.init_lr == runner.scheduler.get_lr()[0]
 
     # Check final LR
-    def on_stage_end(self, runner):
+    def on_experiment_end(self, runner):
         assert self.final_lr == runner.scheduler.get_lr()[0]
 
 
@@ -62,7 +62,6 @@ def test_onecyle():
 
     callbacks = [LRCheckerCallback(init_lr, min_lr)]
 
-    # Single stage
     runner.train(
         model=model,
         criterion=criterion,

@@ -53,17 +53,11 @@ class ProfilerCallback(Callback):
             from catalyst.contrib.datasets import MNIST
 
             loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
+                "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
+                "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
             }
 
-            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 10))
             criterion = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
             runner = dl.SupervisedRunner()
@@ -109,7 +103,7 @@ class ProfilerCallback(Callback):
         self.loader_key = loader_key
         self.epoch = epoch
         self.num_batches = num_batches
-        self.batch_cnt = 0
+        self.batch_counter = 0
 
         self.profiler_kwargs = {} if profiler_kwargs is None else profiler_kwargs
         if tensorboard_path is not None and "on_trace_ready" not in profiler_kwargs:
@@ -124,15 +118,15 @@ class ProfilerCallback(Callback):
     def _should_use_profiler(self, loader_key: str, epoch: int):
         if self.loader_key == loader_key and self.epoch == epoch:
             if self.num_batches is not None:
-                return self.batch_cnt < self.num_batches
+                return self.batch_counter < self.num_batches
             return True
         return False
 
     def _enter_profiler(self, runner: IRunner) -> None:
         loader_key = runner.loader_key
-        epoch = runner.stage_epoch_step
+        epoch_step = runner.epoch_step
 
-        if not self._should_use_profiler(loader_key, epoch):
+        if not self._should_use_profiler(loader_key, epoch_step):
             return
 
         if self.profiler is None:
@@ -141,9 +135,12 @@ class ProfilerCallback(Callback):
 
     def _exit_profiler(self, runner: IRunner) -> None:
         loader_key = runner.loader_key
-        epoch = runner.stage_epoch_step
+        epoch_step = runner.epoch_step
 
-        if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
+        if (
+            not self._should_use_profiler(loader_key, epoch_step)
+            or self.profiler is None
+        ):
             return
 
         if self.stats is None:
@@ -174,48 +171,31 @@ class ProfilerCallback(Callback):
             print(table_txt)
 
     def on_loader_start(self, runner: IRunner) -> None:
-        """
-        On loader start action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self.loader_key is None:
             self.loader_key = runner.loader_key  # use first loader for profile
 
         self._enter_profiler(runner)
 
     def on_loader_end(self, runner: IRunner) -> None:
-        """
-        On loader end action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         self._exit_profiler(runner)
 
     def on_batch_start(self, runner: IRunner) -> None:
-        """
-        On batch start action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         self._enter_profiler(runner)
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """
-        On batch end action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self.profiler is None:
             return
 
-        if self.num_batches is not None and self.batch_cnt < self.num_batches:
+        if self.num_batches is not None and self.batch_counter < self.num_batches:
             # do a profiling step after each batch
             self.profiler.step()
-            self.batch_cnt += 1
+            self.batch_counter += 1
 
         self._exit_profiler(runner)
+
+
+__all__ = ["ProfilerCallback"]

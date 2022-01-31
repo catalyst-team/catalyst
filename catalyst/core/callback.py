@@ -64,8 +64,7 @@ class CallbackOrder(IntFlag):
     - **Scheduler** (100) - scheduler step,
       in `ReduceLROnPlateau` case
       requires computed validation metrics for optimizer schedule.
-    - **External** (120) - additional callbacks with custom logic,
-      like InferenceCallbacks
+    - **External** (120) - additional callbacks with custom logic.
 
     Nevertheless, you always can create CustomCallback with any order,
     for example::

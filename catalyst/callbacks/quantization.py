@@ -33,28 +33,14 @@ class QuantizationCallback(Callback):
             from torch.utils.data import DataLoader
 
             from catalyst import dl
-            from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
-            from catalyst.contrib.layers import Flatten
 
             loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(),
-                    train=False,
-                    download=True,
-                    transform=ToTensor()),
-                    batch_size=32,
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(),
-                    train=False,
-                    download=True,
-                    transform=ToTensor()),
-                    batch_size=32,
-                ),
+                "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),
+                "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
             }
 
-            model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 10))
             criterion = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
             runner = dl.SupervisedRunner()
@@ -77,10 +63,7 @@ class QuantizationCallback(Callback):
         dtype: Union[str, Optional[torch.dtype]] = "qint8",
     ):
         """Init."""
-        super().__init__(
-            order=CallbackOrder.ExternalExtra
-        )  # External Extra for applying
-        # after CheckpointCallback; node master for saving.
+        super().__init__(order=CallbackOrder.External + 1)
         self.qconfig_spec = qconfig_spec
         self.dtype = dtype
         if logdir is not None:

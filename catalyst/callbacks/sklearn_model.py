@@ -14,13 +14,15 @@ class SklearnModelCallback(Callback):
     to give predictions on the valid loader.
 
     Args:
-        feature_key: keys of tensors that should be used as features in the classifier calculations
-        target_key: keys of tensors that should be used as targets in the classifier calculations
+        feature_key: keys of tensors that should be used as features 
+            for the classifier fit
+        target_key: keys of tensors that should be used as targets 
+            for the classifier fit
         train_loader: train loader name
         valid_loaders: valid loaders where model should be predicted
         model_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
-        predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
+        predict_key: key to store computed classifier predicts in ``runner.batch``
         model_kwargs: additional parameters for ``model_fn``
 
     .. note::

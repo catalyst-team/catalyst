@@ -49,7 +49,7 @@ class ConsoleLogger(ILogger):
             msg = prefix + _format_metrics(metrics)
             print(msg)
         elif scope == "epoch":
-            # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+            # @TODO: remove trick to save pure epoch-based metrics, like lr/momentum
             prefix = f"* Epoch ({epoch_step}/{num_epochs}) "
             msg = prefix + _format_metrics(metrics["_epoch_"])
             print(msg)

@@ -63,27 +63,24 @@ class CustomRunner(dl.IRunner):
         }
 
     @property
-    def stages(self):
-        return ["train"]
-
-    def get_stage_len(self, stage: str) -> int:
+    def num_epochs(self) -> int:
         return 1
 
-    def get_loaders(self, stage: str):
+    def get_loaders(self):
         loaders = {
             "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
             "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
         }
         return loaders
 
-    def get_model(self, stage: str):
+    def get_model(self):
         model = self.model if self.model is not None else VAE(28 * 28, self.hid_features)
         return model
 
-    def get_optimizer(self, stage: str, model):
+    def get_optimizer(self, model):
         return optim.Adam(model.parameters(), lr=0.02)
 
-    def get_callbacks(self, stage: str):
+    def get_callbacks(self):
         return {
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(

@@ -184,7 +184,7 @@ class DynamicBalanceClassSampler(Sampler):
         Args:
             labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
-            start_epoch: start epoch number, can be useful for multi-stage
+            start_epoch: start epoch number, can be useful for multistage
             experiments
             max_d: if not None, limit on the difference between the most
             frequent and the rarest classes, heuristic

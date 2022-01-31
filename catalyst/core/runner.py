@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 import logging
 
-from accelerate.state import DistributedType
-
 import torch
 from torch.utils.data import DataLoader, DistributedSampler
 
@@ -315,7 +313,7 @@ class IRunner(ICallback, ILogger, ABC):
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
-            self.loader.sampler.set_epoch(self.stage_epoch_step)
+            self.loader.sampler.set_epoch(self.epoch_step)
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler."""
@@ -374,7 +372,7 @@ class IRunner(ICallback, ILogger, ABC):
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
-        Used to make a train/valid/infer stage during Experiment run.
+        Used to make a train/valid/infer step during Experiment run.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches from DataLoader.

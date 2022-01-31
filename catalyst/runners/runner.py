@@ -1,9 +1,9 @@
 from typing import Any, Dict, Generator, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
+from pickle import NONE
 
 import torch
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
@@ -226,7 +226,7 @@ class Runner(IRunner):
         return self._scheduler
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for a given stage."""
+        """Returns the callbacks for the experiment."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
@@ -283,7 +283,6 @@ class Runner(IRunner):
         # experiment info
         seed: int = 42,
         hparams: Dict[str, Any] = None,
-        # stage info
         num_epochs: int = 1,
         # extra info (callbacks info)
         logdir: str = None,
@@ -303,7 +302,7 @@ class Runner(IRunner):
         ddp: bool = False,
     ) -> None:
         """
-        Starts the train stage of the model.
+        Starts the training of the model.
 
         Args:
             loaders: dictionary with one or several ``torch.utils.data.DataLoader``
@@ -367,7 +366,6 @@ class Runner(IRunner):
         # the callbacks
         self._callbacks = callbacks
         # extra
-        self._stage = "train"
         self._seed = seed
         self._hparams = hparams
         self._num_epochs = num_epochs
@@ -437,17 +435,14 @@ class Runner(IRunner):
 
             .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
         """
+        assert resume is NONE, NotImplementedError("work in progress")
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
 
         if model is not None:
             self.model = model
         assert self.model is not None
 
-        if resume is not None:
-            checkpoint = self.engine.load_checkpoint(resume)
-            self.engine.unpack_checkpoint(checkpoint, model=self.model)
-
-        # self.model = self.engine.sync_device(self.model)
+        self.model = self.engine.prepare(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
 
         set_global_seed(seed)
@@ -463,7 +458,7 @@ class Runner(IRunner):
         verbose: bool = False,
     ) -> Dict[str, Any]:
         """
-        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
+        Evaluates dataloader with given model and returns obtained metrics.
 
         Args:
             loader: loader to predict
@@ -476,18 +471,12 @@ class Runner(IRunner):
         Returns:
             Dict with metrics counted on the loader.
         """
-        if isinstance(callbacks, List):
-            for callback in callbacks:
-                if isinstance(callback, CheckpointCallback):
-                    raise IRunnerError(
-                        "CheckpointCallback isn`t allowed for evaluation loader method"
-                    )
-        else:
-            for callback in callbacks.values():
-                if isinstance(callback, CheckpointCallback):
-                    raise IRunnerError(
-                        "CheckpointCallback isn`t allowed for evaluation loader method"
-                    )
+        callbacks = sort_callbacks_by_order(callbacks)
+        for callback in callbacks.values():
+            if callback_isinstance(callback, ICheckpointCallback):
+                raise IRunnerError(
+                    "CheckpointCallback isn`t allowed for evaluation loader method"
+                )
 
         if model is None:
             model = self.model
@@ -521,60 +510,6 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Please follow the `minimal examples`_ sections for use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-
-    Examples:
-
-    .. code-block:: python
-
-        import os
-        from torch import nn, optim
-        from torch.utils.data import DataLoader
-        from catalyst import dl, utils
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-
-        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-        loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32
-            ),
-        }
-
-        runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
-        )
-        # model training
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            loaders=loaders,
-            num_epochs=1,
-            callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3)),
-                dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-            ],
-            logdir="./logs",
-            valid_loader="valid",
-            valid_metric="loss",
-            minimize_valid_metric=True,
-            verbose=True,
-            load_best_on_end=True,
-        )
-        # model inference
-        for prediction in runner.predict_loader(loader=loaders["valid"]):
-            assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
     """
 
     def __init__(
@@ -602,8 +537,8 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Run model inference on specified data batch.
 
         .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
+            You should not override this method. 
+            If you need specific model call, override runner.forward() method.
 
         Args:
             batch: dictionary with data batch from DataLoader.
@@ -617,14 +552,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         return output
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
-        """Prepares the callbacks for selected stage.
-
-        Args:
-            stage: stage name
-
-        Returns:
-            dictionary with stage callbacks
-        """
+        """Returns the callbacks for the experiment."""
         callbacks = super().get_callbacks()
         callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
@@ -641,9 +569,9 @@ class SupervisedRunner(ISupervisedRunner, Runner):
             IOptimizerCallback
         ):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(
-            self._scheduler, (TorchScheduler, ReduceLROnPlateau)
-        ) and not callback_exists(ISchedulerCallback):
+        if isinstance(self._scheduler, TorchScheduler) and not callback_exists(
+            ISchedulerCallback
+        ):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric
             )

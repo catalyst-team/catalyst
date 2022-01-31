@@ -191,7 +191,7 @@ class ISupervisedRunner(IRunner):
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
-        Used to make a train/valid/infer stage during Experiment run.
+        Used to make a train/valid/infer step during Experiment run.
 
         Args:
             batch: dictionary with data batches from DataLoader.
