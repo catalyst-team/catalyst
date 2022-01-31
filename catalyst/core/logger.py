@@ -90,7 +90,7 @@ class ILogger:
         """Logs image to the logger."""
         pass
 
-    def log_hparams(self, hparams: Dict, scope: str = None) -> None:
+    def log_hparams(self, hparams: Dict) -> None:
         """Logs hyperparameters to the logger."""
         pass
 

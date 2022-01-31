@@ -19,9 +19,11 @@ from catalyst.core.callback import (
 
 from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.batch_transform import BatchTransformCallback  # advanced
+
+# from catalyst.callbacks.batch_transform import BatchTransformCallback  # advanced
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
+
+# from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
 from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.metric import (
     BatchMetricCallback,

@@ -98,7 +98,7 @@ class CSVLogger(ILogger):
         log_line_csv = log_line_csv[:-1] + "\n"  # replace last "," with new line
         self.loggers[loader_key].write(log_line_csv)
 
-    def log_hparams(self, hparams: Dict, scope: str = None) -> None:
+    def log_hparams(self, hparams: Dict) -> None:
         """Logs hyperparameters to the logger."""
         if scope == "experiment":
             save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))

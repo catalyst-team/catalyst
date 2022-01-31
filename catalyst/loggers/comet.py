@@ -155,21 +155,79 @@ class CometLogger(ILogger):
                 **self.experiment_kwargs,
             )
 
+    def log_artifact(
+        self,
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
+        scope: str = None,
+        # experiment info
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
+    ) -> None:
+        """Logs artifact (any arbitrary file or object) to the logger."""
+        metadata_parameters = {"loader_key": loader_key, "scope": scope}
+        passed_metadata_parameters = {
+            k: v for k, v in metadata_parameters.items() if v is not None
+        }
+        if path_to_artifact:
+            self.experiment.log_asset(
+                path_to_artifact,
+                file_name=tag,
+                step=batch_step,
+                metadata=passed_metadata_parameters,
+            )
+        else:
+            self.experiment.log_asset_data(
+                pickle.dumps(artifact),
+                file_name=tag,
+                step=batch_step,
+                epoch=epoch_step,
+                metadata=passed_metadata_parameters,
+            )
+
+    def log_image(
+        self,
+        tag: str,
+        image: np.ndarray,
+        scope: str = None,
+        # experiment info
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
+    ) -> None:
+        """Logs image to the logger."""
+        image_name = f"{scope}_{tag}"
+        self.experiment.log_image(image, name=image_name, step=batch_step)
+
+    def log_hparams(self, hparams: Dict) -> None:
+        """Logs hyperparameters to the logger."""
+        self.experiment.log_parameters(hparams)
+
     def log_metrics(
         self,
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -182,110 +240,21 @@ class CometLogger(ILogger):
             scope in ["loader", "epoch"] and not self.log_epoch_metrics
         ):
             return
-        if global_batch_step % self.logging_frequency == 0:
+        if batch_step % self.logging_frequency == 0:
             self.experiment.log_metrics(
                 metrics,
-                step=global_batch_step,
-                epoch=global_epoch_step,
-                prefix=f"{stage_key}/{loader_key}_{scope}",
-            )
-
-    def log_image(
-        self,
-        tag: str,
-        image: np.ndarray,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
-    ) -> None:
-        """Logs image to the logger."""
-        image_name = f"{scope}_{tag}"
-
-        self.experiment.log_image(image, name=image_name, step=global_batch_step)
-
-    def log_hparams(
-        self,
-        hparams: Dict,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        stage_key: str = None,
-    ) -> None:
-        """Logs hyperparameters to the logger."""
-        self.experiment.log_parameters(hparams, prefix=scope)
-
-    def log_artifact(
-        self,
-        tag: str = "artifact",
-        artifact: object = None,
-        path_to_artifact: str = None,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
-    ) -> None:
-        """Logs artifact (any arbitrary file or object) to the logger."""
-        metadata_parameters = {
-            "stage_key": stage_key,
-            "loader_key": loader_key,
-            "scope": scope,
-        }
-        passed_metadata_parameters = {
-            k: v for k, v in metadata_parameters.items() if v is not None
-        }
-        if path_to_artifact:
-            self.experiment.log_asset(
-                path_to_artifact,
-                file_name=tag,
-                step=global_batch_step,
-                metadata=passed_metadata_parameters,
-            )
-        else:
-            self.experiment.log_asset_data(
-                pickle.dumps(artifact),
-                file_name=tag,
-                step=global_batch_step,
-                epoch=global_epoch_step,
-                metadata=passed_metadata_parameters,
+                step=batch_step,
+                epoch=epoch_step,
+                prefix=f"{loader_key}_{scope}",
             )
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
         pass
 
-    def close_log(self, scope: str = None) -> None:
+    def close_log(self) -> None:
         """Closes the logger."""
-        if scope is None or scope == "experiment":
-            self.experiment.end()
+        self.experiment.end()
 
 
 __all__ = ["CometLogger"]
