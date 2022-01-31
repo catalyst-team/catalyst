@@ -6,7 +6,6 @@ import numpy as np
 import torch
 
 from catalyst.metrics._metric import IMetric
-from catalyst.utils.torch import detach_tensor
 
 
 def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
@@ -14,7 +13,7 @@ def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
     def _wrapper(
         value: torch.Tensor, *args: Any, **kwargs: Any
     ) -> Union[float, np.ndarray]:
-        np_tensor = detach_tensor(value)
+        np_tensor = value.cpu().detach().numpy()
         value = metric_fn(np_tensor, *args, **kwargs)
 
         return value

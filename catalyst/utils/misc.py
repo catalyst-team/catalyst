@@ -114,12 +114,6 @@ def maybe_recursive_call(
         return method(object_or_dict, *r_args, **r_kwargs, **kwargs)
 
 
-def is_exception(ex: Any) -> bool:
-    """Check if the argument is of ``Exception`` type."""
-    result = (ex is not None) and isinstance(ex, BaseException)
-    return result
-
-
 def get_utcnow_time(format: str = None) -> str:
     """Return string with current utc time in chosen format.
 
@@ -133,41 +127,6 @@ def get_utcnow_time(format: str = None) -> str:
         format = "%y%m%d.%H%M%S"
     result = datetime.utcnow().strftime(format)
     return result
-
-
-def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
-    """Return default parameters of Callable.
-
-    Args:
-        fn (Callable[..., Any]): target Callable
-        exclude: exclude list of parameters
-
-    Returns:
-        dict: contains default parameters of `fn`
-    """
-    argspec = inspect.getfullargspec(fn)
-    default_params = zip(argspec.args[-len(argspec.defaults) :], argspec.defaults)
-    if exclude is not None:
-        default_params = filter(lambda x: x[0] not in exclude, default_params)
-    default_params = dict(default_params)
-    return default_params
-
-
-def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
-    """Return parameter names of Callable.
-
-    Args:
-        fn (Callable[..., Any]): target Callable
-        exclude: exclude list of parameters
-
-    Returns:
-        list: contains parameter names of `fn`
-    """
-    argspec = inspect.getfullargspec(fn)
-    params = argspec.args + argspec.kwonlyargs
-    if exclude is not None:
-        params = list(filter(lambda x: x not in exclude, params))
-    return params
 
 
 def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
@@ -360,7 +319,7 @@ def make_tuple(tuple_like):
 
 
 def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
-    """@TODO: docs."""
+    """Docs."""
     if not isinstance(dict_, dict):
         raise ValueError()
 
@@ -372,10 +331,7 @@ def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
 
 __all__ = [
     "boolean_flag",
-    "get_fn_default_params",
-    "get_fn_argsnames",
     "get_utcnow_time",
-    "is_exception",
     "maybe_recursive_call",
     "get_attr",
     "set_global_seed",

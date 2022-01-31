@@ -7,7 +7,7 @@ import unittest
 import torch
 import torch.nn as nn
 
-from catalyst.utils.swa import get_averaged_weights_by_path_mask
+from catalyst.contrib.utils.swa import get_averaged_weights_by_path_mask
 
 
 class Net(nn.Module):

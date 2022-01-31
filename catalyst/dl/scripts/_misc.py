@@ -2,10 +2,10 @@ from typing import Dict
 import copy
 from pathlib import Path
 
+from catalyst.contrib.utils.sys import import_module
 from catalyst.registry import REGISTRY
 from catalyst.utils.config import load_config
 from catalyst.utils.misc import merge_dicts
-from catalyst.utils.sys import import_module
 
 
 def parse_config_args(*, config, args, unknown_args):

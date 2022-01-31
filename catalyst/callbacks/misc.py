@@ -6,7 +6,6 @@ from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.extras.metric_handler import MetricHandler
 from catalyst.extras.time_manager import TimeManager
-from catalyst.utils.misc import is_exception
 
 EPS = 1e-8
 
@@ -370,11 +369,11 @@ class TqdmCallback(Callback):
 
     def on_exception(self, runner: "IRunner"):
         """Called if an Exception was raised."""
-        exception = runner.exception
-        if not is_exception(exception):
+        ex = runner.exception
+        if not ((ex is not None) and isinstance(ex, BaseException)):
             return
 
-        if isinstance(exception, KeyboardInterrupt):
+        if isinstance(ex, KeyboardInterrupt):
             if self.tqdm is not None:
                 self.tqdm.write("Keyboard Interrupt")
                 self.tqdm.clear()

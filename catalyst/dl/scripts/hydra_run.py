@@ -4,9 +4,9 @@ import os
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
+from catalyst.contrib.utils.sys import dump_code, dump_environment, import_module
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import set_global_seed
-from catalyst.utils.sys import dump_code, dump_environment, import_module
 from catalyst.utils.torch import prepare_cudnn
 
 logger = logging.getLogger(__name__)
