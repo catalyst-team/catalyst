@@ -11,6 +11,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.runners import SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.utils.quantization import quantize_model
+from tests import DATA_ROOT
 
 
 def test_api():
@@ -58,8 +59,8 @@ def test_accuracy():
         torch.nn.Linear(64, 10),
     )
     datasets = {
-        "train": MNIST("./data", train=False),
-        "valid": MNIST("./data", train=False),
+        "train": MNIST(DATA_ROOT, train=False),
+        "valid": MNIST(DATA_ROOT, train=False),
     }
     dataloaders = {
         k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()

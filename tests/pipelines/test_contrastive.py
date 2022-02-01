@@ -12,9 +12,9 @@ from torch.optim import Adam
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.losses import NTXentLoss
-from catalyst.data import Compose, ImageToTensor, NormalizeImage
 from catalyst.data.dataset import SelfSupervisedDatasetWrapper
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+from tests import DATA_ROOT
 
 
 def read_csv(csv_path: str):
@@ -38,13 +38,12 @@ if SETTINGS.ml_required:
 if SETTINGS.cv_required:
     import torchvision
 
+    from catalyst.contrib.data import Compose, ImageToTensor, NormalizeImage
 
-def train_experiment(device, engine=None):
 
+def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
-
         # 1. data and transforms
-
         transforms = Compose(
             [
                 torchvision.transforms.ToPILImage(),
@@ -60,7 +59,7 @@ def train_experiment(device, engine=None):
             [ImageToTensor(), NormalizeImage((0.1307,), (0.3081,))]
         )
 
-        mnist = MNIST("./logdir", train=True, download=True, normalize=None, numpy=True)
+        mnist = MNIST(DATA_ROOT, train=True, download=True, normalize=None, numpy=True)
         contrastive_mnist = SelfSupervisedDatasetWrapper(
             mnist, transforms=transforms, transform_original=transform_original
         )
@@ -69,7 +68,7 @@ def train_experiment(device, engine=None):
         )
 
         mnist_valid = MNIST(
-            "./logdir", train=False, download=True, normalize=None, numpy=True
+            DATA_ROOT, train=False, download=True, normalize=None, numpy=True
         )
         contrastive_valid = SelfSupervisedDatasetWrapper(
             mnist_valid, transforms=transforms, transform_original=transform_original
@@ -139,7 +138,7 @@ def train_experiment(device, engine=None):
         logdir = "./logdir"
         runner.train(
             model=model,
-            engine=engine or dl.DeviceEngine(device),
+            engine=engine,
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
@@ -165,116 +164,73 @@ def train_experiment(device, engine=None):
 requirements_satisfied = SETTINGS.ml_required and SETTINGS.cv_required
 
 
+# Torch
 @mark.skipif(not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required")
-def test_on_cpu():
-    train_experiment("cpu")
+def test_classification_on_cpu():
+    train_experiment(dl.CPUEngine())
 
 
 @mark.skipif(
     not all([requirements_satisfied, IS_CUDA_AVAILABLE]),
-    reason="catalyst[ml], catalyst[cv] and CUDA device are required",
+    reason="CUDA device is not available",
 )
-def test_on_torch_cuda0():
-    train_experiment("cuda:0")
+def test_classification_on_torch_cuda0():
+    train_experiment(dl.GPUEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+# )
+# def test_classification_on_torch_cuda1():
+#     train_experiment("cuda:1")
 
 
 @mark.skipif(
-    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
-    reason="No CUDA>=2 found or requriments are not satisfied",
-)
-def test_on_torch_cuda1():
-    train_experiment("cuda:1")
-
-
-@mark.skipif(
-    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
-    reason="No CUDA>=2 found or requriments are not satisfied",
-)
-def test_on_torch_dp():
-    train_experiment(None, dl.DataParallelEngine())
-
-
-@mark.skipif(
-    not all([requirements_satisfied, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    not all([requirements_satisfied, (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2)]),
     reason="No CUDA>=2 found",
 )
-def test_on_torch_ddp():
-    train_experiment(None, dl.DistributedDataParallelEngine())
+def test_classification_on_torch_dp():
+    train_experiment(dl.DataParallelEngine())
+
+
+@mark.skipif(
+    not all([requirements_satisfied, (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2)]),
+    reason="No CUDA>=2 found",
+)
+def test_classification_on_torch_ddp():
+    train_experiment(dl.DistributedDataParallelEngine())
 
 
 # AMP
 @mark.skipif(
-    not all([requirements_satisfied, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
-    reason="No CUDA or AMP found or requriments are not satisfied",
+    not all([requirements_satisfied, (IS_CUDA_AVAILABLE and SETTINGS.amp_required)]),
+    reason="No CUDA or AMP found",
 )
-def test_on_amp():
-    train_experiment(None, dl.AMPEngine())
+def test_classification_on_amp():
+    train_experiment(dl.GPUEngine(fp16=True))
 
 
 @mark.skipif(
     not all(
         [
             requirements_satisfied,
-            IS_CUDA_AVAILABLE,
-            NUM_CUDA_DEVICES >= 2,
-            SETTINGS.amp_required,
+            (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
         ]
     ),
-    reason="No CUDA>=2 or AMP found or requriments are not satisfied",
+    reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
-    train_experiment(None, dl.DataParallelAMPEngine())
+def test_classification_on_amp_dp():
+    train_experiment(dl.DataParallelEngine(fp16=True))
 
 
 @mark.skipif(
     not all(
         [
             requirements_satisfied,
-            IS_CUDA_AVAILABLE,
-            NUM_CUDA_DEVICES >= 2,
-            SETTINGS.amp_required,
+            (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
         ]
     ),
-    reason="No CUDA>=2 or AMP found or requriments are not satisfied",
+    reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_ddp():
-    train_experiment(None, dl.DistributedDataParallelAMPEngine())
-
-
-# APEX
-@mark.skipif(
-    not all([requirements_satisfied, IS_CUDA_AVAILABLE, SETTINGS.apex_required]),
-    reason="No CUDA or Apex found or requriments are not satisfied",
-)
-def test_on_apex():
-    train_experiment(None, dl.APEXEngine())
-
-
-@mark.skipif(
-    not all(
-        [
-            requirements_satisfied,
-            IS_CUDA_AVAILABLE,
-            NUM_CUDA_DEVICES >= 2,
-            SETTINGS.apex_required,
-        ]
-    ),
-    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
-)
-def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelAPEXEngine())
-
-
-@mark.skipif(
-    not all(
-        [
-            requirements_satisfied,
-            IS_CUDA_AVAILABLE,
-            NUM_CUDA_DEVICES >= 2,
-            SETTINGS.apex_required,
-        ]
-    ),
-    reason="No CUDA>=2 or Apex found or requriments are not satisfied",
-)
-def test_on_apex_ddp():
-    train_experiment(None, dl.DistributedDataParallelAPEXEngine())
+def test_classification_on_amp_ddp():
+    train_experiment(dl.DistributedDataParallelEngine(fp16=True))
