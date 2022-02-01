@@ -8,7 +8,6 @@ import torch
 
 from catalyst.callbacks import AccuracyCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.layers import Flatten
 from catalyst.runners import SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.utils.quantization import quantize_model
@@ -17,7 +16,7 @@ from catalyst.utils.quantization import quantize_model
 def test_api():
     """Test if model can be quantize through API"""
     model = torch.nn.Sequential(
-        Flatten(),
+        torch.nn.Flatten(),
         torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),
@@ -52,7 +51,7 @@ def _evaluate_loader_accuracy(runner, loader):
 def test_accuracy():
     """Test if accuracy drops too low."""
     model = torch.nn.Sequential(
-        Flatten(),
+        torch.nn.Flatten(),
         torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),

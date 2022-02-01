@@ -2,8 +2,10 @@
 import torch
 import torch.nn as nn
 
-from catalyst.callbacks import OptimizerCallback
-from catalyst.engines.torch import DeviceEngine
+from catalyst.callbacks import backward
+from catalyst.callbacks.backward import BackwardCallback
+from catalyst.callbacks.optimizer import OptimizerCallback
+from catalyst.engines.torch import CPUEngine
 
 
 class DummyRunner:
@@ -17,8 +19,8 @@ class DummyRunner:
         self.is_train_loader = True
         self.model = model
         self.optimizer = optimizer
-        self.device = torch.device("cpu")
-        self.engine = DeviceEngine("cpu")
+        # self.device = torch.device("cpu")
+        self.engine = CPUEngine()
 
 
 def test_zero_grad():
@@ -30,22 +32,25 @@ def test_zero_grad():
     inp = torch.randn(batch_size, 10)
     target = torch.FloatTensor(batch_size, 2).uniform_()
 
-    callback = OptimizerCallback(metric_key="loss")
+    backward_callback = BackwardCallback(metric_key="loss")
+    optimizer_callback = OptimizerCallback(metric_key="loss")
 
     loss1 = criterion(model(inp), target)
     loss1_value = loss1.detach().item()
 
     runner = DummyRunner(loss1, model, optimizer)
 
-    callback.on_experiment_start(runner)
-    callback.on_epoch_start(runner)
-    callback.on_batch_end(runner)
+    for clb in [backward_callback, optimizer_callback]:
+        clb.on_experiment_start(runner)
+        clb.on_epoch_start(runner)
+        clb.on_batch_end(runner)
 
     loss2 = criterion(model(inp), target)
     loss2_value = loss2.detach().item()
 
     runner.batch_metrics = {"loss": loss2}
-    callback.on_epoch_start(runner)
-    callback.on_batch_end(runner)
+    for clb in [backward_callback, optimizer_callback]:
+        clb.on_epoch_start(runner)
+        clb.on_batch_end(runner)
 
     assert loss1_value > loss2_value

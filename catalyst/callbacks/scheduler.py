@@ -43,7 +43,7 @@ class SchedulerCallback(ISchedulerCallback):
         metric_key: str = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.scheduler)
+        super().__init__()
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
                 "For metric reduction `SchedulerCallback` "

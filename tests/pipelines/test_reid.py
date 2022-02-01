@@ -7,12 +7,13 @@ import numpy as np
 import pytest
 
 import torch
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
 from catalyst.callbacks.metric import BatchMetricCallback, LoaderMetricCallback
-from catalyst.contrib import datasets, models, nn
+from catalyst.contrib import datasets, models
 from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
 from catalyst.metrics import AccuracyMetric, CMCMetric
 

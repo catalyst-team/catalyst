@@ -74,7 +74,7 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _handle_epoch(self, runner: "IRunner", score: float):
         obj = runner.model
-        logprefix = f"{self.logdir}/{self.mode}.{runner.epoch_step:03d}"
+        logprefix = f"{self.logdir}/{self.mode}.{runner.epoch_step:04d}"
         logpath = self.save(runner, obj, logprefix)
         self._storage.append(Checkpoint(obj=obj, logpath=logpath, metric=score))
         self._storage = sorted(
@@ -91,13 +91,15 @@ class CheckpointCallback(ICheckpointCallback):
                 shutil.rmtree(last_item.logpath, ignore_errors=True)
         with open(f"{self.logdir}/{self.mode}.storage.json", "w") as fout:
             stats = {
-                "logdir": self.logdir,
+                "logdir": str(self.logdir),
                 "topk": self.topk,
                 "loader_key": self.loader_key,
                 "metric_key": self.metric_key,
                 "minimize": self._minimize,
             }
-            storage = [{"logpath": x.logpath, "metric": x.metric} for x in self._storage]
+            storage = [
+                {"logpath": str(x.logpath), "metric": x.metric} for x in self._storage
+            ]
             stats["storage"] = storage
             json.dump(stats, fout, indent=2, ensure_ascii=False)
 

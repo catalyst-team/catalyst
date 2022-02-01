@@ -2,7 +2,6 @@
 
 from collections import OrderedDict
 from distutils.version import LooseVersion
-import logging
 import os
 from tempfile import TemporaryDirectory
 
@@ -19,8 +18,6 @@ from catalyst.settings import SETTINGS
 
 if HAS_REQUIRED_TORCH_VERSION:
     from catalyst.callbacks import ProfilerCallback
-
-logger = logging.getLogger(__name__)
 
 
 class DummyDataset(Dataset):

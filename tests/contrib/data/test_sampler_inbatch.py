@@ -1,7 +1,7 @@
 # flake8: noqa
 from typing import List, Tuple
 from collections import Counter
-from random import randint
+from random import randint, shuffle
 
 import numpy as np
 import pytest
@@ -17,11 +17,36 @@ from catalyst.contrib.data.sampler_inbatch import (
     TLabels,
 )
 from catalyst.settings import SETTINGS
-from .test_sampler import generate_valid_labels
 
 if SETTINGS.ml_required:
     from scipy.spatial.distance import squareform
     from scipy.special import binom
+
+TLabelsPK = List[Tuple[List[int], int, int]]
+
+
+def generate_valid_labels(num: int) -> TLabelsPK:
+    """
+    This function generates some valid inputs for samplers.
+    It generates k instances for p classes.
+
+    Args:
+        num: number of generated samples
+
+    Returns:
+        samples in the folowing order: (labels, p, k)
+    """
+    labels_pk = []
+
+    for _ in range(num):
+        p, k = randint(2, 12), randint(2, 12)
+        labels_list = [[label] * randint(2, 12) for label in range(p)]
+        labels = [el for sublist in labels_list for el in sublist]
+
+        shuffle(labels)
+        labels_pk.append((labels, p, k))
+
+    return labels_pk
 
 
 @pytest.fixture()

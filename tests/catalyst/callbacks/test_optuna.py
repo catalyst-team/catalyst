@@ -8,14 +8,10 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.layers import Flatten
-from catalyst.dl import AccuracyCallback
 from catalyst.settings import SETTINGS
 
 if SETTINGS.optuna_required:
     import optuna
-
-    from catalyst.callbacks import OptunaPruningCallback
 
 
 @pytest.mark.skipif(not (SETTINGS.optuna_required), reason="No optuna required")
@@ -26,7 +22,9 @@ def test_optuna():
         "train": DataLoader(trainset, batch_size=32),
         "valid": DataLoader(testset, batch_size=64),
     }
-    model = nn.Sequential(Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
+    model = nn.Sequential(
+        nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10)
+    )
 
     def objective(trial):
         lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
@@ -39,10 +37,10 @@ def test_optuna():
             criterion=criterion,
             optimizer=optimizer,
             callbacks={
-                "optuna": OptunaPruningCallback(
+                "optuna": dl.OptunaPruningCallback(
                     loader_key="valid", metric_key="loss", minimize=True, trial=trial
                 ),
-                "accuracy": AccuracyCallback(
+                "accuracy": dl.AccuracyCallback(
                     num_classes=10, input_key="logits", target_key="targets"
                 ),
             },

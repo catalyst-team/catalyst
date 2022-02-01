@@ -6,10 +6,10 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 
 import torch
+from torch import nn
 from torch.optim import Adam
 
 from catalyst import dl
-from catalyst.contrib import nn
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.losses import NTXentLoss
 from catalyst.data import Compose, ImageToTensor, NormalizeImage

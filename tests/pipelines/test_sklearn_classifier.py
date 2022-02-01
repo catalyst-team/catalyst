@@ -6,11 +6,11 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 
 import torch
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
-from catalyst.contrib import nn
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:

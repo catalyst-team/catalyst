@@ -298,7 +298,7 @@ class Runner(IRunner):
         resume: str = None,
         valid_loader: str = None,
         valid_metric: str = None,
-        minimize_valid_metric: bool = True,
+        minimize_valid_metric: bool = None,
         verbose: bool = False,
         timeit: bool = False,
         check: bool = False,
