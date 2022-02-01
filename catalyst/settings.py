@@ -38,15 +38,6 @@ def _is_amp_available():
         return False
 
 
-def _is_albumentations_available():
-    try:
-        import albumentations as albu  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
 def _is_xla_available():
     try:
         import torch_xla.core.xla_model as xm  # noqa: F401
@@ -111,16 +102,6 @@ def _is_optuna_available():
         return False
 
 
-def _is_hydra_available():
-    try:
-        import hydra  # noqa: F401
-        from omegaconf import DictConfig, OmegaConf  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
 def _is_cv_available():
     try:
         import cv2  # noqa: F401
@@ -128,15 +109,6 @@ def _is_cv_available():
         from skimage.color import label2rgb, rgb2gray  # noqa: F401
 
         import torchvision  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_nifti_available():
-    try:
-        import nibabel  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -212,24 +184,16 @@ class Settings(FrozenClass):
         cv_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
-        hydra_required: Optional[bool] = None,
         optuna_required: Optional[bool] = None,
-        # [engines]
-        amp_required: Optional[bool] = None,
-        apex_required: Optional[bool] = None,
-        xla_required: Optional[bool] = None,
-        fairscale_required: Optional[bool] = None,
-        deepspeed_required: Optional[bool] = None,
         # [dl-extras]
         onnx_required: Optional[bool] = None,
         pruning_required: Optional[bool] = None,
         quantization_required: Optional[bool] = None,
         # [logging]
-        # alchemy_required: Optional[bool] = None,
-        neptune_required: Optional[bool] = None,
-        mlflow_required: Optional[bool] = None,
-        wandb_required: Optional[bool] = None,
         comet_required: Optional[bool] = None,
+        mlflow_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -239,9 +203,6 @@ class Settings(FrozenClass):
         compute_per_class_metrics: Optional[bool] = None,
         # [versions]
         is_torch_1_7_0: Optional[bool] = None,
-        # [to remove]
-        nifti_required: Optional[bool] = None,
-        albu_required: Optional[bool] = None,
     ):
         # True – use the package
         # None – use the package if available
@@ -259,11 +220,6 @@ class Settings(FrozenClass):
         )
 
         # [integrations]
-        self.hydra_required: bool = _get_optional_value(
-            hydra_required,
-            _is_hydra_available,
-            "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
-        )
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
             _is_optuna_available,
@@ -271,43 +227,30 @@ class Settings(FrozenClass):
             "run `pip install catalyst[optuna]`.",
         )
 
-        # [to remove]
-        self.nifti_required: bool = _get_optional_value(
-            nifti_required,
-            _is_nifti_available,
-            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
-        )
-        self.albu_required: bool = _get_optional_value(
-            albu_required,
-            _is_albumentations_available,
-            "catalyst[albu] is not available, to install it, "
-            "run `pip install catalyst[albu]`.",
-        )
-
         # [engines]
         self.amp_required: bool = _get_optional_value(
-            amp_required,
+            False,
             _is_amp_available,
             "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
         )
         self.apex_required: bool = _get_optional_value(
-            apex_required,
+            False,
             _is_apex_avalilable,
             "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
         )
         self.xla_required: bool = _get_optional_value(
-            xla_required,
+            False,
             _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
         )
         self.fairscale_required: bool = _get_optional_value(
-            fairscale_required,
+            False,
             _is_fairscale_available,
             "catalyst[fairscale] is not available, "
             "to install it, run `pip install catalyst[fairscale]`.",
         )
         self.deepspeed_required: bool = _get_optional_value(
-            deepspeed_required,
+            False,
             _is_deepspeed_available,
             "catalyst[deepspeed] is not available, "
             "to install it, run `pip install catalyst[deepspeed]`.",
@@ -340,18 +283,17 @@ class Settings(FrozenClass):
             _is_comet_available,
             "comet is not available, to install, run 'pip install comet_ml'.",
         )
-        self.neptune_required: bool = _get_optional_value(
-            neptune_required,
-            _is_neptune_available,
-            "neptune is not available, to install it, run `pip install neptune-client`.",
-        )
         self.mlflow_required: bool = _get_optional_value(
             mlflow_required,
             _is_mlflow_available,
             "catalyst[mlflow] is not available, to install it, "
             "run `pip install catalyst[mlflow]`.",
         )
-
+        self.neptune_required: bool = _get_optional_value(
+            neptune_required,
+            _is_neptune_available,
+            "neptune is not available, to install it, run `pip install neptune-client`.",
+        )
         self.wandb_required: bool = _get_optional_value(
             wandb_required,
             _is_wandb_available,
@@ -382,16 +324,6 @@ class Settings(FrozenClass):
         self.is_torch_1_7_0: bool = _get_optional_value(
             is_torch_1_7_0, _is_torch_1_7_0, "upgrade to torch >= 1.7.0."
         )
-
-        # [global]
-
-        # epoch
-        self.epoch_metrics_prefix: str = "_epoch_"
-
-        # loader
-        self.loader_train_prefix: str = "train"
-        self.loader_valid_prefix: str = "valid"
-        self.loader_infer_prefix: str = "infer"
 
     @staticmethod
     def _optional_value(value, default):

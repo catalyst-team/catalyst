@@ -1,6 +1,5 @@
 # flake8: noqa
 from catalyst.data.dataset import DatasetFromSampler, SelfSupervisedDatasetWrapper
-from catalyst.data.ddp_loader import BatchSamplerShard, prepare_ddp_loader
 from catalyst.data.loader import (
     ILoaderWrapper,
     BatchLimitLoaderWrapper,
@@ -14,4 +13,4 @@ from catalyst.data.sampler import (
     MiniEpochSampler,
 )
 
-from catalyst.contrib.data import *
+# from catalyst.contrib.data import *

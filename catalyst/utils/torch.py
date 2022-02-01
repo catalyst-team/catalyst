@@ -8,6 +8,12 @@ from torch import nn
 import torch.backends
 from torch.backends import cudnn
 
+from catalyst.engines.torch import (
+    CPUEngine,
+    DataParallelEngine,
+    DistributedDataParallelEngine,
+    GPUEngine,
+)
 from catalyst.settings import SETTINGS
 from catalyst.typing import (
     RunnerCriterion,
@@ -26,6 +32,8 @@ if TYPE_CHECKING:
 
 if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
+
+    from catalyst.engines.torch import DistributedXLAEngine
 
 
 def get_optimizer_momentum(optimizer: TorchOptimizer) -> float:
@@ -102,12 +110,8 @@ def get_available_engine(
     Returns:
         IEngine which match requirements.
     """
-    from catalyst.engines.torch import (
-        CPUEngine,
-        DataParallelEngine,
-        DistributedDataParallelEngine,
-        GPUEngine,
-    )
+    if SETTINGS.xla_required:
+        return DistributedXLAEngine()
 
     if cpu or not torch.cuda.is_available():
         return CPUEngine()
@@ -261,6 +265,7 @@ def set_requires_grad(model: TorchModel, requires_grad: Union[bool, Dict[str, bo
             param.requires_grad = requires_grad
 
 
+# TODO: add tests
 def pack_checkpoint(
     model: RunnerModel = None,
     criterion: RunnerCriterion = None,

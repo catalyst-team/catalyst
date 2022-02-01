@@ -4,10 +4,26 @@ import os
 import numpy as np
 
 from tensorboardX import SummaryWriter
+import torch
 
 from catalyst.core.logger import ILogger
-from catalyst.loggers._misc import image_to_tensor
 from catalyst.settings import SETTINGS
+
+
+def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
+    """
+    Creates tensor from RGB image.
+
+    Args:
+        image: RGB image stored as np.ndarray
+
+    Returns:
+        tensor
+    """
+    image = np.moveaxis(image, -1, 0)
+    image = np.ascontiguousarray(image)
+    image = torch.from_numpy(image)
+    return image
 
 
 class TensorboardLogger(ILogger):
@@ -132,7 +148,7 @@ class TensorboardLogger(ILogger):
         """Logs image to Tensorboard for current scope on current step."""
         assert loader_key is not None
         self._check_loader_key(loader_key=loader_key)
-        tensor = image_to_tensor(image)
+        tensor = _image_to_tensor(image)
         self.loggers[loader_key].add_image(
             f"{tag}/{scope}", tensor, global_step=epoch_step
         )

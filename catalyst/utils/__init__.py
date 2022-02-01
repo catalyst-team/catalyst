@@ -1,8 +1,8 @@
 # flake8: noqa
 from catalyst.settings import SETTINGS
 
-from catalyst.utils.config import load_config, save_config
-
+if SETTINGS.yaml_required:
+    from catalyst.utils.config import save_config, load_config
 from catalyst.utils.distributed import (
     get_backend,
     get_world_size,
@@ -35,11 +35,7 @@ if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model
 
 if SETTINGS.pruning_required:
-    from catalyst.utils.pruning import (
-        prune_model,
-        remove_reparametrization,
-        get_pruning_fn,
-    )
+    from catalyst.utils.pruning import prune_model, remove_reparametrization
 
 if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model

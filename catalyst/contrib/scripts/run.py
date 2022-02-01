@@ -12,9 +12,6 @@ from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.torch import prepare_cudnn
 
-if SETTINGS.hydra_required:
-    from catalyst.dl.scripts.hydra_run import main as hydra_main
-
 
 def build_args(parser: ArgumentParser):
     """Constructs the command-line arguments for ``catalyst-dl run``."""
@@ -120,12 +117,7 @@ def main(args, unknown_args):
             "catalyst[hydra] requirements are not available, to install them,"
             " run `pip install catalyst[hydra]`."
         )
-    if args.hydra:
-        sys.argv.remove("run")
-        sys.argv.remove("--hydra")
-        hydra_main()
-    else:
-        config_main(args, unknown_args)
+    config_main(args, unknown_args)
 
 
 if __name__ == "__main__":

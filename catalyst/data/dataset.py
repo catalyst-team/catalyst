@@ -49,7 +49,8 @@ class SelfSupervisedDatasetWrapper(Dataset):
         transform_left: transform only for left batch
         transform_right: transform only for right batch
         transform_original: transforms which will be applied to save original in batch
-        is_target: the flag for selection does dataset return (sample, target) or only sample
+        is_target: the flag for selection does dataset return (sample, target) 
+            or only sample
 
     Example:
 
@@ -72,7 +73,10 @@ class SelfSupervisedDatasetWrapper(Dataset):
         )
 
         cifar_dataset = CIFAR10(root="./data", download=True, transform=None)
-        cifar_contrastive = SelfSupervisedDatasetWrapper(cifar_dataset, transforms=transforms)
+        cifar_contrastive = SelfSupervisedDatasetWrapper(
+            cifar_dataset, 
+            transforms=transforms
+        )
 
     .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
         https://arxiv.org/abs/2002.05709
@@ -95,7 +99,8 @@ class SelfSupervisedDatasetWrapper(Dataset):
             transform_left: transform only for left batch
             transform_right: transform only for right batch
             transform_original: transforms which will be applied to save original in batch
-            is_target: the flag for selection does dataset return (sample, target) or only sample
+            is_target: the flag for selection does dataset return (sample, target) 
+                or only sample
 
         Raises:
             ValueError: should be specified transform_left and transform_right simultaneously
@@ -111,7 +116,8 @@ class SelfSupervisedDatasetWrapper(Dataset):
             self.transform_left = transforms
         else:
             raise ValueError(
-                "Specify transform_left and transform_right simultaneously or only transforms."
+                "Specify `transform_left` and `transform_right` simultaneously "
+                "or only `transforms`."
             )
         self.transform_original = transform_original
         self.dataset = dataset

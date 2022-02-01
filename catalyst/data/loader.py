@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import DataLoader
 
 
-class ILoaderWrapper:
+class ILoaderWrapper(DataLoader):
     """Loader wrapper interface.
 
     Args:
@@ -20,41 +20,6 @@ class ILoaderWrapper:
     def __init__(self, loader: DataLoader):
         """Init"""
         self.origin = loader
-
-    def __getattr__(self, key):
-        """
-        Gets attribute by ``key``.
-        Firstly, looks at the ``origin`` for the appropriate ``key``.
-        If none founds - looks at the wrappers attributes.
-        If could not found anything - raises ``NotImplementedError``.
-
-        Args:
-            key: attribute key
-
-        Returns:
-            attribute value
-
-        Raises:
-            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``
-        """
-        some_default_value = "_no_attr_found_"
-        value = self.origin.__dict__.get(key, some_default_value)
-        # value = getattr(self.origin, key, None)
-        if value != some_default_value:
-            return value
-        value = self.__dict__.get(key, some_default_value)
-        # value = getattr(self, key, None)
-        if value != some_default_value:
-            return value
-        raise NotImplementedError()
-
-    def __len__(self) -> int:
-        """Returns length of the wrapper loader.
-
-        Returns:
-            int: length of the wrapper loader
-        """
-        return len(self.origin)
 
 
 class BatchLimitLoaderWrapper(ILoaderWrapper):

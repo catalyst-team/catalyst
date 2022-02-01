@@ -10,6 +10,7 @@ import torch.multiprocessing as mp
 
 from catalyst import SETTINGS
 from catalyst.core.engine import IEngine
+from catalyst.utils.distributed import mean_reduce
 
 if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
@@ -53,18 +54,11 @@ class DistributedDataParallelEngine(IEngine):
     def cleanup():
         dist.destroy_process_group()
 
-    def _sum_reduce(self, tensor: torch.Tensor) -> torch.Tensor:
-        cloned = tensor.clone()
-        dist.all_reduce(cloned, dist.ReduceOp.SUM)
-        return cloned
-
-    def _mean_reduce(self, tensor: torch.Tensor) -> torch.Tensor:
-        reduced = self._sum_reduce(tensor) / self.state.num_processes
-        return reduced
-
     def mean_reduce_ddp_metrics(self, metrics: Dict):
         metrics = {
-            k: self._mean_reduce(torch.tensor(v, device=self.device))
+            k: mean_reduce(
+                torch.tensor(v, device=self.device), world_size=self.state.num_processes,
+            )
             for k, v in metrics.items()
         }
         return metrics
@@ -82,3 +76,12 @@ class DistributedXLAEngine(IEngine):
             for k, v in metrics.items()
         }
         return metrics
+
+
+__all__ = [
+    CPUEngine,
+    GPUEngine,
+    DataParallelEngine,
+    DistributedDataParallelEngine,
+    DistributedXLAEngine,
+]

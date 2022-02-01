@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, List, Optional
 import os
 import pickle
 
@@ -22,11 +22,6 @@ def _is_xla_distributed_initialized() -> bool:
     return (
         SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
     )
-
-
-def _is_slurm_available():
-    """Checks if slurm is available."""
-    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def _is_ddp_wrapped(model: nn.Module) -> bool:

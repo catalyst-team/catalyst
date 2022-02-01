@@ -76,9 +76,7 @@ def build_parser() -> ArgumentParser:
 def main():
     """catalyst-contrib entry point."""
     parser = build_parser()
-
     args, uargs = parser.parse_known_args()
-
     COMMANDS[args.command].main(args, uargs)
 
 
