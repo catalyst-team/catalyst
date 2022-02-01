@@ -3,13 +3,13 @@ import pickle
 
 from catalyst.settings import SETTINGS
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 if SETTINGS.use_pyarrow:
     try:
         import pyarrow
     except ImportError as ex:
-        logger.warning(
+        LOGGER.warning(
             "pyarrow not available, switching to pickle. "
             "To install pyarrow, run `pip install pyarrow`."
         )

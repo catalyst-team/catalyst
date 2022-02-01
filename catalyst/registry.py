@@ -1,8 +1,4 @@
-import logging
-
 import hydra_slayer
-
-LOGGER = logging.getLogger(__name__)
 
 REGISTRY = hydra_slayer.Registry()
 Registry = REGISTRY.add

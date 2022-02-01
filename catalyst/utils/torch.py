@@ -8,12 +8,6 @@ from torch import nn
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst.engines.torch import (
-    CPUEngine,
-    DataParallelEngine,
-    DistributedDataParallelEngine,
-    GPUEngine,
-)
 from catalyst.settings import SETTINGS
 from catalyst.typing import (
     RunnerCriterion,
@@ -110,6 +104,13 @@ def get_available_engine(
     Returns:
         IEngine which match requirements.
     """
+    from catalyst.engines.torch import (
+        CPUEngine,
+        DataParallelEngine,
+        DistributedDataParallelEngine,
+        GPUEngine,
+    )
+
     if SETTINGS.xla_required:
         return DistributedXLAEngine()
 

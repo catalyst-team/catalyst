@@ -4,6 +4,7 @@ from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
+# @TODO: how to fix?
 if SETTINGS.ml_required:
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,

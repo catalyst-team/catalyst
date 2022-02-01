@@ -9,13 +9,13 @@ from six import string_types
 from catalyst.contrib.utils.serialization import deserialize, serialize
 from catalyst.settings import SETTINGS
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 if SETTINGS.use_lz4:
     try:
         import lz4.frame
     except ImportError as ex:
-        logger.warning("lz4 not available, to install lz4, run `pip install lz4`.")
+        LOGGER.warning("lz4 not available, to install lz4, run `pip install lz4`.")
         raise ex
 
 

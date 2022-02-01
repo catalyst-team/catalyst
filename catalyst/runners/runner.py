@@ -6,14 +6,21 @@ from pickle import NONE
 import torch
 from torch.utils.data import DataLoader
 
+from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
+from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.optimizer import OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core.callback import Callback
+from catalyst.callbacks.scheduler import SchedulerCallback
+from catalyst.core.callback import (
+    Callback,
+    IBackwardCallback,
+    ICriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+)
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, IRunnerError
@@ -437,7 +444,7 @@ class Runner(IRunner):
 
             .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
         """
-        assert resume is NONE, NotImplementedError("work in progress")
+        assert resume is None, NotImplementedError("work in progress")
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
 
         if model is not None:
@@ -567,6 +574,10 @@ class SupervisedRunner(ISupervisedRunner, Runner):
                 target_key=self._target_key,
                 metric_key=self._loss_key,
             )
+        if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
+            IBackwardCallback
+        ):
+            callbacks["_backward"] = BackwardCallback(metric_key=self._loss_key)
         if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
             IOptimizerCallback
         ):

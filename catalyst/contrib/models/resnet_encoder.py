@@ -3,10 +3,11 @@
 from typing import Union
 from pathlib import Path
 
-import torch
-from torch import nn
 import torchvision
 from torchvision.models import ResNet
+
+import torch
+from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.layers import Flatten

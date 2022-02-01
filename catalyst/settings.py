@@ -107,7 +107,6 @@ def _is_cv_available():
         import cv2  # noqa: F401
         import imageio  # noqa: F401
         from skimage.color import label2rgb, rgb2gray  # noqa: F401
-
         import torchvision  # noqa: F401
 
         return True
@@ -157,6 +156,15 @@ def _is_comet_available():
 def _is_neptune_available():
     try:
         import neptune.new as neptune  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_yaml_available():
+    try:
+        import yaml  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -229,28 +237,28 @@ class Settings(FrozenClass):
 
         # [engines]
         self.amp_required: bool = _get_optional_value(
-            False,
+            None,
             _is_amp_available,
             "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
         )
         self.apex_required: bool = _get_optional_value(
-            False,
+            None,
             _is_apex_avalilable,
             "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
         )
         self.xla_required: bool = _get_optional_value(
-            False,
+            None,
             _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
         )
         self.fairscale_required: bool = _get_optional_value(
-            False,
+            None,
             _is_fairscale_available,
             "catalyst[fairscale] is not available, "
             "to install it, run `pip install catalyst[fairscale]`.",
         )
         self.deepspeed_required: bool = _get_optional_value(
-            False,
+            None,
             _is_deepspeed_available,
             "catalyst[deepspeed] is not available, "
             "to install it, run `pip install catalyst[deepspeed]`.",
@@ -301,6 +309,12 @@ class Settings(FrozenClass):
         )
 
         # [extras]
+        self.yaml_required: bool = _get_optional_value(
+            None,
+            _is_yaml_available,
+            "yaml is not available, to install it, " "run `pip install PyYAML>=5.1`.",
+        )
+
         self.use_lz4: bool = use_lz4 or os.environ.get("CATALYST_USE_LZ4", "0") == "1"
         self.use_pyarrow: bool = use_pyarrow or os.environ.get(
             "CATALYST_USE_PYARROW", "0"

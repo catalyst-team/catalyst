@@ -1,13 +1,10 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
 import json
-from logging import getLogger
 from pathlib import Path
 import re
 
 import yaml
-
-logger = getLogger(__name__)
 
 
 class OrderedLoader(yaml.SafeLoader):
@@ -66,11 +63,6 @@ def load_config(
     Raises:
         ValueError: if path ``path`` doesn't exists
             or file format is not YAML or JSON
-
-    Adapted from
-    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L63
-    which was adapted from
-    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L10
     """
     path = Path(path)
 
@@ -123,11 +115,6 @@ def save_config(
         ensure_ascii: Used for JSON, if True non-ASCII
         characters are escaped in JSON strings.
         indent: Used for JSON
-
-    Adapted from
-    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110
-    which was adapted from
-    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L38
     """
     path = Path(path)
 

@@ -2,10 +2,10 @@
 
 from typing import Callable, Dict
 
-from accelerate import Accelerator
-from accelerate.state import DistributedType
 import numpy as np
 
+from accelerate import Accelerator
+from accelerate.state import DistributedType
 import torch
 
 from catalyst import SETTINGS

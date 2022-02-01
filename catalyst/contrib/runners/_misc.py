@@ -2,7 +2,6 @@ from typing import Any, Dict, Tuple, Union
 from collections import OrderedDict
 import copy
 from functools import partial
-import logging
 
 import torch
 from torch import nn
@@ -13,11 +12,6 @@ from catalyst.typing import TorchModel, TorchSampler
 from catalyst.utils.distributed import get_distributed_params, get_rank
 from catalyst.utils.misc import merge_dicts, set_global_seed
 from catalyst.utils.torch import process_model_params
-
-if SETTINGS.hydra_required:
-    from omegaconf import ListConfig
-
-logger = logging.getLogger(__name__)
 
 
 def do_lr_linear_scaling(

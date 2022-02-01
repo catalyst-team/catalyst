@@ -9,6 +9,8 @@ from catalyst.settings import SETTINGS
 from catalyst.utils import get_device
 from catalyst.utils.distributed import all_gather, get_backend
 
+# @TODO: remove `all_gather` and `get_backend` dependencies from metrics
+
 if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
 
@@ -98,7 +100,10 @@ class AUCMetric(ICallbackLoaderMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features", 
+            output_key="logits", 
+            target_key="targets", 
+            loss_key="loss",
         )
         runner.train(
             model=model,
@@ -192,7 +197,7 @@ class AUCMetric(ICallbackLoaderMetric):
             return [], micro, macro, weighted
 
     def compute_key_value(self) -> Dict[str, float]:
-        """Computes the AUC metric based on saved statistics and returns key-value results."""
+        """Computes the AUC metric and returns key-value results."""
         per_class_auc, micro_auc, macro_auc, weighted_auc = self.compute()
         output = {
             f"{self.metric_name}/class_{i:02d}": value.item()

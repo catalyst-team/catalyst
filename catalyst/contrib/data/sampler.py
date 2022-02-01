@@ -10,6 +10,8 @@ from torch.utils.data.sampler import BatchSampler, Sampler
 
 from catalyst.contrib.data._misc import find_value_ids
 
+LOGGER = logging.getLogger(__name__)
+
 
 class BalanceBatchSampler(Sampler):
     """
@@ -206,8 +208,7 @@ class DynamicBalanceClassSampler(Sampler):
         self.min_class_size = min(samples_per_class.values())
 
         if self.min_class_size < 100 and not ignore_warning:
-            logger = logging.getLogger(__name__)
-            logger.warning(
+            LOGGER.warning(
                 f"the smallest class contains only"
                 f" {self.min_class_size} examples. At the end of"
                 f" training, epochs will contain only"

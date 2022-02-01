@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional
 from collections import OrderedDict
 from copy import deepcopy
-import logging
 import os
 
 from torch.utils.data import DataLoader, Dataset
@@ -36,8 +35,6 @@ from catalyst.typing import (
 )
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 from catalyst.utils.torch import get_available_engine
-
-LOGGER = logging.getLogger(__name__)
 
 
 class ConfigRunner(IRunner):

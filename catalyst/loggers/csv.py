@@ -77,7 +77,7 @@ class CSVLogger(ILogger):
         """Init."""
         super().__init__(log_batch_metrics=False, log_epoch_metrics=True)
         if use_logdir_postfix:
-            logdir = os.path.join(logdir, "logs")
+            logdir = os.path.join(logdir, "csv_logger")
         self.logdir = logdir
         self.loggers = {}
         os.makedirs(self.logdir, exist_ok=True)

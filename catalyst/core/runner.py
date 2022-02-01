@@ -1,7 +1,6 @@
 from typing import Any, Dict, Mapping, Optional
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
-import logging
 
 import torch
 from torch.utils.data import DataLoader, DistributedSampler
@@ -23,9 +22,6 @@ from catalyst.typing import (
     RunnerScheduler,
 )
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-
-LOGGER = logging.getLogger(__name__)
-
 
 BATCH_METRICS = Dict[str, float]  # {"loss": 1.7}
 LOADER_METRICS = Dict[str, float]  # {"loss": 1.7}

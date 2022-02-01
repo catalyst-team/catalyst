@@ -24,7 +24,7 @@ class ConsoleLogger(ILogger):
 
     def log_hparams(self, hparams: Dict) -> None:
         """Logs hyperparameters to the console."""
-        if scope == "experiment" and self._log_hparams:
+        if self._log_hparams:
             print(f"Hparams: {hparams}")
 
     def log_metrics(
