@@ -4,7 +4,6 @@ from typing import Any, Mapping
 from collections import OrderedDict
 import enum
 import gc
-import os
 import time
 
 import numpy as np
@@ -15,11 +14,10 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 
-from catalyst import contrib, dl, utils
+from catalyst import dl, utils
+from catalyst.contrib.datasets import MNIST
 from catalyst.typing import TorchCriterion, TorchModel, TorchOptimizer
-
-DATA_ROOT = "."
-IS_BENCHMARK_REQUIRED = os.environ.get("BENCHMARK_REQUIRED", "0") == "1"
+from tests import DATA_ROOT
 
 
 class RunMode(str, enum.Enum):
@@ -33,7 +31,7 @@ class TestMnistRunner(dl.Runner):
     def get_loaders(self) -> "OrderedDict[str, DataLoader]":
         return {
             "train": DataLoader(
-                contrib.MNIST(DATA_ROOT, train=True, download=True),
+                MNIST(DATA_ROOT, train=True, download=True),
                 batch_size=128,
                 num_workers=1,
             )
@@ -121,7 +119,7 @@ def run_catalyst(
 
     runner = dl.SupervisedRunner()
     runner.train(
-        engine=dl.DeviceEngine(device),
+        engine=dl.GPUEngine() if device == "cuda" else dl.CPUEngine(),
         model=model,
         criterion=criterion,
         optimizer=optimizer,
@@ -211,7 +209,7 @@ def assert_absolute_equal(
     "irunner,num_epochs,num_runs,precision,max_diff_time,max_diff_memory",
     [(TestMnistRunner, 4, 3, 2, 0.1, 0.001),],
 )
-@pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
+# @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
     tmpdir,
     irunner: dl.IRunner,
@@ -224,7 +222,7 @@ def test_benchmark(
 
     irunner = irunner()
     # prepare data
-    _ = irunner.get_loaders(None)
+    _ = irunner.get_loaders()
 
     # score runs
     pytorch = score_runs(
