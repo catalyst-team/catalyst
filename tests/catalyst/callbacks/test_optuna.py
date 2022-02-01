@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.settings import SETTINGS
+from tests import DATA_ROOT
 
 if SETTINGS.optuna_required:
     import optuna
@@ -16,8 +17,8 @@ if SETTINGS.optuna_required:
 
 @pytest.mark.skipif(not (SETTINGS.optuna_required), reason="No optuna required")
 def test_optuna():
-    trainset = MNIST("./data", train=False)
-    testset = MNIST("./data", train=False)
+    trainset = MNIST(DATA_ROOT, train=False)
+    testset = MNIST(DATA_ROOT, train=False)
     loaders = {
         "train": DataLoader(trainset, batch_size=32),
         "valid": DataLoader(testset, batch_size=64),

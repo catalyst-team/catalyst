@@ -1,6 +1,4 @@
 # flake8: noqa
-
-import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -9,19 +7,20 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 
 from catalyst import dl, utils
-from catalyst.contrib import MNIST
+from catalyst.contrib.datasets import MNIST
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+from tests import DATA_ROOT
 
 
-def train_experiment(device, engine=None):
+def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=0.02)
 
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+            "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+            "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
         }
 
         runner = dl.SupervisedRunner(
@@ -44,31 +43,21 @@ def train_experiment(device, engine=None):
                     input_key="logits", target_key="targets", num_classes=10
                 )
             )
-        if SETTINGS.amp_required and (
-            engine is None
-            or not isinstance(
-                engine,
-                (
-                    dl.AMPEngine,
-                    dl.DataParallelAMPEngine,
-                    dl.DistributedDataParallelAMPEngine,
-                ),
-            )
-        ):
+        if isinstance(engine, dl.CPUEngine):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
-        if SETTINGS.onnx_required:
-            callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
-        if SETTINGS.pruning_required:
-            callbacks.append(
-                dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5)
-            )
-        if SETTINGS.quantization_required:
-            callbacks.append(dl.QuantizationCallback(logdir=logdir))
-        if engine is None or not isinstance(engine, dl.DistributedDataParallelEngine):
-            callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
+        # if SETTINGS.onnx_required:
+        #     callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
+        # if SETTINGS.pruning_required:
+        #     callbacks.append(
+        #         dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5)
+        #     )
+        # if SETTINGS.quantization_required:
+        #     callbacks.append(dl.QuantizationCallback(logdir=logdir))
+        # if engine is None or not isinstance(engine, dl.DistributedDataParallelEngine):
+        #     callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
         # model training
         runner.train(
-            engine=engine or dl.DeviceEngine(device),
+            engine=engine,
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -106,9 +95,9 @@ def train_experiment(device, engine=None):
         # model post-processing
         features_batch = next(iter(loaders["valid"]))[0]
         # model stochastic weight averaging
-        model.load_state_dict(
-            utils.get_averaged_weights_by_path_mask(logdir=logdir, path_mask="*.pth")
-        )
+        # model.load_state_dict(
+        #     utils.get_averaged_weights_by_path_mask(logdir=logdir, path_mask="*.pth")
+        # )
         # model onnx export
         if SETTINGS.onnx_required:
             utils.onnx_export(
@@ -130,78 +119,55 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-def test_mnist_on_cpu():
-    train_experiment("cpu")
+def test_classification_on_cpu():
+    train_experiment(dl.CPUEngine())
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_mnist_on_torch_cuda0():
-    train_experiment("cuda:0")
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
-)
-def test_mnist_on_torch_cuda1():
-    train_experiment("cuda:1")
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
-)
-def test_mnist_on_torch_dp():
-    train_experiment(None, dl.DataParallelEngine())
+def test_classification_on_torch_cuda0():
+    train_experiment(dl.GPUEngine())
 
 
 # @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
-#     reason="No CUDA>=2 found",
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_mnist_on_ddp():
-#     train_experiment(None, dl.DistributedDataParallelEngine())
+# def test_classification_on_torch_cuda1():
+#     train_experiment("cuda:1")
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_dp():
+    train_experiment(dl.DataParallelEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+# )
+# def test_classification_on_torch_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine())
+
 
 # AMP
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
 )
-def test_mnist_on_amp():
-    train_experiment(None, dl.AMPEngine())
+def test_classification_on_amp():
+    train_experiment(dl.GPUEngine(fp16=True))
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_mnist_on_amp_dp():
-    train_experiment(None, dl.DataParallelAMPEngine())
+def test_classification_on_amp_dp():
+    train_experiment(dl.DataParallelEngine(fp16=True))
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_mnist_on_amp_ddp():
-#     train_experiment(None, dl.DistributedDataParallelAMPEngine())
-
-# APEX
-# @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
-# )
-# def test_mnist_on_apex():
-#     train_experiment(None, dl.APEXEngine())
-#
-#
-# @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-#     reason="No CUDA>=2 or Apex found",
-# )
-# def test_mnist_on_apex_dp():
-#     train_experiment(None, dl.DataParallelApexEngine())
-
-
-# @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-#     reason="No CUDA>=2 or Apex found",
-# )
-# def test_mnist_on_apex_ddp():
-#     train_experiment(None, dl.DistributedDataParallelApexEngine())
+# def test_classification_on_amp_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine(fp16=True))

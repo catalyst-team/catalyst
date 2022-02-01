@@ -138,3 +138,4 @@ _nogit*
 
 presets/
 _todo/
+tests/MNIST/

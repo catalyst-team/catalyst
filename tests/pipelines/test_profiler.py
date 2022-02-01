@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
+from tests import DATA_ROOT
 
 
 def _is_profile_available():
@@ -23,8 +24,8 @@ def _is_profile_available():
 
 def train_experiment():
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+        "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+        "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
     }
     model = nn.Sequential(
         nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10)

@@ -19,8 +19,7 @@ from catalyst.core.callback import (
 
 from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-
-# from catalyst.callbacks.batch_transform import BatchTransformCallback  # advanced
+from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 
 # from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
@@ -37,7 +36,8 @@ from catalyst.callbacks.misc import (
     TimerCallback,
     TqdmCallback,
 )
-from catalyst.callbacks.mixup import MixupCallback  # advanced
+
+# from catalyst.callbacks.mixup import MixupCallback  # advanced
 
 # if SETTINGS.onnx_required:
 #     from catalyst.callbacks.onnx import OnnxCallback  # advanced

@@ -1,6 +1,5 @@
 # flake8: noqa
 
-import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -12,12 +11,13 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+from tests import DATA_ROOT
 
 if SETTINGS.optuna_required:
     import optuna
 
 
-def train_experiment(device, engine=None):
+def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
 
         def objective(trial):
@@ -25,8 +25,8 @@ def train_experiment(device, engine=None):
             num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
             loaders = {
-                "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
-                "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32,),
+                "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+                "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
             }
             model = nn.Sequential(
                 nn.Flatten(),
@@ -41,7 +41,7 @@ def train_experiment(device, engine=None):
                 input_key="features", output_key="logits", target_key="targets"
             )
             runner.train(
-                engine=engine or dl.DeviceEngine(device),
+                engine=engine,
                 model=model,
                 criterion=criterion,
                 optimizer=optimizer,
@@ -73,96 +73,55 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-@mark.skipif(not SETTINGS.optuna_required, reason="catalyst[optuna] in not required")
-def test_on_cpu():
-    train_experiment("cpu")
+def test_classification_on_cpu():
+    train_experiment(dl.CPUEngine())
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.optuna_required),
-    reason="CUDA device is not available",
-)
-def test_on_torch_cuda0():
-    train_experiment("cuda:0")
-
-
-@mark.skipif(
-    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
-    reason="No CUDA>=2 found",
-)
-def test_on_torch_cuda1():
-    train_experiment("cuda:1")
-
-
-@mark.skipif(
-    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
-    reason="No CUDA>=2 found",
-)
-def test_on_torch_dp():
-    train_experiment(None, dl.DataParallelEngine())
+@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+def test_classification_on_torch_cuda0():
+    train_experiment(dl.GPUEngine())
 
 
 # @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
-#     reason="No CUDA>=2 found",
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_on_ddp():
-#     train_experiment(None, dl.DistributedDataParallelEngine())
+# def test_classification_on_torch_cuda1():
+#     train_experiment("cuda:1")
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_dp():
+    train_experiment(dl.DataParallelEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+# )
+# def test_classification_on_torch_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine())
+
 
 # AMP
 @mark.skipif(
-    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and SETTINGS.amp_required),
-    reason="No CUDA or AMP found",
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
 )
-def test_on_amp():
-    train_experiment(None, dl.AMPEngine())
+def test_classification_on_amp():
+    train_experiment(dl.GPUEngine(fp16=True))
 
 
 @mark.skipif(
-    not (
-        SETTINGS.optuna_required
-        and IS_CUDA_AVAILABLE
-        and NUM_CUDA_DEVICES >= 2
-        and SETTINGS.amp_required
-    ),
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
-    train_experiment(None, dl.DataParallelAMPEngine())
+def test_classification_on_amp_dp():
+    train_experiment(dl.DataParallelEngine(fp16=True))
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_on_amp_ddp():
-#     train_experiment(None, dl.DistributedDataParallelAMPEngine())
-
-# APEX
-@mark.skipif(
-    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and SETTINGS.apex_required),
-    reason="No CUDA or Apex found",
-)
-def test_on_apex():
-    train_experiment(None, dl.APEXEngine())
-
-
-@mark.skipif(
-    not (
-        SETTINGS.optuna_required
-        and IS_CUDA_AVAILABLE
-        and NUM_CUDA_DEVICES >= 2
-        and SETTINGS.apex_required
-    ),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelAPEXEngine())
-
-
-# @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-#     reason="No CUDA>=2 or Apex found",
-# )
-# def test_on_apex_ddp():
-#     train_experiment(None, dl.DistributedDataParallelApexEngine())
+# def test_classification_on_amp_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine(fp16=True))
