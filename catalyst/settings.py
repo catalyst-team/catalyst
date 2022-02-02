@@ -219,37 +219,42 @@ class Settings(FrozenClass):
         self.cv_required: bool = _get_optional_value(
             cv_required,
             _is_cv_available,
-            "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
+            "catalyst[cv] is not available, "
+            "to install it, run `pip install catalyst[cv]`.",
         )
         self.ml_required: bool = _get_optional_value(
             ml_required,
             _is_ml_available,
-            "catalyst[ml] is not available, to install it, run `pip install catalyst[ml]`.",
+            "catalyst[ml] is not available, "
+            "to install it, run `pip install catalyst[ml]`.",
         )
 
         # [integrations]
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
             _is_optuna_available,
-            "catalyst[optuna] is not available, to install it, "
-            "run `pip install catalyst[optuna]`.",
+            "catalyst[optuna] is not available, "
+            "to install it, run `pip install catalyst[optuna]`.",
         )
 
         # [engines]
         self.amp_required: bool = _get_optional_value(
             None,
             _is_amp_available,
-            "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
+            "catalyst[amp] is not available, "
+            "to install it, run `pip install catalyst[amp]`.",
         )
         self.apex_required: bool = _get_optional_value(
             None,
             _is_apex_avalilable,
-            "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
+            "catalyst[apex] is not available, "
+            "to install it, run `pip install catalyst[apex]`.",
         )
         self.xla_required: bool = _get_optional_value(
             None,
             _is_xla_available,
-            "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
+            "catalyst[xla] is not available, "
+            "to install it, run `pip install catalyst[xla]`.",
         )
         self.fairscale_required: bool = _get_optional_value(
             None,

@@ -85,7 +85,7 @@ class IOUCallback(BatchMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -198,7 +198,7 @@ class DiceCallback(BatchMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -313,7 +313,7 @@ class TrevskyCallback(BatchMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(

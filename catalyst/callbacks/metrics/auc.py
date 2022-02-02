@@ -40,7 +40,10 @@ class AUCCallback(LoaderMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features", 
+            output_key="logits", 
+            target_key="targets", 
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -68,7 +71,7 @@ class AUCCallback(LoaderMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(

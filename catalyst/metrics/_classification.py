@@ -56,7 +56,10 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features", 
+            output_key="logits", 
+            target_key="targets", 
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -82,7 +85,7 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
         )
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
 
     """
 
@@ -112,7 +115,8 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int], Tuple[Any, Any, Any, Any, Any]]:
         """
-        Compute statistics from outputs and targets, update accumulated statistics with new values.
+        Compute statistics from outputs and targets, 
+        update accumulated statistics with new values.
 
         Args:
             outputs: prediction values
@@ -217,7 +221,10 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features", 
+            output_key="logits", 
+            target_key="targets", 
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -243,7 +250,7 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         )
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
 
     """
 
@@ -384,7 +391,10 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features", 
+            output_key="logits", 
+            target_key="targets", 
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -410,7 +420,7 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         )
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
 
     """
 

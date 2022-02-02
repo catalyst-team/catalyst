@@ -71,7 +71,7 @@ class Runner(IRunner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
 
     Examples:
 
@@ -358,7 +358,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
 
         """
         # experiment setup
@@ -442,7 +442,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
         """
         assert resume is None, NotImplementedError("work in progress")
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
@@ -518,7 +518,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
