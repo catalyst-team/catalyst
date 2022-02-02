@@ -43,7 +43,7 @@ def train_experiment(engine=None):
             dl.HitrateCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
             dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
             dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
-            dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+            dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3)),
             dl.OptimizerCallback(metric_key="loss"),
             dl.SchedulerCallback(),
             dl.CheckpointCallback(

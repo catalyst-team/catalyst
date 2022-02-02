@@ -111,7 +111,7 @@ class NDCGMetric(TopKMetric):
                     input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
                 dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(

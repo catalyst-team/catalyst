@@ -58,10 +58,15 @@ class IOUCallback(BatchMetricCallback):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(
@@ -171,10 +176,15 @@ class DiceCallback(BatchMetricCallback):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(
@@ -286,10 +296,15 @@ class TrevskyCallback(BatchMetricCallback):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(

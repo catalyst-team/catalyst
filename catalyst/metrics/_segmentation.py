@@ -74,7 +74,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         # check class_names
         if self.class_names is not None:
             assert len(self.class_names) == len(self.statistics), (
-                f"the number of class names must be equal to the number of classes, got weights"
+                f"the number of class names must be equal to the number of classes,"
+                " got weights"
                 f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
@@ -83,7 +84,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             ]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
-                f"the number of weights must be equal to the number of classes, got weights"
+                f"the number of weights must be equal to the number of classes,"
+                " got weights"
                 f" {len(self.weights)} and classes: {len(self.statistics)}"
             )
 
@@ -93,7 +95,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self._ddp_backend = get_backend()
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """Updates segmentation statistics with new data and return intermediate metrics values.
+        """Updates segmentation statistics with new data
+        and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -131,7 +134,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
-        """Updates segmentation statistics with new data and return intermediate metrics values.
+        """Updates segmentation statistics with new data
+        and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -143,8 +147,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics_per_class = self.update(outputs, targets)
         macro_metric = torch.mean(metrics_per_class)
         metrics = {
-            f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": value
-            for idx, value in enumerate(metrics_per_class)
+            f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": val
+            for idx, val in enumerate(metrics_per_class)
         }
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
         if self.weights is not None:
@@ -161,8 +165,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Compute metrics with accumulated statistics
 
         Returns:
-            tuple of metrics: per_class, micro_metric, macro_metric, weighted_metric(None if
-                weights is None)
+            tuple of metrics: per_class, micro_metric, macro_metric,
+                weighted_metric(None if weights is None)
         """
         per_class = []
         total_statistics = {}
@@ -210,15 +214,15 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Compute segmentation metric for all data and return results in key-value format
 
         Returns:
-             dict of metrics, including micro, macro and weighted (if weights were given) metrics
+             dict of metrics, including micro, macro
+                and weighted (if weights were given) metrics
         """
         per_class, micro_metric, macro_metric, weighted_metric = self.compute()
 
         metrics = {}
         for class_idx, value in enumerate(per_class):
-            metrics[
-                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
-            ] = value
+            class_name = self.class_names[class_idx]
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/{class_name}"] = value
 
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
@@ -307,10 +311,15 @@ class IOUMetric(RegionBasedMetric):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(
@@ -334,7 +343,7 @@ class IOUMetric(RegionBasedMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -441,10 +450,15 @@ class DiceMetric(RegionBasedMetric):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(
@@ -468,7 +482,7 @@ class DiceMetric(RegionBasedMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -579,10 +593,15 @@ class TrevskyMetric(RegionBasedMetric):
                 x = batch[self._input_key]
                 x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
                 x_ = self.model(x_noise)
-                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+                self.batch = {
+                    self._input_key: x, self._output_key: x_, self._target_key: x
+                }
 
         runner = CustomRunner(
-            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="scores",
+            target_key="targets",
+            loss_key="loss"
         )
         # model training
         runner.train(
@@ -606,7 +625,7 @@ class TrevskyMetric(RegionBasedMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
