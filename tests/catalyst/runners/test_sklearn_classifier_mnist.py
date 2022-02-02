@@ -94,7 +94,7 @@ def train_experiment(engine=None):
             ),
             dl.ControlFlowCallbackWrapper(
                 dl.AccuracyCallback(
-                    target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
+                    target_key="targets", input_key="sklearn_predict", topk=(1, 3)
                 ),
                 loaders=["valid", "infer"],
             ),

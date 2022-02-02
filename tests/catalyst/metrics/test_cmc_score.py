@@ -165,7 +165,7 @@ def test_cmc_score(
         embeddings_key="embeddings",
         labels_key="labels",
         is_query_key="is_query",
-        topk_args=topk,
+        topk=topk,
     )
     _test_score(metric=metric, batch=batch, true_values=true_values)
 
@@ -204,6 +204,6 @@ def test_reid_cmc_score(
         pids_key="pids",
         cids_key="cids",
         is_query_key="is_query",
-        topk_args=topk,
+        topk=topk,
     )
     _test_score(metric=metric, batch=batch, true_values=true_values)

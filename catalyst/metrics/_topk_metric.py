@@ -13,7 +13,7 @@ class TopKMetric(ICallbackBatchMetric):
     Args:
         metric_name: name of the metric
         metric_function: metric calculation function
-        topk_args: list of `topk` for metric@topk computing
+        topk: list of `topk` for metric@topk computing
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
@@ -23,7 +23,7 @@ class TopKMetric(ICallbackBatchMetric):
         self,
         metric_name: str,
         metric_function: Callable,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -32,9 +32,9 @@ class TopKMetric(ICallbackBatchMetric):
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name = metric_name
         self.metric_function = metric_function
-        self.topk_args = topk_args or (1,)
+        self.topk = topk or (1,)
         self.metrics: List[AdditiveMetric] = [
-            AdditiveMetric() for _ in range(len(self.topk_args))
+            AdditiveMetric() for _ in range(len(self.topk))
         ]
 
     def reset(self) -> None:
@@ -53,7 +53,7 @@ class TopKMetric(ICallbackBatchMetric):
         Returns:
             list of metric@k values
         """
-        values = self.metric_function(logits, targets, topk=self.topk_args)
+        values = self.metric_function(logits, targets, topk=self.topk)
         values = [v.item() for v in values]
         for value, metric in zip(values, self.metrics):
             metric.update(value, len(targets))
@@ -76,7 +76,7 @@ class TopKMetric(ICallbackBatchMetric):
         values = self.update(logits=logits, targets=targets)
         output = {
             f"{self.prefix}{self.metric_name}{key:02d}{self.suffix}": value
-            for key, value in zip(self.topk_args, values)
+            for key, value in zip(self.topk, values)
         }
         return output
 
@@ -100,11 +100,11 @@ class TopKMetric(ICallbackBatchMetric):
         means, stds = self.compute()
         output_mean = {
             f"{self.prefix}{self.metric_name}{key:02d}{self.suffix}": value
-            for key, value in zip(self.topk_args, means)
+            for key, value in zip(self.topk, means)
         }
         output_std = {
             f"{self.prefix}{self.metric_name}{key:02d}{self.suffix}/std": value
-            for key, value in zip(self.topk_args, stds)
+            for key, value in zip(self.topk, stds)
         }
         return {**output_mean, **output_std}
 

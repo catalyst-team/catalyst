@@ -128,9 +128,7 @@ def run_catalyst(
         verbose=False,
         callbacks=[
             dl.AccuracyCallback(
-                input_key=runner._output_key,
-                target_key=runner._target_key,
-                topk_args=(1,),
+                input_key=runner._output_key, target_key=runner._target_key, topk=(1,),
             )
         ],
     )

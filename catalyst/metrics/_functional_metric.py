@@ -14,7 +14,8 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
     """Class for custom **batch-based** metrics in a functional way.
 
     Args:
-        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_fn: metric function, that get outputs,
+            targets and return score as torch.Tensor
         metric_key: metric name
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
@@ -130,7 +131,8 @@ class FunctionalLoaderMetric(ICallbackLoaderMetric):
     """Class for custom **loader-based** metrics in a functional way.
 
     Args:
-        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_fn: metric function, that get outputs,
+            targets and return score as torch.Tensor
         metric_key: metric name
         accumulative_fields: list of keys to accumulate data from batch
         compute_on_call: if True, allows compute metric's value on call

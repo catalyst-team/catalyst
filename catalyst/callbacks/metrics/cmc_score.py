@@ -21,7 +21,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: embeddings key in output dict
         labels_key: labels key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log
+        topk: specifies which cmc@K to log
         prefix: metric prefix
         suffix: metric suffix
 
@@ -98,7 +98,7 @@ class CMCScoreCallback(LoaderMetricCallback):
                     embeddings_key="embeddings",
                     labels_key="targets",
                     is_query_key="is_query",
-                    topk_args=[1],
+                    topk=[1],
                 ),
                 loaders="valid",
             ),
@@ -125,9 +125,9 @@ class CMCScoreCallback(LoaderMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
-        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+        - ``topk = (1,) or None`` ---> ``"cmc01"``
+        - ``topk = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -143,7 +143,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -153,7 +153,7 @@ class CMCScoreCallback(LoaderMetricCallback):
                 embeddings_key=embeddings_key,
                 labels_key=labels_key,
                 is_query_key=is_query_key,
-                topk_args=topk_args,
+                topk=topk,
                 prefix=prefix,
                 suffix=suffix,
             ),
@@ -172,7 +172,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: pids key in output dict
         cids_key: cids key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log.
+        topk: specifies which cmc@K to log.
             [1] - cmc@1
             [1, 3] - cmc@1 and cmc@3
             [1, 3, 5] - cmc@1, cmc@3 and cmc@5
@@ -186,7 +186,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -197,7 +197,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
                 pids_key=pids_key,
                 cids_key=cids_key,
                 is_query_key=is_query_key,
-                topk_args=topk_args,
+                topk=topk,
                 prefix=prefix,
                 suffix=suffix,
             ),

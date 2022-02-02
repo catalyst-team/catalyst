@@ -355,7 +355,7 @@ def get_multilabel_statistics(
     return tn, fp, fn, tp, support, num_classes
 
 
-def get_default_topk_args(num_classes: int) -> Sequence[int]:
+def get_default_topk(num_classes: int) -> Sequence[int]:
     """Calculate list params for ``Accuracy@k``.
 
     Args:
@@ -365,10 +365,10 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
         iterable: array of accuracy arguments
 
     Examples:
-        >>> get_default_topk_args(num_classes=4)
+        >>> get_default_topk(num_classes=4)
         [1, 3]
 
-        >>> get_default_topk_args(num_classes=8)
+        >>> get_default_topk(num_classes=8)
         [1, 3, 5]
     """
     result = [1]
@@ -409,5 +409,5 @@ __all__ = [
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",
-    "get_default_topk_args",
+    "get_default_topk",
 ]

@@ -8,7 +8,7 @@ class HitrateMetric(TopKMetric):
     """Calculates the hitrate.
 
     Args:
-        topk_args: list of `topk` for hitrate@topk computing
+        topk: list of `topk` for hitrate@topk computing
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
@@ -24,7 +24,7 @@ class HitrateMetric(TopKMetric):
 
         outputs = torch.Tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]])
         targets = torch.Tensor([[0, 0, 1.0, 1.0], [0, 0, 0.0, 0.0]])
-        metric = metrics.HitrateMetric(topk_args=[1, 2, 3, 4])
+        metric = metrics.HitrateMetric(topk=[1, 2, 3, 4])
         metric.reset()
 
         metric.update(outputs, targets)
@@ -77,9 +77,9 @@ class HitrateMetric(TopKMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -102,11 +102,11 @@ class HitrateMetric(TopKMetric):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -118,9 +118,9 @@ class HitrateMetric(TopKMetric):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"hitrate01"``
-        - ``topk_args = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
+        - ``topk = (1,) or None`` ---> ``"hitrate01"``
+        - ``topk = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
+        - ``topk = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -133,7 +133,7 @@ class HitrateMetric(TopKMetric):
 
     def __init__(
         self,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -142,7 +142,7 @@ class HitrateMetric(TopKMetric):
         super().__init__(
             metric_name="hitrate",
             metric_function=hitrate,
-            topk_args=topk_args,
+            topk=topk,
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,

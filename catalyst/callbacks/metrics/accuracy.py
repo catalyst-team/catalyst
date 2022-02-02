@@ -13,8 +13,8 @@ class AccuracyCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        topk_args: specifies which accuracy@K to log
-        num_classes: number of classes to calculate ``topk_args`` if ``accuracy_args`` is None
+        topk: specifies which accuracy@K to log
+        num_classes: number of classes to calculate ``topk`` if ``accuracy_args`` is None
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -45,9 +45,9 @@ class AccuracyCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -76,11 +76,11 @@ class AccuracyCallback(BatchMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = None`` ---> see \
-            :py:mod:`catalyst.metrics.functional._misc.get_default_topk_args`
-        - ``topk_args = (1,)`` ---> ``"accuracy01"``
-        - ``topk_args = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
+        - ``topk = None`` ---> see \
+            :py:mod:`catalyst.metrics.functional._misc.get_default_topk`
+        - ``topk = (1,)`` ---> ``"accuracy01"``
+        - ``topk = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
+        - ``topk = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -95,7 +95,7 @@ class AccuracyCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         num_classes: int = None,
         log_on_batch: bool = True,
         prefix: str = None,
@@ -104,10 +104,7 @@ class AccuracyCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=AccuracyMetric(
-                topk_args=topk_args,
-                num_classes=num_classes,
-                prefix=prefix,
-                suffix=suffix,
+                topk=topk, num_classes=num_classes, prefix=prefix, suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -153,9 +150,9 @@ class MultilabelAccuracyCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(

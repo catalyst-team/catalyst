@@ -56,9 +56,9 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -115,7 +115,7 @@ class BinaryStatisticsMetric(ICallbackBatchMetric):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int], Tuple[Any, Any, Any, Any, Any]]:
         """
-        Compute statistics from outputs and targets, 
+        Compute statistics from outputs and targets,
         update accumulated statistics with new values.
 
         Args:
@@ -221,9 +221,9 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -281,7 +281,8 @@ class MulticlassStatisticsMetric(ICallbackBatchMetric):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int, int], Tuple[Any, Any, Any, Any, Any, int]]:
         """
-        Compute statistics from outputs and targets, update accumulated statistics with new values.
+        Compute statistics from outputs and targets,
+        update accumulated statistics with new values.
 
         Args:
             outputs: prediction values
@@ -391,9 +392,9 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -451,7 +452,8 @@ class MultilabelStatisticsMetric(ICallbackBatchMetric):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Union[Tuple[int, int, int, int, int, int], Tuple[Any, Any, Any, Any, Any, int]]:
         """
-        Compute statistics from outputs and targets, update accumulated statistics with new values.
+        Compute statistics from outputs and targets,
+        update accumulated statistics with new values.
 
         Args:
             outputs: prediction values
@@ -665,7 +667,8 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
 
 class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
     """
-    Metric that can collect statistics and count precision, recall, f1_score and support with it.
+    Metric that can collect statistics and count precision,
+    recall, f1_score and support with it.
 
     Args:
         zero_division: value to set in case of zero division during metrics
@@ -844,7 +847,8 @@ class MulticlassPrecisionRecallF1SupportMetric(MulticlassStatisticsMetric):
 
 class MultilabelPrecisionRecallF1SupportMetric(MultilabelStatisticsMetric):
     """
-    Metric that can collect statistics and count precision, recall, f1_score and support with it.
+    Metric that can collect statistics and count precision,
+    recall, f1_score and support with it.
 
     Args:
         zero_division: value to set in case of zero division during metrics

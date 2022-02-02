@@ -65,7 +65,7 @@ def test_accuracy(
         topk: list of topk args for accuracy@topk
         true_values: true metrics values
     """
-    metric = AccuracyMetric(topk_args=topk)
+    metric = AccuracyMetric(topk=topk)
     metric.update(logits=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values.keys():
@@ -135,7 +135,7 @@ def test_accuracy_update(
         topk: topk args for computing accuracy@topk
         true_values_list: list of correct metrics intermediate values
     """
-    metric = AccuracyMetric(topk_args=topk, num_classes=num_classes)
+    metric = AccuracyMetric(topk=topk, num_classes=num_classes)
     for outputs, targets, true_values in zip(
         outputs_list, targets_list, true_values_list
     ):

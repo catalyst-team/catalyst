@@ -31,7 +31,7 @@ def train_experiment(engine=None):
         )
         callbacks = [
             dl.AccuracyCallback(
-                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+                input_key="logits", target_key="targets", topk=(1, 3, 5)
             ),
             dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
@@ -83,7 +83,7 @@ def train_experiment(engine=None):
             loader=loaders["valid"],
             callbacks=[
                 dl.AccuracyCallback(
-                    input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="logits", target_key="targets", topk=(1, 3, 5)
                 )
             ],
         )

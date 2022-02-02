@@ -6,7 +6,7 @@ from catalyst.metrics.functional._misc import (
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
-    get_default_topk_args,
+    get_default_topk,
 )
 
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy

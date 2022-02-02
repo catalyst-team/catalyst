@@ -40,9 +40,9 @@ class AUCCallback(LoaderMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(

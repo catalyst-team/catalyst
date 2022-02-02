@@ -14,7 +14,7 @@ class HitrateCallback(BatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        topk_args: specifies which HR@K to log
+        topk: specifies which HR@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -45,9 +45,9 @@ class HitrateCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -70,11 +70,11 @@ class HitrateCallback(BatchMetricCallback):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -86,9 +86,9 @@ class HitrateCallback(BatchMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"hitrate01"``
-        - ``topk_args = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
+        - ``topk = (1,) or None`` ---> ``"hitrate01"``
+        - ``topk = (1, 3)`` ---> ``"hitrate01"``, ``"hitrate03"``
+        - ``topk = (1, 3, 5)`` ---> ``"hitrate01"``, ``"hitrate03"``, ``"hitrate05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -103,14 +103,14 @@ class HitrateCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
-            metric=HitrateMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=HitrateMetric(topk=topk, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -125,7 +125,7 @@ class MAPCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which MAP@K to log
+        topk: specifies which MAP@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -156,9 +156,9 @@ class MAPCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -181,11 +181,11 @@ class MAPCallback(BatchMetricCallback):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -197,9 +197,9 @@ class MAPCallback(BatchMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"map01"``
-        - ``topk_args = (1, 3)`` ---> ``"map01"``, ``"map03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
+        - ``topk = (1,) or None`` ---> ``"map01"``
+        - ``topk = (1, 3)`` ---> ``"map01"``, ``"map03"``
+        - ``topk = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -214,14 +214,14 @@ class MAPCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
-            metric=MAPMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=MAPMetric(topk=topk, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -236,7 +236,7 @@ class MRRCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which MRR@K to log
+        topk: specifies which MRR@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -267,9 +267,9 @@ class MRRCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -292,11 +292,11 @@ class MRRCallback(BatchMetricCallback):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -308,9 +308,9 @@ class MRRCallback(BatchMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"mrr01"``
-        - ``topk_args = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
+        - ``topk = (1,) or None`` ---> ``"mrr01"``
+        - ``topk = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
+        - ``topk = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -325,14 +325,14 @@ class MRRCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
-            metric=MRRMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=MRRMetric(topk=topk, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -347,7 +347,7 @@ class NDCGCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         prefix: key for the metric's name
-        topk_args: specifies which NDCG@K to log
+        topk: specifies which NDCG@K to log
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -378,9 +378,9 @@ class NDCGCallback(BatchMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", 
-            output_key="logits", 
-            target_key="targets", 
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
             loss_key="loss"
         )
         runner.train(
@@ -403,11 +403,11 @@ class NDCGCallback(BatchMetricCallback):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -419,9 +419,9 @@ class NDCGCallback(BatchMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"ndcg01"``
-        - ``topk_args = (1, 3)`` ---> ``"ndcg01"``, ``"ndcg03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"ndcg01"``, ``"ndcg03"``, ``"ndcg05"``
+        - ``topk = (1,) or None`` ---> ``"ndcg01"``
+        - ``topk = (1, 3)`` ---> ``"ndcg01"``, ``"ndcg03"``
+        - ``topk = (1, 3, 5)`` ---> ``"ndcg01"``, ``"ndcg03"``, ``"ndcg05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -436,14 +436,14 @@ class NDCGCallback(BatchMetricCallback):
         self,
         input_key: str,
         target_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init."""
         super().__init__(
-            metric=NDCGMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=NDCGMetric(topk=topk, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,

@@ -78,7 +78,7 @@ def train_experiment(engine=None):
                     embeddings_key="embeddings",
                     labels_key="targets",
                     is_query_key="is_query",
-                    topk_args=[1],
+                    topk=[1],
                 ),
                 loaders="valid",
             ),

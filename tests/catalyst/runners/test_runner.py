@@ -75,7 +75,7 @@ def test_evaluation_loader_metrics() -> None:
     model = nn.Linear(in_features=dataset.features_dim, out_features=dataset.out_dim)
     loader = DataLoader(dataset=dataset, batch_size=1)
     callbacks = [
-        dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))
+        dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1,))
     ]
     runner = SupervisedRunner()
     runner.train(
@@ -98,7 +98,7 @@ def test_evaluation_loader_empty_model() -> None:
         dataset = DummyDataset()
         loader = DataLoader(dataset=dataset, batch_size=1)
         callbacks = [
-            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1,))
         ]
         runner = SupervisedRunner()
         runner.evaluate_loader(loader=loader, callbacks=callbacks, model=None)
@@ -114,7 +114,7 @@ def test_evaluation_loader_custom_model() -> None:
     model = nn.Linear(in_features=dataset.features_dim, out_features=dataset.out_dim)
     loader = DataLoader(dataset=dataset, batch_size=1)
     callbacks = [
-        dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))
+        dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1,))
     ]
     runner = SupervisedRunner()
 
