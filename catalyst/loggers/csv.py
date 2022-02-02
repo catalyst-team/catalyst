@@ -3,9 +3,7 @@ import os
 
 from catalyst import SETTINGS
 from catalyst.core.logger import ILogger
-
-if SETTINGS.yaml_required:
-    from catalyst.utils.config import save_config
+from catalyst.utils.config import save_config
 
 
 class CSVLogger(ILogger):
@@ -103,8 +101,7 @@ class CSVLogger(ILogger):
 
     def log_hparams(self, hparams: Dict) -> None:
         """Logs hyperparameters to the logger."""
-        if SETTINGS.yaml_required:
-            save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
+        save_config(config=hparams, path=os.path.join(self.logdir, "hparams.json"))
 
     def log_metrics(
         self,

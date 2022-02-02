@@ -22,7 +22,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 
-from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
+from catalyst.callbacks.control_flow import ControlFlowCallbackWrapper  # advanced
 from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.metric import (
     BatchMetricCallback,

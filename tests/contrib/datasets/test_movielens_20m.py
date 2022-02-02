@@ -4,6 +4,7 @@ import shutil
 import pytest
 
 from catalyst.settings import SETTINGS
+from tests import MOVIELENS20M_ROOT
 
 if SETTINGS.ml_required and SETTINGS.is_torch_1_7_0:
     from catalyst.contrib.datasets import MovieLens20M
@@ -17,7 +18,7 @@ def setup_module():
     """
     Remove the temp folder if exists
     """
-    data_path = "./tmp_data"
+    data_path = MOVIELENS20M_ROOT
     try:
         shutil.rmtree(data_path)
     except Exception as e:
@@ -30,26 +31,26 @@ def test_download_split_by_user():
     """
     Test movielense download
     """
-    MovieLens20M("./tmp_data", download=True, sample=True)
+    MovieLens20M(MOVIELENS20M_ROOT, download=True, sample=True)
 
     filename = "ml-20m"
 
     # check if data folder exists
-    assert os.path.isdir("./tmp_data") is True
+    assert os.path.isdir(MOVIELENS20M_ROOT) is True
 
     # cehck if class folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M") is True
 
     # check if raw folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M/raw") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M/raw") is True
 
     # check if processed folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M/processed") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M/processed") is True
 
     # check some random file from MovieLens
     assert (
         os.path.isfile(
-            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+            f"{MOVIELENS20M_ROOT}/MovieLens20M/raw/{filename}/genome-scores.csv"
         )
         is True
     )
@@ -57,7 +58,7 @@ def test_download_split_by_user():
     # check if data file is not Nulll
     assert (
         os.path.getsize(
-            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+            f"{MOVIELENS20M_ROOT}/MovieLens20M/raw/{filename}/genome-scores.csv"
         )
         > 0
     )
@@ -69,26 +70,26 @@ def test_download_split_by_ts():
     """
     Test movielense download
     """
-    MovieLens20M("./tmp_data", download=True, split="ts", sample=True)
+    MovieLens20M(MOVIELENS20M_ROOT, download=True, split="ts", sample=True)
 
     filename = "ml-20m"
 
     # check if data folder exists
-    assert os.path.isdir("./tmp_data") is True
+    assert os.path.isdir(MOVIELENS20M_ROOT) is True
 
     # cehck if class folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M") is True
 
     # check if raw folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M/raw") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M/raw") is True
 
     # check if processed folder exists
-    assert os.path.isdir("./tmp_data/MovieLens20M/processed") is True
+    assert os.path.isdir(f"{MOVIELENS20M_ROOT}/MovieLens20M/processed") is True
 
     # check some random file from MovieLens
     assert (
         os.path.isfile(
-            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+            f"{MOVIELENS20M_ROOT}/MovieLens20M/raw/{filename}/genome-scores.csv"
         )
         is True
     )
@@ -96,7 +97,7 @@ def test_download_split_by_ts():
     # check if data file is not Nulll
     assert (
         os.path.getsize(
-            "./tmp_data/MovieLens20M/raw/{}/genome-scores.csv".format(filename)
+            f"{MOVIELENS20M_ROOT}/MovieLens20M/raw/{filename}/genome-scores.csv"
         )
         > 0
     )
@@ -109,7 +110,7 @@ def test_minimal_ranking():
     Tets retrieveing the minimal ranking
     """
     movielens_20m_min_two = MovieLens20M(
-        "./tmp_data", download=True, min_rating=2.0, sample=True, n_rows=1000000
+        MOVIELENS20M_ROOT, download=True, min_rating=2.0, sample=True, n_rows=1000000
     )
 
     assert 1 not in movielens_20m_min_two[1]._values().unique()
@@ -145,7 +146,7 @@ def test_users_per_item_filtering():
     min_users_per_item = 2.0
 
     movielens_20m_min_users = MovieLens20M(
-        "./tmp_data",
+        MOVIELENS20M_ROOT,
         download=True,
         min_users_per_item=min_users_per_item,
         sample=True,
@@ -166,7 +167,7 @@ def test_items_per_user_filtering():
     min_items_per_user = 2.0
     min_users_per_item = 1.0
     movielens_20m_min_users = MovieLens20M(
-        "./tmp_data",
+        MOVIELENS20M_ROOT,
         download=True,
         min_items_per_user=min_items_per_user,
         min_users_per_item=min_users_per_item,
@@ -183,7 +184,7 @@ def teardown_module():
     """
     Remove tempoary files after test execution
     """
-    data_path = "./tmp_data"
+    data_path = MOVIELENS20M_ROOT
     try:
         shutil.rmtree(data_path)
     except Exception as e:

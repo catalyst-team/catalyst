@@ -106,7 +106,7 @@ def train_experiment(engine=None):
         criterion = NTXentLoss(tau=0.1)
 
         callbacks = [
-            dl.ControlFlowCallback(
+            dl.ControlFlowCallbackWrapper(
                 dl.CriterionCallback(
                     input_key="projection_left",
                     target_key="projection_right",
@@ -125,7 +125,7 @@ def train_experiment(engine=None):
                 random_state=RANDOM_STATE,
                 n_estimators=50,
             ),
-            dl.ControlFlowCallback(
+            dl.ControlFlowCallbackWrapper(
                 dl.AccuracyCallback(
                     target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
                 ),

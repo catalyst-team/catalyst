@@ -116,7 +116,7 @@ class _ArgsFilterFn:
         return self.filter_fn(epoch, loader)
 
 
-class ControlFlowCallback(CallbackWrapper):
+class ControlFlowCallbackWrapper(CallbackWrapper):
     """Enable/disable callback execution on different epochs and loaders.
 
     Args:
@@ -341,4 +341,4 @@ class ControlFlowCallback(CallbackWrapper):
         self._is_enabled = True
 
 
-__all__ = ["ControlFlowCallback"]
+__all__ = ["ControlFlowCallbackWrapper"]

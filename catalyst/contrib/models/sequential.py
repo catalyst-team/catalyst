@@ -8,8 +8,9 @@ from copy import deepcopy
 import torch
 from torch import nn
 
-from catalyst import utils
+from catalyst.contrib.utils.torch import get_optimal_inner_init
 from catalyst.registry import REGISTRY
+from catalyst.utils.misc import pairwise
 
 
 def _process_additional_params(params, layers):
@@ -105,7 +106,7 @@ class SequentialNet(nn.Module):
         }
 
         net = []
-        for i, (f_in, f_out) in enumerate(utils.pairwise(hiddens)):
+        for i, (f_in, f_out) in enumerate(pairwise(hiddens)):
             block_list = []
             for key in layer_order:
                 sub_fn = name2fn[key]
@@ -126,7 +127,7 @@ class SequentialNet(nn.Module):
 
             if block_dict.get("act", None) is not None:
                 activation = block_dict["act"]
-                activation_init = utils.get_optimal_inner_init(nonlinearity=activation)
+                activation_init = get_optimal_inner_init(nonlinearity=activation)
                 block_net.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):

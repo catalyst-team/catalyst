@@ -28,7 +28,7 @@ class BackwardCallback(IBackwardCallback):
         metric_key: str,
         grad_clip_fn: Union[str, Callable] = None,
         grad_clip_params: Dict = None,
-        log_gradient: bool = False
+        log_gradient: bool = False,
     ):
         """Init."""
         super().__init__()

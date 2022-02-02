@@ -9,9 +9,9 @@ from copy import deepcopy
 import torch
 from torch import nn
 
-from catalyst import utils
 from catalyst.contrib.layers import Normalize
 from catalyst.contrib.models.sequential import SequentialNet
+from catalyst.utils.misc import flatten_dict
 
 
 class Hydra(nn.Module):
@@ -105,7 +105,7 @@ class Hydra(nn.Module):
         output = {
             "features": features,
             "embeddings": embeddings,
-            **utils.flatten_dict(heads_output),
+            **flatten_dict(heads_output),
         }
 
         for key, value in targets_kwargs.items():

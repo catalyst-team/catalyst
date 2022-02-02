@@ -7,6 +7,7 @@ import pytest
 import torch
 
 from catalyst.contrib import losses as module
+from catalyst.contrib.data import AllTripletsSampler
 from catalyst.contrib.losses import (
     BarlowTwinsLoss,
     CircleLoss,
@@ -15,7 +16,6 @@ from catalyst.contrib.losses import (
     SupervisedContrastiveLoss,
     TripletMarginLossWithSampler,
 )
-from catalyst.data import AllTripletsSampler
 
 
 def test_criterion_init():

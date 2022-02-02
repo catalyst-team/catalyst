@@ -4,35 +4,38 @@ import json
 from pathlib import Path
 import re
 
-import yaml
+from catalyst.settings import SETTINGS
 
-
-class OrderedLoader(yaml.SafeLoader):
-    pass
-
-
-def construct_mapping(loader, node):
-    loader.flatten_mapping(node)
-    return OrderedDict(loader.construct_pairs(node))
-
-
-OrderedLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+YAML_MESSAGE = (
+    "could not find yaml package, please install with ``pip install PyYAML>=5.1``"
 )
-OrderedLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:float",
-    re.compile(
-        """^(?:
-        [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
-        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
-        |\\.[0-9_]+(?:[eE][-+][0-9]+)?
-        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
-        |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$""",
-        re.X,
-    ),
-    list("-+0123456789."),
-)
+if SETTINGS.yaml_required:
+    import yaml
+
+    class OrderedLoader(yaml.SafeLoader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return OrderedDict(loader.construct_pairs(node))
+
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+    )
+    OrderedLoader.add_implicit_resolver(
+        "tag:yaml.org,2002:float",
+        re.compile(
+            """^(?:
+            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+            |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+            |[-+]?\\.(?:inf|Inf|INF)
+            |\\.(?:nan|NaN|NAN))$""",
+            re.X,
+        ),
+        list("-+0123456789."),
+    )
 
 
 def _load_ordered_yaml(stream):
@@ -87,6 +90,7 @@ def load_config(
                 config = json.loads(file, object_pairs_hook=object_pairs_hook)
 
         elif suffix in [".yml", ".yaml"]:
+            assert SETTINGS.yaml_required, YAML_MESSAGE
             loader = OrderedLoader if ordered else yaml.SafeLoader
             config = yaml.load(stream, loader)
 
@@ -129,6 +133,7 @@ def save_config(
         if suffix == ".json":
             json.dump(config, stream, indent=indent, ensure_ascii=ensure_ascii)
         elif suffix in [".yml", ".yaml"]:
+            assert SETTINGS.yaml_required, YAML_MESSAGE
             yaml.dump(config, stream)
 
 

@@ -14,7 +14,7 @@ class LRCheckerCallback(Callback):
 
     # Check initial LR
     def on_batch_start(self, runner):
-        step = getattr(runner, "global_batch_step")
+        step = getattr(runner, "batch_step")
         if step == 1:
             assert self.init_lr == runner.scheduler.get_lr()[0]
 
