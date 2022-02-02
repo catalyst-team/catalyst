@@ -99,7 +99,9 @@ class AdditiveMetric(IMetric):
                     {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
                 )
                 for key in ["loss", "accuracy01", "accuracy03"]:
-                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                    self.meters[key].update(
+                        self.batch_metrics[key].item(), self.batch_size
+                    )
                 # run model backward pass
                 if self.is_train_loader:
                     loss.backward()

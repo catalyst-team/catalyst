@@ -273,7 +273,8 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> float:
         """
-        Update metric value with accuracy for new data and return intermediate metric value.
+        Update metric value with accuracy for new data
+        and return intermediate metric value.
 
         Args:
             outputs: tensor of outputs

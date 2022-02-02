@@ -106,7 +106,6 @@ class NDCGMetric(TopKMetric):
                     input_key="logits", target_key="targets", metric_key="loss"
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
-                dl.HitrateCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
                 dl.HitrateCallback(
                     input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),

@@ -44,7 +44,8 @@ class TopKMetric(ICallbackBatchMetric):
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
         """
-        Update metric value with value for new data and return intermediate metrics values.
+        Update metric value with value for new data
+        and return intermediate metrics values.
 
         Args:
             logits (torch.Tensor): tensor of logits

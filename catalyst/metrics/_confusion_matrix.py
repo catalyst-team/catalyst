@@ -19,7 +19,8 @@ class ConfusionMatrixMetric(IMetric):
     Args:
         num_classes: number of classes in the classification problem
         normalize: determines whether or not the confusion matrix is normalize or not
-        compute_on_call: Boolean flag to computes and return confusion matrix during __call__.
+        compute_on_call: Boolean flag to computes
+            and return confusion matrix during __call__.
             default: True
 
     Examples:

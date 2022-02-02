@@ -91,7 +91,9 @@ class CMCMetric(AccumulativeMetric):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):
@@ -128,7 +130,7 @@ class CMCMetric(AccumulativeMetric):
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+                valid_loader="valid", valid_metric="cmc01", minimize=False, valid=2
             ),
         ]
 
@@ -343,7 +345,8 @@ class ReidCMCMetric(AccumulativeMetric):
             list of metrics values
 
         Raises:
-            ValueError: if there are samples in query that have no relevant samples in gallery
+            ValueError: if there are samples in query
+            that have no relevant samples in gallery
         """
         query_mask = (self.storage[self.is_query_key] == 1).to(torch.bool)
 

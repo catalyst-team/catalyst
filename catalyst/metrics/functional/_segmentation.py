@@ -181,7 +181,8 @@ def iou(
     eps: float = 1e-7,
 ) -> torch.Tensor:
     """
-    Computes the iou/jaccard score, iou score = intersection / union = tp / (tp + fp + fn)
+    Computes the iou/jaccard score,
+    iou score = intersection / union = tp / (tp + fp + fn)
 
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples

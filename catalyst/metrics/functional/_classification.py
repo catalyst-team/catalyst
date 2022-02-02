@@ -14,8 +14,8 @@ def precision(tp: int, fp: int, zero_division: int = 0) -> float:
     Args:
         tp: number of true positives
         fp: number of false positives
-        zero_division: int value, 
-            should be one of 0 or 1; if both tp==0 and fp==0 return this 
+        zero_division: int value,
+            should be one of 0 or 1; if both tp==0 and fp==0 return this
             value as s result
 
     Returns:
@@ -30,13 +30,13 @@ def precision(tp: int, fp: int, zero_division: int = 0) -> float:
 
 
 def recall(tp: int, fn: int, zero_division: int = 0) -> float:
-    """Calculates recall (a.k.a. true positive rate) for binary classification 
+    """Calculates recall (a.k.a. true positive rate) for binary classification
     and segmentation.
 
     Args:
         tp: number of true positives
         fn: number of false negatives
-        zero_division: int value, 
+        zero_division: int value,
             should be one of 0 or 1; if both tp==0 and fn==0 return this
             value as s result
 
@@ -149,7 +149,7 @@ def get_aggregated_metrics(
     tp: np.array, fp: np.array, fn: np.array, support: np.array, zero_division: int = 0
 ) -> Tuple[np.array, np.array, np.array, np.array]:
     """
-    Count precision, recall, f1 scores per-class and with macro, 
+    Count precision, recall, f1 scores per-class and with macro,
     weighted and micro average with statistics.
 
     Args:
