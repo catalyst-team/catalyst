@@ -5,8 +5,7 @@ torch>=1.3.0
 # hardware backend
 accelerate
 
-# Config API
-PyYAML>=5.1
+# registry
 hydra-slayer>=0.1.1
 
 # progress bar
