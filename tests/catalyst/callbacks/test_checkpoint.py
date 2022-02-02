@@ -64,7 +64,7 @@ def test_files_existence(tmpdir):
     # assert os.path.isfile(tmpdir + "/train.5_full.pth")
     assert os.path.isfile(tmpdir + "/model.best.pth")
     # assert os.path.isfile(tmpdir + "/best_full.pth")
-    # assert os.path.isfile(tmpdir + "/last.pth")
+    assert os.path.isfile(tmpdir + "/model.last.pth")
     # assert os.path.isfile(tmpdir + "/last_full.pth")
 
 

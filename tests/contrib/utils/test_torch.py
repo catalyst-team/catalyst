@@ -4,7 +4,7 @@ from typing import Dict
 import torch
 from torch import nn
 
-from catalyst.contrib.utils.torch2 import get_network_output
+from catalyst.contrib.utils.torch import get_network_output
 
 
 def test_network_output():

@@ -4,7 +4,7 @@ from collections import OrderedDict
 from catalyst.core.callback import Callback, CallbackWrapper
 
 LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
-FILTER_FN = Callable[[str, int, str], bool]
+FILTER_FN = Callable[[int, str], bool]
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -108,7 +108,7 @@ class _ArgsFilterFn:
             raise ValueError("'filter_fn' should be a callable!")
         if filter_fn.__code__.co_argcount != 2:
             raise ValueError(
-                "Filter function should have three arguments - " "'epoch' and 'loader'!"
+                "Filter function should have two arguments - " "'epoch' and 'loader'!"
             )
         self.filter_fn = filter_fn
 
@@ -203,13 +203,13 @@ class ControlFlowCallback(CallbackWrapper):
                 # exept "train" loader every 2 epochs
                 ControlFlowCallback(
                     ...
-                    filter_fn=lambda s, e, l: l != "train" and e % 2 == 0
+                    filter_fn=lambda e, l: l != "train" and e % 2 == 0
                     ...
                 )
                 # or with string equivalent
                 ControlFlowCallback(
                     ...
-                    filter_fn="lambda s, e, l: l != 'train' and e % 2 == 0"
+                    filter_fn="lambda e, l: l != 'train' and e % 2 == 0"
                     ...
                 )
 

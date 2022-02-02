@@ -1,10 +1,9 @@
-from typing import Callable, Dict, List, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, Union
 
 import torch
 from torch import nn, Tensor
 import torch.backends
 
-from catalyst.settings import SETTINGS
 from catalyst.typing import TorchModel
 
 ACTIVATIONS = {

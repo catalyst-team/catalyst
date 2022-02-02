@@ -1,26 +1,25 @@
-# # flake8: noqa
-# import copy
-# from io import StringIO
-# import os
-# import re
-# import shutil
-# import sys
+# flake8: noqa
+import copy
+from io import StringIO
+import os
+import re
+import shutil
+import sys
 
-# import pytest
+import pytest
 
-# import torch
-# from torch.utils.data import DataLoader, TensorDataset
+import torch
+from torch.utils.data import DataLoader, TensorDataset
 
-# from catalyst.dl import (
-#     Callback,
-#     CallbackOrder,
-#     CheckpointCallback,
-#     CheckRunCallback,
-#     CriterionCallback,
-#     PeriodicLoaderCallback,
-#     SupervisedRunner,
-# )
-
+from catalyst.dl import (
+    Callback,
+    CallbackOrder,
+    CheckpointCallback,
+    CheckRunCallback,
+    CriterionCallback,
+    PeriodicLoaderCallback,
+    SupervisedRunner,
+)
 
 # @pytest.mark.skip(reason="disabled")
 # def test_multiple_stages_with_magic_callback():
@@ -88,7 +87,7 @@
 #         minimize_valid_metric=True,
 #         callbacks=[
 #             PeriodicLoaderCallback(
-#                 valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=2
+#                 valid_loader="valid", valid_metric="loss", minimize=True, valid=2
 #             ),
 #             BestStateCheckerCallback(),
 #             CheckRunCallback(num_epoch_steps=5),
@@ -131,206 +130,206 @@
 
 
 # @pytest.mark.skip(reason="disabled")
-# def test_validation_with_period_3():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_validation_with_period_3():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "valid": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "valid": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=10,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=3
-#             ),
-#             CheckRunCallback(num_epoch_steps=10),
-#         ],
-#     )
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=10,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid", valid_metric="loss", minimize=True, valid=3
+            ),
+            CheckRunCallback(num_epoch_steps=10),
+        ],
+    )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     # assert len(re.findall(r"\(train\)", exp_output)) == 10
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == 3
-#     # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    # assert len(re.findall(r"\(train\)", exp_output)) == 10
+    # assert len(re.findall(r"\(valid\)", exp_output)) == 3
+    # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.9.pth")
-#     assert os.path.isfile(checkpoint + "/train.9_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/model.0009.pth")
+    # assert os.path.isfile(checkpoint + "/train.9_full.pth")
+    assert os.path.isfile(checkpoint + "/model.best.pth")
+    # assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/model.last.pth")
+    # assert os.path.isfile(checkpoint + "/last_full.pth")
 
-#     shutil.rmtree(logdir, ignore_errors=True)
-
-
-# @pytest.mark.skip(reason="disabled support period = 0 for validation loaders")
-# def test_validation_with_period_0():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "valid": loader,
-#     }
-
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
-
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=5,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=0
-#             ),
-#             CheckRunCallback(num_epoch_steps=5),
-#         ],
-#     )
-
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-
-#     # assert len(re.findall(r"\(train\)", exp_output)) == 5
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == 0
-#     # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
-
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.5.pth")
-#     assert os.path.isfile(checkpoint + "/train.5_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
-
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
-# def test_multiple_loaders():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+@pytest.mark.skip(reason="disabled support period = 0 for validation loaders")
+def test_validation_with_period_0():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "valid": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=10,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="loss",
-#                 minimize=True,
-#                 train_additional=2,
-#                 valid=3,
-#                 valid_additional=0,
-#             ),
-#             CheckRunCallback(num_epoch_steps=10),
-#         ],
-#     )
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=5,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid", valid_metric="loss", minimize=True, valid=0
+            ),
+            CheckRunCallback(num_epoch_steps=5),
+        ],
+    )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     # assert len(re.findall(r"\(train\)", exp_output)) == 10
-#     # assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == 3
-#     # assert len(re.findall(r"\(valid_additional\)", exp_output)) == 0
-#     # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    # assert len(re.findall(r"\(train\)", exp_output)) == 5
+    # assert len(re.findall(r"\(valid\)", exp_output)) == 0
+    # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.9.pth")
-#     assert os.path.isfile(checkpoint + "/train.9_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/train.5.pth")
+    assert os.path.isfile(checkpoint + "/train.5_full.pth")
+    assert os.path.isfile(checkpoint + "/best.pth")
+    assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/last.pth")
+    assert os.path.isfile(checkpoint + "/last_full.pth")
 
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)
+
+
+def test_multiple_loaders():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
+
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
+
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
+
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
+
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=10,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid",
+                valid_metric="loss",
+                minimize=True,
+                train_additional=2,
+                valid=3,
+                valid_additional=0,
+            ),
+            CheckRunCallback(num_epoch_steps=10),
+        ],
+    )
+
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
+
+    # assert len(re.findall(r"\(train\)", exp_output)) == 10
+    # assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
+    # assert len(re.findall(r"\(valid\)", exp_output)) == 3
+    # assert len(re.findall(r"\(valid_additional\)", exp_output)) == 0
+    # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/model.0009.pth")
+    # assert os.path.isfile(checkpoint + "/train.9_full.pth")
+    assert os.path.isfile(checkpoint + "/model.best.pth")
+    # assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/model.last.pth")
+    # assert os.path.isfile(checkpoint + "/last_full.pth")
+
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
 # def test_multiple_loaders_and_multiple_stages():
@@ -340,7 +339,7 @@
 #     # experiment_setup
 #     logdir = "./logs/periodic_loader"
 #     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+#     logfile = checkpoint + "/model.storage.json"
 
 #     # data
 #     num_samples, num_features = int(1e4), int(1e1)
@@ -375,8 +374,8 @@
 #         minimize_valid_metric=True,
 #         callbacks=[
 #             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="loss",
+#                 valid_loader="valid",
+#                 valid_metric="loss",
 #                 minimize=True,
 #                 train_additional=2,
 #                 valid=3,
@@ -400,8 +399,8 @@
 #         minimize_valid_metric=True,
 #         callbacks=[
 #             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="loss",
+#                 valid_loader="valid",
+#                 valid_metric="loss",
 #                 minimize=True,
 #                 train_additional=2,
 #                 valid=3,
@@ -431,386 +430,386 @@
 #     shutil.rmtree(logdir, ignore_errors=True)
 
 
-# def test_no_loaders_epoch():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_no_loaders_epoch():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     with pytest.raises(ValueError):
-#         runner.train(
-#             model=model,
-#             criterion=criterion,
-#             optimizer=optimizer,
-#             loaders=loaders,
-#             logdir=logdir,
-#             num_epochs=10,
-#             verbose=False,
-#             valid_loader="valid",
-#             valid_metric="loss",
-#             minimize_valid_metric=True,
-#             callbacks=[
-#                 PeriodicLoaderCallback(
-#                     valid_loader_key="valid",
-#                     valid_metric_key="loss",
-#                     minimize=True,
-#                     train=2,
-#                     train_additional=2,
-#                     valid=3,
-#                     valid_additional=0,
-#                 )
-#             ],
-#         )
+    with pytest.raises(ValueError):
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=10,
+            verbose=False,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            callbacks=[
+                PeriodicLoaderCallback(
+                    valid_loader="valid",
+                    valid_metric="loss",
+                    minimize=True,
+                    train=2,
+                    train_additional=2,
+                    valid=3,
+                    valid_additional=0,
+                )
+            ],
+        )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     shutil.rmtree(logdir, ignore_errors=True)
-
-
-# def test_wrong_period_type():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
-
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
-
-#     with pytest.raises(TypeError):
-#         runner.train(
-#             model=model,
-#             criterion=criterion,
-#             optimizer=optimizer,
-#             loaders=loaders,
-#             logdir=logdir,
-#             num_epochs=10,
-#             verbose=False,
-#             valid_loader="valid",
-#             valid_metric="loss",
-#             minimize_valid_metric=True,
-#             callbacks=[
-#                 PeriodicLoaderCallback(
-#                     valid_loader_key="valid",
-#                     valid_metric_key="loss",
-#                     minimize=True,
-#                     train_additional=[],
-#                     train_not_exists=2,
-#                     valid=3,
-#                     valid_additional=0,
-#                     valid_not_exist=1,
-#                 )
-#             ],
-#         )
-
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
-# def test_negative_period_exception():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_wrong_period_type():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     with pytest.raises(ValueError):
-#         runner.train(
-#             model=model,
-#             criterion=criterion,
-#             optimizer=optimizer,
-#             loaders=loaders,
-#             logdir=logdir,
-#             num_epochs=10,
-#             verbose=False,
-#             valid_loader="valid",
-#             valid_metric="loss",
-#             minimize_valid_metric=True,
-#             callbacks=[
-#                 PeriodicLoaderCallback(
-#                     valid_loader_key="valid",
-#                     valid_metric_key="loss",
-#                     minimize=True,
-#                     train_additional=1,
-#                     train_not_exists=-10,
-#                     valid=3,
-#                     valid_additional=-1,
-#                     valid_not_exist=1,
-#                 )
-#             ],
-#         )
+    with pytest.raises(TypeError):
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=10,
+            verbose=False,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            callbacks=[
+                PeriodicLoaderCallback(
+                    valid_loader="valid",
+                    valid_metric="loss",
+                    minimize=True,
+                    train_additional=[],
+                    train_not_exists=2,
+                    valid=3,
+                    valid_additional=0,
+                    valid_not_exist=1,
+                )
+            ],
+        )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     shutil.rmtree(logdir, ignore_errors=True)
-
-
-# def test_zero_period_validation_exception():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
-
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
-
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
-
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
-
-#     with pytest.raises(ValueError):
-#         runner.train(
-#             model=model,
-#             criterion=criterion,
-#             optimizer=optimizer,
-#             loaders=loaders,
-#             logdir=logdir,
-#             num_epochs=10,
-#             verbose=False,
-#             valid_loader="valid",
-#             valid_metric="loss",
-#             minimize_valid_metric=True,
-#             callbacks=[
-#                 PeriodicLoaderCallback(
-#                     valid_loader_key="valid",
-#                     valid_metric_key="loss",
-#                     minimize=True,
-#                     train_additional=1,
-#                     train_not_exists=3,
-#                     valid=0,
-#                     valid_additional=2,
-#                     valid_not_exist=1,
-#                 )
-#             ],
-#         )
-
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
-
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
-# def test_ignoring_unknown_loaders():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_negative_period_exception():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "train_additional": loader,
-#         "valid": loader,
-#         "valid_additional": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=10,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="loss",
-#                 minimize=True,
-#                 train_additional=2,
-#                 train_not_exists=2,
-#                 valid=3,
-#                 valid_additional=0,
-#                 valid_not_exist=1,
-#             ),
-#             CheckRunCallback(num_epoch_steps=10),
-#         ],
-#     )
+    with pytest.raises(ValueError):
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=10,
+            verbose=False,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            callbacks=[
+                PeriodicLoaderCallback(
+                    valid_loader="valid",
+                    valid_metric="loss",
+                    minimize=True,
+                    train_additional=1,
+                    train_not_exists=-10,
+                    valid=3,
+                    valid_additional=-1,
+                    valid_not_exist=1,
+                )
+            ],
+        )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     # assert len(re.findall(r"\(train\)", exp_output)) == 10
-#     # assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
-#     # assert len(re.findall(r"\(train_not_exists\)", exp_output)) == 0
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == 3
-#     # assert len(re.findall(r"\(valid_additional\)", exp_output)) == 0
-#     # assert len(re.findall(r"\(valid_not_exist\)", exp_output)) == 0
-#     # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
-
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.9.pth")
-#     assert os.path.isfile(checkpoint + "/train.9_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
-
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
-# def test_loading_best_state_at_end():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_zero_period_validation_exception():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "valid": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=5,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=3
-#             ),
-#             CheckRunCallback(num_epoch_steps=5),
-#         ],
-#         load_best_on_end=True,
-#     )
+    with pytest.raises(ValueError):
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=10,
+            verbose=False,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            callbacks=[
+                PeriodicLoaderCallback(
+                    valid_loader="valid",
+                    valid_metric="loss",
+                    minimize=True,
+                    train_additional=1,
+                    train_not_exists=3,
+                    valid=0,
+                    valid_additional=2,
+                    valid_not_exist=1,
+                )
+            ],
+        )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     # assert len(re.findall(r"\(train\)", exp_output)) == 5
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == 1
-#     # assert len(re.findall(r"\(global epoch 3, epoch 3, stage train\)", exp_output)) == 1
-#     # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    shutil.rmtree(logdir, ignore_errors=True)
 
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.3.pth")
-#     assert os.path.isfile(checkpoint + "/train.3_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
 
-#     shutil.rmtree(logdir, ignore_errors=True)
+def test_ignoring_unknown_loaders():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
+
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
+
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "train_additional": loader,
+        "valid": loader,
+        "valid_additional": loader,
+    }
+
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
+
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=10,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid",
+                valid_metric="loss",
+                minimize=True,
+                train_additional=2,
+                train_not_exists=2,
+                valid=3,
+                valid_additional=0,
+                valid_not_exist=1,
+            ),
+            CheckRunCallback(num_epoch_steps=10),
+        ],
+    )
+
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
+
+    # assert len(re.findall(r"\(train\)", exp_output)) == 10
+    # assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
+    # assert len(re.findall(r"\(train_not_exists\)", exp_output)) == 0
+    # assert len(re.findall(r"\(valid\)", exp_output)) == 3
+    # assert len(re.findall(r"\(valid_additional\)", exp_output)) == 0
+    # assert len(re.findall(r"\(valid_not_exist\)", exp_output)) == 0
+    # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/model.0009.pth")
+    # assert os.path.isfile(checkpoint + "/train.9_full.pth")
+    assert os.path.isfile(checkpoint + "/model.best.pth")
+    # assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/model.last.pth")
+    # assert os.path.isfile(checkpoint + "/last_full.pth")
+
+    shutil.rmtree(logdir, ignore_errors=True)
+
+
+def test_loading_best_state_at_end():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
+
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
+
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "valid": loader,
+    }
+
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
+
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=5,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid", valid_metric="loss", minimize=True, valid=3
+            ),
+            CheckRunCallback(num_epoch_steps=5),
+        ],
+        load_best_on_end=True,
+    )
+
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
+
+    # assert len(re.findall(r"\(train\)", exp_output)) == 5
+    # assert len(re.findall(r"\(valid\)", exp_output)) == 1
+    # assert len(re.findall(r"\(global epoch 3, epoch 3, stage train\)", exp_output)) == 1
+    # assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/model.0003.pth")
+    # assert os.path.isfile(checkpoint + "/train.3_full.pth")
+    assert os.path.isfile(checkpoint + "/model.best.pth")
+    # assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/model.last.pth")
+    # assert os.path.isfile(checkpoint + "/last_full.pth")
+
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
 # @pytest.mark.skip(reason="disabled")
@@ -830,7 +829,7 @@
 #     # experiment_setup
 #     logdir = "./logs/periodic_loader"
 #     checkpoint = logdir  # + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+#     logfile = checkpoint + "/model.storage.json"
 
 #     # data
 #     num_samples, num_features = int(1e4), int(1e1)
@@ -875,8 +874,8 @@
 #         minimize_valid_metric=False,
 #         callbacks=[
 #             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="metric",
+#                 valid_loader="valid",
+#                 valid_metric="metric",
 #                 minimize=True,
 #                 valid=period,
 #             ),
@@ -906,81 +905,78 @@
 
 
 # @pytest.mark.skip(reason="disabled")
-# def test_multiple_best_checkpoints():
-#     old_stdout = sys.stdout
-#     sys.stdout = str_stdout = StringIO()
+def test_multiple_best_checkpoints():
+    old_stdout = sys.stdout
+    sys.stdout = str_stdout = StringIO()
 
-#     # experiment_setup
-#     logdir = "./logs/periodic_loader"
-#     checkpoint = logdir  # + "/checkpoints"
-#     logfile = checkpoint + "/_metrics.json"
+    # experiment_setup
+    logdir = "./logs/periodic_loader"
+    checkpoint = logdir  # + "/checkpoints"
+    logfile = checkpoint + "/model.storage.json"
 
-#     # data
-#     num_samples, num_features = int(1e4), int(1e1)
-#     X = torch.rand(num_samples, num_features)
-#     y = torch.randint(0, 5, size=[num_samples])
-#     dataset = TensorDataset(X, y)
-#     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-#     loaders = {
-#         "train": loader,
-#         "valid": loader,
-#     }
+    # data
+    num_samples, num_features = int(1e4), int(1e1)
+    X = torch.rand(num_samples, num_features)
+    y = torch.randint(0, 5, size=[num_samples])
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {
+        "train": loader,
+        "valid": loader,
+    }
 
-#     # model, criterion, optimizer, scheduler
-#     model = torch.nn.Linear(num_features, 5)
-#     criterion = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-#     runner = SupervisedRunner()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 5)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    runner = SupervisedRunner()
 
-#     n_epochs = 12
-#     period = 2
-#     # first stage
-#     runner.train(
-#         model=model,
-#         criterion=criterion,
-#         optimizer=optimizer,
-#         loaders=loaders,
-#         logdir=logdir,
-#         num_epochs=n_epochs,
-#         verbose=False,
-#         valid_loader="valid",
-#         valid_metric="loss",
-#         minimize_valid_metric=True,
-#         callbacks=[
-#             PeriodicLoaderCallback(
-#                 valid_loader_key="valid",
-#                 valid_metric_key="loss",
-#                 minimize=True,
-#                 valid=period,
-#             ),
-#             CheckRunCallback(num_epoch_steps=n_epochs),
-#             CheckpointCallback(
-#                 logdir=logdir,
-#                 loader_key="valid",
-#                 metric_key="loss",
-#                 minimize=True,
-#                 topk=3,
-#             ),
-#         ],
-#     )
+    n_epochs = 12
+    period = 2
+    # first stage
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        num_epochs=n_epochs,
+        verbose=False,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        callbacks=[
+            PeriodicLoaderCallback(
+                valid_loader="valid", valid_metric="loss", minimize=True, valid=period,
+            ),
+            CheckRunCallback(num_epoch_steps=n_epochs),
+            CheckpointCallback(
+                logdir=logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                topk=3,
+            ),
+        ],
+    )
 
-#     sys.stdout = old_stdout
-#     exp_output = str_stdout.getvalue()
+    sys.stdout = old_stdout
+    exp_output = str_stdout.getvalue()
 
-#     # assert len(re.findall(r"\(train\)", exp_output)) == n_epochs
-#     # assert len(re.findall(r"\(valid\)", exp_output)) == (n_epochs // period)
-#     # assert len(re.findall(r".*/train\.\d{1,2}\.pth", exp_output)) == 3
+    # assert len(re.findall(r"\(train\)", exp_output)) == n_epochs
+    # assert len(re.findall(r"\(valid\)", exp_output)) == (n_epochs // period)
+    # assert len(re.findall(r".*/train\.\d{1,2}\.pth", exp_output)) == 3
 
-#     assert os.path.isfile(logfile)
-#     assert os.path.isfile(checkpoint + "/train.8.pth")
-#     assert os.path.isfile(checkpoint + "/train.8_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.10.pth")
-#     assert os.path.isfile(checkpoint + "/train.10_full.pth")
-#     assert os.path.isfile(checkpoint + "/train.12.pth")
-#     assert os.path.isfile(checkpoint + "/train.12_full.pth")
-#     assert os.path.isfile(checkpoint + "/best.pth")
-#     assert os.path.isfile(checkpoint + "/best_full.pth")
-#     assert os.path.isfile(checkpoint + "/last.pth")
-#     assert os.path.isfile(checkpoint + "/last_full.pth")
+    assert os.path.isfile(logfile)
+    assert os.path.isfile(checkpoint + "/model.0008.pth")
+    # assert os.path.isfile(checkpoint + "/train.8_full.pth")
+    assert os.path.isfile(checkpoint + "/model.0010.pth")
+    # assert os.path.isfile(checkpoint + "/train.10_full.pth")
+    assert os.path.isfile(checkpoint + "/model.0012.pth")
+    # assert os.path.isfile(checkpoint + "/train.12_full.pth")
+    assert os.path.isfile(checkpoint + "/model.best.pth")
+    # assert os.path.isfile(checkpoint + "/best_full.pth")
+    assert os.path.isfile(checkpoint + "/model.last.pth")
+    # assert os.path.isfile(checkpoint + "/last_full.pth")
 
-#     shutil.rmtree(logdir, ignore_errors=True)
+    shutil.rmtree(logdir, ignore_errors=True)

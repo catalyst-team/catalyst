@@ -15,6 +15,7 @@ class BackwardCallback(IBackwardCallback):
         metric_key: a key to get loss from ``runner.batch_metrics``
         grad_clip_fn: callable gradient cliping function or it's name
         grad_clip_params: key-value parameters for grad_clip_fn
+        log_gradient: boolean flag to log gradient norm to ``runner.batch_metrics``
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
@@ -27,6 +28,7 @@ class BackwardCallback(IBackwardCallback):
         metric_key: str,
         grad_clip_fn: Union[str, Callable] = None,
         grad_clip_params: Dict = None,
+        log_gradient: bool = False
     ):
         """Init."""
         super().__init__()
@@ -40,6 +42,7 @@ class BackwardCallback(IBackwardCallback):
             self.grad_clip_fn = partial(self.grad_clip_fn, **grad_clip_params)
 
         self._prefix_gradient = f"gradient/{metric_key}"
+        self._log_gradient = log_gradient
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
@@ -50,7 +53,8 @@ class BackwardCallback(IBackwardCallback):
             if self.grad_clip_fn is not None:
                 runner.engine.unscale_gradients()
                 norm = self.grad_clip_fn(self.model.parameters())
-                runner.batch_metrics[f"{self._prefix_gradient}/norm"] = norm
+                if self._log_gradient:
+                    runner.batch_metrics[f"{self._prefix_gradient}/norm"] = norm
 
 
 __all__ = ["BackwardCallback"]

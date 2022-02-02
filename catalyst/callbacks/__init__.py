@@ -11,9 +11,9 @@ from catalyst.core.callback import (
     ICallback,
     IBackwardCallback,
     ICriterionCallback,
+    IMetricCallback,
     IOptimizerCallback,
     ISchedulerCallback,
-    IMetricCallback,
 )
 
 
@@ -22,7 +22,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 
-# from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
+from catalyst.callbacks.control_flow import ControlFlowCallback  # advanced
 from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.metric import (
     BatchMetricCallback,
@@ -37,26 +37,26 @@ from catalyst.callbacks.misc import (
     TqdmCallback,
 )
 
-# from catalyst.callbacks.mixup import MixupCallback  # advanced
+from catalyst.callbacks.mixup import MixupCallback  # advanced
 
 # if SETTINGS.onnx_required:
-#     from catalyst.callbacks.onnx import OnnxCallback  # advanced
+#     from catalyst.callbacks.onnx import OnnxCallback  # advanced, utils
 
 from catalyst.callbacks.optimizer import OptimizerCallback
 
 if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
 
-# from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback  # advanced
+from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback  # advanced
 
 if LooseVersion(torch.__version__) >= LooseVersion("1.8.1"):
     from catalyst.callbacks.profiler import ProfilerCallback
 
 # if SETTINGS.pruning_required:
-#     from catalyst.callbacks.pruning import PruningCallback  # advanced
+#     from catalyst.callbacks.pruning import PruningCallback  # advanced, utils
 
 # if SETTINGS.quantization_required:
-#     from catalyst.callbacks.quantization import QuantizationCallback  # advanced
+#     from catalyst.callbacks.quantization import QuantizationCallback  # advanced, utils
 
 
 from catalyst.callbacks.scheduler import (
@@ -65,10 +65,11 @@ from catalyst.callbacks.scheduler import (
     SchedulerCallback,
 )
 
-# if SETTINGS.ml_required:
-#     from catalyst.callbacks.sklearn_model import SklearnModelCallback  # advanced
+if SETTINGS.ml_required:
+    from catalyst.callbacks.sklearn_model import SklearnModelCallback  # advanced
 
-# from catalyst.callbacks.soft_update import SoftUpdateCallaback  # advanced
-# from catalyst.callbacks.tracing import TracingCallback  # advanced
+from catalyst.callbacks.soft_update import SoftUpdateCallaback  # advanced, utils
+
+# from catalyst.callbacks.tracing import TracingCallback  # advanced, utils
 
 from catalyst.callbacks.metrics import *

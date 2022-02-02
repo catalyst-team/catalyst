@@ -52,17 +52,13 @@ class PeriodicLoaderCallback(Callback):
     """
 
     def __init__(
-        self,
-        valid_loader_key: str,
-        valid_metric_key: str,
-        minimize: bool = True,
-        **kwargs,
+        self, valid_loader: str, valid_metric: str, minimize: bool = True, **kwargs,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.internal)
 
-        self.valid_loader: str = valid_loader_key
-        self.valid_metric: str = valid_metric_key
+        self.valid_loader: str = valid_loader
+        self.valid_metric: str = valid_metric
         self.minimize_metric: bool = minimize
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
@@ -102,7 +98,7 @@ class PeriodicLoaderCallback(Callback):
                     lambda n: all(
                         (p == 0 or n % p != 0) for p in self.loader_periods.values()
                     ),
-                    range(1, runner.epoch_len + 1),
+                    range(1, runner.num_epochs + 1),
                 )
             )
             if len(zero_loaders_epochs) > 0:

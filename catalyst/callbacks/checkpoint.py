@@ -30,6 +30,8 @@ class CheckpointCallback(ICheckpointCallback):
         topk: int = 1,
         resume: Union[str, Dict[str, str]] = None,
         mode: str = "model",
+        save_last: bool = True,
+        save_best: bool = True,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.external)
@@ -53,6 +55,8 @@ class CheckpointCallback(ICheckpointCallback):
         self.logdir = logdir
         self.mode = mode
         self.resume = resume
+        self.save_last = save_last
+        self.save_best = save_best
 
         # model selection info
         self.loader_key = loader_key
@@ -74,6 +78,11 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _handle_epoch(self, runner: "IRunner", score: float):
         obj = runner.model
+        if self.save_last:
+            # @TODO: simplify it
+            logprefix = f"{self.logdir}/{self.mode}.last"
+            logpath = self.save(runner, obj, logprefix)
+
         logprefix = f"{self.logdir}/{self.mode}.{runner.epoch_step:04d}"
         logpath = self.save(runner, obj, logprefix)
         self._storage.append(Checkpoint(obj=obj, logpath=logpath, metric=score))
@@ -115,8 +124,9 @@ class CheckpointCallback(ICheckpointCallback):
             score = runner.epoch_metrics[self.metric_key]
         self._handle_epoch(runner=runner, score=score)
 
-        best_logprefix = f"{self.logdir}/{self.mode}.best"
-        self.save(runner, self._storage[0].obj, best_logprefix)
+        if self.save_best:
+            best_logprefix = f"{self.logdir}/{self.mode}.best"
+            self.save(runner, self._storage[0].obj, best_logprefix)
 
     def on_epoch_end_last(self, runner: "IRunner") -> None:
         """Event handler."""

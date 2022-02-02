@@ -4,7 +4,6 @@ from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
-# @TODO: how to fix?
 if SETTINGS.ml_required:
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
@@ -24,7 +23,7 @@ class ConfusionMatrixCallback(Callback):
         prefix: plot name for monitoring tools
         class_names: list with class names
         num_classes: number of classes
-        normalized: boolean flag for confusion matrix normalization
+        normalize: boolean flag for confusion matrix normalization
         plot_params: extra params for plt.figure rendering
 
     .. note::
@@ -97,7 +96,7 @@ class ConfusionMatrixCallback(Callback):
         prefix: str = None,
         class_names: List[str] = None,
         num_classes: int = None,
-        normalized: bool = False,
+        normalize: bool = False,
         plot_params: Dict = None,
     ):
         """Callback initialisation."""
@@ -111,11 +110,11 @@ class ConfusionMatrixCallback(Callback):
 
         self.class_names = class_names or [f"class_{i:02d}" for i in range(num_classes)]
         self.num_classes = num_classes if class_names is None else len(class_names)
-        self.normalized = normalized
+        self.normalize = normalize
 
         assert self.num_classes is not None
         self.confusion_matrix = ConfusionMatrixMetric(
-            num_classes=self.num_classes, normalized=self.normalized
+            num_classes=self.num_classes, normalize=self.normalize
         )
 
     def on_loader_start(self, runner: "IRunner"):
@@ -148,7 +147,7 @@ class ConfusionMatrixCallback(Callback):
         fig = plot_confusion_matrix(
             confusion_matrix,
             class_names=self.class_names,
-            normalize=self.normalized,
+            normalize=self.normalize,
             show=False,
             **self._plot_params,
         )

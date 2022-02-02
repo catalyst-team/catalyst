@@ -18,7 +18,7 @@ class ConfusionMatrixMetric(IMetric):
 
     Args:
         num_classes: number of classes in the classification problem
-        normalized: determines whether or not the confusion matrix is normalized or not
+        normalize: determines whether or not the confusion matrix is normalize or not
         compute_on_call: Boolean flag to computes and return confusion matrix during __call__.
             default: True
 
@@ -83,12 +83,12 @@ class ConfusionMatrixMetric(IMetric):
     """
 
     def __init__(
-        self, num_classes: int, normalized: bool = False, compute_on_call: bool = True
+        self, num_classes: int, normalize: bool = False, compute_on_call: bool = True
     ):
         """Constructs a confusion matrix for a multiclass classification problems."""
         super().__init__(compute_on_call=compute_on_call)
         self.num_classes = num_classes
-        self.normalized = normalized
+        self.normalize = normalize
         self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
         self._ddp_backend = None
         self.reset()
@@ -169,7 +169,7 @@ class ConfusionMatrixMetric(IMetric):
             value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
             self.conf = value
 
-        if self.normalized:
+        if self.normalize:
             conf = self.conf.astype(np.float32)
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:

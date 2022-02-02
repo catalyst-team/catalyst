@@ -1,12 +1,12 @@
 from typing import Callable, List, Union
 from functools import partial
-import importlib
 
 import torch
 
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
 from catalyst.metrics._accumulative import AccumulativeMetric
+from catalyst.registry import REGISTRY
 
 
 class SklearnModelCallback(Callback):
@@ -217,9 +217,7 @@ class SklearnModelCallback(Callback):
         super().__init__(order=CallbackOrder.Metric)
 
         if isinstance(model_fn, str):
-            base, clf = model_fn.split(".")
-            base = f"sklearn.{base}"
-            model_fn = getattr(importlib.import_module(base), clf)
+            model_fn = REGISTRY.get(model_fn)
 
         assert hasattr(
             model_fn(), predict_method
