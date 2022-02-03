@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import torch
 
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core.callback import CallbackOrder, ISchedulerCallback
+from catalyst.core.callback import ISchedulerCallback
 from catalyst.typing import TorchOptimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list

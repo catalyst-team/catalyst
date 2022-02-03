@@ -93,7 +93,8 @@ def get_loader_batch_size(loader: DataLoader):
         return batch_size
     raise NotImplementedError(
         "No `batch_size` found,"
-        "please specify it with `loader.batch_size`, or `loader.batch_sampler.batch_size`"
+        "please specify it with `loader.batch_size`,"
+        "or `loader.batch_sampler.batch_size`"
     )
 
 

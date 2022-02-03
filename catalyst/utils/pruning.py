@@ -28,8 +28,8 @@ def get_pruning_fn(
                 `"l1_unstructured"`. See pytorch docs for more details.
         dim (int, optional): if you are using structured pruning method you need
                 to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
-            Defaults to None.
+        l_norm (int, optional): if you are using
+            ln_structured you need to specify l_norm. Defaults to None.
 
     Raises:
         ValueError: If ``dim`` or ``l_norm`` is not defined when it's required.
@@ -80,7 +80,8 @@ def prune_model(
         model: Model to be pruned.
         pruning_fn: Pruning function with API same as in torch.nn.utils.pruning.
             pruning_fn(module, name, amount).
-        keys_to_prune: list of strings. Determines which tensor in modules will be pruned.
+        keys_to_prune: list of strings.
+            Determines which tensor in modules will be pruned.
         amount: quantity of parameters to prune.
             If float, should be between 0.0 and 1.0 and
             represent the fraction of parameters to prune.
@@ -90,8 +91,8 @@ def prune_model(
             If None provided then will try to prune every module in model.
         dim (int, optional): if you are using structured pruning method you need
             to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
-            Defaults to None.
+        l_norm (int, optional): if you are using
+            ln_structured you need to specify l_norm. Defaults to None.
 
     Example:
         .. code-block:: python

@@ -60,9 +60,12 @@ class CategoricalRegressionLoss(nn.Module):
         """Compute the loss
 
         Args:
-            logits_t (torch.Tensor): predicted atoms at step T, shape: [bs; num_atoms]
-            logits_tp1 (torch.Tensor): predicted atoms at step T+1, shape: [bs; num_atoms]
-            atoms_target_t (torch.Tensor): target atoms at step T, shape: [bs; num_atoms]
+            logits_t (torch.Tensor): predicted atoms at step T.
+                shape: [bs; num_atoms]
+            logits_tp1 (torch.Tensor): predicted atoms at step T+1.
+                shape: [bs; num_atoms]
+            atoms_target_t (torch.Tensor): target atoms at step T.
+                shape: [bs; num_atoms]
 
         Returns:
             torch.Tensor: computed loss

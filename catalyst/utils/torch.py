@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Tuple, TYPE_CHECKING, Union
+from typing import Dict, List, Tuple, TYPE_CHECKING, Union
 import os
 
 import numpy as np
@@ -9,17 +9,7 @@ import torch.backends
 from torch.backends import cudnn
 
 from catalyst.settings import SETTINGS
-from catalyst.typing import (
-    RunnerCriterion,
-    RunnerDevice,
-    RunnerModel,
-    RunnerOptimizer,
-    RunnerScheduler,
-    TorchModel,
-    TorchOptimizer,
-)
-from catalyst.utils.distributed import get_nn_from_ddp_module
-from catalyst.utils.misc import maybe_recursive_call
+from catalyst.typing import RunnerDevice, TorchModel, TorchOptimizer
 
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine
@@ -99,7 +89,7 @@ def get_available_engine(
     Args:
         cpu (bool): option to use cpu for training. Default is `False`.
         ddp (bool): option to use DDP for training. Default is `False`.
-        amp (bool): option to use APEX for training. Default is `False`.
+        fp16 (bool): option to use APEX for training. Default is `False`.
 
     Returns:
         IEngine which match requirements.
@@ -213,7 +203,7 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
             deterministic = os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
         cudnn.deterministic = deterministic
 
-        # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
+        # http://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053
         if benchmark is None:
             benchmark = os.environ.get("CUDNN_BENCHMARK", "True") == "True"
         cudnn.benchmark = benchmark
@@ -300,7 +290,8 @@ def set_requires_grad(model: TorchModel, requires_grad: Union[bool, Dict[str, bo
 #             )
 #     else:
 #         model_module = get_nn_from_ddp_module(model)
-#         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
+#         checkpoint["model_state_dict"] = \
+# maybe_recursive_call(model_module, "state_dict")
 
 #     for dict2save, name2save in zip(
 #         [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
@@ -385,7 +376,8 @@ def set_requires_grad(model: TorchModel, requires_grad: Union[bool, Dict[str, bo
 
 
 def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
-    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation).
+    """Updates the `target` data with the `source` one
+    smoothing by ``tau`` (inplace operation).
 
     Args:
         target: nn.Module to update
@@ -404,12 +396,12 @@ def mixup_batch(
 
     Args:
         batch: batch to which you want to apply augmentation
-        alpha: beta distribution a=b parameters. Must be >=0. The closer alpha to zero the
-            less effect of the mixup.
+        alpha: beta distribution a=b parameters.
+            Must be >=0. The closer alpha to zero the less effect of the mixup.
         mode: algorithm used for muxup: ``"replace"`` | ``"add"``. If "replace"
             then replaces the batch with a mixed one, while the batch size is not changed
-            If "add", concatenates mixed examples to the current ones, the batch size increases
-            by 2 times.
+            If "add", concatenates mixed examples to the current ones,
+            the batch size increases by 2 times.
 
     Returns:
         augmented batch

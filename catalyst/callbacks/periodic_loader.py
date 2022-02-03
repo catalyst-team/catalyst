@@ -52,10 +52,11 @@ class PeriodicLoaderCallback(Callback):
     """
 
     def __init__(
-        self, valid_loader: str, valid_metric: str, minimize: bool = True, **kwargs,
+        self, valid_loader: str, valid_metric: str, minimize: bool, **kwargs,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.internal)
+        # @TODO: make valid_loader optional
 
         self.valid_loader: str = valid_loader
         self.valid_metric: str = valid_metric

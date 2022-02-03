@@ -1,7 +1,6 @@
-from typing import Any, Dict
+from typing import Dict
 import os
 
-from catalyst import SETTINGS
 from catalyst.core.logger import ILogger
 from catalyst.utils.config import save_config
 
@@ -14,14 +13,10 @@ class CSVLogger(ILogger):
         use_logdir_postfix: boolean flag to use extra ``logs`` prefix in the logdir
 
     .. note::
-        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
-        specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
+        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner``
+        in case of specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
 
-    .. note::
-        This logger is used by default by ``dl.ConfigRunner`` and ``dl.HydraRunner`` in case of
-        specified logdir in config ``args``.
-
-    Notebook API examples:
+    Examples:
 
     .. code-block:: python
 
@@ -50,25 +45,6 @@ class CSVLogger(ILogger):
 
         runner = CustomRunner().run()
 
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            csv:
-                _target_: CSVLogger
-                logdir: ./logdir/logs
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            csv:
-                _target_: catalyst.dl.CSVLogger
-                logdir: ./logdir/logs
-        ...
     """
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):

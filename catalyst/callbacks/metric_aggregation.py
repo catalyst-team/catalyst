@@ -33,7 +33,8 @@ class MetricAggregationCallback(Callback):
         scope: type of metric. Must be either ``batch`` or ``loader``
         multiplier: scale factor for the aggregated metric.
 
-    Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:
+    Python example - loss is a weighted sum of cross entropy loss
+    and binary cross entropy loss:
 
     .. code-block:: python
 
@@ -52,7 +53,10 @@ class MetricAggregationCallback(Callback):
 
         # model, criterion, optimizer, scheduler
         model = torch.nn.Linear(num_features, num_classes)
-        criterion = {"ce": torch.nn.CrossEntropyLoss(), "bce": torch.nn.BCEWithLogitsLoss()}
+        criterion = {
+            "ce": torch.nn.CrossEntropyLoss(),
+            "bce": torch.nn.BCEWithLogitsLoss()
+        }
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 

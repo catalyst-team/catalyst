@@ -68,27 +68,6 @@ class CometLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            comet:
-                _target_: CometLogger
-                project_name: my_comet_project
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            comet:
-                _target_: catalyst.dl.CometLogger
-                project_name: my_comet_project
-        ...
-
     """
 
     def __init__(

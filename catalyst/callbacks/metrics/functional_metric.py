@@ -10,7 +10,8 @@ class FunctionalMetricCallback(FunctionalBatchMetricCallback):
     Args:
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
-        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_fn: metric function, that get outputs, targets
+            and return score as torch.Tensor
         metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True

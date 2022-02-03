@@ -190,7 +190,7 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </p>
 </details>
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
+Catalyst is compatible with: Python 3.7+. PyTorch 1.4+. <br/>
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
 
@@ -206,14 +206,12 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsyst
 
 
 ### Tests
-All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
+All Catalyst code, features, and pipelines [are fully tested](./tests).
 We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
-
 During testing, we train a variety of different models: image classification,
 image segmentation, text classification, GANs, and much more.
 We then compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.
-
 As a result, Catalyst provides fully tested and reproducible
 best practices for your deep learning research and development.
 

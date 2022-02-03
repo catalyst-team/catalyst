@@ -1,3 +1,4 @@
+# flake8: noqa
 # from typing import Dict, Optional, TYPE_CHECKING, Union
 # from pathlib import Path
 

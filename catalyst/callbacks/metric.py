@@ -45,7 +45,8 @@ class _IMetricCallback(IMetricCallback, ABC):
 
 class _MetricCallback(_IMetricCallback):
     """
-    MetricCallback is a base implementation of callback that updates metrics over batch or loader.
+    MetricCallback is a base implementation of callback
+    that updates metrics over batch or loader.
 
     Args:
         metric: metric to calculate in callback
@@ -169,7 +170,8 @@ class _MetricCallback(_IMetricCallback):
 
 
 class BatchMetricCallback(_MetricCallback):
-    """BatchMetricCallback implements batch-based metrics update and computation over loader
+    """BatchMetricCallback implements batch-based metrics update
+    and computation over loader
 
     Args:
         metric: metric to calculate in callback
@@ -200,7 +202,8 @@ class BatchMetricCallback(_MetricCallback):
         self.metric.reset()
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action: update metric with new batch data and log it's value if necessary
+        """On batch end action: update metric with new batch data
+        and log it's value if necessary
 
         Args:
             runner: current runner
@@ -211,7 +214,8 @@ class BatchMetricCallback(_MetricCallback):
             runner.batch_metrics.update(metrics)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action: compute metric values and update runner's loader metrics with it
+        """On loader end action: compute metric values
+        and update runner's loader metrics with it
 
         Args:
             runner: current runner
@@ -288,7 +292,8 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
 
 
 class LoaderMetricCallback(_MetricCallback):
-    """LoaderMetricCallback implements loader-based metrics update and computation over loader
+    """LoaderMetricCallback implements loader-based metrics update
+    and computation over loader
 
     Args:
         metric: metric to calculate in callback
@@ -306,7 +311,8 @@ class LoaderMetricCallback(_MetricCallback):
         assert isinstance(metric, ICallbackLoaderMetric)
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """On loader star action: reset metric values in case of ICallbackLoaderMetric metric
+        """On loader star action:
+        reset metric values in case of ICallbackLoaderMetric metric
 
         Args:
             runner: current runner
@@ -325,7 +331,8 @@ class LoaderMetricCallback(_MetricCallback):
         self._update_metric(metrics_inputs)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action: compute metric values and update runner's loader metrics with it
+        """On loader end action:
+        compute metric values and update runner's loader metrics with it
 
         Args:
             runner: current runner

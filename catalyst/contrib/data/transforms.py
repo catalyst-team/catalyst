@@ -39,7 +39,8 @@ def normalize_image(tensor: torch.Tensor, mean, std, inplace=False):
     """Normalize a tensor image with mean and standard deviation.
 
     .. note::
-        This transform acts out of place by default, i.e., it does not mutates the input tensor.
+        This transform acts out of place by default, i.e.,
+        it does not mutates the input tensor.
 
     Args:
         tensor: Tensor image of size (C, H, W) to be normalized.

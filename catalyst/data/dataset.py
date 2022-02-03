@@ -49,7 +49,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
         transform_left: transform only for left batch
         transform_right: transform only for right batch
         transform_original: transforms which will be applied to save original in batch
-        is_target: the flag for selection does dataset return (sample, target) 
+        is_target: the flag for selection does dataset return (sample, target)
             or only sample
 
     Example:
@@ -74,7 +74,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
 
         cifar_dataset = CIFAR10(root="./data", download=True, transform=None)
         cifar_contrastive = SelfSupervisedDatasetWrapper(
-            cifar_dataset, 
+            cifar_dataset,
             transforms=transforms
         )
 
@@ -98,12 +98,14 @@ class SelfSupervisedDatasetWrapper(Dataset):
             left and right output batch.
             transform_left: transform only for left batch
             transform_right: transform only for right batch
-            transform_original: transforms which will be applied to save original in batch
-            is_target: the flag for selection does dataset return (sample, target) 
+            transform_original: transforms which will be applied
+                to save original in batch
+            is_target: the flag for selection does dataset return (sample, target)
                 or only sample
 
         Raises:
-            ValueError: should be specified transform_left and transform_right simultaneously
+            ValueError: should be specified transform_left
+                and transform_right simultaneously
                 or only transforms
         """
         super().__init__()

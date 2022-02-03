@@ -56,19 +56,19 @@ class MNIST(Dataset):
     # CVDF mirror of http://yann.lecun.com/exdb/mnist/
     resources = [
         (
-            "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz",  # noqa: E501, W505
             "f68b3c2dcbeaaa9fbdd348bbdeb94873",
         ),
         (
-            "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz",  # noqa: E501, W505
             "d53e105ee54ea40749a09fcbcd1e9432",
         ),
         (
-            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz",  # noqa: E501, W505
             "9fb629c4189551a2d022fa330f9573f3",
         ),
         (
-            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz",  # noqa: E501, W505
             "ec29112dd5afa0611ce80d1b7f02629c",
         ),
     ]

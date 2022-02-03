@@ -57,8 +57,10 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
     Args:
         patience: number of epochs with no improvement
             after which training will be stopped.
-        loader_key: loader key for early stopping (based on metric score over the dataset)
-        metric_key: metric key for early stopping (based on metric score over the dataset)
+        loader_key: loader key for early stopping
+            (based on metric score over the dataset)
+        metric_key: metric key for early stopping
+            (based on metric score over the dataset)
         minimize: if ``True`` then expected that metric should
             decrease and early stopping will be performed only when metric
             stops decreasing. If ``False`` then expected

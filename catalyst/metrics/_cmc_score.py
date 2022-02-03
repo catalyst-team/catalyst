@@ -101,7 +101,7 @@ class CMCMetric(AccumulativeMetric):
                 if self.is_train_loader:
                     images, targets = batch["features"].float(), batch["targets"].long()
                     features = self.model(images)
-                    self.batch = {"embeddings": features, "targets": targets,}
+                    self.batch = {"embeddings": features, "targets": targets}
                 else:
                     images, targets, is_query = (
                         batch["features"].float(),

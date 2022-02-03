@@ -87,8 +87,8 @@ def test_accuracy(
             [1],
             [
                 {"accuracy01": 0.5, "accuracy01/std": 0.0},
-                {"accuracy01": 0.75, "accuracy01/std": 0.288675,},
-                {"accuracy01": 0.6, "accuracy01/std": 0.41833,},
+                {"accuracy01": 0.75, "accuracy01/std": 0.288675},
+                {"accuracy01": 0.6, "accuracy01/std": 0.41833},
             ],
         ),
         (

@@ -75,7 +75,10 @@ class BatchTransformCallback(Callback):
                     dl.OptimizerCallback(metric_key="loss"),
                     dl.SchedulerCallback(),
                     dl.CheckpointCallback(
-                        logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+                        logdir="./logs",
+                        loader_key="valid",
+                        metric_key="map01",
+                        minimize=False
                     ),
                 ]
             )
@@ -93,9 +96,11 @@ class BatchTransformCallback(Callback):
                     accuracy01, accuracy03 = metrics.accuracy(
                         logits, batch["targets"], topk=(1, 3)
                     )
-                    self.batch_metrics.update(
-                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
-                    )
+                    self.batch_metrics.update({
+                        "loss": loss,
+                        "accuracy01":accuracy01,
+                        "accuracy03": accuracy03
+                    })
 
                     if self.is_train_loader:
                         loss.backward()
@@ -108,7 +113,10 @@ class BatchTransformCallback(Callback):
                     self.dataset = dataset
 
                 def __getitem__(self, item):
-                    return {"features": self.dataset[item][0], "targets": self.dataset[item][1]}
+                    return {
+                        "features": self.dataset[item][0],
+                        "targets": self.dataset[item][1]
+                    }
 
                 def __len__(self):
                     return len(self.dataset)
@@ -149,7 +157,9 @@ class BatchTransformCallback(Callback):
                 check=True,
                 callbacks=[
                     BatchTransformCallback(
-                        transform=transrorms, scope="on_batch_start", input_key="features"
+                        transform=transrorms,
+                        scope="on_batch_start",
+                        input_key="features"
                     )
                 ],
             )
@@ -178,16 +188,15 @@ class BatchTransformCallback(Callback):
         Preprocess your batch with specified function.
 
         Args:
-            transform (Callable, str): Function to apply.
+            transform: Function to apply.
                 If string will get function from registry.
-            scope (str): ``"on_batch_end"`` (post-processing model output) or
+            scope: ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
-            input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
-                Defaults to ``None``.
-            output_key (Union[List[str], str], optional): Keys for output.
+            input_key: Keys in batch dict to apply function. Defaults to ``None``.
+            output_key: Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
-            transform_kwargs (Dict[str, Any]): Kwargs for transform.
+            transform_kwargs: Kwargs for transform.
 
         Raises:
             TypeError: When keys is not str or a list.

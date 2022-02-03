@@ -26,7 +26,6 @@ if SETTINGS.ml_required:
 from catalyst.contrib.utils.serialization import deserialize, serialize
 
 from catalyst.contrib.utils.swa import average_weights, get_averaged_weights_by_path_mask
-from catalyst.contrib.utils.sys import import_module
 
 from catalyst.contrib.utils.torch import (
     get_optimal_inner_init,

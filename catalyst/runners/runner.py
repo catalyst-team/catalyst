@@ -1,7 +1,6 @@
 from typing import Any, Dict, Generator, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
-from pickle import NONE
 
 import torch
 from torch.utils.data import DataLoader
@@ -46,7 +45,7 @@ from catalyst.utils.torch import get_available_engine
 class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API.
 
-    Runner supports the logic for deep learning pipeline configuration 
+    Runner supports the logic for deep learning pipeline configuration
     with pure python code.
     Please check the examples for intuition.
 
@@ -61,7 +60,7 @@ class Runner(IRunner):
 
         It does not automatically add Criterion, Optimizer or Scheduler callbacks.
 
-        That means, that you have do optimization step by yourself during 
+        That means, that you have do optimization step by yourself during
         ``handle_batch`` method
         or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.
 
@@ -126,7 +125,9 @@ class Runner(IRunner):
                     {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
                 )
                 for key in ["loss", "accuracy01", "accuracy03"]:
-                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                    self.meters[key].update(
+                        self.batch_metrics[key].item(), self.batch_size
+                    )
                 # run model backward pass
                 if self.is_train_loader:
                     loss.backward()
@@ -318,7 +319,6 @@ class Runner(IRunner):
                 for training, validation or inference
             model: model to train
             engine: engine to use for model training
-            trial: trial to use during model training
             criterion: criterion function for training
             optimizer: optimizer for training
             scheduler: scheduler for training
@@ -358,7 +358,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
         """
         # experiment setup
@@ -401,7 +401,7 @@ class Runner(IRunner):
             batch: dictionary with data batches from DataLoader.
             **kwargs: additional kwargs to pass to the model
 
-        Returns:
+        Returns:  # noqa: DAR202
             Mapping: model output dictionary
 
         Raises:
@@ -442,7 +442,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
         """
         assert resume is None, NotImplementedError("work in progress")
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
@@ -479,6 +479,9 @@ class Runner(IRunner):
 
         Returns:
             Dict with metrics counted on the loader.
+
+        Raises:
+            IRunnerError: if ``CheckpointCallback`` found in the callbacks
         """
         callbacks = sort_callbacks_by_order(callbacks)
         for callback in callbacks.values():
@@ -546,7 +549,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Run model inference on specified data batch.
 
         .. warning::
-            You should not override this method. 
+            You should not override this method.
             If you need specific model call, override runner.forward() method.
 
         Args:

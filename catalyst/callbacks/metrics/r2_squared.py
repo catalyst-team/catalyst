@@ -6,8 +6,8 @@ class R2SquaredCallback(LoaderMetricCallback):
     """R2 Squared  metric callback.
 
     Args:
-        input_key: input key to use for r2squared calculation, specifies our ``y_true``.
-        target_key: output key to use for r2squared calculation, specifies our ``y_pred``.
+        input_key: input key to use for r2squared calculation, specifies our ``y_true``
+        target_key: output key to use for r2squared calculation, specifies our ``y_pred``
         prefix: metric prefix
         suffix: metric suffix
 

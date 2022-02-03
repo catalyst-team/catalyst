@@ -17,9 +17,9 @@ class OptunaPruningCallback(Callback):
 
     Args:
         trial:  Optuna.Trial for the experiment.
-        loader_key: loader key for best model selection 
+        loader_key: loader key for best model selection
             (based on metric score over the dataset)
-        metric_key: metric key for best model selection 
+        metric_key: metric key for best model selection
             (based on metric score over the dataset)
         minimize: boolean flag to minimize the required metric
         min_delta: minimal delta for metric improve
@@ -50,8 +50,6 @@ class OptunaPruningCallback(Callback):
 
         study = optuna.create_study()
         study.optimize(objective, n_trials=100, timeout=600)
-
-    Config API is supported through `catalyst-dl tune` command.
     """
 
     def __init__(

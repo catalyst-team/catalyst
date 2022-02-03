@@ -121,10 +121,10 @@ package to help with code formatting issues, and a corresponding pre-commit hook
 - You could check the codestyle for your PR with:
     ```bash
     # to make code compatible with `catalyst` code style
-    catalyst-make-codestyle -l 99
+    catalyst-make-codestyle -l 89
 
     # to check that the code is `catalyst` code style compliant
-    catalyst-check-codestyle -l 99
+    catalyst-check-codestyle -l 89
     ```
 
     Or you can use ```make check```

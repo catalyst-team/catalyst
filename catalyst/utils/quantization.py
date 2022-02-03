@@ -16,8 +16,9 @@ def quantize_model(
 
     Args:
         model: model to be quantized
-        qconfig_spec (Dict, optional): quantization config in PyTorch format. Defaults to None.
-        dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.
+        qconfig_spec (Dict, optional): quantization config in PyTorch format.
+            Defaults to None.
+        dtype: Type of weights after quantization.
             Defaults to "qint8".
 
     Returns:

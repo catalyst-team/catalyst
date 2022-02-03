@@ -1,3 +1,4 @@
+# flake8: noqa
 # from typing import List, TYPE_CHECKING, Union
 # from pathlib import Path
 
@@ -121,7 +122,8 @@
 #                 runner = dl.SupervisedRunner()
 #                 runner.train(
 #                     model=model,
-#                     callbacks=[dl.TracingCallback(input_key="features", logdir="./logs")],
+#                     callbacks=[
+# dl.TracingCallback(input_key="features", logdir="./logs")],
 #                     loaders=loaders,
 #                     criterion=criterion,
 #                     optimizer=optimizer,

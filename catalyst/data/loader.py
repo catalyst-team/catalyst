@@ -27,10 +27,13 @@ class ILoaderWrapper(DataLoader):
         Firstly, looks at the ``origin`` for the appropriate ``key``.
         If none founds - looks at the wrappers attributes.
         If could not found anything - raises ``NotImplementedError``.
+
         Args:
             key: attribute key
+
         Returns:
             attribute value
+
         Raises:
             NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``
         """
@@ -47,6 +50,7 @@ class ILoaderWrapper(DataLoader):
 
     def __len__(self) -> int:
         """Returns length of the wrapper loader.
+
         Returns:
             int: length of the wrapper loader
         """

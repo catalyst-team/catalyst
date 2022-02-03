@@ -39,7 +39,7 @@ class NeptuneLogger(ILogger):
     https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379
 
     To start with Neptune please check
-    `Neptune getting-started docs <https://docs.neptune.ai/getting-started/installation>`_
+    `Neptune getting-started docs <http://docs.neptune.ai/getting-started/installation>`_
     because you will need ``api_token`` and project to log your Catalyst runs to.
 
     .. note::
@@ -50,7 +50,7 @@ class NeptuneLogger(ILogger):
         base_namespace: Optional, ``str``, root namespace within Neptune's run.
           Default is "experiment".
         api_token: Optional, ``str``. Your Neptune API token. Read more about it in the
-          `Neptune installation docs <https://docs.neptune.ai/getting-started/installation>`_.
+          `Neptune docs <http://docs.neptune.ai/getting-started/installation>`_.
         project: Optional, ``str``. Name of the project to log runs to.
           It looks like this: "my_workspace/my_project".
         run: Optional, pass Neptune run object if you want to continue logging
@@ -61,9 +61,9 @@ class NeptuneLogger(ILogger):
           (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
           (default: SETTINGS.log_epoch_metrics or True).
-        neptune_run_kwargs: Optional, additional keyword arguments 
-          to be passed directly to the 
-          `neptune.init()  <https://docs.neptune.ai/api-reference/neptune#init>`_ 
+        neptune_run_kwargs: Optional, additional keyword arguments
+          to be passed directly to the
+          `neptune.init()  <https://docs.neptune.ai/api-reference/neptune#init>`_
           function.
 
     Python API examples:
@@ -100,27 +100,6 @@ class NeptuneLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            neptune:
-                _target_: NeptuneLogger
-                project: my_workspace/my_project
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            neptune:
-                _target_: catalyst.dl.NeptuneLogger
-                project: my_workspace/my_project
-                base_namespace: catalyst
-        ...
     """
 
     def __init__(
@@ -234,7 +213,7 @@ class NeptuneLogger(ILogger):
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == "experiment" or scope is None:
             neptune_path = "/".join(
-                [self.base_namespace, "_artifacts", "epoch-" + str(epoch_step), tag,]
+                [self.base_namespace, "_artifacts", "epoch-" + str(epoch_step), tag]
             )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
 

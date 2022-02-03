@@ -12,15 +12,15 @@ class MixupCallback(Callback):
 
     Args:
         keys: batch keys to which you want to apply augmentation
-        alpha: beta distribution a=b parameters. Must be >=0. 
+        alpha: beta distribution a=b parameters. Must be >=0.
             The more alpha closer to zero the less effect of the mixup.
-        mode: mode determines the method of use. Must be in ["replace", "add"]. 
-            If "replace" then replaces the batch with a mixed one, 
+        mode: mode determines the method of use. Must be in ["replace", "add"].
+            If "replace" then replaces the batch with a mixed one,
             while the batch size is not changed.
-            If "add", concatenates mixed examples to the current ones, 
+            If "add", concatenates mixed examples to the current ones,
             the batch size increases by 2 times.
-        on_train_only: apply to train only. 
-            As the mixup use the proxy inputs, the targets are also proxy. 
+        on_train_only: apply to train only.
+            As the mixup use the proxy inputs, the targets are also proxy.
             We are not interested in them, are we? So, if ``on_train_only``
             is ``True`` use a standard output/metric for validation.
 
@@ -103,7 +103,9 @@ class MixupCallback(Callback):
             callbacks={
                 "mixup": MixupCallback(keys=["image", "clf_targets_one_hot"]),
                 "criterion": dl.CriterionCallback(
-                    metric_key="loss", input_key="clf_logits", target_key="clf_targets_one_hot"
+                    metric_key="loss",
+                    input_key="clf_logits",
+                    target_key="clf_targets_one_hot"
                 ),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "classification": dl.ControlFlowCallback(

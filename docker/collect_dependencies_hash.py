@@ -8,12 +8,17 @@ sha = hashlib.sha1(
             for x, y in [
                 ("docker/Dockerfile", True),
                 ("requirements/requirements.txt", True),
-                ("requirements/requirements-dev.txt", os.environ.get("CATALYST_DEV", "0") == "1"),
-                ("requirements/requirements-cv.txt", os.environ.get("CATALYST_CV", "0") == "1"),
-                ("requirements/requirements-ml.txt", os.environ.get("CATALYST_ML", "0") == "1"),
                 (
-                    "requirements/requirements-hydra.txt",
-                    os.environ.get("CATALYST_HYDRA", "0") == "1",
+                    "requirements/requirements-dev.txt",
+                    os.environ.get("CATALYST_DEV", "0") == "1",
+                ),
+                (
+                    "requirements/requirements-cv.txt",
+                    os.environ.get("CATALYST_CV", "0") == "1",
+                ),
+                (
+                    "requirements/requirements-ml.txt",
+                    os.environ.get("CATALYST_ML", "0") == "1",
                 ),
                 (
                     "requirements/requirements-optuna.txt",

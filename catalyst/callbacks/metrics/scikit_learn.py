@@ -144,7 +144,8 @@ class SklearnBatchCallback(FunctionalBatchMetricCallback):
 
 
 class SklearnLoaderCallback(LoaderMetricCallback):
-    """SklearnLoaderCallback implements an integration of **loader-based** Sklearn metrics
+    """SklearnLoaderCallback implements an integration
+    of **loader-based** Sklearn metrics
 
     Args:
         keys: a mapping between ``metric_fn`` arguments and keys in ``runner.batch``

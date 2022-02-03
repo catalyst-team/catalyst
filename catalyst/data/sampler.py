@@ -153,9 +153,10 @@ class BatchBalanceClassSampler(Sampler):
         from catalyst.data import ToTensor, BatchBalanceClassSampler
         from catalyst.contrib.datasets import MNIST
 
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_data = MNIST(os.getcwd(), train=True, download=True)
         train_labels = train_data.targets.cpu().numpy().tolist()
-        train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
+        train_sampler = BatchBalanceClassSampler(
+            train_labels, num_classes=10, num_samples=4)
         valid_data = MNIST(os.getcwd(), train=False)
 
         loaders = {

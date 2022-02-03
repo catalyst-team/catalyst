@@ -155,8 +155,9 @@ def all_gather(data: Any) -> List[Any]:
     """Run all_gather on arbitrary picklable data (not necessarily tensors).
 
     .. note::
-        if data on different devices then data in resulted list will be on the same devices.
-        Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
+        if data on different devices
+        then data in resulted list will be on the same devices.
+        Source: http://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
 
     Args:
         data: any picklable object

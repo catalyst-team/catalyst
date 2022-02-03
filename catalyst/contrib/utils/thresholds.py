@@ -45,7 +45,8 @@ def get_binary_threshold(
     objective: METRIC_FN,
     num_thresholds: int = 100,
 ) -> Tuple[float, float]:
-    """Finds best threshold for binary classification task based on cross-validation estimates.
+    """Finds best threshold for binary classification task
+    based on cross-validation estimates.
 
     Args:
         scores: estimated per-class scores/probabilities predicted by the model,
@@ -152,8 +153,8 @@ def get_binary_threshold_cv(
     num_repeats: int = 1,
     random_state: int = 42,
 ):
-    """Finds best threshold for binary classification task
-    based on cross-validation estimates.
+    """Finds best threshold
+    for binary classification task based on cross-validation estimates.
 
     Args:
         scores: estimated per-class scores/probabilities predicted by the model,
@@ -306,7 +307,8 @@ def get_multilabel_thresholds_greedy(
     patience: int = 3,
     atol: float = 0.01,
 ) -> Tuple[float, List[float]]:
-    """Finds best thresholds for multilabel classification task with brute-force algorithm.
+    """Finds best thresholds
+    for multilabel classification task with brute-force algorithm.
 
     Args:
         scores: estimated per-class scores/probabilities predicted by the model
@@ -352,7 +354,8 @@ def get_multiclass_thresholds_greedy(
     patience: int = 3,
     atol: float = 0.01,
 ) -> Tuple[float, List[float]]:
-    """Finds best thresholds for multiclass classification task with brute-force algorithm.
+    """Finds best thresholds
+    for multiclass classification task with brute-force algorithm.
 
     Args:
         scores: estimated per-class scores/probabilities predicted by the model

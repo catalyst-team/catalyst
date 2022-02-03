@@ -68,7 +68,7 @@ jobs:
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-albu.txt
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-comet.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-wandb.txt -r ./requirements/requirements-profiler.txt
           python --version
           pip --version
           pip list
@@ -106,39 +106,39 @@ jobs:
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
       # https://github.com/actions/cache/blob/master/examples.md#multiple-oss-in-a-workflow
-      - name: get pip cache
-        id: pip-cache
-        run: |
-          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+      # - name: get pip cache
+      #   id: pip-cache
+      #   run: |
+      #     python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
 
-      - name: cache pip
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.python-version }}-pip-
+      # - name: cache pip
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ${{ steps.pip-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.python-version }}-pip-
 
-      - name: cache pip contrib
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
+      # - name: cache pip contrib
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ${{ steps.pip-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
-      - name: cache pip loggers
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip-loggers -${{ hashFiles('./requirements/requirements-comet.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }} -${{ hashFiles('./requirements/requirements-wandb.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.python-version }}-pip-loggers
+      # - name: cache pip loggers
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ${{ steps.pip-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ matrix.python-version }}-pip-loggers -${{ hashFiles('./requirements/requirements-comet.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }} -${{ hashFiles('./requirements/requirements-wandb.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.python-version }}-pip-loggers
 
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-comet.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-wandb.txt
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-comet.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-wandb.txt -r ./requirements/requirements-profiler.txt
           python --version
           pip --version
           pip list

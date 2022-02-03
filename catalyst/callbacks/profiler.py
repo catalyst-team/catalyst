@@ -27,13 +27,13 @@ class ProfilerCallback(Callback):
         export_stacks_kwargs: arguments to pass to a ``profiler.export_stacks`` method.
             If ``None`` then triggering ``profiler.export_stacks`` will be avoided.
 
-            Example of using **FlameGraph** tool:
+    Example of using **FlameGraph** tool for ``profiler.export_stacks``:
 
-            .. code-block:: bash
+    .. code-block:: bash
 
-                git clone https://github.com/brendangregg/FlameGraph
-                cd FlameGraph
-                ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks > perf_viz.svg
+        git clone https://github.com/brendangregg/FlameGraph
+        cd FlameGraph
+        ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks > perf_viz.svg
 
     .. note::
         Export to tensorboard and chrome trace mutually exclusive and specifying both of

@@ -31,21 +31,18 @@ class TensorboardLogger(ILogger):
 
     Args:
         logdir: path to logdir for tensorboard.
-        use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir.
+        use_logdir_postfix: boolean flag
+            to use extra ``tensorboard`` prefix in the logdir.
         log_batch_metrics: boolean flag to log batch metrics
             (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
             (default: SETTINGS.log_epoch_metrics or True).
 
     .. note::
-        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
-        specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
+        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner``
+        in case of specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
 
-    .. note::
-        This logger is used by default by ``dl.ConfigRunner`` and ``dl.HydraRunner`` in case of
-        specified logdir in config ``args``.
-
-    Notebook API examples:
+    Examples:
 
     .. code-block:: python
 
@@ -73,26 +70,6 @@ class TensorboardLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            tensorboard:
-                _target_: TensorboardLogger
-                logdir: ./logdir/tensorboard
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            tensorboard:
-                _target_: catalyst.dl.TensorboardLogger
-                logdir: ./logdir/tensorboard
-        ...
     """
 
     def __init__(

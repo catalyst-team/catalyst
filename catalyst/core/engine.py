@@ -16,19 +16,60 @@ if SETTINGS.xla_required:
 
 
 class IEngine(Accelerator):
+    """
+    An abstraction that syncs experiment run with
+    different hardware-specific configurations.
+    - CPU
+    - GPU
+    - DataParallel (deepspeed, torch)
+    - AMP (deepspeed, torch)
+    - DDP (deepspeed, torch)
+    - XLA
+    Abstraction, please check out implementations for more details:
+        - :py:mod:`catalyst.engines.torch.CPUEngine`
+        - :py:mod:`catalyst.engines.torch.GPUEngine`
+        - :py:mod:`catalyst.engines.torch.DataParallelEngine`
+        - :py:mod:`catalyst.engines.torch.DistributedDataParallelEngine`
+    """
+
     @staticmethod
-    def spawn(fn: Callable):
-        fn()
+    def spawn(fn: Callable, *args, **kwargs):
+        """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
+
+        Returns:
+            wrapped function (if needed).
+        """
+        return fn(*args, **kwargs)
 
     @staticmethod
     def setup(local_rank: int, world_size: int):
+        """Initialize DDP variables and processes if required.
+
+        Args:
+            local_rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
         pass
 
     @staticmethod
     def cleanup():
+        """Cleans DDP variables and processes."""
         pass
 
     def mean_reduce_ddp_metrics(self, metrics: Dict):
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         if self.state.distributed_type in [
             DistributedType.MULTI_CPU,
             DistributedType.MULTI_GPU,

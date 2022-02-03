@@ -184,13 +184,13 @@ class ControlFlowCallbackWrapper(CallbackWrapper):
 
             If the object passed to a ``filter_fn`` is a string
             then it will be interpreted as python code. Expected
-            lambda function with two arguments: epoch number (int) and loader name (str). 
+            lambda function with two arguments: epoch number (int) and loader name (str).
             This function should return ``True`` if callback should be enabled
             on some condition.
 
             If passed callable object then it should accept
             two arguments: epoch number (int) and loader name (str).
-            It should return ``True`` if callback should be enabled on some condition 
+            It should return ``True`` if callback should be enabled on some condition
             othervise should return ``False``.
 
             Default value is ``None``.
@@ -217,13 +217,13 @@ class ControlFlowCallbackWrapper(CallbackWrapper):
 
         Please run experiment with
         :class:`check option
-        <catalyst.core.callbacks.early_stop.CheckRunCallback>`
+        <catalyst.callbacks.misc.CheckRunCallback>`
         to check if everything works as expected with this callback.
 
     For example, if you don't want to compute loss on a validation
     you can ignore
     :class:`CriterionCallback
-    <catalyst.core.callbacks.criterion.CriterionCallback>`,
+    <catalyst.callbacks.criterion.CriterionCallback>`,
     for **notebook API** need to wrap callback:
 
     .. code-block:: python
@@ -269,19 +269,6 @@ class ControlFlowCallbackWrapper(CallbackWrapper):
                 )
             ]
         )
-
-    In **config API** need to use ``_wrapper`` argument:
-
-    .. code-block:: yaml
-
-        callbacks_params:
-          ...
-          loss:
-            _wrapper:
-               callback: ControlFlowCallback
-               ignore_loaders: valid
-            callback: CriterionCallback
-          ...
 
     """
 

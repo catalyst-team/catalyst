@@ -67,7 +67,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
+        """Logs artifact (arbitrary file like audio, video, etc) to the logger."""
         pass
 
     def log_image(

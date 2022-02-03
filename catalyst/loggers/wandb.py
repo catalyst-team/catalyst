@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 import os
 import pickle
 
@@ -25,7 +25,7 @@ class WandbLogger(ILogger):
             (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
             (default: SETTINGS.log_epoch_metrics or True).
-        kwargs: Optional, 
+        kwargs: Optional,
             additional keyword arguments to be passed directly to the wandb.init
 
     Python API examples:
@@ -56,28 +56,6 @@ class WandbLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            wandb:
-                _target_: WandbLogger
-                project: test_exp
-                name: test_run
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            wandb:
-                _target_: catalyst.dl.WandbLogger
-                project: test_exp
-                name: test_run
-        ...
     """
 
     def __init__(
@@ -139,7 +117,7 @@ class WandbLogger(ILogger):
         artifact = wandb.Artifact(
             name=self.run.id + "_aritfacts",
             type="artifact",
-            metadata={"loader_key": loader_key, "scope": scope,},
+            metadata={"loader_key": loader_key, "scope": scope},
         )
 
         if artifact:

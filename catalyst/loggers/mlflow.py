@@ -76,7 +76,8 @@ class MLflowLogger(ILogger):
     Args:
         experiment: Name of the experiment in MLflow to log to.
         run: Name of the run in Mlflow to log to.
-        tracking_uri: URI of tracking server against which to log run information related.
+        tracking_uri: URI of tracking server against which
+            to log run information related.
         registry_uri: Address of local or remote model registry server.
         exclude: Name of  to exclude from logging.
         log_batch_metrics: boolean flag to log batch metrics
@@ -112,28 +113,6 @@ class MLflowLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            mlflow:
-                _target_: MLflowLogger
-                experiment: test_exp
-                run: test_run
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            mlflow:
-                _target_: catalyst.dl.MLflowLogger
-                experiment: test_exp
-                run: test_run
-        ...
     """
 
     def __init__(

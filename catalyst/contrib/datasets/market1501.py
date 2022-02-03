@@ -14,10 +14,11 @@ from catalyst.contrib.utils.image import imread
 
 class Market1501MLDataset(MetricLearningTrainDataset):
     """
-    Market1501 train dataset. This dataset should be used for training stage of the reid pipeline.
+    Market1501 train dataset.
+    This dataset should be used for training stage of the reid pipeline.
 
     .. _Scalable Person Re-identification\: A Benchmark:
-        https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf
+        https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf  # noqa: E501, W505
     """
 
     def __init__(
@@ -167,8 +168,8 @@ class Market1501QGDataset(QueryGalleryDataset):
             index: index of the item to get
 
         Returns:
-            dict of image, pid, cid and is_query flag that shows if the image should be used as
-            query or gallery sample.
+            dict of image, pid, cid and is_query flag
+            that shows if the image should be used as query or gallery sample.
         """
         img = self.data[index]
         if self.transform is not None:

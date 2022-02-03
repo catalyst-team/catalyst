@@ -19,13 +19,13 @@ class SupervisedContrastiveLoss(nn.Module):
         """
         Args:
             tau: temperature
-            reduction (string, optional): specifies the reduction to apply to the output:
+            reduction: specifies the reduction to apply to the output:
                 ``"none"`` | ``"mean"`` | ``"sum"``.
                 ``"none"``: no reduction will be applied,
                 ``"mean"``: the sum of the output will be divided by the number of
                 positive pairs in the output,
                 ``"sum"``: the output will be summed.
-            pos_aggregation (string, optional): specifies the place of positive pairs aggregation:
+            pos_aggregation: specifies the place of positive pairs aggregation:
                 ``"in"`` | ``"out"``.
                 ``"in"``: maximization of log(average positive exponentiate similarity)
                 ``"out"``: maximization of average positive similarity
@@ -47,7 +47,8 @@ class SupervisedContrastiveLoss(nn.Module):
             )
         if self.pos_aggregation not in ["in", "out"]:
             raise ValueError(
-                f"Positive aggregation should be: in or out. But got - {self.pos_aggregation}!"
+                "Positive aggregation should be: in or out."
+                f"But got - {self.pos_aggregation}!"
             )
 
     def forward(self, features: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
@@ -99,3 +100,6 @@ class SupervisedContrastiveLoss(nn.Module):
         elif self.reduction == "sum":
             loss = loss.sum()
         return loss
+
+
+__all__ = [SupervisedContrastiveLoss]

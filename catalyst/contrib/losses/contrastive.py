@@ -191,11 +191,13 @@ class BarlowTwinsLoss(nn.Module):
         shape_left, shape_right = embeddings_left.shape, embeddings_right.shape
         if len(shape_left) != 2:
             raise ValueError(
-                f"Left shape should be (batch_size, feature_dim), but got - {shape_left}!"
+                "Left shape should be (batch_size, feature_dim),"
+                f"but got - {shape_left}!"
             )
         elif len(shape_right) != 2:
             raise ValueError(
-                f"Right shape should be (batch_size, feature_dim), but got - {shape_right}!"
+                "Right shape should be (batch_size, feature_dim),"
+                f"but got - {shape_right}!"
             )
         if shape_left[0] == 1:
             raise ValueError(f"Batch size should be >= 2, but got - {shape_left[0]}!")

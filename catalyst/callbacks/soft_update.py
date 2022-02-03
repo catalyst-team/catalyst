@@ -16,26 +16,15 @@ class SoftUpdateCallaback(Callback):
                 ``"on_batch_start"``
                 ``"on_epoch_end"``
                 ``"on_epoch_start"``
+
+    Raises:
+        TypeError: if invalid scope
     """
 
     def __init__(
         self, target_model: str, source_model: str, tau: float, scope: str
     ) -> None:
-        """Init.
-
-        Args:
-            target_model_key: key to the data inside `runner.model` to update
-            source_model_key: key to the source data inside `runner.model`
-            tau: smoothing parameter `target * (1.0 - tau) + source * tau`
-            scope (str): when the `target` should be updated
-                ``"on_batch_end"``
-                ``"on_batch_start"``
-                ``"on_epoch_end"``
-                ``"on_epoch_start"``
-
-        Raises:
-            TypeError: if invalid scope
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.External)
         self.target_model = target_model
         self.source_model = source_model
@@ -57,6 +46,7 @@ class SoftUpdateCallaback(Callback):
             )
 
     def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
         assert self.target_model in runner.model, (
             f"Could not find speficied target model ({self.target_model}) "
             "within available runner models ({runner.model.keys()})"
