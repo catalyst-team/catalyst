@@ -1,7 +1,12 @@
-from typing import Iterable
+from typing import Iterable, TYPE_CHECKING
+
+from accelerate.state import DistributedType
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CMCScoreCallback(LoaderMetricCallback):
@@ -166,6 +171,14 @@ class CMCScoreCallback(LoaderMetricCallback):
             target_key=[labels_key],
         )
 
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert runner.engine.distributed_type not in (
+            DistributedType.MULTI_GPU,
+            DistributedType.TPU,
+        ), "CMCScoreCallback could not work within ddp training"
+        return super().on_experiment_start(runner)
+
 
 class ReidCMCScoreCallback(LoaderMetricCallback):
     """
@@ -209,6 +222,14 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
             input_key=[embeddings_key, is_query_key],
             target_key=[pids_key, cids_key],
         )
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert runner.engine.distributed_type not in (
+            DistributedType.MULTI_GPU,
+            DistributedType.TPU,
+        ), "ReidCMCScoreCallback could not work within ddp training"
+        return super().on_experiment_start(runner)
 
 
 __all__ = ["CMCScoreCallback", "ReidCMCScoreCallback"]

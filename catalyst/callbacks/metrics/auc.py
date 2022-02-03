@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._auc import AUCMetric
 from catalyst.settings import SETTINGS
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -92,6 +97,13 @@ class AUCCallback(LoaderMetricCallback):
             input_key=input_key,
             target_key=target_key,
         )
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert (
+            not runner.engine.use_fp16
+        ), "AUCCallback could not work within amp training"
+        return super().on_experiment_start(runner)
 
 
 __all__ = ["AUCCallback"]
