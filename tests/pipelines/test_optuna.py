@@ -25,8 +25,14 @@ def train_experiment(engine=None):
             num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
             loaders = {
-                "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
-                "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+                "train": DataLoader(
+                    MNIST(DATA_ROOT, train=False),
+                    batch_size=32,
+                ),
+                "valid": DataLoader(
+                    MNIST(DATA_ROOT, train=False),
+                    batch_size=32,
+                ),
             }
             model = nn.Sequential(
                 nn.Flatten(),

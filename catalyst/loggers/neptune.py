@@ -286,7 +286,9 @@ class NeptuneLogger(ILogger):
             neptune_path = "/".join([self.base_namespace, scope])
             if prepared_metrics:
                 self._log_metrics(
-                    metrics=prepared_metrics, neptune_path=neptune_path, step=epoch_step,
+                    metrics=prepared_metrics,
+                    neptune_path=neptune_path,
+                    step=epoch_step,
                 )
         elif scope == "experiment" or scope is None:
             self._log_metrics(metrics=metrics, neptune_path=self.base_namespace, step=0)

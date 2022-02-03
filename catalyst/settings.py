@@ -321,9 +321,9 @@ class Settings(FrozenClass):
         )
 
         self.use_lz4: bool = use_lz4 or os.environ.get("CATALYST_USE_LZ4", "0") == "1"
-        self.use_pyarrow: bool = use_pyarrow or os.environ.get(
-            "CATALYST_USE_PYARROW", "0"
-        ) == "1"
+        self.use_pyarrow: bool = (
+            use_pyarrow or os.environ.get("CATALYST_USE_PYARROW", "0") == "1"
+        )
         self.use_libjpeg_turbo: bool = (
             use_libjpeg_turbo or os.environ.get("CATALYST_USE_LIBJPEG_TURBO", "0") == "1"
         )

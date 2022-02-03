@@ -64,7 +64,12 @@ class DistributedDataParallelEngine(IEngine):
             wrapped function (if needed).
         """
         world_size: int = torch.cuda.device_count()
-        return mp.spawn(fn, args=(world_size,), nprocs=world_size, join=True,)
+        return mp.spawn(
+            fn,
+            args=(world_size,),
+            nprocs=world_size,
+            join=True,
+        )
 
     @staticmethod
     def setup(local_rank: int, world_size: int):
@@ -93,7 +98,8 @@ class DistributedDataParallelEngine(IEngine):
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         metrics = {
             k: mean_reduce(
-                torch.tensor(v, device=self.device), world_size=self.state.num_processes,
+                torch.tensor(v, device=self.device),
+                world_size=self.state.num_processes,
             )
             for k, v in metrics.items()
         }

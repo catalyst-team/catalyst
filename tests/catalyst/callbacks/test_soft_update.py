@@ -32,7 +32,10 @@ def test_soft_update():
     runner.is_train_loader = True
 
     soft_update = dl.SoftUpdateCallaback(
-        target_model="target", source_model="source", tau=0.1, scope="on_batch_end",
+        target_model="target",
+        source_model="source",
+        tau=0.1,
+        scope="on_batch_end",
     )
     soft_update.on_batch_end(runner)
 
@@ -63,7 +66,10 @@ def test_soft_update_not_work():
     runner.is_train_loader = True
 
     soft_update = dl.SoftUpdateCallaback(
-        target_model="target", source_model="source", tau=0.1, scope="on_batch_start",
+        target_model="target",
+        source_model="source",
+        tau=0.1,
+        scope="on_batch_start",
     )
     soft_update.on_batch_end(runner)
 

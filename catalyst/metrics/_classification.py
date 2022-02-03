@@ -547,7 +547,9 @@ class BinaryPrecisionRecallF1Metric(BinaryStatisticsMetric):
     ):
         """Init BinaryPrecisionRecallF1SupportMetric instance"""
         super().__init__(
-            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix,
+            compute_on_call=compute_on_call,
+            prefix=prefix,
+            suffix=suffix,
         )
         self.statistics = None
         self.zero_division = zero_division

@@ -71,8 +71,14 @@ def train_experiment(engine=None):
         criterion = nn.CrossEntropyLoss()
 
         loaders = {
-            "train": DataLoader(MNIST(DATA_ROOT, train=True), batch_size=32,),
-            "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+            "train": DataLoader(
+                MNIST(DATA_ROOT, train=True),
+                batch_size=32,
+            ),
+            "valid": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
         }
 
         runner = CustomRunner()

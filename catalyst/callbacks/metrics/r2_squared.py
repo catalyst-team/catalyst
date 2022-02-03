@@ -58,7 +58,11 @@ class R2SquaredCallback(LoaderMetricCallback):
     """
 
     def __init__(
-        self, input_key: str, target_key: str, prefix: str = None, suffix: str = None,
+        self,
+        input_key: str,
+        target_key: str,
+        prefix: str = None,
+        suffix: str = None,
     ):
         """Init."""
         super().__init__(

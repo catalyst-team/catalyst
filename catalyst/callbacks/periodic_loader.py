@@ -50,7 +50,11 @@ class PeriodicLoaderCallback(Callback):
     """
 
     def __init__(
-        self, valid_loader_key: str, valid_metric_key: str, minimize: bool, **kwargs,
+        self,
+        valid_loader_key: str,
+        valid_metric_key: str,
+        minimize: bool,
+        **kwargs,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.internal)

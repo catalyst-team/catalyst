@@ -19,8 +19,14 @@ def train_experiment(engine=None):
         optimizer = optim.Adam(model.parameters(), lr=0.02)
 
         loaders = {
-            "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
-            "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+            "train": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
+            "valid": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
         }
 
         runner = dl.SupervisedRunner(

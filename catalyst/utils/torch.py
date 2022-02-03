@@ -82,7 +82,9 @@ def get_device() -> torch.device:
 
 
 def get_available_engine(
-    cpu: bool = False, fp16: bool = False, ddp: bool = False,
+    cpu: bool = False,
+    fp16: bool = False,
+    ddp: bool = False,
 ) -> "IEngine":
     """Returns available engine based on given arguments.
 

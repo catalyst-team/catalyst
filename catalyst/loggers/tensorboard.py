@@ -159,7 +159,10 @@ class TensorboardLogger(ILogger):
         elif scope == "loader" and self.log_epoch_metrics:
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
-                metrics=metrics, step=epoch_step, loader_key=loader_key, suffix="/epoch",
+                metrics=metrics,
+                step=epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             # @TODO: remove naming magic

@@ -19,7 +19,9 @@ from catalyst.metrics._r2_squared import R2Squared
     ),
 )
 def test_r2_squared(
-    outputs: torch.Tensor, targets: torch.Tensor, true_values: Dict[str, torch.Tensor],
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    true_values: Dict[str, torch.Tensor],
 ) -> None:
     """
     Test r2 squared metric

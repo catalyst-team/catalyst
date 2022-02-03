@@ -218,7 +218,10 @@ class MLflowLogger(ILogger):
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=batch_step, loader_key=loader_key, suffix="/batch",
+                metrics=metrics,
+                step=batch_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             for loader_key, per_loader_metrics in metrics.items():

@@ -68,8 +68,14 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self):
         loaders = {
-            "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
-            "valid": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+            "train": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
+            "valid": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
         }
         return loaders
 

@@ -104,7 +104,10 @@ class AccuracyCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=AccuracyMetric(
-                topk=topk, num_classes=num_classes, prefix=prefix, suffix=suffix,
+                topk=topk,
+                num_classes=num_classes,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,

@@ -128,7 +128,9 @@ def run_catalyst(
         verbose=False,
         callbacks=[
             dl.AccuracyCallback(
-                input_key=runner._output_key, target_key=runner._target_key, topk=(1,),
+                input_key=runner._output_key,
+                target_key=runner._target_key,
+                topk=(1,),
             )
         ],
     )
@@ -249,7 +251,10 @@ def test_benchmark(
         f"Times are for... \n PyTorch: {pytorch['time']} \n Catalyst: {catalyst['time']}"
     )
     assert_absolute_equal(
-        catalyst["time"], pytorch["time"], norm=num_epochs, max_diff=max_diff_time,
+        catalyst["time"],
+        pytorch["time"],
+        norm=num_epochs,
+        max_diff=max_diff_time,
     )
 
     # check memory

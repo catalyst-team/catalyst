@@ -180,11 +180,17 @@ class WandbLogger(ILogger):
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=sample_step, loader_key=loader_key, prefix="batch",
+                metrics=metrics,
+                step=sample_step,
+                loader_key=loader_key,
+                prefix="batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
             self._log_metrics(
-                metrics=metrics, step=sample_step, loader_key=loader_key, prefix="epoch",
+                metrics=metrics,
+                step=sample_step,
+                loader_key=loader_key,
+                prefix="epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             loader_key = "_epoch_"

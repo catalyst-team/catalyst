@@ -51,7 +51,11 @@ def test_files_existence(tmpdir):
     n_epochs = 5
     callbacks = [
         dl.CheckpointCallback(
-            logdir=tmpdir, loader_key="valid", metric_key="loss", minimize=True, topk=2,
+            logdir=tmpdir,
+            loader_key="valid",
+            metric_key="loss",
+            minimize=True,
+            topk=2,
         ),
         dl.CheckRunCallback(num_epoch_steps=n_epochs),
     ]

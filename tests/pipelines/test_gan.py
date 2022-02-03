@@ -121,7 +121,10 @@ def train_experiment(engine=None):
             ),
         }
         loaders = {
-            "train": DataLoader(MNIST(DATA_ROOT, train=False), batch_size=32,),
+            "train": DataLoader(
+                MNIST(DATA_ROOT, train=False),
+                batch_size=32,
+            ),
         }
 
         runner = CustomRunner(latent_dim)
@@ -145,10 +148,12 @@ def train_experiment(engine=None):
                     criterion_key="generator",
                 ),
                 dl.OptimizerCallback(
-                    optimizer_key="generator", metric_key="loss_generator",
+                    optimizer_key="generator",
+                    metric_key="loss_generator",
                 ),
                 dl.OptimizerCallback(
-                    optimizer_key="discriminator", metric_key="loss_discriminator",
+                    optimizer_key="discriminator",
+                    metric_key="loss_discriminator",
                 ),
             ],
             valid_loader="train",
