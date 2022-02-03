@@ -88,7 +88,14 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("docker", "docs", "tests", "examples",)),
+    packages=find_packages(
+        exclude=(
+            "docker",
+            "docs",
+            "tests",
+            "examples",
+        )
+    ),
     entry_points={
         "console_scripts": [
             "catalyst-contrib=catalyst.contrib.__main__:main",
