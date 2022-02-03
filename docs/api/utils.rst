@@ -56,21 +56,6 @@ Quantization
     :undoc-members:
     :show-inheritance:
 
-
-Stochastic Weights Averaging (SWA)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.swa
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Sys
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.sys
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Torch
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.torch

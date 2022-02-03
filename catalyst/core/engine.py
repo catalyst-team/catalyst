@@ -25,6 +25,7 @@ class IEngine(Accelerator):
     - AMP (deepspeed, torch)
     - DDP (deepspeed, torch)
     - XLA
+
     Abstraction, please check out implementations for more details:
         - :py:mod:`catalyst.engines.torch.CPUEngine`
         - :py:mod:`catalyst.engines.torch.GPUEngine`
