@@ -1,6 +1,6 @@
+# flake8: noqa
 from typing import Dict, Iterable, Union
 from collections import OrderedDict
-import os
 from tempfile import TemporaryDirectory
 
 import numpy as np
@@ -266,7 +266,10 @@ def test_metric_learning_pipeline():
                     loaders="valid",
                 ),
                 "control": dl.PeriodicLoaderCallback(
-                    valid_loader_key="valid", valid_metric_key="cmc", valid=2
+                    valid_loader_key="valid",
+                    valid_metric_key="cmc",
+                    minimize=False,
+                    valid=2,
                 ),
             }
         )

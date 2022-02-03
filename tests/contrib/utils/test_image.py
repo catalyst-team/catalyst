@@ -1,3 +1,4 @@
+# flake8: noqa
 import pytest
 
 from catalyst.settings import SETTINGS

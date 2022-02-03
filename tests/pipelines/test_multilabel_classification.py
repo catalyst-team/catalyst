@@ -38,7 +38,7 @@ def train_experiment(engine=None):
         )
         callbacks = [
             dl.BatchTransformCallback(
-                transform="F.sigmoid",
+                transform="torch.sigmoid",
                 scope="on_batch_end",
                 input_key="logits",
                 output_key="scores",
