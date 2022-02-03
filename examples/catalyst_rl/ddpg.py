@@ -4,11 +4,11 @@ import os
 
 from buffer import OffpolicyReplayBuffer
 from db import RedisDB
+import gym
 from misc import GameCallback, soft_update, Trajectory
 import numpy as np
 from sampler import ISampler
 
-import gym
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -88,7 +88,10 @@ def get_network_actor(env):
     outer_fn = utils.outer_init
 
     network = torch.nn.Sequential(
-        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU()
+        nn.Linear(env.observation_space.shape[0], 400),
+        nn.ReLU(),
+        nn.Linear(400, 300),
+        nn.ReLU(),
     )
     head = torch.nn.Sequential(nn.Linear(300, 1), nn.Tanh())
 
@@ -151,8 +154,8 @@ class CustomRunner(dl.Runner):
         self.actor_optimizer: nn.Module = None
         self.critic_optimizer: nn.Module = None
 
-    def on_stage_start(self, runner: dl.IRunner):
-        super().on_stage_start(runner)
+    def on_experiment_start(self, runner: dl.IRunner):
+        super().on_experiment_start(runner)
         self.actor = self.model[self.actor_key]
         self.critic = self.model[self.critic_key]
         self.target_actor = self.model[self.target_actor_key]
@@ -219,7 +222,7 @@ class CustomRunner(dl.Runner):
             value_loss.backward()
             self.critic_optimizer.step()
 
-            if self.global_batch_step % self.tau_period == 0:
+            if self.batch_step % self.tau_period == 0:
                 soft_update(self.target_actor, self.actor, self.tau)
                 soft_update(self.target_critic, self.critic, self.tau)
 

@@ -4,12 +4,12 @@ from typing import Optional
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from common import E2E, parse_ddp_params
-
 from datasets import load_dataset
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_scheduler
+
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_scheduler
 
 from catalyst import dl
 
@@ -32,13 +32,10 @@ class CustomRunner(dl.IRunner):
         }
 
     @property
-    def stages(self):
-        return ["train"]
-
-    def get_stage_len(self, stage: str) -> int:
+    def num_epochs(self) -> int:
         return 10
 
-    def get_loaders(self, stage: str):
+    def get_loaders(self,):
         datasets = load_dataset("glue", "sst2")
         tokenizer = AutoTokenizer.from_pretrained("albert-base-v2")
         encoded_datasets = datasets.map(
@@ -74,14 +71,16 @@ class CustomRunner(dl.IRunner):
         else:
             train_sampler = valid_sampler = None
 
-        self.train_loader_len = len(DataLoader(train_data, batch_size=64, sampler=train_sampler))
+        self.train_loader_len = len(
+            DataLoader(train_data, batch_size=64, sampler=train_sampler)
+        )
 
         return {
             "train": DataLoader(train_data, batch_size=64, sampler=train_sampler),
             "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler),
         }
 
-    def get_model(self, stage: str):
+    def get_model(self,):
         model = (
             self.model
             if self.model is not None
@@ -89,37 +88,39 @@ class CustomRunner(dl.IRunner):
         )
         return model
 
-    def get_criterion(self, stage: str):
+    def get_criterion(self,):
         return nn.CrossEntropyLoss()
 
-    def get_optimizer(self, stage: str, model):
+    def get_optimizer(self, model):
         return optim.Adam(model.parameters(), lr=3e-5)
 
-    def get_scheduler(self, stage: str, optimizer):
+    def get_scheduler(self, optimizer):
         scheduler = get_scheduler(
             "linear",
             optimizer=optimizer,
-            num_warmup_steps=int(0.05 * self.train_loader_len) * self.stage_epoch_len,
-            num_training_steps=self.train_loader_len * self.stage_epoch_len,
+            num_warmup_steps=int(0.05 * self.train_loader_len) * self.num_epochs,
+            num_training_steps=self.train_loader_len * self.num_epochs,
         )
         return scheduler
 
-    def get_callbacks(self, stage: str):
+    def get_callbacks(self,):
         return {
             "criterion": dl.CriterionCallback(
                 input_key="logits", target_key="labels", metric_key="loss"
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss", mode="batch"),
+            "scheduler": dl.SchedulerCallback(
+                loader_key="valid", metric_key="loss", mode="batch"
+            ),
             "accuracy": dl.AccuracyCallback(
-                input_key="logits", target_key="labels", topk_args=(1,)
+                input_key="logits", target_key="labels", topk=(1,)
             ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="accuracy01",
                 minimize=False,
-                save_n_best=1,
+                topk=1,
             ),
             # "tqdm": dl.TqdmCallback(),
         }
@@ -140,12 +141,8 @@ if __name__ == "__main__":
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
     args, unknown_args = parser.parse_known_args()
     args.logdir = args.logdir or f"logs_albert_{args.engine}".replace("-", "_")
-    if args.engine in {"ddp", "amp-ddp", "apex-ddp", "ds-ddp", "fs-ddp", "fs-ddp-amp", "fs-fddp"}:
+    if args.engine in ("ddp", "ddp-amp"):
         engine_params, _ = parse_ddp_params(unknown_args)
-
-        # fix for DeepSpeed engine since is does not support batchnorm synchonization
-        if args.engine == "ds-ddp":
-            engine_params.pop("sync_bn")
     else:
         engine_params = None
 

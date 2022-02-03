@@ -205,7 +205,7 @@ def assert_absolute_equal(
 
 @pytest.mark.parametrize(
     "irunner,num_epochs,num_runs,precision,max_diff_time,max_diff_memory",
-    [(TestMnistRunner, 4, 3, 2, 0.1, 0.001)],
+    [(TestMnistRunner, 4, 3, 2, 0.15, 0.001)],
 )
 # @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(

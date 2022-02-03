@@ -157,7 +157,9 @@ class SSDDataset(Dataset):
         else:
             self.class2category_id = {
                 cls_idx: cat_id
-                for cls_idx, cat_id in enumerate(sorted(self.category_id2category_name.keys()))
+                for cls_idx, cat_id in enumerate(
+                    sorted(self.category_id2category_name.keys())
+                )
             }
             self.category_id2class = {v: k for k, v in self.class2category_id.items()}
             self.background_class = self.category_id2class[background_id]
@@ -173,7 +175,9 @@ class SSDDataset(Dataset):
             if cls_idx == self.background_class:
                 labels.append("<BACKGROUND>")
             else:
-                labels.append(self.category_id2category_name[self.class2category_id[cls_idx]])
+                labels.append(
+                    self.category_id2category_name[self.class2category_id[cls_idx]]
+                )
         return labels
 
     @property
@@ -271,7 +275,8 @@ class CenterNetDataset(Dataset):
         self.images_list = sorted(self.images.keys())
 
         self.class_to_cid = {
-            cls_idx: cat_id for cls_idx, cat_id in enumerate(sorted(self.categories.keys()))
+            cls_idx: cat_id
+            for cls_idx, cat_id in enumerate(sorted(self.categories.keys()))
         }
         self.cid_to_class = {v: k for k, v in self.class_to_cid.items()}
         self.num_classes = len(self.class_to_cid)
@@ -319,7 +324,9 @@ class CenterNetDataset(Dataset):
         heatmap_height = image.shape[1] // self.down_ratio
         heatmap_width = image.shape[2] // self.down_ratio
         # draw class centers
-        heatmap = np.zeros((self.num_classes, heatmap_height, heatmap_width), dtype=np.float32)
+        heatmap = np.zeros(
+            (self.num_classes, heatmap_height, heatmap_width), dtype=np.float32
+        )
         for (x1, y1, x2, y2), cls_channel in zip(boxes, labels):
             w, h = abs(x2 - x1), abs(y2 - y1)
             xc, yc = x1 + w // 2, y1 + h // 2
@@ -370,7 +377,9 @@ class CenterNetDataset(Dataset):
 
 
 class YOLOXDataset(Dataset):
-    def __init__(self, coco_json_path, images_dir=None, transforms=None, max_objects_on_image=120):
+    def __init__(
+        self, coco_json_path, images_dir=None, transforms=None, max_objects_on_image=120
+    ):
         self.file = coco_json_path
         self.images_dir = images_dir
         self.transforms = transforms
@@ -380,7 +389,8 @@ class YOLOXDataset(Dataset):
         self.images_list = sorted(self.images.keys())
 
         self.class_to_cid = {
-            cls_idx: cat_id for cls_idx, cat_id in enumerate(sorted(self.categories.keys()))
+            cls_idx: cat_id
+            for cls_idx, cat_id in enumerate(sorted(self.categories.keys()))
         }
         self.cid_to_class = {v: k for k, v in self.class_to_cid.items()}
         self.num_classes = len(self.class_to_cid)
@@ -419,7 +429,9 @@ class YOLOXDataset(Dataset):
 
         bboxes = np.zeros((self.max_objects_on_image, 4), dtype=np.float32)
         classes = np.zeros(self.max_objects_on_image, dtype=np.int32)
-        for idx, (x1, y1, x2, y2, box_cls) in enumerate(boxes[: self.max_objects_on_image]):
+        for idx, (x1, y1, x2, y2, box_cls) in enumerate(
+            boxes[: self.max_objects_on_image]
+        ):
             bboxes[idx, :] = [x1, y1, x2, y2]
             classes[idx] = int(box_cls)
 
@@ -447,7 +459,7 @@ class YOLOXDataset(Dataset):
         Returns:
             images batch with shape [B, C, H, W]
             boxes with shape [B, MAX_OBJECTS, 4]
-            classes with shape [B, MAX_OBJECTS,]
+            classes with shape [B, MAX_OBJECTS]
         """
         images, boxes, classes = [], [], []
         for item in batch:

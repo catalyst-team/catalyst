@@ -40,17 +40,13 @@ def load_version():
 
 # Specific dependencies.
 extras = {
-    "albu": load_requirements("requirements/requirements-albu.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
     "comet": load_requirements("requirements/requirements-comet.txt"),
     "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
     "dev": load_requirements("requirements/requirements-dev.txt"),
-    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
-    "hydra": load_requirements("requirements/requirements-hydra.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
-    "nifti": load_requirements("requirements/requirements-nifti.txt"),
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),

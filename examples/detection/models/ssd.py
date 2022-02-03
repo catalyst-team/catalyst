@@ -1,8 +1,9 @@
 # flake8: noqa
 
+from torchvision.models import resnet
+
 import torch
 import torch.nn as nn
-from torchvision.models import resnet
 
 _channels_map = {
     "resnet18": [256, 512, 512, 256, 256, 128],
@@ -78,7 +79,9 @@ class SingleShotDetector(nn.Module):
 
         for nd, oc in zip(self.num_defaults, self.feature_extractor.out_channels):
             self.loc.append(nn.Conv2d(oc, nd * 4, kernel_size=3, padding=1))
-            self.conf.append(nn.Conv2d(oc, nd * self.label_num, kernel_size=3, padding=1))
+            self.conf.append(
+                nn.Conv2d(oc, nd * self.label_num, kernel_size=3, padding=1)
+            )
 
         self.loc = nn.ModuleList(self.loc)
         self.conf = nn.ModuleList(self.conf)
@@ -95,7 +98,12 @@ class SingleShotDetector(nn.Module):
                     nn.BatchNorm2d(channels),
                     nn.ReLU(inplace=True),
                     nn.Conv2d(
-                        channels, output_size, kernel_size=3, padding=1, stride=2, bias=False
+                        channels,
+                        output_size,
+                        kernel_size=3,
+                        padding=1,
+                        stride=2,
+                        bias=False,
                     ),
                     nn.BatchNorm2d(output_size),
                     nn.ReLU(inplace=True),
@@ -126,7 +134,9 @@ class SingleShotDetector(nn.Module):
         ret = []
         for s, l, c in zip(src, loc, conf):
             # ret.append((l(s).view(s.size(0), 4, -1), c(s).view(s.size(0), self.label_num, -1)))
-            ret.append((l(s).view(s.size(0), -1, 4), c(s).view(s.size(0), -1, self.label_num)))
+            ret.append(
+                (l(s).view(s.size(0), -1, 4), c(s).view(s.size(0), -1, self.label_num))
+            )
 
         locs, confs = list(zip(*ret))
         # locs, confs = torch.cat(locs, 2).contiguous(), torch.cat(confs, 2).contiguous()
