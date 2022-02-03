@@ -88,18 +88,16 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(exclude=("docker", "docs", "tests", "examples",)),
     entry_points={
         "console_scripts": [
             "catalyst-contrib=catalyst.contrib.__main__:main",
-            "catalyst-dl=catalyst.dl.__main__:main",
         ],
     },
     scripts=[
         "bin/scripts/catalyst-parallel-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
-        "bin/scripts/install-apex",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
