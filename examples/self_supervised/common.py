@@ -124,10 +124,14 @@ def get_loaders(
         )
 
     train_data = SelfSupervisedDatasetWrapper(
-        train_data, transforms=transforms, transform_original=transform_original,
+        train_data,
+        transforms=transforms,
+        transform_original=transform_original,
     )
     valid_data = SelfSupervisedDatasetWrapper(
-        valid_data, transforms=transforms, transform_original=transform_original,
+        valid_data,
+        transforms=transforms,
+        transform_original=transform_original,
     )
 
     train_loader = DataLoader(train_data, batch_size=batch_size, num_workers=num_workers)

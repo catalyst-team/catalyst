@@ -195,7 +195,10 @@ def process_centernet_output(
 
 
 def process_yolo_x_output(
-    predicted_tensor, gt_boxes, gt_labels, iou_threshold=0.5,
+    predicted_tensor,
+    gt_boxes,
+    gt_labels,
+    iou_threshold=0.5,
 ):
     """Generate bbox and classes from YOLO-X model outputs.
 

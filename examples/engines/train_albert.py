@@ -35,7 +35,9 @@ class CustomRunner(dl.IRunner):
     def num_epochs(self) -> int:
         return 10
 
-    def get_loaders(self,):
+    def get_loaders(
+        self,
+    ):
         datasets = load_dataset("glue", "sst2")
         tokenizer = AutoTokenizer.from_pretrained("albert-base-v2")
         encoded_datasets = datasets.map(
@@ -80,7 +82,9 @@ class CustomRunner(dl.IRunner):
             "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler),
         }
 
-    def get_model(self,):
+    def get_model(
+        self,
+    ):
         model = (
             self.model
             if self.model is not None
@@ -88,7 +92,9 @@ class CustomRunner(dl.IRunner):
         )
         return model
 
-    def get_criterion(self,):
+    def get_criterion(
+        self,
+    ):
         return nn.CrossEntropyLoss()
 
     def get_optimizer(self, model):
@@ -103,7 +109,9 @@ class CustomRunner(dl.IRunner):
         )
         return scheduler
 
-    def get_callbacks(self,):
+    def get_callbacks(
+        self,
+    ):
         return {
             "criterion": dl.CriterionCallback(
                 input_key="logits", target_key="labels", metric_key="loss"
