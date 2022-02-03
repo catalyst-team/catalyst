@@ -24,9 +24,7 @@ class PeriodicLoaderCallback(Callback):
 
     .. code-block:: python
 
-        from catalyst.dl import (
-            SupervisedRunner, PeriodicLoaderCallback
-        )
+        from catalyst.dl import SupervisedRunner, PeriodicLoaderCallback
         runner = SupervisedRunner()
         runner.train(
             ...
@@ -52,14 +50,14 @@ class PeriodicLoaderCallback(Callback):
     """
 
     def __init__(
-        self, valid_loader: str, valid_metric: str, minimize: bool, **kwargs,
+        self, valid_loader_key: str, valid_metric_key: str, minimize: bool, **kwargs,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.internal)
         # @TODO: make valid_loader optional
 
-        self.valid_loader: str = valid_loader
-        self.valid_metric: str = valid_metric
+        self.valid_loader_key: str = valid_loader_key
+        self.valid_metric_key: str = valid_metric_key
         self.minimize_metric: bool = minimize
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
@@ -106,9 +104,9 @@ class PeriodicLoaderCallback(Callback):
                 epoch_with_err = zero_loaders_epochs[0]
                 raise ValueError(f"There will be no loaders in epoch {epoch_with_err}!")
 
-        if self.loader_periods.get(self.valid_loader, 1) < 1:
+        if self.loader_periods.get(self.valid_loader_key, 1) < 1:
             raise ValueError(
-                f"Period for a validation loader ('{self.valid_loader}') "
+                f"Period for a validation loader ('{self.valid_loader_key}') "
                 "should be > 0!"
             )
 
@@ -150,9 +148,9 @@ class PeriodicLoaderCallback(Callback):
         Args:
             runner: current runner
         """
-        if self.valid_loader not in runner.loaders:
-            runner.epoch_metrics[self.valid_loader] = {
-                self.valid_metric: float("+inf")
+        if self.valid_loader_key not in runner.loaders:
+            runner.epoch_metrics[self.valid_loader_key] = {
+                self.valid_metric_key: float("+inf")
                 if self.minimize_metric
                 else float("-inf")
             }

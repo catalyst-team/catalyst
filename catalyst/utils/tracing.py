@@ -5,7 +5,7 @@ from torch import jit
 
 from catalyst.extras.forward_wrapper import ModelForwardWrapper
 from catalyst.typing import TorchModel
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 
 def trace_model(

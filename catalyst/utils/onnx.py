@@ -6,7 +6,7 @@ import torch
 
 from catalyst.extras.forward_wrapper import ModelForwardWrapper
 from catalyst.settings import SETTINGS
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 if SETTINGS.onnx_required:
     import onnx

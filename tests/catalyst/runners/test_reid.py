@@ -266,7 +266,7 @@ def test_metric_learning_pipeline():
                     loaders="valid",
                 ),
                 "control": dl.PeriodicLoaderCallback(
-                    valid_loader="valid", valid_metric="cmc", valid=2
+                    valid_loader_key="valid", valid_metric_key="cmc", valid=2
                 ),
             }
         )
@@ -333,7 +333,10 @@ def test_reid_pipeline():
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader="valid", valid_metric="cmc01", minimize=False, valid=2,
+                valid_loader_key="valid",
+                valid_metric_key="cmc01",
+                minimize=False,
+                valid=2,
             ),
         ]
 

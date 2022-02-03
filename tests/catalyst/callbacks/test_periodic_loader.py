@@ -87,7 +87,7 @@ from catalyst.dl import (
 #         minimize_valid_metric=True,
 #         callbacks=[
 #             PeriodicLoaderCallback(
-#                 valid_loader="valid", valid_metric="loss", minimize=True, valid=2
+#                 valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=2
 #             ),
 #             BestStateCheckerCallback(),
 #             CheckRunCallback(num_epoch_steps=5),
@@ -170,7 +170,7 @@ def test_validation_with_period_3():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid", valid_metric="loss", minimize=True, valid=3
+                valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=3
             ),
             CheckRunCallback(num_epoch_steps=10),
         ],
@@ -235,7 +235,7 @@ def test_validation_with_period_0():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid", valid_metric="loss", minimize=True, valid=0
+                valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=0
             ),
             CheckRunCallback(num_epoch_steps=5),
         ],
@@ -301,8 +301,8 @@ def test_multiple_loaders():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid",
-                valid_metric="loss",
+                valid_loader_key="valid",
+                valid_metric_key="loss",
                 minimize=True,
                 train_additional=2,
                 valid=3,
@@ -472,8 +472,8 @@ def test_no_loaders_epoch():
             minimize_valid_metric=True,
             callbacks=[
                 PeriodicLoaderCallback(
-                    valid_loader="valid",
-                    valid_metric="loss",
+                    valid_loader_key="valid",
+                    valid_metric_key="loss",
                     minimize=True,
                     train=2,
                     train_additional=2,
@@ -531,8 +531,8 @@ def test_wrong_period_type():
             minimize_valid_metric=True,
             callbacks=[
                 PeriodicLoaderCallback(
-                    valid_loader="valid",
-                    valid_metric="loss",
+                    valid_loader_key="valid",
+                    valid_metric_key="loss",
                     minimize=True,
                     train_additional=[],
                     train_not_exists=2,
@@ -591,8 +591,8 @@ def test_negative_period_exception():
             minimize_valid_metric=True,
             callbacks=[
                 PeriodicLoaderCallback(
-                    valid_loader="valid",
-                    valid_metric="loss",
+                    valid_loader_key="valid",
+                    valid_metric_key="loss",
                     minimize=True,
                     train_additional=1,
                     train_not_exists=-10,
@@ -651,8 +651,8 @@ def test_zero_period_validation_exception():
             minimize_valid_metric=True,
             callbacks=[
                 PeriodicLoaderCallback(
-                    valid_loader="valid",
-                    valid_metric="loss",
+                    valid_loader_key="valid",
+                    valid_metric_key="loss",
                     minimize=True,
                     train_additional=1,
                     train_not_exists=3,
@@ -711,8 +711,8 @@ def test_ignoring_unknown_loaders():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid",
-                valid_metric="loss",
+                valid_loader_key="valid",
+                valid_metric_key="loss",
                 minimize=True,
                 train_additional=2,
                 train_not_exists=2,
@@ -786,7 +786,7 @@ def test_loading_best_state_at_end():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid", valid_metric="loss", minimize=True, valid=3
+                valid_loader_key="valid", valid_metric_key="loss", minimize=True, valid=3
             ),
             CheckRunCallback(num_epoch_steps=5),
         ],
@@ -947,7 +947,10 @@ def test_multiple_best_checkpoints():
         minimize_valid_metric=True,
         callbacks=[
             PeriodicLoaderCallback(
-                valid_loader="valid", valid_metric="loss", minimize=True, valid=period,
+                valid_loader_key="valid",
+                valid_metric_key="loss",
+                minimize=True,
+                valid=period,
             ),
             CheckRunCallback(num_epoch_steps=n_epochs),
             CheckpointCallback(

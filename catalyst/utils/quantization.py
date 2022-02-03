@@ -4,7 +4,7 @@ import torch
 from torch import quantization
 
 from catalyst.typing import TorchModel
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 
 def quantize_model(

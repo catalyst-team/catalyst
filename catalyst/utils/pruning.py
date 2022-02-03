@@ -3,7 +3,7 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 PRUNING_FN = {
     "l1_unstructured": prune.l1_unstructured,
