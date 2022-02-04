@@ -12,7 +12,7 @@ DESCRIPTION = "Catalyst. Accelerated deep learning R&D with PyTorch."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.7.0"
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -125,7 +125,6 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         # Programming
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",

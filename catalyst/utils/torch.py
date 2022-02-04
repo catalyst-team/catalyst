@@ -19,7 +19,6 @@ from catalyst.typing import (
     TorchOptimizer,
 )
 from catalyst.utils.distributed import get_nn_from_ddp_module
-from catalyst.utils.misc import maybe_recursive_call
 
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine

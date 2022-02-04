@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, List
 from collections import namedtuple
 import json
 import os
@@ -6,7 +6,6 @@ import shutil
 
 import torch
 
-from catalyst import utils
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.utils import (
@@ -98,26 +97,28 @@ class CheckpointCallback(ICheckpointCallback):
             runner.engine.save(obj.state_dict(), logpath)
         else:  # mode: runner
             checkpoint = pack_checkpoint(obj)
-            utils.save_checkpoint(checkpoint, logpath)
+            save_checkpoint(checkpoint, logpath)
         return logpath
 
     def _load(
         self,
         runner: "IRunner",
-        obj: Any = None,
+        resume_logpath: Any = None,
         resume_model: str = None,
         resume_runner: str = None,
     ):
-        if obj is not None:
-            if issubclass(obj.__class__, torch.nn.Module):  # mode: model
+        if resume_logpath is not None:
+            runner.engine.wait_for_everyone()
+            if self.mode == "model":
                 unwrapped_model = runner.engine.unwrap_model(runner.model)
-                unwrapped_model.load_state_dict(obj)
+                unwrapped_model.load_state_dict(load_checkpoint(resume_logpath))
             else:
-                utils.unpack_checkpoint(checkpoint=obj, model=runner.model)
+                checkpoint = load_checkpoint(resume_logpath)
+                unpack_checkpoint(checkpoint=checkpoint, model=runner.model)
         if resume_runner is not None:
             runner.engine.wait_for_everyone()
             checkpoint = load_checkpoint(resume_runner)
-            utils.unpack_checkpoint(
+            unpack_checkpoint(
                 checkpoint=checkpoint,
                 model=runner.model,
                 criterion=runner.criterion,
@@ -224,7 +225,7 @@ class CheckpointCallback(ICheckpointCallback):
             )
             print(log_message)
         if self.load_best_on_end:
-            self._load(runner=runner, obj=self._storage[0].obj)
+            self._load(runner=runner, resume_logpath=self._storage[0].logpath)
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

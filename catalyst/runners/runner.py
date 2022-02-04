@@ -39,7 +39,7 @@ from catalyst.typing import (
     TorchScheduler,
 )
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import get_available_engine
+from catalyst.utils.torch import get_available_engine, load_checkpoint
 
 
 class Runner(IRunner):
@@ -271,6 +271,7 @@ class Runner(IRunner):
                 loader_key=self._valid_loader,
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
+                load_best_on_end=self._load_best_on_end,
             )
         return callbacks
 
@@ -444,12 +445,16 @@ class Runner(IRunner):
 
             .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
         """
-        assert resume is None, NotImplementedError("work in progress")
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
 
         if model is not None:
             self.model = model
         assert self.model is not None
+
+        if resume is not None:
+            self.engine.wait_for_everyone()
+            unwrapped_model = self.engine.unwrap_model(self.model)
+            unwrapped_model.load_state_dict(load_checkpoint(resume))
 
         self.model = self.engine.prepare(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
