@@ -209,7 +209,6 @@ Indices and tables
 
     faq/architecture
     faq/checkpointing
-    faq/config_api
     faq/dataflow
     faq/dp
     faq/debugging
@@ -221,7 +220,6 @@ Indices and tables
     faq/mixed_precision
     faq/multi_components
     faq/multi_keys
-    faq/multi_stage
     faq/optuna
     faq/settings
 

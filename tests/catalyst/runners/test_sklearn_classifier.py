@@ -9,6 +9,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import dl
+from catalyst import utils
 from catalyst.contrib.data import HardTripletsSampler
 from catalyst.contrib.losses import TripletMarginLossWithSampler
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
@@ -24,8 +25,6 @@ RANDOM_STATE = 42
 
 def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
-        from catalyst import utils
-
         utils.set_global_seed(RANDOM_STATE)
         # 1. generate data
         num_samples, num_features, num_classes = int(1e4), int(30), 3

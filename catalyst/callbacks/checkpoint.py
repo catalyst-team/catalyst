@@ -141,7 +141,7 @@ class CheckpointCallback(ICheckpointCallback):
         if self.mode == "model":
             obj = runner.model
         else:
-            obj = dict(
+            obj = dict(  # noqa: C408
                 model=runner.model,
                 criterion=runner.criterion,
                 optimizer=runner.optimizer,

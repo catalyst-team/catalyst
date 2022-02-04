@@ -330,7 +330,6 @@ def unpack_checkpoint(
         optimizer: optimizer where should be updated state
         scheduler: scheduler where should be updated state
     """
-
     for dict2load, name2load in zip(
         [model, criterion, optimizer, scheduler],
         ["model", "criterion", "optimizer", "scheduler"],

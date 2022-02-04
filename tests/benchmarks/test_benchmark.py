@@ -143,14 +143,17 @@ def run_catalyst(
 
 
 def score_runs(
-    irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epochs: int = 10
+    irunner: dl.IRunner,
+    mode: RunMode,
+    device: str,
+    num_runs: int = 10,
+    num_epochs: int = 10,
 ):
     hist_scores = []
     hist_losses = []
     hist_time = []
     hist_memory = []
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
     torch.backends.cudnn.deterministic = True
     for i in tqdm(range(num_runs), desc=f"{mode} with {irunner.__class__.__name__}"):
         gc.collect()
@@ -205,14 +208,20 @@ def assert_absolute_equal(
     ), f"Catalyst {diffs} worse than PyTorch (threshold {max_diff})"
 
 
+BENCHMARKS = [(TestMnistRunner, 4, "cpu", 3, 2, 0.15, 0.001)]
+if torch.cuda.is_available():
+    BENCHMARKS.append((TestMnistRunner, 4, "cuda", 3, 2, 0.15, 0.001))
+
+
 @pytest.mark.parametrize(
-    "irunner,num_epochs,num_runs,precision,max_diff_time,max_diff_memory",
-    [(TestMnistRunner, 4, 3, 2, 0.15, 0.001)],
+    "irunner,num_epochs,device,num_runs,precision,max_diff_time,max_diff_memory",
+    BENCHMARKS,
 )
 # @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
     tmpdir,
     irunner: dl.IRunner,
+    device: str,
     num_epochs: int,
     num_runs: int,
     precision: int,
@@ -226,22 +235,32 @@ def test_benchmark(
 
     # score runs
     pytorch = score_runs(
-        irunner, mode=RunMode.pytorch, num_epochs=num_epochs, num_runs=num_runs
+        irunner,
+        mode=RunMode.pytorch,
+        device=device,
+        num_epochs=num_epochs,
+        num_runs=num_runs,
     )
     catalyst = score_runs(
-        irunner, mode=RunMode.catalyst, num_epochs=num_epochs, num_runs=num_runs
+        irunner,
+        mode=RunMode.catalyst,
+        device=device,
+        num_epochs=num_epochs,
+        num_runs=num_runs,
     )
 
     # check performance
     print(
-        f"Scores are for... \n PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}"
+        "Scores are for... \n "
+        f"PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}"
     )
     for catalyst_, pytorch_ in zip(catalyst["scores"], pytorch["scores"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
 
     # check loss
     print(
-        f"Losses are for... \n PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}"
+        "Losses are for... \n "
+        f"PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}"
     )
     for catalyst_, pytorch_ in zip(catalyst["losses"], pytorch["losses"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
@@ -260,7 +279,8 @@ def test_benchmark(
     # check memory
     if torch.cuda.is_available():
         print(
-            f"Memory usages are for... \n PyTorch: {pytorch['memory']} \n Catalyst: {catalyst['memory']}"
+            "Memory usages are for... \n "
+            f"PyTorch: {pytorch['memory']} \n Catalyst: {catalyst['memory']}"
         )
         assert_relative_equal(
             catalyst["memory"], pytorch["memory"], max_diff=max_diff_memory
