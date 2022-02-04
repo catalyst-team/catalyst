@@ -8,8 +8,7 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
-from catalyst import dl
-from catalyst import utils
+from catalyst import dl, utils
 from catalyst.contrib.data import HardTripletsSampler
 from catalyst.contrib.losses import TripletMarginLossWithSampler
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
