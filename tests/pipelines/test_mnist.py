@@ -108,7 +108,7 @@ def train_experiment(engine=None):
         if SETTINGS.onnx_required:
             utils.onnx_export(
                 model=runner.model,
-                batch=runner.engine.sync_device(features_batch),
+                batch=features_batch,
                 file="./mnist.onnx",
                 verbose=False,
             )

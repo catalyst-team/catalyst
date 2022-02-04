@@ -22,7 +22,7 @@ class CPUEngine(IEngine):
 
     def __init__(self, *args, **kwargs) -> None:
         """Init."""
-        super().__init__(*args, device_placement=False, cpu=True, **kwargs)
+        super().__init__(*args, cpu=True, **kwargs)
 
 
 class GPUEngine(IEngine):
