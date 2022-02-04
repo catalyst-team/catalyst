@@ -88,6 +88,7 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self):
         return {
+            "backward": dl.BackwardCallback(metric_key="loss"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,

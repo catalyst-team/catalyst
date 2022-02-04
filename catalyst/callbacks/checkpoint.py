@@ -68,7 +68,7 @@ class CheckpointCallback(ICheckpointCallback):
     def save(self, runner: "IRunner", obj: Any, logprefix: str) -> str:
         """Save handler."""
         logpath = f"{logprefix}.pth"
-        if isinstance(obj, torch.nn.Module):
+        if issubclass(obj.__class__, torch.nn.Module):
             runner.engine.wait_for_everyone()
             obj = runner.engine.unwrap_model(obj)
             runner.engine.save(obj.state_dict(), logpath)
@@ -115,6 +115,10 @@ class CheckpointCallback(ICheckpointCallback):
     def on_experiment_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self._storage: List[Checkpoint] = []
+        assert issubclass(runner.model.__class__, torch.nn.Module), (
+            "Could not understand the model class. "
+            "Do you mean ``nn.Module`` or ``nn.ModuleDict``?"
+        )
 
     def on_epoch_end_best(self, runner: "IRunner") -> None:
         """Event handler."""

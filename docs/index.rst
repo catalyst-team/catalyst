@@ -34,7 +34,7 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.contrib import MNIST
+    from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
     criterion = nn.CrossEntropyLoss()
@@ -59,23 +59,20 @@ Getting started
         loaders=loaders,
         num_epochs=1,
         callbacks=[
-            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            dl.PrecisionRecallF1SupportCallback(
-                input_key="logits", target_key="targets", num_classes=10
-            ),
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3, 5)),
+            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets"),
         ],
         logdir="./logs",
         valid_loader="valid",
         valid_metric="loss",
         minimize_valid_metric=True,
         verbose=True,
-        load_best_on_end=True,
     )
 
     # model evaluation
     metrics = runner.evaluate_loader(
         loader=loaders["valid"],
-        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
+        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3, 5))],
     )
     assert "accuracy01" in metrics.keys()
 
@@ -84,8 +81,6 @@ Getting started
         assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
 
     features_batch = next(iter(loaders["valid"]))[0]
-    # model stochastic weight averaging
-    model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
     # model tracing
     utils.trace_model(model=runner.model.cpu(), batch=features_batch)
     # model quantization
@@ -152,18 +147,6 @@ More specific with additional requirements:
 Catalyst is compatible with: Python 3.7+. PyTorch 1.4+.
 
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
-
-
-Features
-~~~~~~~~~~~~~~~~~~~~~~
-- Universal train/inference loop.
-- Configuration files for model/data hyperparameters.
-- Reproducibility – all source code and environment variables will be saved.
-- Callbacks – reusable train/inference pipeline parts with easy customization.
-- Training stages support.
-- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm support.
-
 
 Tests
 ~~~~~~~~~~~~~~~~~~~~~~

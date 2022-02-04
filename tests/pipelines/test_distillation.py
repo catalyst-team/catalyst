@@ -95,6 +95,7 @@ def train_experiment(engine=None):
                 dl.MetricAggregationCallback(
                     metric_key="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"
                 ),
+                dl.BackwardCallback(metric_key="loss"),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.CheckpointCallback(
                     logdir=logdir,

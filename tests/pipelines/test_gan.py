@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.layers import Flatten, Lambda
+from catalyst.contrib.layers import Lambda
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from tests import DATA_ROOT
 
@@ -105,7 +105,7 @@ def train_experiment(engine=None):
         generator = nn.Sequential(
             nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid()
         )
-        discriminator = nn.Sequential(Flatten(), nn.Linear(28 * 28, 1))
+        discriminator = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 1))
 
         model = {"generator": generator, "discriminator": discriminator}
         criterion = {
@@ -141,19 +141,21 @@ def train_experiment(engine=None):
                     metric_key="loss_discriminator",
                     criterion_key="discriminator",
                 ),
+                dl.BackwardCallback(metric_key="loss_discriminator"),
+                dl.OptimizerCallback(
+                    optimizer_key="discriminator",
+                    metric_key="loss_discriminator",
+                ),
                 dl.CriterionCallback(
                     input_key="generated_predictions",
                     target_key="misleading_labels",
                     metric_key="loss_generator",
                     criterion_key="generator",
                 ),
+                dl.BackwardCallback(metric_key="loss_generator"),
                 dl.OptimizerCallback(
                     optimizer_key="generator",
                     metric_key="loss_generator",
-                ),
-                dl.OptimizerCallback(
-                    optimizer_key="discriminator",
-                    metric_key="loss_discriminator",
                 ),
             ],
             valid_loader="train",

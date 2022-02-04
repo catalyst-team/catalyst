@@ -14,7 +14,6 @@ You can easily use Optuna for hyperparameters optimization:
     from torch import nn
     from torch.utils.data import DataLoader
     from catalyst import dl
-    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
 
@@ -24,7 +23,7 @@ You can easily use Optuna for hyperparameters optimization:
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+                MNIST(os.getcwd(), train=True, download=True), batch_size=32
             ),
             "valid": DataLoader(
                 MNIST(os.getcwd(), train=False), batch_size=32
@@ -65,33 +64,6 @@ You can easily use Optuna for hyperparameters optimization:
     )
     study.optimize(objective, n_trials=3, timeout=300)
     print(study.best_value, study.best_params)
-
-Config API
-----------------------------------------------------
-
-Firstly, prepare the Optuna-based config. For example, like:
-
-.. code-block:: yaml
-
-    model_params:
-        model: SimpleNet
-        num_filters1: "int(trial.suggest_loguniform('num_filters1', 4, 32))"
-        num_filters2: "int(trial.suggest_loguniform('num_filters2', 4, 32))"
-        num_hiddens1: "int(trial.suggest_loguniform('num_hiddens1', 32, 128))"
-        num_hiddens2: "int(trial.suggest_loguniform('num_hiddens2', 32, 128))"
-        ...
-
-After that just run:
-
-.. code-block:: bash
-
-    catalyst-dl tune --config=/path/to/config.yml --verbose
-
-You also can visualize current training progress with:
-
-.. code-block:: bash
-
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=/path/to/logdir
 
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.

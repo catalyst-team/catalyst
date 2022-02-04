@@ -102,7 +102,7 @@ Multi-model example:
     # <--- multi-model setup --->
     encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 128))
     head = nn.Linear(128, 10)
-    model = {"encoder": encoder, "head": head}
+    model = nn.ModuleDict({"encoder": encoder, "head": head})
     optimizer = optim.Adam([
         {'params': encoder.parameters()},
         {'params': head.parameters()},
@@ -290,7 +290,6 @@ Multi-criterion example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -303,12 +302,8 @@ Multi-criterion example:
     # <--- multi-criterion setup --->
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
     }
 
     class CustomRunner(dl.Runner):
