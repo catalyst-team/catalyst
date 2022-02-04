@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -33,7 +33,8 @@ class MetricAggregationCallback(Callback):
         scope: type of metric. Must be either ``batch`` or ``loader``
         multiplier: scale factor for the aggregated metric.
 
-    Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:
+    Python example - loss is a weighted sum of cross entropy loss
+    and binary cross entropy loss:
 
     .. code-block:: python
 
@@ -52,7 +53,10 @@ class MetricAggregationCallback(Callback):
 
         # model, criterion, optimizer, scheduler
         model = torch.nn.Linear(num_features, num_classes)
-        criterion = {"ce": torch.nn.CrossEntropyLoss(), "bce": torch.nn.BCEWithLogitsLoss()}
+        criterion = {
+            "ce": torch.nn.CrossEntropyLoss(),
+            "bce": torch.nn.BCEWithLogitsLoss()
+        }
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
@@ -121,7 +125,7 @@ class MetricAggregationCallback(Callback):
         multiplier: float = 1.0,
     ) -> None:
         """Init."""
-        super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.metric_aggregation)
 
         if metric_key is None or not isinstance(metric_key, str):
             raise ValueError("prefix must be str")
@@ -141,7 +145,8 @@ class MetricAggregationCallback(Callback):
                 )
         elif not callable(mode):
             raise NotImplementedError(
-                "mode must be `sum`, `mean` " "or `weighted_sum` or `weighted_mean` or be Callable"
+                "mode must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
         assert scope in ("batch", "loader")
@@ -159,7 +164,9 @@ class MetricAggregationCallback(Callback):
             self.aggregation_fn = _sum_aggregation
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
-                self.metrics = {key: weight / weights_sum for key, weight in metrics.items()}
+                self.metrics = {
+                    key: weight / weights_sum for key, weight in metrics.items()
+                }
         elif mode == "mean":
             self.aggregation_fn = _mean_aggregation
         elif callable(mode):
@@ -169,7 +176,9 @@ class MetricAggregationCallback(Callback):
         if self.metrics is not None:
             try:
                 if self.mode == "weighted_sum":
-                    result = [metrics[key] * value for key, value in self.metrics.items()]
+                    result = [
+                        metrics[key] * value for key, value in self.metrics.items()
+                    ]
                 else:
                     result = [metrics[key] for key in self.metrics]
             except KeyError:
@@ -184,7 +193,7 @@ class MetricAggregationCallback(Callback):
         else:
             metrics_list = self._get_metrics_list(metrics)
             metrics_list = [
-                torch.tensor(v, device=runner.device, dtype=torch.float32)
+                torch.tensor(v, device=runner.engine.device, dtype=torch.float32)
                 if not isinstance(v, torch.Tensor)
                 else v.float()
                 for v in metrics_list
@@ -213,6 +222,4 @@ class MetricAggregationCallback(Callback):
         self._process_metrics("loader", runner.loader_metrics, runner)
 
 
-__all__ = [
-    "MetricAggregationCallback",
-]
+__all__ = ["MetricAggregationCallback"]

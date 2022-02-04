@@ -12,7 +12,7 @@ class MRRMetric(TopKMetric):
     Computes mean value of map and it's approximate std value
 
     Args:
-        topk_args: list of `topk` for mrr@topk computing
+        topk: list of `topk` for mrr@topk computing
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
@@ -32,7 +32,7 @@ class MRRMetric(TopKMetric):
             [0, 0, 1.0, 1.0],
             [0, 0, 1.0, 1.0],
         ])
-        metric = metrics.MRRMetric(topk_args=[1, 3])
+        metric = metrics.MRRMetric(topk=[1, 3])
         metric.reset()
 
         metric.update(outputs, targets)
@@ -75,7 +75,10 @@ class MRRMetric(TopKMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -97,11 +100,11 @@ class MRRMetric(TopKMetric):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -113,9 +116,9 @@ class MRRMetric(TopKMetric):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"mrr01"``
-        - ``topk_args = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
+        - ``topk = (1,) or None`` ---> ``"mrr01"``
+        - ``topk = (1, 3)`` ---> ``"mrr01"``, ``"mrr03"``
+        - ``topk = (1, 3, 5)`` ---> ``"mrr01"``, ``"mrr03"``, ``"mrr05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -123,12 +126,12 @@ class MRRMetric(TopKMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
         self,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -137,7 +140,7 @@ class MRRMetric(TopKMetric):
         super().__init__(
             metric_name="mrr",
             metric_function=mrr,
-            topk_args=topk_args,
+            topk=topk,
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,

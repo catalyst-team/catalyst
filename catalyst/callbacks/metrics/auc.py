@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._auc import AUCMetric
 from catalyst.settings import SETTINGS
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -40,7 +45,10 @@ class AUCCallback(LoaderMetricCallback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -68,7 +76,7 @@ class AUCCallback(LoaderMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -82,11 +90,20 @@ class AUCCallback(LoaderMetricCallback):
         """Init."""
         super().__init__(
             metric=AUCMetric(
-                compute_per_class_metrics=compute_per_class_metrics, prefix=prefix, suffix=suffix
+                compute_per_class_metrics=compute_per_class_metrics,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,
         )
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert (
+            not runner.engine.use_fp16
+        ), "AUCCallback could not work within amp training"
+        return super().on_experiment_start(runner)
 
 
 __all__ = ["AUCCallback"]

@@ -3,7 +3,7 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 PRUNING_FN = {
     "l1_unstructured": prune.l1_unstructured,
@@ -28,8 +28,8 @@ def get_pruning_fn(
                 `"l1_unstructured"`. See pytorch docs for more details.
         dim (int, optional): if you are using structured pruning method you need
                 to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
-            Defaults to None.
+        l_norm (int, optional): if you are using
+            ln_structured you need to specify l_norm. Defaults to None.
 
     Raises:
         ValueError: If ``dim`` or ``l_norm`` is not defined when it's required.
@@ -46,12 +46,14 @@ def get_pruning_fn(
         if "unstructured" not in pruning_fn:
             if dim is None:
                 raise ValueError(
-                    "If you are using structured pruning you" "need to specify dim in args"
+                    "If you are using structured pruning you"
+                    "need to specify dim in args"
                 )
             if pruning_fn == "ln_structured":
                 if l_norm is None:
                     raise ValueError(
-                        "If you are using ln_unstructured you" "need to specify l_norm in args"
+                        "If you are using ln_unstructured you"
+                        "need to specify l_norm in args"
                     )
                 pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
             else:
@@ -78,7 +80,8 @@ def prune_model(
         model: Model to be pruned.
         pruning_fn: Pruning function with API same as in torch.nn.utils.pruning.
             pruning_fn(module, name, amount).
-        keys_to_prune: list of strings. Determines which tensor in modules will be pruned.
+        keys_to_prune: list of strings.
+            Determines which tensor in modules will be pruned.
         amount: quantity of parameters to prune.
             If float, should be between 0.0 and 1.0 and
             represent the fraction of parameters to prune.
@@ -88,8 +91,8 @@ def prune_model(
             If None provided then will try to prune every module in model.
         dim (int, optional): if you are using structured pruning method you need
             to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
-            Defaults to None.
+        l_norm (int, optional): if you are using
+            ln_structured you need to specify l_norm. Defaults to None.
 
     Example:
         .. code-block:: python

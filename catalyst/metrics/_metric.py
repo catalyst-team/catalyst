@@ -71,7 +71,9 @@ class IMetric(ABC):
 class ICallbackBatchMetric(IMetric):
     """Interface for all batch-based Metrics."""
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self, compute_on_call: bool = True, prefix: str = None, suffix: str = None
+    ):
         """Init"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
@@ -117,7 +119,9 @@ class ICallbackLoaderMetric(IMetric):
         suffix:  metrics suffix
     """
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self, compute_on_call: bool = True, prefix: str = None, suffix: str = None
+    ):
         """Init."""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""

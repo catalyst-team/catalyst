@@ -16,7 +16,9 @@ if TYPE_CHECKING:
     from buffer import OffpolicyReplayBuffer
     from db import IRLDatabase
 
-Trajectory = namedtuple("Trajectory", field_names=["observations", "actions", "rewards", "dones"])
+Trajectory = namedtuple(
+    "Trajectory", field_names=["observations", "actions", "rewards", "dones"]
+)
 
 
 def structed2dict(array: np.ndarray):
@@ -132,7 +134,9 @@ class GameCallback(dl.Callback):
     def _sync_checkpoint(self, runner: dl.IRunner):
         actor = copy.deepcopy(runner.model[self.actor_key]).to("cpu")
         checkpoint = {self.actor_key: actor.state_dict()}
-        self.db_server.add_checkpoint(checkpoint=checkpoint, epoch=runner.stage_epoch_step)
+        self.db_server.add_checkpoint(
+            checkpoint=checkpoint, epoch=runner.stage_epoch_step
+        )
 
     def _fetch_initial_buffer(self):
         buffer_size = self.replay_buffer.length
@@ -189,8 +193,12 @@ class GameCallback(dl.Callback):
         self._fetch_initial_buffer()
 
     def on_epoch_end(self, runner: dl.IRunner):
-        runner.epoch_metrics["_epoch_"]["num_trajectories"] = self.replay_buffer.num_trajectories
-        runner.epoch_metrics["_epoch_"]["num_transitions"] = self.replay_buffer.num_transitions
+        runner.epoch_metrics["_epoch_"][
+            "num_trajectories"
+        ] = self.replay_buffer.num_trajectories
+        runner.epoch_metrics["_epoch_"][
+            "num_transitions"
+        ] = self.replay_buffer.num_transitions
         runner.epoch_metrics["_epoch_"]["updates_per_sample"] = (
             runner.loader_sample_step / self.replay_buffer.num_transitions
         )

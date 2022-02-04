@@ -4,7 +4,9 @@ import torch
 from torch import nn, Tensor
 
 
-def _convert_label_to_similarity(normed_features: Tensor, labels: Tensor) -> Tuple[Tensor, Tensor]:
+def _convert_label_to_similarity(
+    normed_features: Tensor, labels: Tensor
+) -> Tuple[Tensor, Tensor]:
     similarity_matrix = normed_features @ normed_features.transpose(1, 0)
     label_matrix = labels.unsqueeze(1) == labels.unsqueeze(0)
 
@@ -23,7 +25,8 @@ def _convert_label_to_similarity(normed_features: Tensor, labels: Tensor) -> Tup
 
 class CircleLoss(nn.Module):
     """
-    CircleLoss from `Circle Loss: A Unified Perspective of Pair Similarity Optimization`_ paper.
+    CircleLoss from
+    `Circle Loss: A Unified Perspective of Pair Similarity Optimization`_ paper.
 
     Adapter from:
     https://github.com/TinyZeaMays/CircleLoss
@@ -76,7 +79,9 @@ class CircleLoss(nn.Module):
         logit_p = -ap * (sp - delta_p) * self.gamma
         logit_n = an * (sn - delta_n) * self.gamma
 
-        loss = self.soft_plus(torch.logsumexp(logit_n, dim=0) + torch.logsumexp(logit_p, dim=0))
+        loss = self.soft_plus(
+            torch.logsumexp(logit_n, dim=0) + torch.logsumexp(logit_p, dim=0)
+        )
 
         return loss
 

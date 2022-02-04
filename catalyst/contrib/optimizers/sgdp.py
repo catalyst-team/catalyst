@@ -159,7 +159,8 @@ class SGDP(Optimizer):
                 # Weight decay
                 if group["weight_decay"] > 0:
                     p.data.mul_(
-                        1 - group["lr"] * group["weight_decay"] * wd_ratio / (1 - momentum)
+                        1
+                        - group["lr"] * group["weight_decay"] * wd_ratio / (1 - momentum)
                     )
 
                 # Step

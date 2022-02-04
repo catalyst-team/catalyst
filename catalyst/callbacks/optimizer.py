@@ -1,16 +1,13 @@
 from typing import Callable, Dict, TYPE_CHECKING, Union
 from functools import partial
-import logging
 
-from catalyst.core.callback import CallbackNode, CallbackOrder, IOptimizerCallback
+from catalyst.core.callback import IOptimizerCallback
 from catalyst.registry import REGISTRY
-from catalyst.utils import get_optimizer_momentum_list
 from catalyst.utils.misc import get_attr
+from catalyst.utils.torch import get_optimizer_momentum_list
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
-
-logger = logging.getLogger(__name__)
 
 
 class OptimizerCallback(IOptimizerCallback):
@@ -22,92 +19,28 @@ class OptimizerCallback(IOptimizerCallback):
             there are several of them and they are in a dictionary format.
         optimizer_key: a key to select a optimizer from ``runner.optimizer`` in case
             there are several of them and they are in a dictionary format.
-        accumulation_steps: number of steps before ``model.zero_grad()``
+        accumulation_steps: number of steps before ``optimizer.step()``
         grad_clip_fn: callable gradient cliping function or it's name or
         grad_clip_params: key-value parameters for grad_clip_fn
-
-    Examples:
-
-    .. code-block:: python
-
-        import torch
-        from torch.utils.data import DataLoader, TensorDataset
-        from catalyst import dl
-
-        # sample data
-        num_users, num_features, num_items = int(1e4), int(1e1), 10
-        X = torch.rand(num_users, num_features)
-        y = (torch.rand(num_users, num_items) > 0.5).to(torch.float32)
-
-        # pytorch loaders
-        dataset = TensorDataset(X, y)
-        loader = DataLoader(dataset, batch_size=32, num_workers=1)
-        loaders = {"train": loader, "valid": loader}
-
-        # model, criterion, optimizer, scheduler
-        model = torch.nn.Linear(num_features, num_items)
-        criterion = torch.nn.BCEWithLogitsLoss()
-        optimizer = torch.optim.Adam(model.parameters())
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-        # model training
-        runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
-        )
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            loaders=loaders,
-            num_epochs=3,
-            verbose=True,
-            callbacks=[
-                dl.BatchTransformCallback(
-                    transform=torch.sigmoid,
-                    scope="on_batch_end",
-                    input_key="logits",
-                    output_key="scores"
-                ),
-                dl.CriterionCallback(
-                    input_key="logits", target_key="targets", metric_key="loss"
-                ),
-                dl.AUCCallback(input_key="scores", target_key="targets"),
-                dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
-                ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.OptimizerCallback(metric_key="loss"),
-                dl.SchedulerCallback(),
-                dl.CheckpointCallback(
-                    logdir="./logs", loader_key="valid", metric_key="loss", minimize=True
-                ),
-            ]
-        )
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
         self,
         metric_key: str,
-        model_key: str = None,
         optimizer_key: str = None,
         accumulation_steps: int = 1,
         grad_clip_fn: Union[str, Callable] = None,
         grad_clip_params: Dict = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
+        super().__init__()
         self.metric_key = metric_key
-        self.model_key = model_key
         self.optimizer_key = optimizer_key
-        self.model = None
         self.optimizer = None
         self.criterion = None
 
@@ -121,13 +54,8 @@ class OptimizerCallback(IOptimizerCallback):
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
 
-        if self.model_key is not None or self.optimizer_key is not None:
-            if self.model_key is not None and self.optimizer_key is not None:
-                self._prefix = f"{self.model_key}_{self.optimizer_key}"
-            elif self.model_key is not None:
-                self._prefix = f"{self.model_key}"
-            elif self.optimizer_key is not None:
-                self._prefix = f"{self.optimizer_key}"
+        if self.optimizer_key is not None:
+            self._prefix = f"{self.optimizer_key}"
             self._prefix_lr = f"lr/{self._prefix}"
             self._prefix_momentum = f"momentum/{self._prefix}"
             self._prefix_gradient = f"gradient/{self._prefix}"
@@ -142,48 +70,28 @@ class OptimizerCallback(IOptimizerCallback):
         stats = {self._prefix_lr: lr_list[0], self._prefix_momentum: momentum_list[0]}
         return stats
 
-    def on_stage_start(self, runner: "IRunner") -> None:
+    def on_experiment_start(self, runner: "IRunner") -> None:
         """Event handler."""
-        self.model = get_attr(runner, key="model", inner_key=self.model_key)
         self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
-        assert self.model is not None
         assert self.optimizer is not None
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         if runner.is_train_loader:
             self._accumulation_counter += 1
-            need_gradient_step = self._accumulation_counter % self.accumulation_steps == 0
-
-            loss = runner.batch_metrics[self.metric_key]
-            runner.engine.backward_loss(loss, self.model, self.optimizer)
-
-            if self.grad_clip_fn is not None:
-                # hotfix for gradinet clipping with fp16
-                if hasattr(runner.engine, "scaler"):
-                    runner.engine.scaler.unscale_(self.optimizer)
-                norm = self.grad_clip_fn(self.model.parameters())
-                runner.batch_metrics[f"{self._prefix_gradient}/norm"] = norm
+            need_gradient_step = (
+                self._accumulation_counter % self.accumulation_steps == 0
+            )
 
             if need_gradient_step:
-                runner.engine.optimizer_step(loss, self.model, self.optimizer)
-                runner.engine.zero_grad(loss, self.model, self.optimizer)
+                self.optimizer.step()
+                self.optimizer.zero_grad()
 
         runner.batch_metrics.update(self._get_lr_momentum_stats())
-        # hotfix for gradinet clipping with fp16
-        if hasattr(runner.engine, "scaler"):
-            scaler_state = runner.engine.scaler.state_dict()
-            runner.batch_metrics[f"{self._prefix_gradient}/scale"] = scaler_state["scale"] or 1.0
-            runner.batch_metrics[f"{self._prefix_gradient}/growth_tracker"] = scaler_state[
-                "_growth_tracker"
-            ]
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler."""
         runner.loader_metrics.update(self._get_lr_momentum_stats())
 
 
-__all__ = [
-    "IOptimizerCallback",
-    "OptimizerCallback",
-]
+__all__ = ["OptimizerCallback"]

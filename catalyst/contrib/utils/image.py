@@ -11,7 +11,7 @@ from skimage.color import rgb2gray  # label2rgb
 
 from catalyst.settings import SETTINGS
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 if SETTINGS.use_libjpeg_turbo:
     try:
@@ -24,10 +24,12 @@ if SETTINGS.use_libjpeg_turbo:
             _test_img = jpeg.JPEG(fp.name).decode()
 
     except ImportError as ex:
-        logger.warning("jpeg4py not available. " "To install jpeg4py, run `pip install jpeg4py`.")
+        LOGGER.warning(
+            "jpeg4py not available. " "To install jpeg4py, run `pip install jpeg4py`."
+        )
         raise ex
     except OSError as ex:
-        logger.warning(
+        LOGGER.warning(
             "libjpeg-turbo not available. "
             "To install libjpeg-turbo, run `apt-get install libturbojpeg`."
         )

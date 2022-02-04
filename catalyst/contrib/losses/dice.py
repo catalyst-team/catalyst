@@ -37,7 +37,12 @@ class DiceLoss(nn.Module):
         super().__init__()
         assert mode in ["micro", "macro", "weighted"]
         self.loss_fn = partial(
-            dice, eps=eps, class_dim=class_dim, threshold=None, mode=mode, weights=weights
+            dice,
+            eps=eps,
+            class_dim=class_dim,
+            threshold=None,
+            mode=mode,
+            weights=weights,
         )
 
     def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:

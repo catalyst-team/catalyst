@@ -12,7 +12,7 @@ DESCRIPTION = "Catalyst. Accelerated deep learning R&D with PyTorch."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.7.0"
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,17 +40,13 @@ def load_version():
 
 # Specific dependencies.
 extras = {
-    "albu": load_requirements("requirements/requirements-albu.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
     "comet": load_requirements("requirements/requirements-comet.txt"),
     "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
     "dev": load_requirements("requirements/requirements-dev.txt"),
-    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
-    "hydra": load_requirements("requirements/requirements-hydra.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
-    "nifti": load_requirements("requirements/requirements-nifti.txt"),
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
@@ -92,18 +88,23 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(
+        exclude=(
+            "docker",
+            "docs",
+            "tests",
+            "examples",
+        )
+    ),
     entry_points={
         "console_scripts": [
             "catalyst-contrib=catalyst.contrib.__main__:main",
-            "catalyst-dl=catalyst.dl.__main__:main",
         ],
     },
     scripts=[
         "bin/scripts/catalyst-parallel-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
-        "bin/scripts/install-apex",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
@@ -124,7 +125,6 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         # Programming
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",

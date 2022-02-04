@@ -36,8 +36,12 @@ class MultiDAE(nn.Module):
         super().__init__()
         self.p_dims = p_dims
         if q_dims:
-            assert q_dims[0] == p_dims[-1], "In and Out dimensions must equal to each other"
-            assert q_dims[-1] == p_dims[0], "Latent dimension for p- and q- network mismatches."
+            assert (
+                q_dims[0] == p_dims[-1]
+            ), "In and Out dimensions must equal to each other"
+            assert (
+                q_dims[-1] == p_dims[0]
+            ), "Latent dimension for p- and q- network mismatches."
             self.q_dims = q_dims
         else:
             self.q_dims = p_dims[::-1]
@@ -54,7 +58,8 @@ class MultiDAE(nn.Module):
             self.decoder.add_module(f"decoder_fc_{i + 1}", nn.Linear(d_in, d_out))
             self.decoder.add_module(f"decoder_tanh_{i + 1}", nn.Tanh())
         self.decoder.add_module(
-            f"decoder_fc_{len(self.p_dims) - 1}", nn.Linear(self.p_dims[-2], self.p_dims[-1])
+            f"decoder_fc_{len(self.p_dims) - 1}",
+            nn.Linear(self.p_dims[-2], self.p_dims[-1]),
         )
 
         self.encoder.apply(self.init_weights)
@@ -90,6 +95,7 @@ if __name__ == "__main__":
         dl.MAPCallback("logits", "targets", [20, 50, 100]),
         dl.MRRCallback("logits", "targets", [20, 50, 100]),
         dl.HitrateCallback("logits", "targets", [20, 50, 100]),
+        dl.BackwardCallback("loss"),
         dl.OptimizerCallback("loss", accumulation_steps=1),
     ]
 

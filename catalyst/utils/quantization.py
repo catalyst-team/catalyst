@@ -3,19 +3,22 @@ from typing import Dict, Optional, Union
 import torch
 from torch import quantization
 
-from catalyst.typing import Model
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.typing import TorchModel
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 
 def quantize_model(
-    model: Model, qconfig_spec: Dict = None, dtype: Union[str, Optional[torch.dtype]] = "qint8"
-) -> Model:
+    model: TorchModel,
+    qconfig_spec: Dict = None,
+    dtype: Union[str, Optional[torch.dtype]] = "qint8",
+) -> TorchModel:
     """Function to quantize model weights.
 
     Args:
         model: model to be quantized
-        qconfig_spec (Dict, optional): quantization config in PyTorch format. Defaults to None.
-        dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.
+        qconfig_spec (Dict, optional): quantization config in PyTorch format.
+            Defaults to None.
+        dtype: Type of weights after quantization.
             Defaults to "qint8".
 
     Returns:

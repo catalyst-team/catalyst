@@ -148,7 +148,9 @@ class Ralamb(Optimizer):
                         -radam_step_size * group["lr"] * trust_ratio, exp_avg, denom
                     )
                 else:
-                    p_data_fp32.add_(-radam_step_size * group["lr"] * trust_ratio, exp_avg)
+                    p_data_fp32.add_(
+                        -radam_step_size * group["lr"] * trust_ratio, exp_avg
+                    )
 
                 p.data.copy_(p_data_fp32)
 

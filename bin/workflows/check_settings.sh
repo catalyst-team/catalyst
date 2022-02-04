@@ -4,14 +4,12 @@
 set -eo pipefail -v
 
 function clean_requirements() {
+pip uninstall -r requirements/requirements-dev.txt -y
   pip uninstall -r requirements/requirements-cv.txt -y
-  pip uninstall -r requirements/requirements-dev.txt -y
-  pip uninstall -r requirements/requirements-hydra.txt -y
   pip uninstall -r requirements/requirements-ml.txt -y
   pip uninstall -r requirements/requirements-optuna.txt -y
   pip uninstall -r requirements/requirements-mlflow.txt -y
   pip uninstall -r requirements/requirements-neptune.txt -y
-  pip uninstall -r requirements/requirements-albu.txt -y
   pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -25,11 +23,9 @@ function require_libs() {
 [catalyst]
 cv_required = false
 ml_required = false
-hydra_required = false
 optuna_required = false
 mlflow_required = false
 neptune_required = false
-albu_required = false
 ")"
   for REQUIRED in "$@"
   do
@@ -47,10 +43,8 @@ cat <<EOT > .catalyst
 [catalyst]
 cv_required = false
 ml_required = false
-hydra_required = false
 optuna_required = false
 mlflow_required = false
-albu_required = false
 EOT
 
 python -c """
@@ -91,17 +85,6 @@ else:
 python -c """
 try:
     from catalyst.contrib.utils import imread, imwrite
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
-
-python -c """
-try:
-    from catalyst.contrib.__main__ import COMMANDS
-
-    assert not ('process-images' in COMMANDS)
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -163,132 +146,6 @@ from catalyst.contrib.utils import imread, imwrite
 # )
 # """
 
-################################  pipeline 03  ################################
-# checking catalyst-(cv/ml) dependencies loading
-clean_requirements
-require_libs cv ml
-
-cat <<EOT > .catalyst
-[catalyst]
-cv_required = true
-ml_required = true
-hydra_required = false
-mlflow_required = false
-neptune_required = false
-albu_required = false
-EOT
-
-python -c """
-try:
-    from catalyst.contrib.data.dataset_cv import ImageFolderDataset
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
-
-python -c """
-try:
-    from catalyst.contrib.models import ResnetEncoder
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
-
-python -c """
-try:
-    from catalyst.contrib.utils import imread, imwrite
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
-
-# python -c """
-# try:
-#     from catalyst.contrib.__main__ import COMMANDS
-
-#     assert not ('process-images' in COMMANDS)
-# except (AttributeError, ImportError, AssertionError):
-#     pass  # Ok
-# else:
-#     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-# """
-
-# python -c """
-# try:
-#     from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
-# except (AttributeError, ImportError, AssertionError):
-#     pass  # Ok
-# else:
-#     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-# """
-
-# python -c """
-# try:
-#     from catalyst.contrib.__main__ import COMMANDS
-
-#     assert not (
-#         'tag2label' in COMMANDS
-#         or 'split-dataframe' in COMMANDS
-#     )
-# except (AttributeError, ImportError, AssertionError):
-#     pass  # Ok
-# else:
-#     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-# """
-
-
-pip install -r requirements/requirements-cv.txt --quiet \
-  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
-  --upgrade-strategy only-if-needed
-
-pip install -r requirements/requirements-ml.txt --quiet \
-  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
-  --upgrade-strategy only-if-needed
-
-python -c """
-from catalyst.contrib.data.dataset_cv import ImageFolderDataset
-from catalyst.contrib.models import ResnetEncoder
-from catalyst.contrib.utils import imread, imwrite
-# from catalyst.contrib.__main__ import COMMANDS
-
-# assert 'process-images' in COMMANDS
-"""
-
-# python -c """
-# from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
-# from catalyst.contrib.__main__ import COMMANDS
-
-# assert (
-#     'tag2label' in COMMANDS
-#     and 'split-dataframe' in COMMANDS
-# )
-# """
-
-################################  pipeline 04  ################################
-# checking catalyst-hydra dependencies loading
-clean_requirements
-require_libs hydra
-
-# check if fail if requirements not installed
-python -c """
-try:
-    from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
-except (AttributeError, ImportError, AssertionError):
-    pass  # Ok
-else:
-    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
-"""
-
-pip install -r requirements/requirements-hydra.txt --quiet \
-  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
-  --upgrade-strategy only-if-needed
-
-python -c """
-from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
-"""
 
 ################################  pipeline 05  ################################
 # checking catalyst-optuna dependencies loading
@@ -298,9 +155,7 @@ require_libs optuna
 # check if fail if requirements not installed
 python -c """
 try:
-    from catalyst.dl.__main__ import COMMANDS
-
-    assert not ('tune' in COMMANDS)
+    from catalyst.callbacks.optuna import OptunaPruningCallback
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -312,9 +167,7 @@ pip install -r requirements/requirements-optuna.txt --quiet \
   --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.dl.__main__ import COMMANDS
-
-assert ('tune' in COMMANDS)
+from catalyst.callbacks.optuna import OptunaPruningCallback
 """
 
 ################################  pipeline 06  ################################

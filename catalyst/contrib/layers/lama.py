@@ -3,7 +3,7 @@
 import torch
 from torch import nn
 
-from catalyst.utils.torch import outer_init
+from catalyst.contrib.utils.torch import outer_init
 
 
 class TemporalLastPooling(nn.Module):
@@ -57,7 +57,12 @@ class TemporalAttentionPooling(nn.Module):
         activation = activation or "softmax"
 
         self.attention_pooling = nn.Sequential(
-            nn.Conv1d(in_channels=in_features, out_channels=1, kernel_size=kernel_size, **params),
+            nn.Conv1d(
+                in_channels=in_features,
+                out_channels=1,
+                kernel_size=kernel_size,
+                **params
+            ),
             TemporalAttentionPooling.name2activation[activation],
         )
         self.attention_pooling.apply(outer_init)
@@ -135,7 +140,9 @@ def _get_pooling(key, in_features, **params):
     elif key_prefix == "max":
         layer = TemporalMaxPooling()
     elif key_prefix in ["softmax", "tanh", "sigmoid"]:
-        layer = TemporalAttentionPooling(in_features=in_features, activation=key_prefix, **params)
+        layer = TemporalAttentionPooling(
+            in_features=in_features, activation=key_prefix, **params
+        )
     else:
         raise NotImplementedError()
 

@@ -24,7 +24,10 @@ class ContrastiveEmbeddingLoss(nn.Module):
         self.reduction = reduction or "none"
 
     def forward(
-        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, distance_true
+        self,
+        embeddings_left: torch.Tensor,
+        embeddings_right: torch.Tensor,
+        distance_true,
     ) -> torch.Tensor:
         """Forward propagation method for the contrastive loss.
 
@@ -43,9 +46,9 @@ class ContrastiveEmbeddingLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance = torch.clamp(margin_distance, min=0.0)
-        loss = (1 - distance_true) * torch.pow(distance_pred, 2) + distance_true * torch.pow(
-            margin_distance, 2
-        )
+        loss = (1 - distance_true) * torch.pow(
+            distance_pred, 2
+        ) + distance_true * torch.pow(margin_distance, 2)
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -83,9 +86,9 @@ class ContrastiveDistanceLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance = torch.clamp(margin_distance, min=0.0)
-        loss = (1 - distance_true) * torch.pow(distance_pred, 2) + distance_true * torch.pow(
-            margin_distance, 2
-        )
+        loss = (1 - distance_true) * torch.pow(
+            distance_pred, 2
+        ) + distance_true * torch.pow(margin_distance, 2)
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -188,16 +191,20 @@ class BarlowTwinsLoss(nn.Module):
         shape_left, shape_right = embeddings_left.shape, embeddings_right.shape
         if len(shape_left) != 2:
             raise ValueError(
-                f"Left shape should be (batch_size, feature_dim), but got - {shape_left}!"
+                "Left shape should be (batch_size, feature_dim),"
+                f"but got - {shape_left}!"
             )
         elif len(shape_right) != 2:
             raise ValueError(
-                f"Right shape should be (batch_size, feature_dim), but got - {shape_right}!"
+                "Right shape should be (batch_size, feature_dim),"
+                f"but got - {shape_right}!"
             )
         if shape_left[0] == 1:
             raise ValueError(f"Batch size should be >= 2, but got - {shape_left[0]}!")
         if shape_left != shape_right:
-            raise ValueError(f"Shapes should be equall, but got - {shape_left} and {shape_right}!")
+            raise ValueError(
+                f"Shapes should be equall, but got - {shape_left} and {shape_right}!"
+            )
         # normalization
         z_left = (embeddings_left - embeddings_left.mean(dim=0)) / (
             embeddings_left.var(dim=0) + self.eps

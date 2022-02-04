@@ -198,7 +198,9 @@ class HardTripletsSampler(InBatchTripletsSampler):
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 
-        ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(distmat=dist_mat, labels=labels)
+        ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(
+            distmat=dist_mat, labels=labels
+        )
 
         return ids_anchor, ids_pos, ids_neg
 

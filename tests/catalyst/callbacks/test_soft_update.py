@@ -2,9 +2,9 @@
 from typing import Tuple
 
 import torch
+from torch import nn
 
 from catalyst import dl
-from catalyst.contrib import nn
 
 
 class DummyRunner(dl.Runner):
@@ -20,7 +20,10 @@ def set_requires_grad(model, val):
 def test_soft_update():
 
     model = nn.ModuleDict(
-        {"target": nn.Linear(10, 10, bias=False), "source": nn.Linear(10, 10, bias=False)}
+        {
+            "target": nn.Linear(10, 10, bias=False),
+            "source": nn.Linear(10, 10, bias=False),
+        }
     )
     set_requires_grad(model, False)
     model["target"].weight.data.fill_(0)
@@ -29,12 +32,18 @@ def test_soft_update():
     runner.is_train_loader = True
 
     soft_update = dl.SoftUpdateCallaback(
-        target_model_key="target", source_model_key="source", tau=0.1, scope="on_batch_end"
+        target_model="target",
+        source_model="source",
+        tau=0.1,
+        scope="on_batch_end",
     )
     soft_update.on_batch_end(runner)
 
     checks = (
-        ((0.1 * runner.model["source"].weight.data) == runner.model["target"].weight.data)
+        (
+            (0.1 * runner.model["source"].weight.data)
+            == runner.model["target"].weight.data
+        )
         .flatten()
         .tolist()
     )
@@ -45,7 +54,10 @@ def test_soft_update():
 def test_soft_update_not_work():
 
     model = nn.ModuleDict(
-        {"target": nn.Linear(10, 10, bias=False), "source": nn.Linear(10, 10, bias=False)}
+        {
+            "target": nn.Linear(10, 10, bias=False),
+            "source": nn.Linear(10, 10, bias=False),
+        }
     )
     set_requires_grad(model, False)
     model["target"].weight.data.fill_(0)
@@ -54,7 +66,10 @@ def test_soft_update_not_work():
     runner.is_train_loader = True
 
     soft_update = dl.SoftUpdateCallaback(
-        target_model_key="target", source_model_key="source", tau=0.1, scope="on_batch_start"
+        target_model="target",
+        source_model="source",
+        tau=0.1,
+        scope="on_batch_start",
     )
     soft_update.on_batch_end(runner)
 

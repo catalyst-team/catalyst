@@ -57,7 +57,9 @@ def build_parser() -> ArgumentParser:
         parser
     """
     parser = ArgumentParser("catalyst-contrib", formatter_class=RawTextHelpFormatter)
-    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
@@ -74,9 +76,7 @@ def build_parser() -> ArgumentParser:
 def main():
     """catalyst-contrib entry point."""
     parser = build_parser()
-
     args, uargs = parser.parse_known_args()
-
     COMMANDS[args.command].main(args, uargs)
 
 

@@ -14,7 +14,8 @@ def precision(tp: int, fp: int, zero_division: int = 0) -> float:
     Args:
         tp: number of true positives
         fp: number of false positives
-        zero_division: int value, should be one of 0 or 1; if both tp==0 and fp==0 return this
+        zero_division: int value,
+            should be one of 0 or 1; if both tp==0 and fp==0 return this
             value as s result
 
     Returns:
@@ -29,12 +30,14 @@ def precision(tp: int, fp: int, zero_division: int = 0) -> float:
 
 
 def recall(tp: int, fn: int, zero_division: int = 0) -> float:
-    """Calculates recall (a.k.a. true positive rate) for binary classification and segmentation.
+    """Calculates recall (a.k.a. true positive rate) for binary classification
+    and segmentation.
 
     Args:
         tp: number of true positives
         fn: number of false negatives
-        zero_division: int value, should be one of 0 or 1; if both tp==0 and fn==0 return this
+        zero_division: int value,
+            should be one of 0 or 1; if both tp==0 and fn==0 return this
             value as s result
 
     Returns:
@@ -146,8 +149,8 @@ def get_aggregated_metrics(
     tp: np.array, fp: np.array, fn: np.array, support: np.array, zero_division: int = 0
 ) -> Tuple[np.array, np.array, np.array, np.array]:
     """
-    Count precision, recall, f1 scores per-class and with macro, weighted and micro average
-    with statistics.
+    Count precision, recall, f1 scores per-class and with macro,
+    weighted and micro average with statistics.
 
     Args:
         tp: array of shape (num_classes, ) of true positive statistics per class
@@ -168,7 +171,9 @@ def get_aggregated_metrics(
     for i in range(num_classes):
         precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)
         recall_values[i] = recall(tp=tp[i], fn=fn[i], zero_division=zero_division)
-        f1_values[i] = f1score(precision_value=precision_values[i], recall_value=recall_values[i])
+        f1_values[i] = f1score(
+            precision_value=precision_values[i], recall_value=recall_values[i]
+        )
 
     per_class = (
         precision_values,

@@ -5,6 +5,7 @@ import gc
 import time
 
 import gym
+
 from torch import nn
 
 from catalyst import utils

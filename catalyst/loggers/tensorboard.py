@@ -4,10 +4,26 @@ import os
 import numpy as np
 
 from tensorboardX import SummaryWriter
+import torch
 
 from catalyst.core.logger import ILogger
-from catalyst.loggers._misc import image_to_tensor
 from catalyst.settings import SETTINGS
+
+
+def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
+    """
+    Creates tensor from RGB image.
+
+    Args:
+        image: RGB image stored as np.ndarray
+
+    Returns:
+        tensor
+    """
+    image = np.moveaxis(image, -1, 0)
+    image = np.ascontiguousarray(image)
+    image = torch.from_numpy(image)
+    return image
 
 
 class TensorboardLogger(ILogger):
@@ -15,21 +31,18 @@ class TensorboardLogger(ILogger):
 
     Args:
         logdir: path to logdir for tensorboard.
-        use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir.
+        use_logdir_postfix: boolean flag
+            to use extra ``tensorboard`` prefix in the logdir.
         log_batch_metrics: boolean flag to log batch metrics
             (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
             (default: SETTINGS.log_epoch_metrics or True).
 
     .. note::
-        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
-        specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
+        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner``
+        in case of specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
 
-    .. note::
-        This logger is used by default by ``dl.ConfigRunner`` and ``dl.HydraRunner`` in case of
-        specified logdir in config ``args``.
-
-    Notebook API examples:
+    Examples:
 
     .. code-block:: python
 
@@ -57,26 +70,6 @@ class TensorboardLogger(ILogger):
             # ...
 
         runner = CustomRunner().run()
-
-    Config API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            tensorboard:
-                _target_: TensorboardLogger
-                logdir: ./logdir/tensorboard
-        ...
-
-    Hydra API example:
-
-    .. code-block:: yaml
-
-        loggers:
-            tensorboard:
-                _target_: catalyst.dl.TensorboardLogger
-                logdir: ./logdir/tensorboard
-        ...
     """
 
     def __init__(
@@ -87,7 +80,9 @@ class TensorboardLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
     ):
         """Init."""
-        super().__init__(log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics)
+        super().__init__(
+            log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
+        )
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
@@ -104,25 +99,46 @@ class TensorboardLogger(ILogger):
             logdir = os.path.join(self.logdir, f"{loader_key}")
             self.loggers[loader_key] = SummaryWriter(logdir)
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""
+    ):
         for key, value in metrics.items():
             self.loggers[loader_key].add_scalar(f"{key}{suffix}", float(value), step)
+
+    def log_image(
+        self,
+        tag: str,
+        image: np.ndarray,
+        scope: str = None,
+        # experiment info
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
+    ) -> None:
+        """Logs image to Tensorboard for current scope on current step."""
+        assert loader_key is not None
+        self._check_loader_key(loader_key=loader_key)
+        tensor = _image_to_tensor(image)
+        self.loggers[loader_key].add_image(
+            f"{tag}/{scope}", tensor, global_step=epoch_step
+        )
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -135,12 +151,18 @@ class TensorboardLogger(ILogger):
             self._check_loader_key(loader_key=loader_key)
             # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_sample_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics,
+                step=sample_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch"
+                metrics=metrics,
+                step=epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             # @TODO: remove naming magic
@@ -149,50 +171,20 @@ class TensorboardLogger(ILogger):
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
                 metrics=per_loader_metrics,
-                step=global_epoch_step,
+                step=epoch_step,
                 loader_key=loader_key,
                 suffix="/epoch",
             )
-
-    def log_image(
-        self,
-        tag: str,
-        image: np.ndarray,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
-    ) -> None:
-        """Logs image to Tensorboard for current scope on current step."""
-        assert loader_key is not None
-        self._check_loader_key(loader_key=loader_key)
-        tensor = image_to_tensor(image)
-        self.loggers[loader_key].add_image(f"{tag}/{scope}", tensor, global_step=global_epoch_step)
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self, scope: str = None) -> None:
+    def close_log(self) -> None:
         """Closes the loggers."""
-        if scope is None or scope == "experiment":
-            for logger in self.loggers.values():
-                logger.close()
+        for logger in self.loggers.values():
+            logger.close()
 
 
 __all__ = ["TensorboardLogger"]

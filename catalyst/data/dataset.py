@@ -49,7 +49,8 @@ class SelfSupervisedDatasetWrapper(Dataset):
         transform_left: transform only for left batch
         transform_right: transform only for right batch
         transform_original: transforms which will be applied to save original in batch
-        is_target: the flag for selection does dataset return (sample, target) or only sample
+        is_target: the flag for selection does dataset return (sample, target)
+            or only sample
 
     Example:
 
@@ -58,7 +59,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
         import torchvision
         from torchvision.datasets import CIFAR10
 
-        from catalyst.contrib.data.dataset import SelfSupervisedDatasetWrapper
+        from catalyst.data.dataset import SelfSupervisedDatasetWrapper
 
         transforms = torchvision.transforms.Compose(
             [
@@ -72,7 +73,10 @@ class SelfSupervisedDatasetWrapper(Dataset):
         )
 
         cifar_dataset = CIFAR10(root="./data", download=True, transform=None)
-        cifar_contrastive = SelfSupervisedDatasetWrapper(cifar_dataset, transforms=transforms)
+        cifar_contrastive = SelfSupervisedDatasetWrapper(
+            cifar_dataset,
+            transforms=transforms
+        )
 
     .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
         https://arxiv.org/abs/2002.05709
@@ -94,11 +98,14 @@ class SelfSupervisedDatasetWrapper(Dataset):
             left and right output batch.
             transform_left: transform only for left batch
             transform_right: transform only for right batch
-            transform_original: transforms which will be applied to save original in batch
-            is_target: the flag for selection does dataset return (sample, target) or only sample
+            transform_original: transforms which will be applied
+                to save original in batch
+            is_target: the flag for selection does dataset return (sample, target)
+                or only sample
 
         Raises:
-            ValueError: should be specified transform_left and transform_right simultaneously
+            ValueError: should be specified transform_left
+                and transform_right simultaneously
                 or only transforms
         """
         super().__init__()
@@ -111,7 +118,8 @@ class SelfSupervisedDatasetWrapper(Dataset):
             self.transform_left = transforms
         else:
             raise ValueError(
-                "Specify transform_left and transform_right simultaneously or only transforms."
+                "Specify `transform_left` and `transform_right` simultaneously "
+                "or only `transforms`."
             )
         self.transform_original = transform_original
         self.dataset = dataset
@@ -135,7 +143,9 @@ class SelfSupervisedDatasetWrapper(Dataset):
         else:
             sample = self.dataset[idx]
 
-        transformed_sample = self.transform_original(sample) if self.transform_original else sample
+        transformed_sample = (
+            self.transform_original(sample) if self.transform_original else sample
+        )
         aug_1 = self.transform_left(sample)
         aug_2 = self.transform_right(sample)
 

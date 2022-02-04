@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
@@ -9,119 +9,40 @@ class ICallback:
     """A callable abstraction for deep learning runs."""
 
     def on_experiment_start(self, runner: "IRunner") -> None:
-        """Event handler for experiment start.
-
-        Args:
-            runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
-        """
-        pass
-
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for experiment start."""
         pass
 
     def on_epoch_start(self, runner: "IRunner") -> None:
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for epoch start."""
         pass
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for loader start."""
         pass
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for batch start."""
         pass
 
-    # def handle_batch(self, runner: "IRunner") -> None:
-    #     """Event handler for exception case.
-    #
-    #     Args:
-    #         runner: IRunner instance.
-    #     """
-    #     pass
-
     def on_batch_end(self, runner: "IRunner") -> None:
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for batch end."""
         pass
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for loader end."""
         pass
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_stage_end(self, runner: "IRunner") -> None:
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for epoch end."""
         pass
 
     def on_experiment_end(self, runner: "IRunner") -> None:
-        """Event handler for experiment end.
-
-        Args:
-            runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
-        """
+        """Event handler for experiment end."""
         pass
 
     def on_exception(self, runner: "IRunner") -> None:
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-        """
+        """Event handler for exception case."""
         pass
-
-
-class CallbackNode(IntFlag):
-    """Callback node usage flag during distributed training.
-
-    - All (0) - use on all nodes, botch master and worker.
-    - Master (1) - use only on master node.
-    - Worker (2) - use only in worker nodes.
-    """
-
-    All = all = 0
-    Master = master = 1
-    Worker = worker = 2
 
 
 class CallbackOrder(IntFlag):
@@ -137,13 +58,13 @@ class CallbackOrder(IntFlag):
     - **Metric** (20) - Callbacks with metrics and losses computation.
     - **MetricAggregation** (40) - metrics aggregation callbacks,
       like sum different losses into one.
-    - **Optimizer** (60) - optimizer step,
+    - **Backward** (60) - backward step.
+    - **Optimizer** (80) - optimizer step,
       requires computed metrics for optimization.
-    - **Scheduler** (80) - scheduler step,
+    - **Scheduler** (100) - scheduler step,
       in `ReduceLROnPlateau` case
       requires computed validation metrics for optimizer schedule.
-    - **External** (100) - additional callbacks with custom logic,
-      like InferenceCallbacks
+    - **External** (120) - additional callbacks with custom logic.
 
     Nevertheless, you always can create CustomCallback with any order,
     for example::
@@ -159,21 +80,10 @@ class CallbackOrder(IntFlag):
     Internal = internal = 0
     Metric = metric = 20
     MetricAggregation = metric_aggregation = 40
-    Optimizer = optimizer = 60
-    Scheduler = scheduler = 80
-    External = external = 100
-    ExternalExtra = external_extra = 120
-
-
-class CallbackScope(IntFlag):
-    """Callback scope usage flag during training.
-
-    - Stage (0) - use Callback only during one experiment stage.
-    - Experiment (1) - use Callback during whole experiment run.
-    """
-
-    Stage = stage = 0
-    Experiment = experiment = 1
+    Backward = backward = 60
+    Optimizer = optimizer = 80
+    Scheduler = scheduler = 100
+    External = external = 120
 
 
 class Callback(ICallback):
@@ -182,15 +92,13 @@ class Callback(ICallback):
 
     Args:
         order: flag from ``CallbackOrder``
-        node: flag from ``CallbackNode``
-        scope: flag from ``CallbackScope``
 
     To give users maximum flexibility and extensibility Catalyst supports
     callback execution anywhere in the training loop:
 
     .. code:: bash
 
-        -- stage start
+        -- experiment start
         ---- epoch start
         ------ loader start
         -------- batch start
@@ -198,7 +106,7 @@ class Callback(ICallback):
         -------- batch end
         ------ loader end
         ---- epoch end
-        -- stage end
+        -- experiment end
 
         exception – if an Exception was raised
 
@@ -218,29 +126,47 @@ class Callback(ICallback):
 
     """
 
-    def __init__(self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage):
-        """Callback initializer."""
-        self.node = node
+    def __init__(self, order: int):
+        """Init."""
         self.order = order
-        self.scope = scope
 
 
-class ICriterionCallback(Callback):
+class IMetricCallback(Callback):
+    """Metric callback interface, abstraction over metric step."""
+
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Metric)
+
+
+class ICriterionCallback(IMetricCallback):
     """Criterion callback interface, abstraction over criterion step."""
 
     pass
 
 
+class IBackwardCallback(Callback):
+    """Backward callback interface, abstraction over backward step."""
+
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Backward)
+
+
 class IOptimizerCallback(Callback):
     """Optimizer callback interface, abstraction over optimizer step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Optimizer)
 
 
 class ISchedulerCallback(Callback):
     """Scheduler callback interface, abstraction over scheduler step."""
 
-    pass
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Scheduler)
 
 
 class CallbackWrapper(Callback):
@@ -257,232 +183,64 @@ class CallbackWrapper(Callback):
         """Init."""
         if base_callback is None or not isinstance(base_callback, Callback):
             raise ValueError(f"Expected callback but got - {type(base_callback)}!")
-        super().__init__(
-            order=base_callback.order, node=base_callback.node, scope=base_callback.scope
-        )
+        super().__init__(order=base_callback.order)
         self.callback = base_callback
         self._is_enabled = enable_callback
 
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler for experiment start."""
         if self._is_enabled:
-            self.callback.on_stage_start(runner)
+            self.callback.on_experiment_start(runner)
 
     def on_epoch_start(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for epoch start."""
         if self._is_enabled:
             self.callback.on_epoch_start(runner)
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """
-        Check if current epoch should be skipped.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for loader start."""
         if self._is_enabled:
             self.callback.on_loader_start(runner)
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for batch start."""
         if self._is_enabled:
             self.callback.on_batch_start(runner)
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for batch end."""
         if self._is_enabled:
             self.callback.on_batch_end(runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """
-        Reset status of callback
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for loader end."""
         if self._is_enabled:
             self.callback.on_loader_end(runner)
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for epoch end."""
         if self._is_enabled:
             self.callback.on_epoch_end(runner)
 
-    def on_stage_end(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+    def on_experiment_end(self, runner: "IRunner") -> None:
+        """Event handler for experiment end."""
         if self._is_enabled:
-            self.callback.on_stage_end(runner)
+            self.callback.on_experiment_end(runner)
 
     def on_exception(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
+        """Event handler for exception case."""
         if self._is_enabled:
             self.callback.on_exception(runner)
-
-
-class CallbackList(Callback):
-    """Callback wrapper for a list of Callbacks
-
-    Args:
-        callbacks: list of callbacks
-        order: flag from ``CallbackOrder``
-        node: flag from ``CallbackNode``
-        scope: flag from ``CallbackScope``
-    """
-
-    def __init__(
-        self,
-        callbacks: List[Callback],
-        order: int,
-        node: int = CallbackNode.all,
-        scope: int = CallbackScope.stage,
-    ):
-        """Init."""
-        super().__init__(order=order, node=node, scope=scope)
-        self.callbacks = callbacks
-
-    def on_experiment_start(self, runner: "IRunner") -> None:
-        """Event handler for experiment start.
-
-        Args:
-            runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
-        """
-        for callback in self.callbacks:
-            callback.on_experiment_start(runner)
-
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_stage_start(runner)
-
-    def on_epoch_start(self, runner: "IRunner") -> None:
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_epoch_start(runner)
-
-    def on_loader_start(self, runner: "IRunner") -> None:
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_loader_start(runner)
-
-    def on_batch_start(self, runner: "IRunner") -> None:
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_batch_start(runner)
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_batch_end(runner)
-
-    def on_loader_end(self, runner: "IRunner") -> None:
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_loader_end(runner)
-
-    def on_epoch_end(self, runner: "IRunner") -> None:
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_epoch_end(runner)
-
-    def on_stage_end(self, runner: "IRunner") -> None:
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_stage_end(runner)
-
-    def on_experiment_end(self, runner: "IRunner") -> None:
-        """Event handler for experiment end.
-
-        Args:
-            runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
-        """
-        for callback in self.callbacks:
-            callback.on_experiment_end(runner)
-
-    def on_exception(self, runner: "IRunner") -> None:
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-        """
-        for callback in self.callbacks:
-            callback.on_exception(runner)
 
 
 __all__ = [
     "ICallback",
     "Callback",
-    "CallbackNode",
     "CallbackOrder",
-    "CallbackScope",
+    "IMetricCallback",
     "ICriterionCallback",
+    "IBackwardCallback",
     "IOptimizerCallback",
     "ISchedulerCallback",
     "CallbackWrapper",
-    "CallbackList",
 ]

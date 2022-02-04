@@ -1,58 +1,52 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
+from typing import Any, Dict, Generator, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
 
 import torch
-from torch import nn, optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 
+from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
+from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.optimizer import OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core._misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.callback import Callback
+from catalyst.callbacks.scheduler import SchedulerCallback
+from catalyst.core.callback import (
+    Callback,
+    IBackwardCallback,
+    ICriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+)
 from catalyst.core.logger import ILogger
-from catalyst.core.runner import IRunner, RunnerError
-from catalyst.core.trial import ITrial
-from catalyst.data.loader import ILoaderWrapper
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
+from catalyst.core.runner import IRunner, IRunnerError
 from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.runners._misc import get_loaders_from_params
-from catalyst.runners.self_supervised import ISelfSupervisedRunner
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
-    Criterion,
-    Model,
-    Optimizer,
     RunnerCriterion,
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
-    Scheduler,
+    TorchCriterion,
+    TorchModel,
+    TorchOptimizer,
+    TorchScheduler,
 )
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import get_available_engine
-
-
-def _process_loaders(
-    loaders: "OrderedDict[str, DataLoader]", initial_seed: int
-) -> "OrderedDict[str, DataLoader]":
-    if not isinstance(loaders[list(loaders.keys())[0]], (DataLoader, ILoaderWrapper)):
-        loaders = get_loaders_from_params(initial_seed=initial_seed, **loaders)
-    return loaders
+from catalyst.utils.torch import get_available_engine, load_checkpoint
 
 
 class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API.
 
-    Runner supports the logic for deep learning pipeline configuration with pure python code.
+    Runner supports the logic for deep learning pipeline configuration
+    with pure python code.
     Please check the examples for intuition.
 
     Args:
@@ -66,7 +60,8 @@ class Runner(IRunner):
 
         It does not automatically add Criterion, Optimizer or Scheduler callbacks.
 
-        That means, that you have do optimization step by yourself during ``handle_batch`` method
+        That means, that you have do optimization step by yourself during
+        ``handle_batch`` method
         or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.
 
         For more easy-to-go supervised use case please follow
@@ -75,7 +70,7 @@ class Runner(IRunner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
     Examples:
 
@@ -130,7 +125,9 @@ class Runner(IRunner):
                     {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
                 )
                 for key in ["loss", "accuracy01", "accuracy03"]:
-                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                    self.meters[key].update(
+                        self.batch_metrics[key].item(), self.batch_size
+                    )
                 # run model backward pass
                 if self.is_train_loader:
                     loss.backward()
@@ -163,24 +160,9 @@ class Runner(IRunner):
     def __init__(self, *args, **kwargs):
         """Init."""
         super().__init__(*args, **kwargs)
-        # the core
-        self._trial: ITrial = None
-        self._engine: IEngine = self.engine
-        self._model: RunnerModel = self.model
-        # the data
-        self._loaders: Dict[str, DataLoader] = None
-        # the components
-        self._criterion: RunnerCriterion = None
-        self._optimizer: RunnerOptimizer = None
-        self._scheduler: RunnerScheduler = None
-        # the callbacks
-        self._callbacks: Dict[str, Callback] = {}
-        # the loggers
-        self._loggers: Dict[str, ILogger] = {}
         # extra
         self._seed = 42
         self._hparams: Dict = None
-        self._stage: str = "stage"
         self._num_epochs: int = 1
         # model selection
         self._logdir = None
@@ -202,111 +184,72 @@ class Runner(IRunner):
         return self._seed
 
     @property
-    def name(self) -> str:
-        """Returns run name."""
-        return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
-
-    @property
     def hparams(self) -> Dict:
         """Returns hyperparameters."""
-        if self._hparams is not None:
-            return self._hparams
-        elif self._trial is not None:
-            return self._trial.params
-        else:
-            return {}
+        return self._hparams or {}
 
     @property
-    def stages(self) -> Iterable[str]:
-        """Experiment's stage names (array with one value)."""
-        return [self._stage]
-
-    def get_stage_len(self, stage: str) -> int:
-        """Returns the stage length in epochs for a given stage."""
+    def num_epochs(self) -> int:
+        """Returns the number of epochs in the experiment."""
         return self._num_epochs
 
-    def get_trial(self) -> ITrial:
-        """Returns the trial for a run."""
-        return self._trial
-
     def get_engine(self) -> IEngine:
-        """Returns the engine for a run."""
-        return self._engine or get_available_engine()
+        """Returns the engine for the experiment."""
+        return self._engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """Returns the logger for a run."""
+        """Returns the loggers for the experiment."""
         loggers = self._loggers or {}
-        is_logger_exists = lambda logger_fn: any(
+        logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
         )
-        if not is_logger_exists(ConsoleLogger):
+        if not logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
-        if self._logdir is not None and not is_logger_exists(CSVLogger):
+        if self._logdir is not None and not logger_exists(CSVLogger):
+            # @TODO: remove postfix
             loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
-        if self._logdir is not None and not is_logger_exists(TensorboardLogger):
+        if self._logdir is not None and not logger_exists(TensorboardLogger):
+            # @TODO: remove postfix
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=self._logdir, use_logdir_postfix=True
             )
-
         return loggers
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage."""
-        self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
+    def get_loaders(self) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for the experiment."""
         return self._loaders
 
-    def get_model(self, stage: str) -> Model:
-        """Returns the model for a given stage."""
-        model = (
-            self._model()
-            if callable(self._model) and not isinstance(self._model, nn.Module)
-            else self._model
-        )
-        return model
+    def get_model(self) -> RunnerModel:
+        """Returns the model for the experiment."""
+        return self._model
 
-    def get_criterion(self, stage: str) -> Criterion:
-        """Returns the criterion for a given stage."""
-        return (
-            self._criterion()
-            if callable(self._criterion) and not isinstance(self._criterion, nn.Module)
-            else self._criterion
-        )
+    def get_criterion(self) -> Optional[RunnerCriterion]:
+        """Returns the criterion for the experiment."""
+        return self._criterion
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
-        """Returns the optimizer for a given stage."""
-        return (
-            self._optimizer(model)
-            if callable(self._optimizer) and not isinstance(self._optimizer, optim.Optimizer)
-            else self._optimizer
-        )
+    def get_optimizer(self, model: RunnerModel) -> Optional[RunnerOptimizer]:
+        """Returns the optimizer for the experiment."""
+        return self._optimizer
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        """Returns the scheduler for a given stage."""
-        return (
-            self._scheduler(optimizer)
-            if callable(self._scheduler)
-            and not isinstance(
-                self._scheduler,
-                (optim.lr_scheduler.ReduceLROnPlateau, optim.lr_scheduler._LRScheduler),
-            )
-            else self._scheduler
-        )
+    def get_scheduler(self, optimizer: RunnerOptimizer) -> Optional[RunnerScheduler]:
+        """Returns the scheduler for the experiment."""
+        return self._scheduler
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for a given stage."""
+    def get_callbacks(self) -> "OrderedDict[str, Callback]":
+        """Returns the callbacks for the experiment."""
         callbacks = sort_callbacks_by_order(self._callbacks)
-        is_callback_exists = lambda callback_fn: any(
+        callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if self._verbose and not is_callback_exists(TqdmCallback):
+        if self._verbose and not callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
-        if self._timeit and not is_callback_exists(TimerCallback):
+        if self._timeit and not callback_exists(TimerCallback):
             callbacks["_timer"] = TimerCallback()
-        if self._check and not is_callback_exists(CheckRunCallback):
+        if self._check and not callback_exists(CheckRunCallback):
             callbacks["_check"] = CheckRunCallback()
-        if self._overfit and not is_callback_exists(BatchOverfitCallback):
+        if self._overfit and not callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
-        if self._profile and not is_callback_exists(ProfilerCallback):
+        if self._profile and not callback_exists(ProfilerCallback):
             callbacks["_profile"] = ProfilerCallback(
                 tensorboard_path=os.path.join(self._logdir, "tb_profile"),
                 profiler_kwargs={
@@ -322,14 +265,13 @@ class Runner(IRunner):
                 },
             )
 
-        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+        if self._logdir is not None and not callback_exists(ICheckpointCallback):
             callbacks["_checkpoint"] = CheckpointCallback(
                 logdir=os.path.join(self._logdir, "checkpoints"),
                 loader_key=self._valid_loader,
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
-                resume=self._resume,
-                load_on_stage_end="best" if self._load_best_on_end else None,
+                load_best_on_end=self._load_best_on_end,
             )
         return callbacks
 
@@ -339,13 +281,12 @@ class Runner(IRunner):
         # the data
         loaders: "OrderedDict[str, DataLoader]",
         # the core
-        model: Model,
+        model: TorchModel,
         engine: Union["IEngine", str] = None,
-        trial: ITrial = None,
         # the components
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
+        criterion: TorchCriterion = None,
+        optimizer: TorchOptimizer = None,
+        scheduler: TorchScheduler = None,
         # the callbacks
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         # the loggers
@@ -353,14 +294,13 @@ class Runner(IRunner):
         # experiment info
         seed: int = 42,
         hparams: Dict[str, Any] = None,
-        # stage info
         num_epochs: int = 1,
         # extra info (callbacks info)
         logdir: str = None,
         resume: str = None,
         valid_loader: str = None,
         valid_metric: str = None,
-        minimize_valid_metric: bool = True,
+        minimize_valid_metric: bool = None,
         verbose: bool = False,
         timeit: bool = False,
         check: bool = False,
@@ -368,20 +308,18 @@ class Runner(IRunner):
         profile: bool = False,
         load_best_on_end: bool = False,
         # engine extra params,
+        cpu: bool = False,
         fp16: bool = False,
-        amp: bool = False,
-        apex: bool = False,
         ddp: bool = False,
     ) -> None:
         """
-        Starts the train stage of the model.
+        Starts the training of the model.
 
         Args:
             loaders: dictionary with one or several ``torch.utils.data.DataLoader``
                 for training, validation or inference
             model: model to train
             engine: engine to use for model training
-            trial: trial to use during model training
             criterion: criterion function for training
             optimizer: optimizer for training
             scheduler: scheduler for training
@@ -413,105 +351,20 @@ class Runner(IRunner):
             load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
-            fp16: boolean flag to use half-precision training (AMP > APEX)
-            amp: boolean flag to use amp half-precision
-            apex: boolean flag to use apex half-precision
+            cpu: boolean flag to force CPU usage
+            fp16: boolean flag to use half-precision
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
 
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
-        Examples:
-
-        .. code-block:: python
-
-            import os
-            from torch import nn, optim
-            from torch.nn import functional as F
-            from torch.utils.data import DataLoader
-            from catalyst import dl, metrics
-            from catalyst.data import ToTensor
-            from catalyst.contrib.datasets import MNIST
-
-            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-            optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-            loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                    batch_size=32
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32
-                ),
-            }
-
-            class CustomRunner(dl.Runner):
-                def predict_batch(self, batch):
-                    # model inference step
-                    return self.model(batch[0].to(self.device))
-
-                def on_loader_start(self, runner):
-                    super().on_loader_start(runner)
-                    self.meters = {
-                        key: metrics.AdditiveMetric(compute_on_call=False)
-                        for key in ["loss", "accuracy01", "accuracy03"]
-                    }
-
-                def handle_batch(self, batch):
-                    # model train/valid step
-                    # unpack the batch
-                    x, y = batch
-                    # run model forward pass
-                    logits = self.model(x)
-                    # compute the loss
-                    loss = F.cross_entropy(logits, y)
-                    # compute other metrics of interest
-                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-                    # log metrics
-                    self.batch_metrics.update(
-                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
-                    )
-                    for key in ["loss", "accuracy01", "accuracy03"]:
-                        self.meters[key].update(
-                            self.batch_metrics[key].item(),
-                            self.batch_size
-                        )
-                    # run model backward pass
-                    if self.is_train_loader:
-                        loss.backward()
-                        self.optimizer.step()
-                        self.optimizer.zero_grad()
-
-                def on_loader_end(self, runner):
-                    for key in ["loss", "accuracy01", "accuracy03"]:
-                        self.loader_metrics[key] = self.meters[key].compute()[0]
-                    super().on_loader_end(runner)
-
-            runner = CustomRunner()
-            # model training
-            runner.train(
-                model=model,
-                optimizer=optimizer,
-                loaders=loaders,
-                logdir="./logs",
-                num_epochs=5,
-                verbose=True,
-                valid_loader="valid",
-                valid_metric="loss",
-                minimize_valid_metric=True,
-            )
-            # model inference
-            for logits in runner.predict_loader(loader=loaders["valid"]):
-                assert logits.detach().cpu().numpy().shape[-1] == 10
         """
         # experiment setup
-        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
-        self._trial = trial
+        self._engine = engine or get_available_engine(cpu=cpu, fp16=fp16, ddp=ddp)
+        # self._trial = trial
         self._loggers = loggers
         # the data
         self._loaders = loaders
@@ -523,7 +376,6 @@ class Runner(IRunner):
         # the callbacks
         self._callbacks = callbacks
         # extra
-        self._stage = "train"
         self._seed = seed
         self._hparams = hparams
         self._num_epochs = num_epochs
@@ -550,30 +402,27 @@ class Runner(IRunner):
             batch: dictionary with data batches from DataLoader.
             **kwargs: additional kwargs to pass to the model
 
-        Returns:
+        Returns:  # noqa: DAR202
             Mapping: model output dictionary
 
         Raises:
             NotImplementedError: if not implemented yet
         """
         raise NotImplementedError("Please implement `runner.predict_batch` method")
-        return None
 
     @torch.no_grad()
     def predict_loader(
         self,
         *,
         loader: DataLoader,
-        model: Model = None,
+        model: TorchModel = None,
         engine: Union["IEngine", str] = None,
         seed: int = 42,
         # extra info
         resume: str = None,
         # engine extra params,
+        cpu: bool = False,
         fp16: bool = False,
-        amp: bool = False,
-        apex: bool = False,
-        ddp: bool = False,
     ) -> Generator:
         """
         Runs model inference on PyTorch DataLoader and returns
@@ -585,11 +434,8 @@ class Runner(IRunner):
             engine: engine to use for prediction
             seed: random seed to use before prediction
             resume: path to checkpoint for model
-            fp16: boolean flag to use half-precision training (AMP > APEX)
-            amp: boolean flag to use amp half-precision
-            apex: boolean flag to use apex half-precision
-            ddp: if `True` will start training in distributed mode.
-                Note: Works only with python scripts. No jupyter support.
+            cpu: boolean flag to force CPU usage
+            fp16: boolean flag to use half-precision
 
         Yields:
             bathes with model predictions
@@ -597,107 +443,20 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-
-        Examples:
-
-        .. code-block:: python
-
-            import os
-            from torch import nn, optim
-            from torch.nn import functional as F
-            from torch.utils.data import DataLoader
-            from catalyst import dl, metrics
-            from catalyst.data import ToTensor
-            from catalyst.contrib.datasets import MNIST
-
-            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-            optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-            loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                    batch_size=32
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32
-                ),
-            }
-
-            class CustomRunner(dl.Runner):
-                def predict_batch(self, batch):
-                    # model inference step
-                    return self.model(batch[0].to(self.device))
-
-                def on_loader_start(self, runner):
-                    super().on_loader_start(runner)
-                    self.meters = {
-                        key: metrics.AdditiveMetric(compute_on_call=False)
-                        for key in ["loss", "accuracy01", "accuracy03"]
-                    }
-
-                def handle_batch(self, batch):
-                    # model train/valid step
-                    # unpack the batch
-                    x, y = batch
-                    # run model forward pass
-                    logits = self.model(x)
-                    # compute the loss
-                    loss = F.cross_entropy(logits, y)
-                    # compute other metrics of interest
-                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-                    # log metrics
-                    self.batch_metrics.update(
-                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
-                    )
-                    for key in ["loss", "accuracy01", "accuracy03"]:
-                        self.meters[key].update(
-                            self.batch_metrics[key].item(),
-                            self.batch_size
-                        )
-                    # run model backward pass
-                    if self.is_train_loader:
-                        loss.backward()
-                        self.optimizer.step()
-                        self.optimizer.zero_grad()
-
-                def on_loader_end(self, runner):
-                    for key in ["loss", "accuracy01", "accuracy03"]:
-                        self.loader_metrics[key] = self.meters[key].compute()[0]
-                    super().on_loader_end(runner)
-
-            runner = CustomRunner()
-            # model training
-            runner.train(
-                model=model,
-                optimizer=optimizer,
-                loaders=loaders,
-                logdir="./logs",
-                num_epochs=5,
-                verbose=True,
-                valid_loader="valid",
-                valid_metric="loss",
-                minimize_valid_metric=True,
-            )
-            # model inference
-            for logits in runner.predict_loader(loader=loaders["valid"]):
-                assert logits.detach().cpu().numpy().shape[-1] == 10
-            # model inference from checkpoint
-            for logits in runner.predict_loader(loader=loaders["valid"], resume="./logs/best.pth"):
-                assert logits.detach().cpu().numpy().shape[-1] == 10
+            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
         """
-        self.engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
 
         if model is not None:
             self.model = model
         assert self.model is not None
 
         if resume is not None:
-            checkpoint = self.engine.load_checkpoint(resume)
-            self.engine.unpack_checkpoint(checkpoint, model=self.model)
+            self.engine.wait_for_everyone()
+            unwrapped_model = self.engine.unwrap_model(self.model)
+            unwrapped_model.load_state_dict(load_checkpoint(resume))
 
-        self.model = self.engine.sync_device(self.model)
+        self.model = self.engine.prepare(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
 
         set_global_seed(seed)
@@ -708,12 +467,12 @@ class Runner(IRunner):
         self,
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        model: Optional[Model] = None,
+        model: Optional[TorchModel] = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict[str, Any]:
         """
-        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
+        Evaluates dataloader with given model and returns obtained metrics.
 
         Args:
             loader: loader to predict
@@ -725,19 +484,16 @@ class Runner(IRunner):
 
         Returns:
             Dict with metrics counted on the loader.
+
+        Raises:
+            IRunnerError: if ``CheckpointCallback`` found in the callbacks
         """
-        if isinstance(callbacks, List):
-            for callback in callbacks:
-                if isinstance(callback, CheckpointCallback):
-                    raise RunnerError(
-                        "CheckpointCallback isn`t allowed for evaluation loader method"
-                    )
-        else:
-            for callback in callbacks.values():
-                if isinstance(callback, CheckpointCallback):
-                    raise RunnerError(
-                        "CheckpointCallback isn`t allowed for evaluation loader method"
-                    )
+        callbacks = sort_callbacks_by_order(callbacks)
+        for callback in callbacks.values():
+            if callback_isinstance(callback, ICheckpointCallback):
+                raise IRunnerError(
+                    "CheckpointCallback isn`t allowed for evaluation loader method"
+                )
 
         if model is None:
             model = self.model
@@ -770,61 +526,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-
-    Examples:
-
-    .. code-block:: python
-
-        import os
-        from torch import nn, optim
-        from torch.utils.data import DataLoader
-        from catalyst import dl, utils
-        from catalyst.data import ToTensor
-        from catalyst.contrib.datasets import MNIST
-
-        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-        loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32
-            ),
-        }
-
-        runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
-        )
-        # model training
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            loaders=loaders,
-            num_epochs=1,
-            callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3)),
-                dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-            ],
-            logdir="./logs",
-            valid_loader="valid",
-            valid_metric="loss",
-            minimize_valid_metric=True,
-            verbose=True,
-            load_best_on_end=True,
-        )
-        # model inference
-        for prediction in runner.predict_loader(loader=loaders["valid"]):
-            assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -852,8 +554,8 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Run model inference on specified data batch.
 
         .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
+            You should not override this method.
+            If you need specific model call, override runner.forward() method.
 
         Args:
             batch: dictionary with data batch from DataLoader.
@@ -863,208 +565,32 @@ class SupervisedRunner(ISupervisedRunner, Runner):
             Mapping[str, Any]: model output dictionary
         """
         batch = self._process_batch(batch)
-        batch = self.engine.sync_device(tensor_or_module=batch)
         output = self.forward(batch, **kwargs)
         return output
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Prepares the callbacks for selected stage.
-
-        Args:
-            stage: stage name
-
-        Returns:
-            dictionary with stage callbacks
-        """
-        callbacks = super().get_callbacks(stage=stage)
-        is_callback_exists = lambda callback_fn: any(
+    def get_callbacks(self) -> "OrderedDict[str, Callback]":
+        """Returns the callbacks for the experiment."""
+        callbacks = super().get_callbacks()
+        callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
-            callbacks["_criterion"] = CriterionCallback(
-                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key
-            )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
-            ISchedulerCallback
+        if isinstance(self._criterion, TorchCriterion) and not callback_exists(
+            ICriterionCallback
         ):
-            callbacks["_scheduler"] = SchedulerCallback(
-                loader_key=self._valid_loader, metric_key=self._valid_metric
-            )
-        return callbacks
-
-
-class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
-    """Runner for experiments with contrastive model.
-
-    Args:
-        input_key: key in ``runner.batch`` dict mapping for model input
-        target_key: key in ``runner.batch`` dict mapping for target
-        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
-        augemention_prefix: key for ``runner.batch`` to sample augumentions
-        projection_prefix: key for ``runner.batch`` to store model projection
-        embedding_prefix: key for `runner.batch`` to store model embeddings
-        loss_mode_prefix: selector key for loss calculation
-
-    Examples:
-
-    .. code-block:: python
-
-        # 1. loader and transforms
-
-        transforms = Compose(
-            [
-                ToTensor(),
-                Normalize((0.1307,), (0.3081,)),
-                torchvision.transforms.RandomCrop((28, 28)),
-                torchvision.transforms.RandomVerticalFlip(),
-                torchvision.transforms.RandomHorizontalFlip(),
-            ]
-        )
-        mnist = MNIST("./logdir", train=True, download=True, transform=None)
-        contrastive_mnist = ContrastiveDataset(mnist, transforms=transforms)
-
-        train_loader = torch.utils.data.DataLoader(contrastive_mnist, batch_size=BATCH_SIZE)
-
-        # 2. model and optimizer
-        encoder = MnistSimpleNet(out_features=16)
-        projection_head = nn.Sequential(
-            nn.Linear(16, 16, bias=False), nn.ReLU(inplace=True), nn.Linear(16, 16, bias=True)
-        )
-
-        class ContrastiveModel(torch.nn.Module):
-            def __init__(self, model, encoder):
-                super(ContrastiveModel, self).__init__()
-                self.model = model
-                self.encoder = encoder
-
-            def forward(self, x):
-                emb = self.encoder(x)
-                projection = self.model(emb)
-                return emb, projection
-
-        model = ContrastiveModel(model=projection_head, encoder=encoder)
-
-        optimizer = Adam(model.parameters(), lr=LR)
-
-        # 3. criterion with triplets sampling
-        criterion = NTXentLoss(tau=0.1)
-
-        callbacks = [
-            dl.ControlFlowCallback(
-                dl.CriterionCallback(
-                    input_key="projection_left", target_key="projection_right", metric_key="loss"
-                ),
-                loaders="train",
-            ),
-            dl.SklearnModelCallback(
-                feature_key="embedding_left",
-                target_key="target",
-                train_loader="train",
-                valid_loaders="valid",
-                model_fn=RandomForestClassifier,
-                predict_method="predict_proba",
-                predict_key="sklearn_predict",
-                random_state=RANDOM_STATE,
-                n_estimators=10,
-            ),
-            dl.ControlFlowCallback(
-                dl.AccuracyCallback(
-                    target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
-                ),
-                loaders="valid",
-            ),
-        ]
-
-        runner = dl.ContrastiveRunner()
-
-        logdir = "./logdir"
-        runner.train(
-            model=model,
-            engine=engine or dl.DeviceEngine(device),
-            criterion=criterion,
-            optimizer=optimizer,
-            callbacks=callbacks,
-            loaders={"train": train_loader, "valid": train_loader},
-            verbose=True,
-            logdir=logdir,
-            valid_loader="train",
-            valid_metric="loss",
-            minimize_valid_metric=True,
-            num_epochs=10,
-        )
-    """
-
-    def __init__(
-        self,
-        model: RunnerModel = None,
-        engine: IEngine = None,
-        input_key: str = "features",
-        target_key: str = "target",
-        loss_key: str = "loss",
-        augemention_prefix: str = "augment",
-        projection_prefix: str = "projection",
-        embedding_prefix: str = "embedding",
-        loss_mode_prefix: str = "projection",
-    ):
-        """Init."""
-        ISelfSupervisedRunner.__init__(
-            self,
-            input_key=input_key,
-            target_key=target_key,
-            loss_key=loss_key,
-            augemention_prefix=augemention_prefix,
-            projection_prefix=projection_prefix,
-            embedding_prefix=embedding_prefix,
-        )
-        Runner.__init__(self, model=model, engine=engine)
-        self.loss_mode_prefix = loss_mode_prefix
-
-    @torch.no_grad()
-    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
-        """
-        Run model inference on specified data batch.
-
-        .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
-
-        Args:
-            batch: dictionary with data batch from DataLoader.
-            **kwargs: additional kwargs to pass to the model
-
-        Returns:
-            Mapping[str, Any]: model output dictionary
-        """
-        batch = self._process_batch(batch)
-        batch = self.engine.sync_device(tensor_or_module=batch)
-        output = self.forward(batch, **kwargs)
-        return output
-
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Prepares the callbacks for selected stage.
-
-        Args:
-            stage: stage name
-
-        Returns:
-            dictionary with stage callbacks
-        """
-        # I took it from supervised runner should be remade
-        callbacks = super().get_callbacks(stage=stage)
-        is_callback_exists = lambda callback_fn: any(
-            callback_isinstance(x, callback_fn) for x in callbacks.values()
-        )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=f"{self.loss_mode_prefix}_left",
-                target_key=f"{self.loss_mode_prefix}_right",
+                input_key=self._output_key,
+                target_key=self._target_key,
                 metric_key=self._loss_key,
             )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+        if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
+            IBackwardCallback
+        ):
+            callbacks["_backward"] = BackwardCallback(metric_key=self._loss_key)
+        if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
+            IOptimizerCallback
+        ):
             callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+        if isinstance(self._scheduler, TorchScheduler) and not callback_exists(
             ISchedulerCallback
         ):
             callbacks["_scheduler"] = SchedulerCallback(
@@ -1073,4 +599,4 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         return callbacks
 
 
-__all__ = ["Runner", "SupervisedRunner", "SelfSupervisedRunner"]
+__all__ = ["Runner", "SupervisedRunner"]

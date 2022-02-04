@@ -4,8 +4,16 @@ from catalyst.settings import SETTINGS
 
 from catalyst.contrib.data.collate_fn import FilteringCollateFn
 
-from catalyst.contrib.data.dataset import ListDataset, MergeDataset, NumpyDataset, PathsDataset
-from catalyst.contrib.data.dataset_ml import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.data.dataset import (
+    ListDataset,
+    MergeDataset,
+    NumpyDataset,
+    PathsDataset,
+)
+from catalyst.contrib.data.dataset_ml import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 
 from catalyst.contrib.data.reader import (
     IReader,
@@ -36,5 +44,5 @@ if SETTINGS.cv_required:
     from catalyst.contrib.data.reader_cv import ImageReader, MaskReader
 
 
-if SETTINGS.nifti_required:
-    from catalyst.contrib.data.reader_nifti import NiftiReader
+# if SETTINGS.nifti_required:
+#     from catalyst.contrib.data.reader_nifti import NiftiReader

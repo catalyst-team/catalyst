@@ -2,10 +2,10 @@
 from typing import Tuple
 import multiprocessing as mp
 
+from gym import spaces
 from misc import structed2dict
 import numpy as np
 
-from gym import spaces
 from torch.utils.data.dataset import Dataset, IterableDataset
 
 
@@ -13,7 +13,9 @@ def _handle_array(array: np.ndarray):
     array = structed2dict(array)
 
     if isinstance(array, dict):
-        output = dict((key, np.array(value).astype(np.float32)) for key, value in array.items())
+        output = dict(
+            (key, np.array(value).astype(np.float32)) for key, value in array.items()
+        )
     else:
         output = np.array(array).astype(np.float32)
 
@@ -72,7 +74,10 @@ def get_buffer(
                 buffer_dtype.append((key, value.dtype, value.shape))
             buffer_dtype = np.dtype(buffer_dtype)
             buffer = np.memmap(
-                f"{logdir}/{name}.memmap", mode="w+", shape=(capacity,), dtype=buffer_dtype
+                f"{logdir}/{name}.memmap",
+                mode="w+",
+                shape=(capacity,),
+                dtype=buffer_dtype,
             )
     elif mode == "dynamic":
         raise NotImplementedError()
@@ -147,7 +152,9 @@ class BufferWrapper:
     def __repr__(self):
         return self._data.__repr__().replace(
             "array",
-            f"BufferWrapper(" f"capacity={self._capacity}, " f"data_dtype={self._dtype}), ",
+            f"BufferWrapper("
+            f"capacity={self._capacity}, "
+            f"data_dtype={self._dtype}), ",
         )
 
 
@@ -237,7 +244,9 @@ class OffpolicyReplayBuffer(Dataset):
             if self.pointer + trajectory_len >= self.capacity_limit:
                 return False
 
-            self.observations[self.pointer : self.pointer + trajectory_len] = observations
+            self.observations[
+                self.pointer : self.pointer + trajectory_len
+            ] = observations
             self.actions[self.pointer : self.pointer + trajectory_len] = actions
             self.rewards[self.pointer : self.pointer + trajectory_len] = rewards
             self.dones[self.pointer : self.pointer + trajectory_len] = dones
@@ -274,9 +283,15 @@ class OffpolicyReplayBuffer(Dataset):
                     self.observations[i_start:i_end] = self.observations[
                         offset + i_start : offset + i_end
                     ]
-                    self.actions[i_start:i_end] = self.actions[offset + i_start : offset + i_end]
-                    self.rewards[i_start:i_end] = self.rewards[offset + i_start : offset + i_end]
-                    self.dones[i_start:i_end] = self.dones[offset + i_start : offset + i_end]
+                    self.actions[i_start:i_end] = self.actions[
+                        offset + i_start : offset + i_end
+                    ]
+                    self.rewards[i_start:i_end] = self.rewards[
+                        offset + i_start : offset + i_end
+                    ]
+                    self.dones[i_start:i_end] = self.dones[
+                        offset + i_start : offset + i_end
+                    ]
 
                 self.pointer = curr_p
             self.length = curr_p
@@ -287,7 +302,8 @@ class OffpolicyReplayBuffer(Dataset):
 
         if start_idx < 0 or np.any(self.dones[start_idx : idx + 1]):
             state = np.zeros(
-                (history_len,) + tuple(self.observations.shape[1:]), dtype=self.observations.dtype
+                (history_len,) + tuple(self.observations.shape[1:]),
+                dtype=self.observations.dtype,
             )
             indices = [idx]
             for i in range(history_len - 1):

@@ -1,11 +1,10 @@
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar, Union
 import argparse
 from base64 import urlsafe_b64encode
 import collections
 import copy
 from datetime import datetime
 from hashlib import sha256
-import inspect
 from itertools import tee
 import os
 import random
@@ -45,7 +44,9 @@ def boolean_flag(
     names = ["--" + name]
     if shorthand is not None:
         names.append("-" + shorthand)
-    parser.add_argument(*names, action="store_true", default=default, dest=dest, help=help)
+    parser.add_argument(
+        *names, action="store_true", default=default, dest=dest, help=help
+    )
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 
@@ -112,12 +113,6 @@ def maybe_recursive_call(
         return method(object_or_dict, *r_args, **r_kwargs, **kwargs)
 
 
-def is_exception(ex: Any) -> bool:
-    """Check if the argument is of ``Exception`` type."""
-    result = (ex is not None) and isinstance(ex, BaseException)
-    return result
-
-
 def get_utcnow_time(format: str = None) -> str:
     """Return string with current utc time in chosen format.
 
@@ -131,41 +126,6 @@ def get_utcnow_time(format: str = None) -> str:
         format = "%y%m%d.%H%M%S"
     result = datetime.utcnow().strftime(format)
     return result
-
-
-def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
-    """Return default parameters of Callable.
-
-    Args:
-        fn (Callable[..., Any]): target Callable
-        exclude: exclude list of parameters
-
-    Returns:
-        dict: contains default parameters of `fn`
-    """
-    argspec = inspect.getfullargspec(fn)
-    default_params = zip(argspec.args[-len(argspec.defaults) :], argspec.defaults)
-    if exclude is not None:
-        default_params = filter(lambda x: x[0] not in exclude, default_params)
-    default_params = dict(default_params)
-    return default_params
-
-
-def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
-    """Return parameter names of Callable.
-
-    Args:
-        fn (Callable[..., Any]): target Callable
-        exclude: exclude list of parameters
-
-    Returns:
-        list: contains parameter names of `fn`
-    """
-    argspec = inspect.getfullargspec(fn)
-    params = argspec.args + argspec.kwonlyargs
-    if exclude is not None:
-        params = list(filter(lambda x: x not in exclude, params))
-    return params
 
 
 def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
@@ -281,7 +241,9 @@ def _make_hashable(o):
     if isinstance(o, (tuple, list)):
         return tuple(((type(o).__name__, _make_hashable(e)) for e in o))
     if isinstance(o, dict):
-        return tuple(sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items()))
+        return tuple(
+            sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items())
+        )
     if isinstance(o, (set, frozenset)):
         return tuple(sorted((type(o).__name__, _make_hashable(e)) for e in o))
     return o
@@ -349,12 +311,14 @@ def make_tuple(tuple_like):
     Returns:
         tuple or list
     """
-    tuple_like = tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
+    tuple_like = (
+        tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
+    )
     return tuple_like
 
 
 def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
-    """@TODO: docs."""
+    """Docs."""
     if not isinstance(dict_, dict):
         raise ValueError()
 
@@ -366,10 +330,7 @@ def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
 
 __all__ = [
     "boolean_flag",
-    "get_fn_default_params",
-    "get_fn_argsnames",
     "get_utcnow_time",
-    "is_exception",
     "maybe_recursive_call",
     "get_attr",
     "set_global_seed",

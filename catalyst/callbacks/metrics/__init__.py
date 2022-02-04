@@ -2,7 +2,10 @@
 
 from catalyst.settings import SETTINGS
 
-from catalyst.callbacks.metrics.accuracy import AccuracyCallback, MultilabelAccuracyCallback
+from catalyst.callbacks.metrics.accuracy import (
+    AccuracyCallback,
+    MultilabelAccuracyCallback,
+)
 from catalyst.callbacks.metrics.auc import AUCCallback
 
 from catalyst.callbacks.metrics.classification import (
@@ -26,11 +29,14 @@ from catalyst.callbacks.metrics.recsys import (
     NDCGCallback,
 )
 
+if SETTINGS.ml_required:
+    from catalyst.callbacks.metrics.scikit_learn import (
+        SklearnBatchCallback,
+        SklearnLoaderCallback,
+    )
+
 from catalyst.callbacks.metrics.segmentation import (
     DiceCallback,
     IOUCallback,
     TrevskyCallback,
 )
-
-if SETTINGS.ml_required:
-    from catalyst.callbacks.metrics.scikit_learn import SklearnBatchCallback, SklearnLoaderCallback

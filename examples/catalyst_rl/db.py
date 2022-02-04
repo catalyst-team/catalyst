@@ -148,7 +148,10 @@ if IS_REDIS_AVAILABLE:
                 self._index = index + 1
 
                 trajectory = unpack(trajectory)
-                trajectory, trajectory_epoch = trajectory["trajectory"], trajectory["epoch"]
+                trajectory, trajectory_epoch = (
+                    trajectory["trajectory"],
+                    trajectory["epoch"],
+                )
                 if self._sync_epoch and self._epoch != trajectory_epoch:
                     trajectory = None
                 else:
@@ -198,7 +201,9 @@ if IS_MONGO_AVAILABLE:
 
             self._trajectory_collection = self._shared_db["trajectories"]
             self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
-            self._checkpoint_collection = gridfs.GridFS(self._agent_db, collection="checkpoints")
+            self._checkpoint_collection = gridfs.GridFS(
+                self._agent_db, collection="checkpoints"
+            )
             self._message_collection = self._agent_db["messages"]
 
             self._last_datetime = datetime.datetime.min
@@ -263,7 +268,9 @@ if IS_MONGO_AVAILABLE:
                 trajectory_ = structed2dict_trajectory(trajectory)
                 trajectory_ = pack(trajectory_)
                 collection = (
-                    self._raw_trajectory_collection if raw else self._trajectory_collection
+                    self._raw_trajectory_collection
+                    if raw
+                    else self._trajectory_collection
                 )
 
                 collection.insert_one(
@@ -319,7 +326,10 @@ if IS_MONGO_AVAILABLE:
                     self.del_checkpoint()
 
                 self._checkpoint_collection.put(
-                    checkpoint_, encoding="ascii", filename="checkpoint", epoch=self._epoch
+                    checkpoint_,
+                    encoding="ascii",
+                    filename="checkpoint",
+                    epoch=self._epoch,
                 )
 
             except pymongo.errors.AutoReconnect:
@@ -328,7 +338,9 @@ if IS_MONGO_AVAILABLE:
 
         def get_checkpoint(self):
             try:
-                checkpoint_obj = self._checkpoint_collection.find_one({"filename": "checkpoint"})
+                checkpoint_obj = self._checkpoint_collection.find_one(
+                    {"filename": "checkpoint"}
+                )
             except pymongo.errors.AutoReconnect:
                 time.sleep(self._reconnect_timeout)
                 return self.get_checkpoint()

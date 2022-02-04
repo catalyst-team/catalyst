@@ -49,8 +49,8 @@ class AccumulativeMetric(ICallbackLoaderMetric):
         Allocate memory for data accumulation
 
         Args:
-            shape_type_dict: dict that contains information about shape of each tensor and
-                it's dtype
+            shape_type_dict: dict that contains information about shape of each tensor
+                and it's dtype
         """
         self.storage = defaultdict(torch.Tensor)
         for key in shape_type_dict:
@@ -78,9 +78,9 @@ class AccumulativeMetric(ICallbackLoaderMetric):
         bs = 0
         for field_name in self.keys:
             bs = kwargs[field_name].shape[0]
-            self.storage[field_name][self.collected_samples : self.collected_samples + bs, ...] = (
-                kwargs[field_name].detach().cpu()
-            )
+            self.storage[field_name][
+                self.collected_samples : self.collected_samples + bs, ...
+            ] = (kwargs[field_name].detach().cpu())
         self.collected_samples += bs
         self.collected_batches += 1
 

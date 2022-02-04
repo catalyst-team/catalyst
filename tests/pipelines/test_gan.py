@@ -1,6 +1,5 @@
 # flake8: noqa
 
-import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -11,8 +10,9 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.layers import Flatten, GlobalMaxPool2d, Lambda
+from catalyst.contrib.layers import Lambda
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+from tests import DATA_ROOT
 
 
 class CustomRunner(dl.Runner):
@@ -23,7 +23,9 @@ class CustomRunner(dl.Runner):
     def predict_batch(self, batch):
         batch_size = 1
         # Sample random points in the latent space
-        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(
+            self.engine.device
+        )
         # Decode them to fake images
         generated_images = self.model["generator"](random_latent_vectors).detach()
         return generated_images
@@ -33,7 +35,9 @@ class CustomRunner(dl.Runner):
         batch_size = real_images.shape[0]
 
         # Sample random points in the latent space
-        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(
+            self.engine.device
+        )
 
         # Decode them to fake images
         generated_images = self.model["generator"](random_latent_vectors).detach()
@@ -41,19 +45,21 @@ class CustomRunner(dl.Runner):
         combined_images = torch.cat([generated_images, real_images])
 
         # Assemble labels discriminating real from fake images
-        labels = torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(
-            self.device
-        )
+        labels = torch.cat(
+            [torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]
+        ).to(self.engine.device)
         # Add random noise to the labels - important trick!
-        labels += 0.05 * torch.rand(labels.shape).to(self.device)
+        labels += 0.05 * torch.rand(labels.shape).to(self.engine.device)
 
         # Discriminator forward
         combined_predictions = self.model["discriminator"](combined_images)
 
         # Sample random points in the latent space
-        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(
+            self.engine.device
+        )
         # Assemble labels that say "all real images"
-        misleading_labels = torch.zeros((batch_size, 1)).to(self.device)
+        misleading_labels = torch.zeros((batch_size, 1)).to(self.engine.device)
 
         # Generator forward
         generated_images = self.model["generator"](random_latent_vectors)
@@ -71,7 +77,7 @@ def _ddp_hack(x):
     return x.view(x.size(0), 1, 28, 28)
 
 
-def train_experiment(device, engine=None):
+def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
         # latent_dim = 128
         # generator = nn.Sequential(
@@ -96,27 +102,34 @@ def train_experiment(device, engine=None):
         #     nn.Linear(128, 1),
         # )
         latent_dim = 32
-        generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid())
-        discriminator = nn.Sequential(Flatten(), nn.Linear(28 * 28, 1))
+        generator = nn.Sequential(
+            nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid()
+        )
+        discriminator = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 1))
 
-        model = {"generator": generator, "discriminator": discriminator}
-        criterion = {"generator": nn.BCEWithLogitsLoss(), "discriminator": nn.BCEWithLogitsLoss()}
+        model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
+        criterion = {
+            "generator": nn.BCEWithLogitsLoss(),
+            "discriminator": nn.BCEWithLogitsLoss(),
+        }
         optimizer = {
-            "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
+            "generator": torch.optim.Adam(
+                generator.parameters(), lr=0.0003, betas=(0.5, 0.999)
+            ),
             "discriminator": torch.optim.Adam(
                 discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)
             ),
         }
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False),
+                MNIST(DATA_ROOT, train=False),
                 batch_size=32,
             ),
         }
 
         runner = CustomRunner(latent_dim)
         runner.train(
-            engine=engine or dl.DeviceEngine(device),
+            engine=engine,
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -128,19 +141,21 @@ def train_experiment(device, engine=None):
                     metric_key="loss_discriminator",
                     criterion_key="discriminator",
                 ),
+                dl.BackwardCallback(metric_key="loss_discriminator"),
+                dl.OptimizerCallback(
+                    optimizer_key="discriminator",
+                    metric_key="loss_discriminator",
+                ),
                 dl.CriterionCallback(
                     input_key="generated_predictions",
                     target_key="misleading_labels",
                     metric_key="loss_generator",
                     criterion_key="generator",
                 ),
+                dl.BackwardCallback(metric_key="loss_generator"),
                 dl.OptimizerCallback(
-                    model_key="generator", optimizer_key="generator", metric_key="loss_generator"
-                ),
-                dl.OptimizerCallback(
-                    model_key="discriminator",
-                    optimizer_key="discriminator",
-                    metric_key="loss_discriminator",
+                    optimizer_key="generator",
+                    metric_key="loss_generator",
                 ),
             ],
             valid_loader="train",
@@ -155,69 +170,55 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-def test_gan_on_cpu():
-    train_experiment("cpu")
+def test_classification_on_cpu():
+    train_experiment(dl.CPUEngine())
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_gan_on_torch_cuda0():
-    train_experiment("cuda:0")
-
-
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_gan_on_torch_cuda1():
-    train_experiment("cuda:1")
-
-
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_gan_on_torch_dp():
-    train_experiment(None, dl.DataParallelEngine())
-
-
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_gan_on_torch_ddp():
-    train_experiment(None, dl.DistributedDataParallelEngine())
-
-
-# AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
-def test_gan_on_amp():
-    train_experiment(None, dl.AMPEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
-    reason="No CUDA>=2 or AMP found",
-)
-def test_gan_on_amp_dp():
-    train_experiment(None, dl.DataParallelAMPEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
-    reason="No CUDA>=2 or AMP found",
-)
-def test_gan_on_amp_ddp():
-    train_experiment(None, dl.DistributedDataParallelAMPEngine())
-
-
-# APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
-def test_gan_on_apex():
-    train_experiment(None, dl.APEXEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_gan_on_apex_dp():
-    train_experiment(None, dl.DataParallelAPEXEngine())
+def test_classification_on_torch_cuda0():
+    train_experiment(dl.GPUEngine())
 
 
 # @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-#     reason="No CUDA>=2 or Apex found",
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_gan_on_apex_ddp():
-#     train_experiment(None, dl.DistributedDataParallelApexEngine())
+# def test_classification_on_torch_cuda1():
+#     train_experiment("cuda:1")
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_dp():
+    train_experiment(dl.DataParallelEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_ddp():
+    train_experiment(dl.DistributedDataParallelEngine())
+
+
+# AMP
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
+def test_classification_on_amp():
+    train_experiment(dl.GPUEngine(fp16=True))
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_classification_on_amp_dp():
+    train_experiment(dl.DataParallelEngine(fp16=True))
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_classification_on_amp_ddp():
+    train_experiment(dl.DistributedDataParallelEngine(fp16=True))

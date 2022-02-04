@@ -30,7 +30,13 @@ class QHAdamW(Optimizer):
     """
 
     def __init__(
-        self, params, lr=1e-3, betas=(0.995, 0.999), nus=(0.7, 1.0), weight_decay=0.0, eps=1e-8
+        self,
+        params,
+        lr=1e-3,
+        betas=(0.995, 0.999),
+        nus=(0.7, 1.0),
+        weight_decay=0.0,
+        eps=1e-8,
     ):
         r"""
         Args:

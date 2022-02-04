@@ -6,7 +6,7 @@ from catalyst.metrics.functional._misc import (
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
-    get_default_topk_args,
+    get_default_topk,
 )
 
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
@@ -17,7 +17,11 @@ from catalyst.metrics.functional._average_precision import (
     binary_average_precision,
 )
 from catalyst.metrics.functional._classification import precision_recall_fbeta_support
-from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count, masked_cmc_score
+from catalyst.metrics.functional._cmc_score import (
+    cmc_score,
+    cmc_score_count,
+    masked_cmc_score,
+)
 from catalyst.metrics.functional._f1_score import f1_score, fbeta_score
 from catalyst.metrics.functional._focal import (
     sigmoid_focal_loss,

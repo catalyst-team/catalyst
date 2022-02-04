@@ -29,7 +29,7 @@ class ILogger:
         Returns: # noqa: DAR201, DAR202
             Any: internal logger/experiment/etc. from the monitoring system.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     def log_batch_metrics(self) -> bool:
@@ -49,21 +49,17 @@ class ILogger:
         """
         return self._log_epoch_metrics
 
-    def log_metrics(
+    def log_artifact(
         self,
-        metrics: Dict[str, float],
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -71,7 +67,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs metrics to the logger."""
+        """Logs artifact (arbitrary file like audio, video, etc) to the logger."""
         pass
 
     def log_image(
@@ -80,16 +76,10 @@ class ILogger:
         image: np.ndarray,
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -100,34 +90,19 @@ class ILogger:
         """Logs image to the logger."""
         pass
 
-    def log_hparams(
-        self,
-        hparams: Dict,
-        scope: str = None,
-        # experiment info
-        run_key: str = None,
-        stage_key: str = None,
-    ) -> None:
+    def log_hparams(self, hparams: Dict) -> None:
         """Logs hyperparameters to the logger."""
         pass
 
-    def log_artifact(
+    def log_metrics(
         self,
-        tag: str,
-        artifact: object = None,
-        path_to_artifact: str = None,
+        metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        run_key: str = None,
-        global_epoch_step: int = 0,
-        global_batch_step: int = 0,
-        global_sample_step: int = 0,
-        # stage info
-        stage_key: str = None,
-        stage_epoch_len: int = 0,
-        stage_epoch_step: int = 0,
-        stage_batch_step: int = 0,
-        stage_sample_step: int = 0,
+        num_epochs: int = 0,
+        epoch_step: int = 0,
+        batch_step: int = 0,
+        sample_step: int = 0,
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
@@ -135,14 +110,14 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs artifact (arbitrary file like audio, video, model weights) to the logger."""
+        """Logs metrics to the logger."""
         pass
 
     def flush_log(self) -> None:
         """Flushes the logger."""
         pass
 
-    def close_log(self, scope: str = None) -> None:
+    def close_log(self) -> None:
         """Closes the logger."""
         pass
 

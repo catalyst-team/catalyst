@@ -1,7 +1,6 @@
 from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
-import os
 from random import randint, shuffle
 
 import numpy as np
@@ -16,6 +15,7 @@ from catalyst.data.sampler import (
     BatchBalanceClassSampler,
     DynamicBalanceClassSampler,
 )
+from tests import DATA_ROOT
 
 TLabelsPK = List[Tuple[List[int], int, int]]
 
@@ -47,7 +47,7 @@ def generate_valid_labels(num: int) -> TLabelsPK:
 def test_balance_class_sampler():
     """Test for BalanceClassSampler."""
     bs = 32
-    data = MNIST(os.getcwd(), train=False)
+    data = MNIST(DATA_ROOT, train=False)
     for mode in ["downsampling", "upsampling", 100, 200, 500]:
         sampler = BalanceClassSampler(data.targets.cpu().numpy().tolist(), mode=mode)
         loader = DataLoader(data, sampler=sampler, batch_size=bs)
@@ -67,7 +67,7 @@ def test_balance_class_sampler():
 
 def test_batch_balance_class_sampler():
     """Test for BatchBalanceClassSampler."""
-    data = MNIST(os.getcwd(), train=False)
+    data = MNIST(DATA_ROOT, train=False)
     for num_classes in [2, 3, 5, 10]:
         for num_samples in [2, 5, 10, 50]:
             sampler = BatchBalanceClassSampler(
@@ -78,7 +78,9 @@ def test_batch_balance_class_sampler():
             loader = DataLoader(data, batch_sampler=sampler)
             for _, y in loader:
                 stats = Counter(y.cpu().numpy().tolist())
-                assert len(stats) == num_classes, f"Each batch shoud contain {num_classes} classes"
+                assert (
+                    len(stats) == num_classes
+                ), f"Each batch shoud contain {num_classes} classes"
                 assert all(
                     n == num_samples for n in stats.values()
                 ), f"Each class shoud contain {num_samples} instances"

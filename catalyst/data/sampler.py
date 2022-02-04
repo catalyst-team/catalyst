@@ -11,6 +11,8 @@ from torch.utils.data.sampler import Sampler
 
 from catalyst.data.dataset import DatasetFromSampler
 
+LOGGER = logging.getLogger(__name__)
+
 
 class BalanceClassSampler(Sampler):
     """Allows you to create stratified sample on unbalanced classes.
@@ -69,14 +71,17 @@ class BalanceClassSampler(Sampler):
         samples_per_class = {label: (labels == label).sum() for label in set(labels)}
 
         self.lbl2idx = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
         }
 
         if isinstance(mode, str):
             assert mode in ["downsampling", "upsampling"]
 
         if isinstance(mode, int) or mode == "upsampling":
-            samples_per_class = mode if isinstance(mode, int) else max(samples_per_class.values())
+            samples_per_class = (
+                mode if isinstance(mode, int) else max(samples_per_class.values())
+            )
         else:
             samples_per_class = min(samples_per_class.values())
 
@@ -148,9 +153,10 @@ class BatchBalanceClassSampler(Sampler):
         from catalyst.data import ToTensor, BatchBalanceClassSampler
         from catalyst.contrib.datasets import MNIST
 
-        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        train_data = MNIST(os.getcwd(), train=True, download=True)
         train_labels = train_data.targets.cpu().numpy().tolist()
-        train_sampler = BatchBalanceClassSampler(train_labels, num_classes=10, num_samples=4)
+        train_sampler = BatchBalanceClassSampler(
+            train_labels, num_classes=10, num_samples=4)
         valid_data = MNIST(os.getcwd(), train=False)
 
         loaders = {
@@ -202,7 +208,8 @@ class BatchBalanceClassSampler(Sampler):
         self._batch_size = self._num_classes * self._num_samples
         self._num_batches = num_batches or len(labels) // self._batch_size
         self.lbl2idx = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
         }
 
     @property
@@ -325,8 +332,7 @@ class DynamicBalanceClassSampler(Sampler):
         self.min_class_size = min(samples_per_class.values())
 
         if self.min_class_size < 100 and not ignore_warning:
-            logger = logging.getLogger(__name__)
-            logger.warning(
+            LOGGER.warning(
                 f"the smallest class contains only"
                 f" {self.min_class_size} examples. At the end of"
                 f" training, epochs will contain only"
@@ -338,7 +344,8 @@ class DynamicBalanceClassSampler(Sampler):
             key: value / self.min_class_size for key, value in samples_per_class.items()
         }
         self.label2idxes = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
         }
 
         if isinstance(mode, int):
@@ -414,7 +421,11 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-        self, data_len: int, mini_epoch_len: int, drop_last: bool = False, shuffle: str = None
+        self,
+        data_len: int,
+        mini_epoch_len: int,
+        drop_last: bool = False,
+        shuffle: str = None,
     ):
         """Sampler initialisation."""
         super().__init__(None)
@@ -439,7 +450,8 @@ class MiniEpochSampler(Sampler):
 
         if not (shuffle is None or shuffle in ["per_mini_epoch", "per_epoch"]):
             raise ValueError(
-                "Shuffle must be one of ['per_mini_epoch', 'per_epoch']. " + f"Got {shuffle}"
+                "Shuffle must be one of ['per_mini_epoch', 'per_epoch']. "
+                + f"Got {shuffle}"
             )
         self.shuffle_type = shuffle
 
@@ -452,7 +464,9 @@ class MiniEpochSampler(Sampler):
                 self.indices = self._indices
                 np.random.shuffle(self.indices)
             else:
-                self.indices = np.random.choice(self._indices, self.mini_epoch_len, replace=True)
+                self.indices = np.random.choice(
+                    self._indices, self.mini_epoch_len, replace=True
+                )
 
     def __iter__(self) -> Iterator[int]:
         """Iterate over sampler.
@@ -516,7 +530,10 @@ class DistributedSamplerWrapper(DistributedSampler):
                 sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
-            DatasetFromSampler(sampler), num_replicas=num_replicas, rank=rank, shuffle=shuffle
+            DatasetFromSampler(sampler),
+            num_replicas=num_replicas,
+            rank=rank,
+            shuffle=shuffle,
         )
         self.sampler = sampler
 

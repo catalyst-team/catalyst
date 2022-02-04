@@ -6,13 +6,14 @@ import numpy as np
 import torch
 
 from catalyst.metrics._metric import IMetric
-from catalyst.utils.torch import detach_tensor
 
 
 def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
     @functools.wraps(metric_fn)
-    def _wrapper(value: torch.Tensor, *args: Any, **kwargs: Any) -> Union[float, np.ndarray]:
-        np_tensor = detach_tensor(value)
+    def _wrapper(
+        value: torch.Tensor, *args: Any, **kwargs: Any
+    ) -> Union[float, np.ndarray]:
+        np_tensor = value.cpu().detach().numpy()
         value = metric_fn(np_tensor, *args, **kwargs)
 
         return value
@@ -98,7 +99,9 @@ class AdditiveMetric(IMetric):
                     {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
                 )
                 for key in ["loss", "accuracy01", "accuracy03"]:
-                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                    self.meters[key].update(
+                        self.batch_metrics[key].item(), self.batch_size
+                    )
                 # run model backward pass
                 if self.is_train_loader:
                     loss.backward()
@@ -127,7 +130,7 @@ class AdditiveMetric(IMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(self, compute_on_call: bool = True, mode: str = "numpy"):

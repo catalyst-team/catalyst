@@ -8,7 +8,7 @@ from catalyst.metrics._additive import AdditiveMetric
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics._topk_metric import TopKMetric
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
-from catalyst.metrics.functional._misc import get_default_topk_args
+from catalyst.metrics.functional._misc import get_default_topk
 
 
 class AccuracyMetric(TopKMetric):
@@ -18,7 +18,7 @@ class AccuracyMetric(TopKMetric):
     (note that it's not a real accuracy std but std of accuracy over batch mean values).
 
     Args:
-        topk_args: list of `topk` for accuracy@topk computing
+        topk: list of `topk` for accuracy@topk computing
         num_classes: number of classes
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
@@ -38,7 +38,7 @@ class AccuracyMetric(TopKMetric):
             [0.0, 0.8, 0.2, 0.0],
         ])
         targets = torch.tensor([3, 0, 2, 2])
-        metric = metrics.AccuracyMetric(topk_args=(1, 3))
+        metric = metrics.AccuracyMetric(topk=(1, 3))
 
         metric.reset()
         metric.update(outputs, targets)
@@ -87,7 +87,10 @@ class AccuracyMetric(TopKMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -115,11 +118,11 @@ class AccuracyMetric(TopKMetric):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = None`` ---> see \
-            :py:mod:`catalyst.metrics.functional._misc.get_default_topk_args`
-        - ``topk_args = (1,)`` ---> ``"accuracy01"``
-        - ``topk_args = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
+        - ``topk = None`` ---> see \
+            :py:mod:`catalyst.metrics.functional._misc.get_default_topk`
+        - ``topk = (1,)`` ---> ``"accuracy01"``
+        - ``topk = (1, 3)`` ---> ``"accuracy01"``, ``"accuracy03"``
+        - ``topk = (1, 3, 5)`` ---> ``"accuracy01"``, ``"accuracy03"``, ``"accuracy05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -127,23 +130,23 @@ class AccuracyMetric(TopKMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
         self,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         num_classes: int = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
         """Init AccuracyMetric"""
-        self.topk_args = topk_args or get_default_topk_args(num_classes)
+        self.topk = topk or get_default_topk(num_classes)
         super().__init__(
             metric_name="accuracy",
             metric_function=accuracy,
-            topk_args=self.topk_args,
+            topk=self.topk,
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
@@ -222,7 +225,10 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -247,7 +253,7 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -267,7 +273,8 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> float:
         """
-        Update metric value with accuracy for new data and return intermediate metric value.
+        Update metric value with accuracy for new data
+        and return intermediate metric value.
 
         Args:
             outputs: tensor of outputs
@@ -282,7 +289,9 @@ class MultilabelAccuracyMetric(AdditiveMetric, ICallbackBatchMetric):
         super().update(value=metric, num_samples=np.prod(targets.shape))
         return metric
 
-    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with accuracy for new data and return intermediate metric
         value in key-value format.

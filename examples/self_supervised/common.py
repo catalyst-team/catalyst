@@ -2,11 +2,13 @@
 from typing import Dict, Optional
 
 from datasets import DATASETS
+
 import torch
+from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.contrib import nn, ResidualBlock
+from catalyst.contrib.layers import ResidualBlock
 from catalyst.data import SelfSupervisedDatasetWrapper
 
 
@@ -38,10 +40,16 @@ def add_arguments(parser) -> None:
         help="Logs directory (tensorboard, weights, etc)",
     )
     parser.add_argument(
-        "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
+        "--epochs",
+        default=1000,
+        type=int,
+        help="Number of sweeps over the dataset to train",
     )
     parser.add_argument(
-        "--num-workers", default=1, type=float, help="Number of workers to process a dataloader"
+        "--num-workers",
+        default=1,
+        type=float,
+        help="Number of workers to process a dataloader",
     )
     parser.add_argument(
         "--batch-size", default=512, type=int, help="Number of images in each mini-batch"
@@ -104,10 +112,16 @@ def get_loaders(
 
     try:
         train_data = DATASETS[dataset]["dataset"](root="data", train=True, download=True)
-        valid_data = DATASETS[dataset]["dataset"](root="data", train=False, download=True)
+        valid_data = DATASETS[dataset]["dataset"](
+            root="data", train=False, download=True
+        )
     except:
-        train_data = DATASETS[dataset]["dataset"](root="data", split="train", download=True)
-        valid_data = DATASETS[dataset]["dataset"](root="data", split="test", download=True)
+        train_data = DATASETS[dataset]["dataset"](
+            root="data", split="train", download=True
+        )
+        valid_data = DATASETS[dataset]["dataset"](
+            root="data", split="test", download=True
+        )
 
     train_data = SelfSupervisedDatasetWrapper(
         train_data,
@@ -147,14 +161,19 @@ def resnet_mnist(in_size: int, in_channels: int, out_features: int, size: int = 
         conv_block(sz2, sz4, pool=True),
         ResidualBlock(nn.Sequential(conv_block(sz4, sz4), conv_block(sz4, sz4))),
         nn.Sequential(
-            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
+            nn.MaxPool2d(4),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(out_size, out_features),
         ),
     )
 
 
 def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
     sz, sz2, sz4, sz8 = size, size * 2, size * 4, size * 8
-    assert in_size >= 32, "The graph is not valid for images with resolution lower then 32x32."
+    assert (
+        in_size >= 32
+    ), "The graph is not valid for images with resolution lower then 32x32."
     out_size = (((in_size // 32) * 32) ** 2 * 2) // size
     return nn.Sequential(
         conv_block(in_channels, sz),
@@ -164,13 +183,20 @@ def resnet9(in_size: int, in_channels: int, out_features: int, size: int = 16):
         conv_block(sz4, sz8, pool=True),
         ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
         nn.Sequential(
-            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(out_size, out_features)
+            nn.MaxPool2d(4),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(out_size, out_features),
         ),
     )
 
 
 def get_contrastive_model(
-    in_size: int, in_channels: int, feature_dim: int, encoder_dim: int = 512, hidden_dim: int = 512
+    in_size: int,
+    in_channels: int,
+    feature_dim: int,
+    encoder_dim: int = 512,
+    hidden_dim: int = 512,
 ) -> ContrastiveModel:
     """Init contrastive model based on parsed parametrs.
 
@@ -185,9 +211,13 @@ def get_contrastive_model(
         ContrstiveModel instance
     """
     try:
-        encoder = resnet9(in_size=in_size, in_channels=in_channels, out_features=encoder_dim)
+        encoder = resnet9(
+            in_size=in_size, in_channels=in_channels, out_features=encoder_dim
+        )
     except:
-        encoder = resnet_mnist(in_size=in_size, in_channels=in_channels, out_features=encoder_dim)
+        encoder = resnet_mnist(
+            in_size=in_size, in_channels=in_channels, out_features=encoder_dim
+        )
     projection_head = nn.Sequential(
         nn.Linear(encoder_dim, hidden_dim, bias=False),
         nn.ReLU(inplace=True),

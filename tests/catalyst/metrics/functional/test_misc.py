@@ -25,7 +25,9 @@ from catalyst.metrics.functional._misc import (
         ),
     ],
 )
-def test_get_binary_statistics(outputs, targets, tn_true, fp_true, fn_true, tp_true, support_true):
+def test_get_binary_statistics(
+    outputs, targets, tn_true, fp_true, fn_true, tp_true, support_true
+):
     tn, fp, fn, tp, support = get_binary_statistics(outputs, targets)
 
     assert tn.item() == tn_true

@@ -12,7 +12,7 @@ class MAPMetric(TopKMetric):
     Computes mean value of MAP and it's approximate std value
 
     Args:
-        topk_args: list of `topk` for map@topk computing
+        topk: list of `topk` for map@topk computing
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
@@ -32,7 +32,7 @@ class MAPMetric(TopKMetric):
             [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
             [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
         ])
-        metric = metrics.MAPMetric(topk_args=[1, 3, 5, 10])
+        metric = metrics.MAPMetric(topk=[1, 3, 5, 10])
         metric.reset()
 
         metric.update(outputs, targets)
@@ -89,7 +89,10 @@ class MAPMetric(TopKMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -111,11 +114,11 @@ class MAPMetric(TopKMetric):
                 ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="scores", target_key="targets", topk=(1, 3, 5)
                 ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk=(1, 3)),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
@@ -127,9 +130,9 @@ class MAPMetric(TopKMetric):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"map01"``
-        - ``topk_args = (1, 3)`` ---> ``"map01"``, ``"map03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
+        - ``topk = (1,) or None`` ---> ``"map01"``
+        - ``topk = (1, 3)`` ---> ``"map01"``, ``"map03"``
+        - ``topk = (1, 3, 5)`` ---> ``"map01"``, ``"map03"``, ``"map05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -137,12 +140,12 @@ class MAPMetric(TopKMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
         self,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
@@ -151,7 +154,7 @@ class MAPMetric(TopKMetric):
         super().__init__(
             metric_name="map",
             metric_function=mean_average_precision,
-            topk_args=topk_args,
+            topk=topk,
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,

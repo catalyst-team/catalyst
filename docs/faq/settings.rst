@@ -10,17 +10,13 @@ Nevertheless, there are much more availabe:
 
 .. code-block:: bash
 
-    pip install catalyst[albu] # + albumentations
     pip install catalyst[comet] # + comet_ml
     pip install catalyst[cv] # + imageio, opencv, scikit-image, torchvision, Pillow
     pip install catalyst[deepspeed] # + deepspeed
     pip install catalyst[dev] # used for Catalyst development and documentaiton rendering
-    pip install catalyst[fairscale] # + fairscale
-    pip install catalyst[hydra] # + hydra-core, omegaconf
     pip install catalyst[ml] # + scipy, matplotlib, pandas, scikit-learn
     pip install catalyst[mlflow] # + mlflow
     pip install catalyst[neptune] # + neptune-client
-    pip install catalyst[nifti] # + nibabel
     pip install catalyst[onnx-gpu] # + onnx, onnxruntime-gpu
     pip install catalyst[onnx] # + onnx, onnxruntime
     pip install catalyst[optuna] # + optuna
@@ -43,14 +39,12 @@ For example:
 .. code-block:: bash
 
     [catalyst]
-    albu_required = false
     cv_required = false
-    hydra_required = false
     mlflow_required = false
     ml_required = true
     neptune_required = false
     optuna_required = false
-    
+
 With such a configuration file, Catalyst will raise you an error if there are now required `catalyst[ml]` dependencies were found.
 
 

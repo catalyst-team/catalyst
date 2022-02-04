@@ -2,7 +2,7 @@ from time import time
 
 
 class TimeManager(object):
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs."""
 
     def __init__(self):
         """Initialization"""

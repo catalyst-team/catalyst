@@ -64,7 +64,9 @@ class ImageClassificationDataset(ImageFolderDataset):
             # download files
             for url, md5 in self.resources:
                 filename = url.rpartition("/")[2]
-                download_and_extract_archive(url, download_root=root, filename=filename, md5=md5)
+                download_and_extract_archive(
+                    url, download_root=root, filename=filename, md5=md5
+                )
 
         rootpath = os.path.join(root, self.name, "train" if train else "val")
         super().__init__(rootpath=rootpath, **kwargs)

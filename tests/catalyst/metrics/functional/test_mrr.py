@@ -38,7 +38,9 @@ def test_reciprocal_rank():
     y_true = [0.0, 1.0]
     k = 2
 
-    value = reciprocal_rank(torch.Tensor([y_pred1, y_pred05]), torch.Tensor([y_true, y_true]), k)
+    value = reciprocal_rank(
+        torch.Tensor([y_pred1, y_pred05]), torch.Tensor([y_true, y_true]), k
+    )
     assert value[0][0] == 1.0
     assert value[1][0] == 0.5
 

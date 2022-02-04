@@ -1,7 +1,12 @@
-from typing import Iterable
+from typing import Iterable, TYPE_CHECKING
+
+from accelerate.state import DistributedType
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CMCScoreCallback(LoaderMetricCallback):
@@ -21,7 +26,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: embeddings key in output dict
         labels_key: labels key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log
+        topk: specifies which cmc@K to log
         prefix: metric prefix
         suffix: metric suffix
 
@@ -66,7 +71,9 @@ class CMCScoreCallback(LoaderMetricCallback):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):
@@ -74,7 +81,7 @@ class CMCScoreCallback(LoaderMetricCallback):
                 if self.is_train_loader:
                     images, targets = batch["features"].float(), batch["targets"].long()
                     features = self.model(images)
-                    self.batch = {"embeddings": features, "targets": targets,}
+                    self.batch = {"embeddings": features, "targets": targets}
                 else:
                     images, targets, is_query = (
                         batch["features"].float(),
@@ -98,12 +105,15 @@ class CMCScoreCallback(LoaderMetricCallback):
                     embeddings_key="embeddings",
                     labels_key="targets",
                     is_query_key="is_query",
-                    topk_args=[1],
+                    topk=[1],
                 ),
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+                valid_loader_key="valid",
+                valid_metric_key="cmc01",
+                minimize=False,
+                valid=2
             ),
         ]
 
@@ -125,9 +135,9 @@ class CMCScoreCallback(LoaderMetricCallback):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
-        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+        - ``topk = (1,) or None`` ---> ``"cmc01"``
+        - ``topk = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -135,7 +145,7 @@ class CMCScoreCallback(LoaderMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -143,7 +153,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -153,13 +163,21 @@ class CMCScoreCallback(LoaderMetricCallback):
                 embeddings_key=embeddings_key,
                 labels_key=labels_key,
                 is_query_key=is_query_key,
-                topk_args=topk_args,
+                topk=topk,
                 prefix=prefix,
                 suffix=suffix,
             ),
             input_key=[embeddings_key, is_query_key],
             target_key=[labels_key],
         )
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert runner.engine.distributed_type not in (
+            DistributedType.MULTI_GPU,
+            DistributedType.TPU,
+        ), "CMCScoreCallback could not work within ddp training"
+        return super().on_experiment_start(runner)
 
 
 class ReidCMCScoreCallback(LoaderMetricCallback):
@@ -172,7 +190,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: pids key in output dict
         cids_key: cids key in output dict
         is_query_key: bool key True if current object is from query
-        topk_args: specifies which cmc@K to log.
+        topk: specifies which cmc@K to log.
             [1] - cmc@1
             [1, 3] - cmc@1 and cmc@3
             [1, 3, 5] - cmc@1, cmc@3 and cmc@5
@@ -186,7 +204,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -197,13 +215,21 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
                 pids_key=pids_key,
                 cids_key=cids_key,
                 is_query_key=is_query_key,
-                topk_args=topk_args,
+                topk=topk,
                 prefix=prefix,
                 suffix=suffix,
             ),
             input_key=[embeddings_key, is_query_key],
             target_key=[pids_key, cids_key],
         )
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
+        assert runner.engine.distributed_type not in (
+            DistributedType.MULTI_GPU,
+            DistributedType.TPU,
+        ), "ReidCMCScoreCallback could not work within ddp training"
+        return super().on_experiment_start(runner)
 
 
 __all__ = ["CMCScoreCallback", "ReidCMCScoreCallback"]

@@ -10,8 +10,14 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from catalyst import dl, utils
-from catalyst.contrib import CIFAR10, Compose, ImageToTensor, NormalizeImage, ResidualBlock
+from catalyst import dl
+from catalyst.contrib import (
+    CIFAR10,
+    Compose,
+    ImageToTensor,
+    NormalizeImage,
+    ResidualBlock,
+)
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -34,7 +40,9 @@ def resnet9(in_channels: int, num_classes: int, size: int = 16):
         conv_block(sz2, sz4, pool=True),
         conv_block(sz4, sz8, pool=True),
         ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
-        nn.Sequential(nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8, num_classes)),
+        nn.Sequential(
+            nn.MaxPool2d(4), nn.Flatten(), nn.Dropout(0.2), nn.Linear(sz8, num_classes)
+        ),
     )
 
 
@@ -56,21 +64,17 @@ class CustomRunner(dl.IRunner):
         }
 
     @property
-    def stages(self):
-        return ["train"]
-
-    def get_stage_len(self, stage: str) -> int:
+    def num_epochs(self) -> int:
         return 10
 
-    def get_loaders(self, stage: str):
+    def get_loaders(self):
         transform = Compose(
-            [
-                ImageToTensor(),
-                NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-            ]
+            [ImageToTensor(), NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
         train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
-        valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
+        valid_data = CIFAR10(
+            os.getcwd(), train=False, download=True, transform=transform
+        )
         if self.engine.is_ddp:
             train_sampler = DistributedSampler(
                 train_data,
@@ -88,24 +92,32 @@ class CustomRunner(dl.IRunner):
             train_sampler = valid_sampler = None
 
         return {
-            "train": DataLoader(train_data, batch_size=32, sampler=train_sampler, num_workers=4),
-            "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler, num_workers=4),
+            "train": DataLoader(
+                train_data, batch_size=32, sampler=train_sampler, num_workers=4
+            ),
+            "valid": DataLoader(
+                valid_data, batch_size=32, sampler=valid_sampler, num_workers=4
+            ),
         }
 
-    def get_model(self, stage: str):
-        model = self.model if self.model is not None else resnet9(in_channels=3, num_classes=10)
+    def get_model(self):
+        model = (
+            self.model
+            if self.model is not None
+            else resnet9(in_channels=3, num_classes=10)
+        )
         return model
 
-    def get_criterion(self, stage: str):
+    def get_criterion(self):
         return nn.CrossEntropyLoss()
 
-    def get_optimizer(self, stage: str, model):
+    def get_optimizer(self, model):
         return optim.Adam(model.parameters(), lr=1e-3)
 
-    def get_scheduler(self, stage: str, optimizer):
+    def get_scheduler(self, optimizer):
         return optim.lr_scheduler.MultiStepLR(optimizer, [5, 8], gamma=0.3)
 
-    def get_callbacks(self, stage: str):
+    def get_callbacks(self):
         return {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
@@ -113,14 +125,14 @@ class CustomRunner(dl.IRunner):
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "accuracy": dl.AccuracyCallback(
-                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+                input_key="logits", target_key="targets", topk=(1, 3, 5)
             ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="accuracy01",
                 minimize=False,
-                save_n_best=1,
+                topk=1,
             ),
             # "tqdm": dl.TqdmCallback(),
         }
@@ -141,12 +153,8 @@ if __name__ == "__main__":
     parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
     args, unknown_args = parser.parse_known_args()
     args.logdir = args.logdir or f"logs_resnet_{args.engine}".replace("-", "_")
-    if args.engine in {"ddp", "amp-ddp", "apex-ddp", "ds-ddp", "fs-ddp", "fs-ddp-amp", "fs-fddp"}:
+    if args.engine in ("ddp", "ddp-amp"):
         engine_params, _ = parse_ddp_params(unknown_args)
-
-        # fix for DeepSpeed engine since is does not support batchnorm synchonization
-        if args.engine == "ds-ddp":
-            engine_params.pop("sync_bn")
     else:
         engine_params = None
 

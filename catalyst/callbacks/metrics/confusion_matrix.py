@@ -1,11 +1,14 @@
 from typing import Dict, List, TYPE_CHECKING
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
+    from catalyst.contrib.utils.visualization import (
+        plot_confusion_matrix,
+        render_figure_to_array,
+    )
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -20,7 +23,7 @@ class ConfusionMatrixCallback(Callback):
         prefix: plot name for monitoring tools
         class_names: list with class names
         num_classes: number of classes
-        normalized: boolean flag for confusion matrix normalization
+        normalize: boolean flag for confusion matrix normalization
         plot_params: extra params for plt.figure rendering
 
     .. note::
@@ -52,7 +55,10 @@ class ConfusionMatrixCallback(Callback):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -83,7 +89,7 @@ class ConfusionMatrixCallback(Callback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -93,11 +99,11 @@ class ConfusionMatrixCallback(Callback):
         prefix: str = None,
         class_names: List[str] = None,
         num_classes: int = None,
-        normalized: bool = False,
+        normalize: bool = False,
         plot_params: Dict = None,
     ):
         """Callback initialisation."""
-        super().__init__(CallbackOrder.metric, CallbackNode.all)
+        super().__init__(CallbackOrder.metric)
         assert num_classes is not None or class_names is not None
         self.prefix = prefix or "confusion_matrix"
         self.input_key = input_key
@@ -107,11 +113,11 @@ class ConfusionMatrixCallback(Callback):
 
         self.class_names = class_names or [f"class_{i:02d}" for i in range(num_classes)]
         self.num_classes = num_classes if class_names is None else len(class_names)
-        self.normalized = normalized
+        self.normalize = normalize
 
         assert self.num_classes is not None
         self.confusion_matrix = ConfusionMatrixMetric(
-            num_classes=self.num_classes, normalized=self.normalized
+            num_classes=self.num_classes, normalize=self.normalize
         )
 
     def on_loader_start(self, runner: "IRunner"):
@@ -144,7 +150,7 @@ class ConfusionMatrixCallback(Callback):
         fig = plot_confusion_matrix(
             confusion_matrix,
             class_names=self.class_names,
-            normalize=self.normalized,
+            normalize=self.normalize,
             show=False,
             **self._plot_params,
         )

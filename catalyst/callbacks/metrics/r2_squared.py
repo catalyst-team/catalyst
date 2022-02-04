@@ -6,8 +6,8 @@ class R2SquaredCallback(LoaderMetricCallback):
     """R2 Squared  metric callback.
 
     Args:
-        input_key: input key to use for r2squared calculation, specifies our ``y_true``.
-        target_key: output key to use for r2squared calculation, specifies our ``y_pred``.
+        input_key: input key to use for r2squared calculation, specifies our ``y_true``
+        target_key: output key to use for r2squared calculation, specifies our ``y_pred``
         prefix: metric prefix
         suffix: metric suffix
 
@@ -54,7 +54,7 @@ class R2SquaredCallback(LoaderMetricCallback):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(

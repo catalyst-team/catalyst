@@ -97,7 +97,12 @@ class FocalTrevskyLoss(nn.Module):
         super().__init__()
         self.gamma = gamma
         self.trevsky_loss = TrevskyLoss(
-            alpha=alpha, beta=beta, class_dim=class_dim, mode=mode, weights=weights, eps=eps
+            alpha=alpha,
+            beta=beta,
+            class_dim=class_dim,
+            mode=mode,
+            weights=weights,
+            eps=eps,
         )
 
     def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:

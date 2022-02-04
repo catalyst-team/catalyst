@@ -6,7 +6,7 @@ import torch
 
 from catalyst.extras.forward_wrapper import ModelForwardWrapper
 from catalyst.settings import SETTINGS
-from catalyst.utils.torch import get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 
 if SETTINGS.onnx_required:
     import onnx
@@ -29,20 +29,20 @@ def onnx_export(
     """Converts model to onnx runtime.
 
     Args:
-        model (torch.nn.Module): model
-        batch (Tensor): inputs
-        file (str, optional): file to save. Defaults to "model.onnx".
-        method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
-        input_names (Iterable, optional): name of inputs in graph. Defaults to None.
-        output_names (List[str], optional): name of outputs in graph. Defaults to None.
-        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
+        model: model
+        batch: inputs
+        file: file to save. Defaults to "model.onnx".
+        method_name: Forward pass method to be converted. Defaults to "forward".
+        input_names: name of inputs in graph. Defaults to None.
+        output_names: name of outputs in graph. Defaults to None.
+        dynamic_axes: axes
             with dynamic shapes. Defaults to None.
-        opset_version (int, optional): Defaults to 9.
-        do_constant_folding (bool, optional): If True, the constant-folding optimization
+        opset_version: Defaults to 9.
+        do_constant_folding: If True, the constant-folding optimization
             is applied to the model during export. Defaults to False.
-        return_model (bool, optional): If True then returns onnxruntime model (onnx required).
+        return_model: If True then returns onnxruntime model (onnx required).
             Defaults to False.
-        verbose (bool, default False): if specified, we will print out a debug
+        verbose: if specified, we will print out a debug
             description of the trace being exported.
 
     Example:
@@ -66,7 +66,9 @@ def onnx_export(
 
            lin_model = LinModel()
            convert_to_onnx(
-               model, batch=torch.randn((1, 10)), file="model.onnx", method_name="first_only"
+               model, batch=torch.randn((1, 10)),
+               file="model.onnx",
+               method_name="first_only"
            )
 
     Raises:
@@ -91,7 +93,9 @@ def onnx_export(
     )
     if return_model:
         if not SETTINGS.onnx_required:
-            raise ImportError("To use onnx model you should install it with ``pip install onnx``")
+            raise ImportError(
+                "To use onnx model you should install it with ``pip install onnx``"
+            )
         return onnx.load(file)
 
 
@@ -104,11 +108,11 @@ def quantize_onnx_model(
     """Takes model converted to onnx runtime and applies pruning.
 
     Args:
-        onnx_model_path (Union[Path, str]): path to onnx model.
-        quantized_model_path (Union[Path, str]): path to quantized model.
-        qtype (str, optional): Type of weights in quantized model.
+        onnx_model_path: path to onnx model.
+        quantized_model_path: path to quantized model.
+        qtype: Type of weights in quantized model.
             Can be `quint8` or `qint8`. Defaults to "qint8".
-        verbose (bool, optional): If set to True prints model size before
+        verbose: If set to True prints model size before
             and after quantization. Defaults to False.
 
     Raises:
@@ -119,13 +123,17 @@ def quantize_onnx_model(
         "quint8": QuantType.QUInt8,
     }
     if qtype not in type_mapping.keys():
-        raise ValueError("type should be string one of 'quint8' or 'qint8'. Got {}".format(qtype))
-    quantize_dynamic(onnx_model_path, quantized_model_path, weight_type=type_mapping[qtype])
+        raise ValueError(
+            "type should be string one of 'quint8' or 'qint8'. Got {}".format(qtype)
+        )
+    quantize_dynamic(
+        onnx_model_path, quantized_model_path, weight_type=type_mapping[qtype]
+    )
     if verbose:
         v_str = (
             "Model size before quantization (MB):"
             f"{os.path.getsize(onnx_model_path) / 2**20:.2f}\n"
-            "Model size after quantization (MB): "
+            "Model size after quantization (MB):"
             f"{os.path.getsize(quantized_model_path) / 2**20:.2f}"
         )
         print("Done.")

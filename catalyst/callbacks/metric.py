@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import IMetricCallback
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
 
 
-class IMetricCallback(Callback, ABC):
+class _IMetricCallback(IMetricCallback, ABC):
     """Metric callback interface, abstraction over metric step."""
 
     @abstractmethod
@@ -43,9 +43,10 @@ class IMetricCallback(Callback, ABC):
         pass
 
 
-class MetricCallback(IMetricCallback):
+class _MetricCallback(_IMetricCallback):
     """
-    MetricCallback is a base implementation of callback that updates metrics over batch or loader.
+    MetricCallback is a base implementation of callback
+    that updates metrics over batch or loader.
 
     Args:
         metric: metric to calculate in callback
@@ -60,7 +61,7 @@ class MetricCallback(IMetricCallback):
         target_key: Union[str, Iterable[str], Dict[str, str]],
     ):
         """Init MetricCallback"""
-        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
+        super().__init__()
         self.metric = metric
         assert isinstance(metric, IMetric)
         self._metric_update_method = self.metric.update
@@ -89,7 +90,9 @@ class MetricCallback(IMetricCallback):
         }
 
     @staticmethod
-    def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
+    def _convert_keys_to_kv(
+        keys: Union[str, Iterable[str], Dict[str, str]]
+    ) -> Dict[str, str]:
         """
         Convert keys to key-value format
 
@@ -166,8 +169,9 @@ class MetricCallback(IMetricCallback):
         return self._metric_update_method(**kv_inputs)
 
 
-class BatchMetricCallback(MetricCallback):
-    """BatchMetricCallback implements batch-based metrics update and computation over loader
+class BatchMetricCallback(_MetricCallback):
+    """BatchMetricCallback implements batch-based metrics update
+    and computation over loader
 
     Args:
         metric: metric to calculate in callback
@@ -198,7 +202,8 @@ class BatchMetricCallback(MetricCallback):
         self.metric.reset()
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action: update metric with new batch data and log it's value if necessary
+        """On batch end action: update metric with new batch data
+        and log it's value if necessary
 
         Args:
             runner: current runner
@@ -209,13 +214,14 @@ class BatchMetricCallback(MetricCallback):
             runner.batch_metrics.update(metrics)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action: compute metric values and update runner's loader metrics with it
+        """On loader end action: compute metric values
+        and update runner's loader metrics with it
 
         Args:
             runner: current runner
         """
         metrics = self.metric.compute_key_value()
-        metrics = runner.engine.sync_metrics(metrics)
+        metrics = runner.engine.mean_reduce_ddp_metrics(metrics)
         runner.loader_metrics.update(metrics)
 
 
@@ -246,10 +252,15 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         """Init."""
         assert isinstance(metric, FunctionalBatchMetric)
         super().__init__(
-            metric=metric, input_key=input_key, target_key=target_key, log_on_batch=log_on_batch
+            metric=metric,
+            input_key=input_key,
+            target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
-    def _get_value_inputs(self, runner: "IRunner") -> Tuple[float, torch.Tensor, torch.Tensor]:
+    def _get_value_inputs(
+        self, runner: "IRunner"
+    ) -> Tuple[float, torch.Tensor, torch.Tensor]:
         """Get data from batch in value input case
 
         Args:
@@ -258,7 +269,11 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         Returns:
             tuple of tensor of inputs and tensor of targets
         """
-        return runner.batch_size, runner.batch[self.input_key], runner.batch[self.target_key]
+        return (
+            runner.batch_size,
+            runner.batch[self.input_key],
+            runner.batch[self.target_key],
+        )
 
     def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
         """Get data from batch in key-value input case
@@ -276,8 +291,9 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         return kv_inputs
 
 
-class LoaderMetricCallback(MetricCallback):
-    """LoaderMetricCallback implements loader-based metrics update and computation over loader
+class LoaderMetricCallback(_MetricCallback):
+    """LoaderMetricCallback implements loader-based metrics update
+    and computation over loader
 
     Args:
         metric: metric to calculate in callback
@@ -295,7 +311,8 @@ class LoaderMetricCallback(MetricCallback):
         assert isinstance(metric, ICallbackLoaderMetric)
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """On loader star action: reset metric values in case of ICallbackLoaderMetric metric
+        """On loader star action:
+        reset metric values in case of ICallbackLoaderMetric metric
 
         Args:
             runner: current runner
@@ -314,7 +331,8 @@ class LoaderMetricCallback(MetricCallback):
         self._update_metric(metrics_inputs)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action: compute metric values and update runner's loader metrics with it
+        """On loader end action:
+        compute metric values and update runner's loader metrics with it
 
         Args:
             runner: current runner
@@ -324,7 +342,8 @@ class LoaderMetricCallback(MetricCallback):
 
 
 __all__ = [
-    "IMetricCallback",
+    "_IMetricCallback",
+    "_MetricCallback",
     "BatchMetricCallback",
     "FunctionalBatchMetricCallback",
     "LoaderMetricCallback",

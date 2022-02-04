@@ -3,50 +3,6 @@ import itertools
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np
 
-# def tensor_to_ndimage(
-#     images: torch.Tensor,
-#     denormalize: bool = True,
-#     mean: Tuple[float, float, float] = _IMAGENET_MEAN,
-#     std: Tuple[float, float, float] = _IMAGENET_STD,
-#     move_channels_dim: bool = True,
-#     dtype=np.float32,
-# ) -> np.ndarray:
-#     """
-#     Convert float image(s) with standard normalization to
-#     np.ndarray with [0..1] when dtype is np.float32 and [0..255]
-#     when dtype is `np.uint8`.
-#
-#     Args:
-#         images: [B]xCxHxW float tensor
-#         denormalize: if True, multiply image(s) by std and add mean
-#         mean (Tuple[float, float, float]): per channel mean to add
-#         std (Tuple[float, float, float]): per channel std to multiply
-#         move_channels_dim: if True, convert tensor to [B]xHxWxC format
-#         dtype: result ndarray dtype. Only float32 and uint8 are supported
-#
-#     Returns:
-#         [B]xHxWxC np.ndarray of dtype
-#     """
-#     if denormalize:
-#         has_batch_dim = len(images.shape) == 4
-#
-#         mean = images.new_tensor(mean).view(*((1) if has_batch_dim else ()), len(mean), 1, 1)
-#         std = images.new_tensor(std).view(*((1) if has_batch_dim else ()), len(std), 1, 1)
-#
-#         images = images * std + mean
-#
-#     images = images.clamp(0, 1).numpy()
-#
-#     if move_channels_dim:
-#         images = np.moveaxis(images, -3, -1)
-#
-#     if dtype == np.uint8:
-#         images = (images * 255).round().astype(dtype)
-#     else:
-#         assert dtype == np.float32, "Only float32 and uint8 are supported"
-#
-#     return images
-
 
 def plot_confusion_matrix(
     cm: np.ndarray,
@@ -123,30 +79,11 @@ def plot_confusion_matrix(
     return figure
 
 
-# def render_figure_to_numpy(figure):
-#     """@TODO: Docs. Contribution is welcome."""
-#     import matplotlib
-#
-#     matplotlib.use("Agg")
-#     import matplotlib.pyplot as plt
-#
-#     plt.ioff()
-#
-#     figure.canvas.draw()
-#
-#     image = np.array(figure.canvas.renderer._renderer)
-#     plt.close(figure)
-#     del figure
-#
-#     return image
-
-
 def render_figure_to_array(figure):
     """Renders matplotlib"s figure to tensor."""
     plt.ioff()
 
     figure.canvas.draw()
-
     image = np.array(figure.canvas.renderer._renderer)
     plt.close(figure)
     del figure

@@ -18,8 +18,9 @@ class ConfusionMatrixMetric(IMetric):
 
     Args:
         num_classes: number of classes in the classification problem
-        normalized: determines whether or not the confusion matrix is normalized or not
-        compute_on_call: Boolean flag to computes and return confusion matrix during __call__.
+        normalize: determines whether or not the confusion matrix is normalize or not
+        compute_on_call: Boolean flag to computes
+            and return confusion matrix during __call__.
             default: True
 
     Examples:
@@ -48,7 +49,10 @@ class ConfusionMatrixMetric(IMetric):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss"
         )
         runner.train(
             model=model,
@@ -79,14 +83,16 @@ class ConfusionMatrixMetric(IMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
-    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+    def __init__(
+        self, num_classes: int, normalize: bool = False, compute_on_call: bool = True
+    ):
         """Constructs a confusion matrix for a multiclass classification problems."""
         super().__init__(compute_on_call=compute_on_call)
         self.num_classes = num_classes
-        self.normalized = normalized
+        self.normalize = normalize
         self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
         self._ddp_backend = None
         self.reset()
@@ -167,7 +173,7 @@ class ConfusionMatrixMetric(IMetric):
             value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
             self.conf = value
 
-        if self.normalized:
+        if self.normalize:
             conf = self.conf.astype(np.float32)
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:

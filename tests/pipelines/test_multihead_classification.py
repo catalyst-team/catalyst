@@ -1,5 +1,4 @@
 # flake8: noqa
-
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -39,7 +38,7 @@ class CustomModule(nn.Module):
         return y1, y2
 
 
-def train_experiment(device, engine=None):
+def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
         num_samples, num_features, num_classes1, num_classes2 = int(1e4), int(1e1), 4, 10
@@ -59,11 +58,16 @@ def train_experiment(device, engine=None):
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         callbacks = [
-            dl.CriterionCallback(metric_key="loss1", input_key="logits1", target_key="targets1"),
-            dl.CriterionCallback(metric_key="loss2", input_key="logits2", target_key="targets2"),
+            dl.CriterionCallback(
+                metric_key="loss1", input_key="logits1", target_key="targets1"
+            ),
+            dl.CriterionCallback(
+                metric_key="loss2", input_key="logits2", target_key="targets2"
+            ),
             dl.MetricAggregationCallback(
                 metric_key="loss", metrics=["loss1", "loss2"], mode="mean"
             ),
+            dl.BackwardCallback(metric_key="loss"),
             dl.OptimizerCallback(metric_key="loss"),
             dl.SchedulerCallback(),
             dl.AccuracyCallback(
@@ -83,14 +87,14 @@ def train_experiment(device, engine=None):
                 loader_key="valid",
                 metric_key="one_accuracy01",
                 minimize=False,
-                save_n_best=1,
+                topk=1,
             ),
             dl.CheckpointCallback(
                 "./logs/two",
                 loader_key="valid",
                 metric_key="two_accuracy03",
                 minimize=False,
-                save_n_best=3,
+                topk=3,
             ),
         ]
         if SETTINGS.ml_required:
@@ -116,7 +120,7 @@ def train_experiment(device, engine=None):
         # model training
         runner = CustomRunner()
         runner.train(
-            engine=engine or dl.DeviceEngine(device),
+            engine=engine,
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -125,74 +129,63 @@ def train_experiment(device, engine=None):
             num_epochs=1,
             verbose=False,
             callbacks=callbacks,
-            loggers={"console": dl.ConsoleLogger(), "tb": dl.TensorboardLogger("./logs/tb")},
+            loggers={
+                "console": dl.ConsoleLogger(),
+                "tb": dl.TensorboardLogger("./logs/tb"),
+            },
         )
 
 
 # Torch
-def test_on_cpu():
-    train_experiment("cpu")
+def test_classification_on_cpu():
+    train_experiment(dl.CPUEngine())
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
-    train_experiment("cuda:0")
+def test_classification_on_torch_cuda0():
+    train_experiment(dl.GPUEngine())
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_on_torch_cuda1():
-    train_experiment("cuda:1")
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+# )
+# def test_classification_on_torch_cuda1():
+#     train_experiment("cuda:1")
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_on_torch_dp():
-    train_experiment(None, dl.DataParallelEngine())
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_dp():
+    train_experiment(dl.DataParallelEngine())
 
 
-@mark.skipif(not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found")
-def test_on_torch_ddp():
-    train_experiment(None, dl.DistributedDataParallelEngine())
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+)
+def test_classification_on_torch_ddp():
+    train_experiment(dl.DistributedDataParallelEngine())
 
 
 # AMP
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found")
-def test_on_amp():
-    train_experiment(None, dl.AMPEngine())
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+)
+def test_classification_on_amp():
+    train_experiment(dl.GPUEngine(fp16=True))
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
-    train_experiment(None, dl.DataParallelAMPEngine())
+def test_classification_on_amp_dp():
+    train_experiment(dl.DataParallelEngine(fp16=True))
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_ddp():
-    train_experiment(None, dl.DistributedDataParallelAMPEngine())
-
-
-# APEX
-@mark.skipif(not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found")
-def test_on_apex():
-    train_experiment(None, dl.APEXEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelAPEXEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_ddp():
-    train_experiment(None, dl.DistributedDataParallelAPEXEngine())
+def test_classification_on_amp_ddp():
+    train_experiment(dl.DistributedDataParallelEngine(fp16=True))

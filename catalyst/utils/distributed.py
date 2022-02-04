@@ -1,10 +1,6 @@
-from typing import Any, Callable, List, Optional
-from collections import OrderedDict
+from typing import Any, List, Optional
 import os
 import pickle
-import random
-import socket
-import subprocess
 
 import torch
 from torch import nn
@@ -23,12 +19,9 @@ def _is_torch_distributed_initialized() -> bool:
 
 
 def _is_xla_distributed_initialized() -> bool:
-    return SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
-
-
-def _is_slurm_available():
-    """Checks if slurm is available."""
-    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
+    return (
+        SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
+    )
 
 
 def _is_ddp_wrapped(model: nn.Module) -> bool:
@@ -43,9 +36,15 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
 
     if SETTINGS.fairscale_required:
-        from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
+        from fairscale.nn.data_parallel import (
+            FullyShardedDataParallel,
+            ShardedDataParallel,
+        )
 
-        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel)
+        parallel_wrappers = parallel_wrappers + (
+            ShardedDataParallel,
+            FullyShardedDataParallel,
+        )
 
     if SETTINGS.deepspeed_required:
         from deepspeed import DeepSpeedEngine, PipelineEngine
@@ -123,64 +122,6 @@ def get_world_size() -> int:
 #     pass
 
 
-# TODO: rename
-# TODO: remove, restore? deprecated part
-def _get_slurm_params():
-    """Return slurm params for experiment run.
-
-    Returns:
-        tuple with current node index, number of nodes, master node
-            and master port
-    """
-    cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
-    nodes = subprocess.getoutput(cmd).split()
-    num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
-    current_node = os.environ["SLURMD_NODENAME"]
-    master_node = socket.gethostbyname(nodes[0])
-    cur_node_idx = nodes.index(current_node)
-    job_id = os.environ["SLURM_JOB_ID"]
-    master_port = str(5 * 10 ** 4 + int(job_id) % 10 ** 4)
-    return cur_node_idx, num_nodes, master_node, master_port
-
-
-# TODO: rename
-# TODO: remove, restore? deprecated part
-def get_distributed_params():
-    """Returns distributed params for experiment run.
-
-    Returns:
-        dictionary with distributed params
-    """
-    master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
-    master_addr = "127.0.0.1"
-    cur_node, num_nodes = 0, 1
-    if _is_slurm_available():
-        cur_node, num_nodes, master_addr, master_port = _get_slurm_params()
-
-    os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", master_addr)
-    os.environ["MASTER_PORT"] = os.getenv("MASTER_PORT", master_port)
-
-    workers_per_node = torch.cuda.device_count()
-    start_rank = cur_node * workers_per_node
-    world_size = num_nodes * workers_per_node
-
-    local_rank = os.getenv("LOCAL_RANK", None)
-    rank = os.getenv("RANK", None)
-    local_rank, rank = [v and int(v) for v in [local_rank, rank]]
-    world_size = int(os.getenv("WORLD_SIZE", world_size))
-
-    output = OrderedDict(
-        local_rank=local_rank,
-        start_rank=start_rank,
-        rank=rank,
-        world_size=world_size,
-        master_addr=os.environ["MASTER_ADDR"],
-        master_port=os.environ["MASTER_PORT"],
-    )
-
-    return output
-
-
 def sum_reduce(tensor: torch.Tensor) -> torch.Tensor:
     """Reduce tensor to all processes and compute total (sum) value.
 
@@ -214,8 +155,9 @@ def all_gather(data: Any) -> List[Any]:
     """Run all_gather on arbitrary picklable data (not necessarily tensors).
 
     .. note::
-        if data on different devices then data in resulted list will be on the same devices.
-        Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
+        if data on different devices
+        then data in resulted list will be on the same devices.
+        Source: http://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
 
     Args:
         data: any picklable object
@@ -252,7 +194,9 @@ def all_gather(data: Any) -> List[Any]:
         tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
 
     if local_size != max_size:
-        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
+        padding = torch.empty(
+            size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
+        )
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 
@@ -288,29 +232,13 @@ def ddp_reduce(tensor: torch.Tensor, mode: str, world_size: int):
         return all_gather(tensor)
 
 
-def ddp_sync_run(function: Callable):
-    """Runs function in a synchronous way: 0-rank first and all other processes after.
-
-    Args:
-        function: callable function
-    """
-    rank = get_rank()
-    if rank > 0:
-        dist.barrier()
-    function()
-    if rank == 0:
-        dist.barrier()
-
-
 __all__ = [
     "get_backend",
     "get_rank",
     "get_world_size",
-    "get_distributed_params",
     "get_nn_from_ddp_module",
     "sum_reduce",
     "mean_reduce",
     "all_gather",
     "ddp_reduce",
-    "ddp_sync_run",
 ]

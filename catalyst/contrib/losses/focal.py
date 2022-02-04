@@ -28,7 +28,10 @@ class FocalLossBinary(_Loss):
 
         if reduced:
             self.loss_fn = partial(
-                metrics.reduced_focal_loss, gamma=gamma, threshold=threshold, reduction=reduction
+                metrics.reduced_focal_loss,
+                gamma=gamma,
+                threshold=threshold,
+                reduction=reduction,
             )
         else:
             self.loss_fn = partial(

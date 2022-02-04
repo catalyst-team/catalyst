@@ -1,3 +1,4 @@
+# flake8: noqa
 import json
 import os
 import sys
@@ -39,7 +40,9 @@ def main():
     """Convert data to COCO format."""
     imgs_dir, annots_dir, output_file = sys.argv[1], sys.argv[2], sys.argv[3]
     category2id = {"banana": 1, "snake fruit": 2, "dragon fruit": 3, "pineapple": 4}
-    categories = [{"id": cat_id, "name": cat_name} for cat_name, cat_id in category2id.items()]
+    categories = [
+        {"id": cat_id, "name": cat_name} for cat_name, cat_id in category2id.items()
+    ]
     images = []
     annotations = []
     img_id = 1
@@ -49,7 +52,9 @@ def main():
             continue
         annot_file = os.path.join(annots_dir, img_file[:-4] + ".xml")
         filename, (width, height), annots = load_annotations(annot_file)
-        images.append({"id": img_id, "file_name": filename, "width": width, "height": height})
+        images.append(
+            {"id": img_id, "file_name": filename, "width": width, "height": height}
+        )
         for item in annots:
             cat_id = category2id[item["category"]]
             x1, y1 = min(item["x1"], item["x2"]), min(item["y1"], item["y2"])

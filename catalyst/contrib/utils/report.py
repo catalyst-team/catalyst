@@ -2,11 +2,18 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score,
+    precision_recall_fscore_support,
+    roc_auc_score,
+)
 
 
 def get_classification_report(
-    y_true: np.ndarray, y_pred: np.ndarray, y_scores: np.ndarray = None, beta: float = None
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    y_scores: np.ndarray = None,
+    beta: float = None,
 ) -> pd.DataFrame:
     """Generates pandas-based per-class and aggregated classification metrics.
 
@@ -87,7 +94,9 @@ def get_classification_report(
             metrics[k][average] = v
 
     report = pd.DataFrame(
-        [precision, recall, f1, auc, support, r_support], columns=labels, index=metrics_names
+        [precision, recall, f1, auc, support, r_support],
+        columns=labels,
+        index=metrics_names,
     ).T
 
     if beta is not None:

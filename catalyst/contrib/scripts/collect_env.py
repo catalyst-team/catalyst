@@ -85,7 +85,9 @@ def parse_args():
 
 def run(command):
     """Returns (return-code, stdout, stderr)"""
-    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    p = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+    )
     output, err = p.communicate()
     rc = p.returncode
     enc = locale.getpreferredencoding()
@@ -148,7 +150,9 @@ def get_nvidia_driver_version(run_lambda):
     """Returns nvidia driver version"""
     if get_platform() == "darwin":
         cmd = "kextstat | grep -i cuda"
-        return run_and_parse_first_match(run_lambda, cmd, r"com[.]nvidia[.]CUDA [(](.*?)[)]")
+        return run_and_parse_first_match(
+            run_lambda, cmd, r"com[.]nvidia[.]CUDA [(](.*?)[)]"
+        )
     smi = get_nvidia_smi()
     return run_and_parse_first_match(run_lambda, smi, r"Driver Version: (.*?) ")
 
@@ -212,7 +216,9 @@ def get_nvidia_smi():
     # Note: nvidia-smi is currently available only on Windows and Linux
     smi = "nvidia-smi"
     if get_platform() == "win32":
-        smi = "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi  # noqa: W505, E501
+        smi = (
+            "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi
+        )  # noqa: W505, E501
     return smi
 
 
@@ -247,7 +253,9 @@ def get_lsb_version(run_lambda):
 
 def check_release_file(run_lambda):
     """Checks release file"""
-    return run_and_parse_first_match(run_lambda, "cat /etc/*-release", r"PRETTY_NAME='(.*)'")
+    return run_and_parse_first_match(
+        run_lambda, "cat /etc/*-release", r"PRETTY_NAME='(.*)'"
+    )
 
 
 def get_os(run_lambda):
@@ -409,7 +417,9 @@ def pretty_str(envinfo):  # noqa: C901
     mutable_dict = envinfo._asdict()
 
     # If nvidia_gpu_models is multiline, start on the next line
-    mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(envinfo.nvidia_gpu_models)
+    mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(
+        envinfo.nvidia_gpu_models
+    )
 
     # If the machine doesn"t have CUDA, report some fields as "No CUDA"
     dynamic_cuda_fields = [
@@ -421,7 +431,11 @@ def pretty_str(envinfo):  # noqa: C901
     all_dynamic_cuda_fields_missing = all(
         mutable_dict[field] is None for field in dynamic_cuda_fields
     )
-    if TORCH_AVAILABLE and not torch.cuda.is_available() and all_dynamic_cuda_fields_missing:
+    if (
+        TORCH_AVAILABLE
+        and not torch.cuda.is_available()
+        and all_dynamic_cuda_fields_missing
+    ):
         for field in all_cuda_fields:
             mutable_dict[field] = "No CUDA"
         if envinfo.cuda_compiled_version is None:
@@ -445,7 +459,9 @@ def pretty_str(envinfo):  # noqa: C901
             mutable_dict["pip_packages"], "[{}] ".format(envinfo.pip_version)
         )
     if mutable_dict["conda_packages"]:
-        mutable_dict["conda_packages"] = prepend(mutable_dict["conda_packages"], "[conda] ")
+        mutable_dict["conda_packages"] = prepend(
+            mutable_dict["conda_packages"], "[conda] "
+        )
     return env_info_fmt.format(**mutable_dict)
 
 

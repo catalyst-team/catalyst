@@ -1,3 +1,4 @@
+# flake8: noqa
 from mean_average_precision import MetricBuilder
 import numpy as np
 
@@ -68,9 +69,9 @@ def process_ssd_output(
         sample_target_classes = sample_target_classes[mask]
         # convert to required format
         sample_target_bboxes = change_box_order(sample_target_bboxes, "xywh2xyxy")
-        sample_target_bboxes = (sample_target_bboxes * (width, height, width, height)).astype(
-            np.int32
-        )
+        sample_target_bboxes = (
+            sample_target_bboxes * (width, height, width, height)
+        ).astype(np.int32)
         gt_sample = np.zeros((sample_target_classes.shape[0], 7), dtype=np.float32)
         gt_sample[:, :4] = sample_target_bboxes
         gt_sample[:, 4] = sample_target_classes
@@ -139,7 +140,9 @@ def process_centernet_output(
 
     hm = predicted_heatmap.sigmoid()
     pooled = F.max_pool2d(hm, kernel_size=(3, 3), stride=1, padding=1)
-    hm *= torch.logical_and(hm >= confidence_threshold, pooled >= confidence_threshold).float()
+    hm *= torch.logical_and(
+        hm >= confidence_threshold, pooled >= confidence_threshold
+    ).float()
 
     hm_numpy = hm.detach().cpu().numpy()
     reg_numpy = predicted_regression.detach().cpu().numpy()

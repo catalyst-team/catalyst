@@ -1,39 +1,41 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
 import json
-from logging import getLogger
 from pathlib import Path
 import re
 
-import yaml
+from catalyst.settings import SETTINGS
 
-logger = getLogger(__name__)
-
-
-class OrderedLoader(yaml.SafeLoader):
-    pass
-
-
-def construct_mapping(loader, node):
-    loader.flatten_mapping(node)
-    return OrderedDict(loader.construct_pairs(node))
-
-
-OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping)
-OrderedLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:float",
-    re.compile(
-        """^(?:
-        [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
-        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
-        |\\.[0-9_]+(?:[eE][-+][0-9]+)?
-        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
-        |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$""",
-        re.X,
-    ),
-    list("-+0123456789."),
+YAML_MESSAGE = (
+    "could not find yaml package, please install with ``pip install PyYAML>=5.1``"
 )
+if SETTINGS.yaml_required:
+    import yaml
+
+    class OrderedLoader(yaml.SafeLoader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return OrderedDict(loader.construct_pairs(node))
+
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+    )
+    OrderedLoader.add_implicit_resolver(
+        "tag:yaml.org,2002:float",
+        re.compile(
+            """^(?:
+            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+            |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+            |[-+]?\\.(?:inf|Inf|INF)
+            |\\.(?:nan|NaN|NAN))$""",
+            re.X,
+        ),
+        list("-+0123456789."),
+    )
 
 
 def _load_ordered_yaml(stream):
@@ -64,11 +66,6 @@ def load_config(
     Raises:
         ValueError: if path ``path`` doesn't exists
             or file format is not YAML or JSON
-
-    Adapted from
-    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L63
-    which was adapted from
-    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L10
     """
     path = Path(path)
 
@@ -93,6 +90,7 @@ def load_config(
                 config = json.loads(file, object_pairs_hook=object_pairs_hook)
 
         elif suffix in [".yml", ".yaml"]:
+            assert SETTINGS.yaml_required, YAML_MESSAGE
             loader = OrderedLoader if ordered else yaml.SafeLoader
             config = yaml.load(stream, loader)
 
@@ -121,11 +119,6 @@ def save_config(
         ensure_ascii: Used for JSON, if True non-ASCII
         characters are escaped in JSON strings.
         indent: Used for JSON
-
-    Adapted from
-    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110
-    which was adapted from
-    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L38
     """
     path = Path(path)
 
@@ -140,6 +133,7 @@ def save_config(
         if suffix == ".json":
             json.dump(config, stream, indent=indent, ensure_ascii=ensure_ascii)
         elif suffix in [".yml", ".yaml"]:
+            assert SETTINGS.yaml_required, YAML_MESSAGE
             yaml.dump(config, stream)
 
 

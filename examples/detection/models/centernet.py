@@ -1,9 +1,10 @@
 # flake8: noqa
 
+from torchvision.models import mobilenet, resnet
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models import mobilenet, resnet
 
 _backbones = {
     "resnet18": (resnet.resnet18, 512),
@@ -84,7 +85,9 @@ class UpDoubleConv(nn.Module):
             # input is CHW
             diffY = x2.size()[2] - x1.size()[2]
             diffX = x2.size()[3] - x1.size()[3]
-            x1 = F.pad(x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
+            x1 = F.pad(
+                x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2)
+            )
         else:
             x = x1
 
@@ -123,6 +126,8 @@ class CenterNet(nn.Module):
         x = self.up1(x)
         x = self.up2(x)
         x = self.up3(x)
-        c = self.out_classification(x)  # NOTE: do not forget to apply sigmoid to obtain scores!
+        c = self.out_classification(
+            x
+        )  # NOTE: do not forget to apply sigmoid to obtain scores!
         r = self.out_residue(x)
         return c, r

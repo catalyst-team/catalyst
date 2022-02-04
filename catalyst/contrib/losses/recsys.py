@@ -36,9 +36,13 @@ class PairwiseLoss(nn.Module):
     """
 
     @staticmethod
-    def _assert_equal_size(positive_score: torch.Tensor, negative_score: torch.Tensor) -> None:
+    def _assert_equal_size(
+        positive_score: torch.Tensor, negative_score: torch.Tensor
+    ) -> None:
         if positive_score.size() != negative_score.size():
-            raise ValueError(f"Shape mismatch: {positive_score.size()}, {negative_score.size()}")
+            raise ValueError(
+                f"Shape mismatch: {positive_score.size()}, {negative_score.size()}"
+            )
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor):
         raise NotImplementedError()
@@ -92,7 +96,9 @@ class BPRLoss(PairwiseLoss):
         super().__init__()
         self.gamma = gamma
 
-    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, positive_score: torch.Tensor, negative_score: torch.Tensor
+    ) -> torch.Tensor:
         """Forward propagation method for the BPR loss.
 
         Args:
@@ -128,7 +134,9 @@ class LogisticLoss(PairwiseLoss):
     def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, positive_score: torch.Tensor, negative_score: torch.Tensor
+    ) -> torch.Tensor:
         """Forward propagation method for the logistic loss.
 
         Args:
@@ -168,7 +176,9 @@ class HingeLoss(PairwiseLoss):
     def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, positive_score: torch.Tensor, negative_score: torch.Tensor
+    ) -> torch.Tensor:
         """Forward propagation method for the hinge loss.
 
         Args:
@@ -209,7 +219,9 @@ class AdaptiveHingeLoss(PairwiseLoss):
         super().__init__()
         self._hingeloss = HingeLoss()
 
-    def forward(self, positive_score: torch.Tensor, negative_scores: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, positive_score: torch.Tensor, negative_scores: torch.Tensor
+    ) -> torch.Tensor:
         """Forward propagation method for the adaptive hinge loss.
 
         Args:

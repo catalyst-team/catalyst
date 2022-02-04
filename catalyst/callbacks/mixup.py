@@ -12,14 +12,16 @@ class MixupCallback(Callback):
 
     Args:
         keys: batch keys to which you want to apply augmentation
-        alpha: beta distribution a=b parameters. Must be >=0. The more alpha closer to zero the
-            less effect of the mixup.
-        mode: mode determines the method of use. Must be in ["replace", "add"]. If "replace"
-            then replaces the batch with a mixed one, while the batch size is not changed
-            If "add", concatenates mixed examples to the current ones, the batch size increases
-            by 2 times.
-        on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
-            also proxy. We are not interested in them, are we? So, if ``on_train_only``
+        alpha: beta distribution a=b parameters. Must be >=0.
+            The more alpha closer to zero the less effect of the mixup.
+        mode: mode determines the method of use. Must be in ["replace", "add"].
+            If "replace" then replaces the batch with a mixed one,
+            while the batch size is not changed.
+            If "add", concatenates mixed examples to the current ones,
+            the batch size increases by 2 times.
+        on_train_only: apply to train only.
+            As the mixup use the proxy inputs, the targets are also proxy.
+            We are not interested in them, are we? So, if ``on_train_only``
             is ``True`` use a standard output/metric for validation.
 
     Examples:
@@ -101,7 +103,9 @@ class MixupCallback(Callback):
             callbacks={
                 "mixup": MixupCallback(keys=["image", "clf_targets_one_hot"]),
                 "criterion": dl.CriterionCallback(
-                    metric_key="loss", input_key="clf_logits", target_key="clf_targets_one_hot"
+                    metric_key="loss",
+                    input_key="clf_logits",
+                    target_key="clf_targets_one_hot"
                 ),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "classification": dl.ControlFlowCallback(
@@ -114,17 +118,22 @@ class MixupCallback(Callback):
         )
 
     .. By running::
-        With running this callback, many metrics (for example, accuracy) become undefined, so
+        With running this callback, many metrics (accuracy, etc) become undefined, so
         use ControlFlowCallback in order to evaluate model(see example)
     """
 
-    def __init__(self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True):
+    def __init__(
+        self, keys: Union[str, List[str]], alpha=0.2, mode="replace", on_train_only=True
+    ):
         """Init."""
         assert isinstance(keys, (str, list, tuple)), (
             f"keys must be str of list[str]," f" get: {type(keys)}"
         )
         assert alpha >= 0, "alpha must be>=0"
-        assert mode in ("add", "replace"), f"mode must be in 'add', 'replace', get: {mode}"
+        assert mode in (
+            "add",
+            "replace",
+        ), f"mode must be in 'add', 'replace', get: {mode}"
         super().__init__(order=CallbackOrder.Internal)
         if isinstance(keys, str):
             keys = [keys]
@@ -132,25 +141,15 @@ class MixupCallback(Callback):
         self.on_train_only = on_train_only
         self.alpha = alpha
         self.mode = mode
-        self.required = True
+        self._is_required = True
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """
-        Loader start hook.
-
-        Args:
-            runner: current runner
-        """
-        self.required = not self.on_train_only or runner.is_train_loader
+        """Event handler."""
+        self._is_required = not self.on_train_only or runner.is_train_loader
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """
-        On batch start action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if self.required:
+        """Event handler."""
+        if self._is_required:
             mixuped_batch = [runner.batch[key] for key in self.keys]
             mixuped_batch = mixup_batch(mixuped_batch, alpha=self.alpha, mode=self.mode)
             for key, mixuped_value in zip(self.keys, mixuped_batch):

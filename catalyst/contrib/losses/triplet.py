@@ -278,12 +278,16 @@ class TripletMarginLossWithSampler(nn.Module):
         """
         labels_list = convert_labels2list(labels)
 
-        features_anchor, features_positive, features_negative = self._sampler_inbatch.sample(
-            features=features, labels=labels_list
-        )
+        (
+            features_anchor,
+            features_positive,
+            features_negative,
+        ) = self._sampler_inbatch.sample(features=features, labels=labels_list)
 
         loss = self._triplet_margin_loss(
-            anchor=features_anchor, positive=features_positive, negative=features_negative
+            anchor=features_anchor,
+            positive=features_positive,
+            negative=features_negative,
         )
         return loss
 

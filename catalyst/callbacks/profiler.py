@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 
 
@@ -27,13 +27,13 @@ class ProfilerCallback(Callback):
         export_stacks_kwargs: arguments to pass to a ``profiler.export_stacks`` method.
             If ``None`` then triggering ``profiler.export_stacks`` will be avoided.
 
-            Example of using **FlameGraph** tool:
+    Example of using **FlameGraph** tool for ``profiler.export_stacks``:
 
-            .. code-block:: bash
+    .. code-block:: bash
 
-                git clone https://github.com/brendangregg/FlameGraph
-                cd FlameGraph
-                ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks > perf_viz.svg
+        git clone https://github.com/brendangregg/FlameGraph
+        cd FlameGraph
+        ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks > perf_viz.svg
 
     .. note::
         Export to tensorboard and chrome trace mutually exclusive and specifying both of
@@ -53,17 +53,11 @@ class ProfilerCallback(Callback):
             from catalyst.contrib.datasets import MNIST
 
             loaders = {
-                "train": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
-                "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False),
-                    batch_size=32,
-                ),
+                "train": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
+                "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
             }
 
-            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 10))
             criterion = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
             runner = dl.SupervisedRunner()
@@ -104,18 +98,18 @@ class ProfilerCallback(Callback):
         export_chrome_trace_path: str = None,
         export_stacks_kwargs: Dict[str, Any] = None,
     ):
-        super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.Internal)
 
         self.loader_key = loader_key
         self.epoch = epoch
         self.num_batches = num_batches
-        self.batch_cnt = 0
+        self.batch_counter = 0
 
         self.profiler_kwargs = {} if profiler_kwargs is None else profiler_kwargs
         if tensorboard_path is not None and "on_trace_ready" not in profiler_kwargs:
-            self.profiler_kwargs["on_trace_ready"] = torch.profiler.tensorboard_trace_handler(
-                tensorboard_path
-            )
+            self.profiler_kwargs[
+                "on_trace_ready"
+            ] = torch.profiler.tensorboard_trace_handler(tensorboard_path)
         self.export_chrome_trace_path = export_chrome_trace_path
         self.export_stacks_kwargs = export_stacks_kwargs
         self.profiler = None
@@ -124,15 +118,15 @@ class ProfilerCallback(Callback):
     def _should_use_profiler(self, loader_key: str, epoch: int):
         if self.loader_key == loader_key and self.epoch == epoch:
             if self.num_batches is not None:
-                return self.batch_cnt < self.num_batches
+                return self.batch_counter < self.num_batches
             return True
         return False
 
     def _enter_profiler(self, runner: IRunner) -> None:
         loader_key = runner.loader_key
-        epoch = runner.stage_epoch_step
+        epoch_step = runner.epoch_step
 
-        if not self._should_use_profiler(loader_key, epoch):
+        if not self._should_use_profiler(loader_key, epoch_step):
             return
 
         if self.profiler is None:
@@ -141,15 +135,21 @@ class ProfilerCallback(Callback):
 
     def _exit_profiler(self, runner: IRunner) -> None:
         loader_key = runner.loader_key
-        epoch = runner.stage_epoch_step
+        epoch_step = runner.epoch_step
 
-        if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
+        if (
+            not self._should_use_profiler(loader_key, epoch_step)
+            or self.profiler is None
+        ):
             return
 
         if self.stats is None:
             self.profiler.__exit__(None, None, None)
 
-            if "on_trace_ready" not in self.profiler_kwargs and self.export_chrome_trace_path:
+            if (
+                "on_trace_ready" not in self.profiler_kwargs
+                and self.export_chrome_trace_path
+            ):
                 self.profiler.export_chrome_trace(self.export_chrome_trace_path)
 
             if self.export_stacks_kwargs is not None:
@@ -163,54 +163,39 @@ class ProfilerCallback(Callback):
                 with open(artifact_path, "w") as f:
                     f.write(table_txt)
                 runner.log_artifact(
-                    tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path
+                    tag="profiler",
+                    artifact="profiler.txt",
+                    path_to_artifact=artifact_path,
                 )
 
             print(table_txt)
 
     def on_loader_start(self, runner: IRunner) -> None:
-        """
-        On loader start action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self.loader_key is None:
             self.loader_key = runner.loader_key  # use first loader for profile
 
         self._enter_profiler(runner)
 
     def on_loader_end(self, runner: IRunner) -> None:
-        """
-        On loader end action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         self._exit_profiler(runner)
 
     def on_batch_start(self, runner: IRunner) -> None:
-        """
-        On batch start action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         self._enter_profiler(runner)
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """
-        On batch end action
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self.profiler is None:
             return
 
-        if self.num_batches is not None and self.batch_cnt < self.num_batches:
+        if self.num_batches is not None and self.batch_counter < self.num_batches:
             # do a profiling step after each batch
             self.profiler.step()
-            self.batch_cnt += 1
+            self.batch_counter += 1
 
         self._exit_profiler(runner)
+
+
+__all__ = ["ProfilerCallback"]

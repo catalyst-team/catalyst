@@ -28,7 +28,7 @@ class SSDCriterion(nn.Module):
         _, idx = cls_loss.sort(1)  # sort by negative losses
         _, rank = idx.sort(1)  # [B, M]
 
-        num_neg = 3 * pos.sum(1)  # [B,]
+        num_neg = 3 * pos.sum(1)  # [B]
         neg = rank < num_neg[:, None]  # [B, M]
         return neg
 
@@ -60,7 +60,7 @@ class SSDCriterion(nn.Module):
 
         cls_loss = F.cross_entropy(
             cls_preds.view(-1, self.num_classes), cls_targets.view(-1), reduction="none"
-        )  # [B * M,]
+        )  # [B * M]
         cls_loss = cls_loss.view(batch_size, -1)
         cls_loss[cls_targets == self.ignore_class] = 0  # set ignored loss to 0
         neg = self._hard_negative_mining(cls_loss, pos)  # [B, M]
@@ -120,7 +120,10 @@ def neg_loss(pred, gt):
 
     positive_loss = torch.log(pred + 1e-12) * torch.pow(1 - pred, 3) * positive_inds
     negative_loss = (
-        torch.log(1 - pred + 1e-12) * torch.pow(pred, 3) * negative_weights * negative_inds
+        torch.log(1 - pred + 1e-12)
+        * torch.pow(pred, 3)
+        * negative_weights
+        * negative_inds
     )
 
     num_pos = positive_inds.float().sum()
@@ -137,7 +140,11 @@ def neg_loss(pred, gt):
 
 class CenterNetCriterion(nn.Module):
     def __init__(
-        self, num_classes=1, mask_loss_weight=1.0, regr_loss_weight=1.0, size_average=True
+        self,
+        num_classes=1,
+        mask_loss_weight=1.0,
+        regr_loss_weight=1.0,
+        size_average=True,
     ):
         """
         Args:
@@ -178,7 +185,8 @@ class CenterNetCriterion(nn.Module):
         mask_loss *= self.mask_loss_weight
 
         regr_loss = (
-            torch.abs(predicted_regr - target_regr).sum(1)[:, None, :, :] * target_heatmap
+            torch.abs(predicted_regr - target_regr).sum(1)[:, None, :, :]
+            * target_heatmap
         ).sum()  # .sum(1).sum(1).sum(1)
         regr_loss = regr_loss / target_heatmap.sum()  # .sum(1).sum(1).sum(1)
         regr_loss *= self.regr_loss_weight

@@ -32,7 +32,9 @@ from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
             },
         ),
         (
-            torch.tensor([[0.1, 0.2, 0.7, 0.0], [0.49, 0.51, 0.0, 0.0], [0.6, 0.3, 0.1, 0.0]]),
+            torch.tensor(
+                [[0.1, 0.2, 0.7, 0.0], [0.49, 0.51, 0.0, 0.0], [0.6, 0.3, 0.1, 0.0]]
+            ),
             torch.tensor([0, 1, 3]),
             4,
             [1, 3],
@@ -63,7 +65,7 @@ def test_accuracy(
         topk: list of topk args for accuracy@topk
         true_values: true metrics values
     """
-    metric = AccuracyMetric(topk_args=topk)
+    metric = AccuracyMetric(topk=topk)
     metric.update(logits=outputs, targets=targets)
     metrics = metric.compute_key_value()
     for key in true_values.keys():
@@ -85,18 +87,15 @@ def test_accuracy(
             [1],
             [
                 {"accuracy01": 0.5, "accuracy01/std": 0.0},
-                {
-                    "accuracy01": 0.75,
-                    "accuracy01/std": 0.288675,
-                },
-                {
-                    "accuracy01": 0.6,
-                    "accuracy01/std": 0.41833,
-                },
+                {"accuracy01": 0.75, "accuracy01/std": 0.288675},
+                {"accuracy01": 0.6, "accuracy01/std": 0.41833},
             ],
         ),
         (
-            [torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3]]), torch.tensor([[0.0, 0.6, 0.4]])],
+            [
+                torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3]]),
+                torch.tensor([[0.0, 0.6, 0.4]]),
+            ],
             [torch.tensor([2, 2]), torch.tensor([0])],
             3,
             [1, 2],
@@ -136,8 +135,10 @@ def test_accuracy_update(
         topk: topk args for computing accuracy@topk
         true_values_list: list of correct metrics intermediate values
     """
-    metric = AccuracyMetric(topk_args=topk, num_classes=num_classes)
-    for outputs, targets, true_values in zip(outputs_list, targets_list, true_values_list):
+    metric = AccuracyMetric(topk=topk, num_classes=num_classes)
+    for outputs, targets, true_values in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(logits=outputs, targets=targets)
         intermediate_metric_values = metric.compute_key_value()
         for key in true_values.keys():
@@ -248,7 +249,9 @@ def test_multilabel_accuracy_mean(
         true_values_list: true intermediate metric results
     """
     metric = MultilabelAccuracyMetric(threshold=thresholds)
-    for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
+    for outputs, targets, true_value in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(outputs=outputs, targets=targets)
         mean, _ = metric.compute()
         assert np.isclose(mean, true_value)
@@ -310,7 +313,9 @@ def test_multilabel_accuracy_std(
         true_values_list: true intermediate metric results
     """
     metric = MultilabelAccuracyMetric(threshold=thresholds)
-    for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
+    for outputs, targets, true_value in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(outputs=outputs, targets=targets)
         _, std = metric.compute()
         assert np.isclose(std, true_value)

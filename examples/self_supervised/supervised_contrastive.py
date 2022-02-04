@@ -1,15 +1,16 @@
 # flake8: noqa
 import argparse
 
-from common import add_arguments, get_contrastive_model, get_loaders
+from datasets import DATASETS
 from sklearn.linear_model import LogisticRegression
 
-from datasets import DATASETS
 import torch
 from torch.optim import Adam
 
 from catalyst import dl
 from catalyst.contrib.losses import SupervisedContrastiveLoss
+from .common import add_arguments, get_contrastive_model, get_loaders
+from .runner import SelfSupervisedRunner
 
 
 def concat(*tensors):
@@ -50,6 +51,7 @@ if __name__ == "__main__":
         dl.CriterionCallback(
             input_key="full_projection", target_key="full_targets", metric_key="loss"
         ),
+        dl.BackwardCallback(metric_key="loss"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SklearnModelCallback(
             feature_key="embedding_origin",
@@ -63,16 +65,16 @@ if __name__ == "__main__":
             solver="saga",
             max_iter=200,
         ),
-        dl.ControlFlowCallback(
+        dl.ControlFlowCallbackWrapper(
             dl.AccuracyCallback(
-                target_key="target", input_key="sklearn_predict", topk_args=(1, 3)
+                target_key="target", input_key="sklearn_predict", topk=(1, 3)
             ),
             loaders="valid",
         ),
     ]
 
     # train model
-    runner = dl.SelfSupervisedRunner()
+    runner = SelfSupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,

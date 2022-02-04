@@ -14,7 +14,7 @@ class CMCMetric(AccumulativeMetric):
         embeddings_key: key of embedding tensor in batch
         labels_key: key of label tensor in batch
         is_query_key: key of query flag tensor in batch
-        topk_args: list of k, specifies which cmc@k should be calculated
+        topk: list of k, specifies which cmc@k should be calculated
         compute_on_call: if True, allows compute metric's value on call
         prefix: metric prefix
         suffix: metric suffix
@@ -47,7 +47,7 @@ class CMCMetric(AccumulativeMetric):
             embeddings_key="embeddings",
             labels_key="labels",
             is_query_key="is_query",
-            topk_args=topk,
+            topk=topk,
         )
         metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
 
@@ -91,7 +91,9 @@ class CMCMetric(AccumulativeMetric):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):
@@ -99,7 +101,7 @@ class CMCMetric(AccumulativeMetric):
                 if self.is_train_loader:
                     images, targets = batch["features"].float(), batch["targets"].long()
                     features = self.model(images)
-                    self.batch = {"embeddings": features, "targets": targets,}
+                    self.batch = {"embeddings": features, "targets": targets}
                 else:
                     images, targets, is_query = (
                         batch["features"].float(),
@@ -123,12 +125,15 @@ class CMCMetric(AccumulativeMetric):
                     embeddings_key="embeddings",
                     labels_key="targets",
                     is_query_key="is_query",
-                    topk_args=[1],
+                    topk=[1],
                 ),
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+                valid_loader_key="valid",
+                valid_metric_key="cmc01",
+                minimize=False,
+                valid=2
             ),
         ]
 
@@ -150,9 +155,9 @@ class CMCMetric(AccumulativeMetric):
     .. note::
         Metric names depending on input parameters:
 
-        - ``topk_args = (1,) or None`` ---> ``"cmc01"``
-        - ``topk_args = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
-        - ``topk_args = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
+        - ``topk = (1,) or None`` ---> ``"cmc01"``
+        - ``topk = (1, 3)`` ---> ``"cmc01"``, ``"cmc03"``
+        - ``topk = (1, 3, 5)`` ---> ``"cmc01"``, ``"cmc03"``, ``"cmc05"``
 
         You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or
         ``runner.epoch_metrics``.
@@ -160,7 +165,7 @@ class CMCMetric(AccumulativeMetric):
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -168,7 +173,7 @@ class CMCMetric(AccumulativeMetric):
         embeddings_key: str,
         labels_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -183,7 +188,7 @@ class CMCMetric(AccumulativeMetric):
         self.embeddings_key = embeddings_key
         self.labels_key = labels_key
         self.is_query_key = is_query_key
-        self.topk_args = topk_args or (1,)
+        self.topk = topk or (1,)
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -214,10 +219,12 @@ class CMCMetric(AccumulativeMetric):
         gallery_embeddings = embeddings[~query_mask]
         gallery_labels = labels[~query_mask]
 
-        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(torch.bool)
+        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
+            torch.bool
+        )
 
         metrics = []
-        for k in self.topk_args:
+        for k in self.topk:
             value = cmc_score(
                 query_embeddings=query_embeddings,
                 gallery_embeddings=gallery_embeddings,
@@ -238,7 +245,7 @@ class CMCMetric(AccumulativeMetric):
         values = self.compute()
         kv_metrics = {
             f"{self.prefix}cmc{k:02d}{self.suffix}": value
-            for k, value in zip(self.topk_args, values)
+            for k, value in zip(self.topk, values)
         }
         return kv_metrics
 
@@ -251,7 +258,7 @@ class ReidCMCMetric(AccumulativeMetric):
         pids_key: key of pids tensor in batch
         cids_key: key of cids tensor in batch
         is_query_key: key of query flag tensor in batch
-        topk_args: list of k, specifies which cmc@k should be calculated
+        topk: list of k, specifies which cmc@k should be calculated
         compute_on_call: if True, allows compute metric's value on call
         prefix: metric prefix
         suffix: metric suffix
@@ -286,7 +293,7 @@ class ReidCMCMetric(AccumulativeMetric):
             pids_key="pids",
             cids_key="cids",
             is_query_key="is_query",
-            topk_args=topk,
+            topk=topk,
         )
         metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
 
@@ -304,7 +311,7 @@ class ReidCMCMetric(AccumulativeMetric):
         pids_key: str,
         cids_key: str,
         is_query_key: str,
-        topk_args: Iterable[int] = None,
+        topk: Iterable[int] = None,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -320,7 +327,7 @@ class ReidCMCMetric(AccumulativeMetric):
         self.pids_key = pids_key
         self.cids_key = cids_key
         self.is_query_key = is_query_key
-        self.topk_args = topk_args or (1,)
+        self.topk = topk or (1,)
 
     def reset(self, num_batches: int, num_samples: int) -> None:
         """
@@ -341,7 +348,8 @@ class ReidCMCMetric(AccumulativeMetric):
             list of metrics values
 
         Raises:
-            ValueError: if there are samples in query that have no relevant samples in gallery
+            ValueError: if there are samples in query
+            that have no relevant samples in gallery
         """
         query_mask = (self.storage[self.is_query_key] == 1).to(torch.bool)
 
@@ -370,10 +378,12 @@ class ReidCMCMetric(AccumulativeMetric):
         available_samples = ~(pid_conformity_matrix * cid_conformity_matrix).bool()
 
         if (available_samples.max(dim=1).values == 0).any():
-            raise ValueError("There is a sample in query that has no relevant samples in gallery.")
+            raise ValueError(
+                "There is a sample in query that has no relevant samples in gallery."
+            )
 
         metrics = []
-        for k in self.topk_args:
+        for k in self.topk:
             value = masked_cmc_score(
                 query_embeddings=query_embeddings,
                 gallery_embeddings=gallery_embeddings,
@@ -395,7 +405,7 @@ class ReidCMCMetric(AccumulativeMetric):
         values = self.compute()
         kv_metrics = {
             f"{self.prefix}cmc{k:02d}{self.suffix}": value
-            for k, value in zip(self.topk_args, values)
+            for k, value in zip(self.topk, values)
         }
         return kv_metrics
 

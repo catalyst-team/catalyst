@@ -47,7 +47,8 @@ class MacridVAE(nn.Module):
             self.encoder.add_module(f"encoder_fc_{i + 1}", nn.Linear(d_in, d_out))
             self.encoder.add_module(f"encoder_tanh_{i + 1}", nn.Tanh())
         self.encoder.add_module(
-            f"encoder_fc_{len(self.q_dims) - 1}", nn.Linear(self.q_dims[-2], self.q_dims[-1] * 2)
+            f"encoder_fc_{len(self.q_dims) - 1}",
+            nn.Linear(self.q_dims[-2], self.q_dims[-1] * 2),
         )
 
         self.drop = nn.Dropout(dropout)
@@ -146,7 +147,9 @@ class RecSysRunner(dl.Runner):
 
         self.batch.update({"logits": x_recon, "inputs": x, "targets": x_true})
 
-        self.batch_metrics.update({"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss})
+        self.batch_metrics.update(
+            {"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss}
+        )
         for key in ["loss_ae", "loss_kld", "loss"]:
             self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
 
@@ -179,6 +182,7 @@ if __name__ == "__main__":
         dl.MAPCallback("logits", "targets", [20, 50, 100]),
         dl.MRRCallback("logits", "targets", [20, 50, 100]),
         dl.HitrateCallback("logits", "targets", [20, 50, 100]),
+        dl.BackwardCallback("loss"),
         dl.OptimizerCallback("loss", accumulation_steps=1),
     ]
 

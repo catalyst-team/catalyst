@@ -68,7 +68,7 @@ and returns embeddings for input batches and distance between them:
 
         def get_embeddings(self, batch):
             """Generate embeddings for a given batch of images.
-            
+
             Args:
                 batch (torch.Tensor): batch with images,
                     expected shapes - [B, C, H, W].
@@ -79,7 +79,7 @@ and returns embeddings for input batches and distance between them:
             """
             return self.layers(batch)
 
-        
+
         def forward(self, first, second):
             """Forward pass.
 
@@ -144,69 +144,3 @@ And then for python API:
         verbose=True,
         load_best_on_end=True,
     )
-
-
-For config API:
-
-.. code-block:: yaml
-
-    args:
-        logdir: &logdir ./siamese_logs
-        seed: 42
-
-    runner:
-        _target_: SupervisedRunner
-        input_key:
-            - first
-            - second
-        output_key:
-            - first_emb
-            - second_emb
-            - l2_distance
-        target_key:
-            - labels
-        loss_key: loss
-
-    engine:
-        _target_: DeviceEngine
-
-    model:
-        _target_: SiameseNet  # don't forget to register model!
-        # ...
-    
-    loggers:
-        console:
-            _target_: ConsoleLogger
-        tensorboard:
-            _target_: TensorboardLogger
-            logdir: *logdir
-            use_logdir_postfix: True
-
-    stages:
-        train:
-            num_epochs: 3
-            loaders:
-                batch_size: 32
-                num_workers: 1
-            criterion:
-                _target_: ContrastiveLoss # don't forget to register loss!
-                # ...
-            optimizer:
-                _target_: Adam
-                lr: 0.001
-            callbacks: &callbacks
-                loss:
-                    _target_: CriterionCallback
-                    input_key: l2_distance
-                    target_key: labels
-                    metric_key: loss
-                optimizer:
-                    _target_: OptimizerCallback
-                    metric_key: loss
-                saver:
-                    _target_: CheckpointCallback
-                    logdir: *logdir
-                    loader_key: valid
-                    metric_key: loss
-                    minimize: True
-                    use_logdir_postfix: True

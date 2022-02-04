@@ -71,7 +71,9 @@ class ArcFace(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, target: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -183,7 +185,9 @@ class SubCenterArcFace(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, target: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -213,7 +217,9 @@ class SubCenterArcFace(nn.Module):
         one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
-        selected = torch.where(theta > self.threshold, torch.zeros_like(one_hot), one_hot)
+        selected = torch.where(
+            theta > self.threshold, torch.zeros_like(one_hot), one_hot
+        )
 
         logits = torch.cos(torch.where(selected.bool(), theta + self.m, theta))
         logits *= self.s

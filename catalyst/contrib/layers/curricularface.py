@@ -74,7 +74,9 @@ class CurricularFace(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, label: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, label: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -101,7 +103,9 @@ class CurricularFace(nn.Module):
         target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(-1, 1)
 
         sin_theta = torch.sqrt(1.0 - torch.pow(target_logit, 2))
-        cos_theta_m = target_logit * self.cos_m - sin_theta * self.sin_m  # cos(target+margin)
+        cos_theta_m = (
+            target_logit * self.cos_m - sin_theta * self.sin_m
+        )  # cos(target+margin)
         mask = cos_theta > cos_theta_m
         final_target_logit = torch.where(
             target_logit > self.threshold, cos_theta_m, target_logit - self.mm

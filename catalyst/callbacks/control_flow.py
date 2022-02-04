@@ -4,14 +4,16 @@ from collections import OrderedDict
 from catalyst.core.callback import Callback, CallbackWrapper
 
 LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
-FILTER_FN = Callable[[str, int, str], bool]
+FILTER_FN = Callable[[int, str], bool]
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
 class _EpochFilterFn:
-    def __init__(self, epochs: Union[int, float, Sequence[int]], reverse_condition: bool):
+    def __init__(
+        self, epochs: Union[int, float, Sequence[int]], reverse_condition: bool
+    ):
         if not isinstance(epochs, (int, float, list, tuple)):
             raise ValueError(
                 "'epochs' should be int/float/Sequence[int]! " f"(got {type(epochs)})"
@@ -25,7 +27,7 @@ class _EpochFilterFn:
         elif isinstance(self.epochs, (list, tuple)):
             self.epochs = sorted(set(self.epochs))
 
-    def __call__(self, stage, epoch, loader):
+    def __call__(self, epoch, loader):
         if isinstance(self.epochs, (int, float)):
             if self.reverse_condition:
                 return epoch % self.epochs != 0
@@ -73,7 +75,7 @@ class _LoaderFilterFn:
                         )
             self._ignore_list = ignore_list
 
-    def __call__(self, stage, epoch, loader):
+    def __call__(self, epoch, loader):
         # sequence of loaders
         if isinstance(self.loaders, (list, tuple)):
             if self.reverse_condition:
@@ -100,23 +102,22 @@ class _ArgsFilterFn:
                 raise ValueError(
                     "'filter_fn' should be a valid "
                     "python lambda function with "
-                    "three arguments - 'stage', 'epoch' and 'loader'!"
+                    "two arguments - 'epoch' and 'loader'!"
                 )
         if not callable(filter_fn):
             raise ValueError("'filter_fn' should be a callable!")
-        if filter_fn.__code__.co_argcount != 3:
+        if filter_fn.__code__.co_argcount != 2:
             raise ValueError(
-                "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
+                "Filter function should have two arguments - " "'epoch' and 'loader'!"
             )
         self.filter_fn = filter_fn
 
-    def __call__(self, stage, epoch, loader):
-        return self.filter_fn(stage, epoch, loader)
+    def __call__(self, epoch, loader):
+        return self.filter_fn(epoch, loader)
 
 
-class ControlFlowCallback(CallbackWrapper):
-    """Enable/disable callback execution on different
-    stages, loaders and epochs.
+class ControlFlowCallbackWrapper(CallbackWrapper):
+    """Enable/disable callback execution on different epochs and loaders.
 
     Args:
         base_callback: callback to wrap
@@ -178,21 +179,19 @@ class ControlFlowCallback(CallbackWrapper):
             loader (dictionary key).
 
             Default value is ``None``.
-        filter_fn (str or Callable[[str, int, str], bool]):
+        filter_fn (str or Callable[[int, str], bool]):
             function to use instead of ``loaders`` or ``epochs`` arguments.
 
             If the object passed to a ``filter_fn`` is a string
             then it will be interpreted as python code. Expected
-            lambda function with three arguments stage name (str),
-            epoch number (int), loader name (str) and this function
-            should return ``True`` if callback should be enabled
+            lambda function with two arguments: epoch number (int) and loader name (str).
+            This function should return ``True`` if callback should be enabled
             on some condition.
 
             If passed callable object then it should accept
-            three arguments - stage name (str), epoch number (int),
-            loader name (str) and should return ``True`` if callback
-            should be enabled on some condition othervise should
-            return ``False``.
+            two arguments: epoch number (int) and loader name (str).
+            It should return ``True`` if callback should be enabled on some condition
+            othervise should return ``False``.
 
             Default value is ``None``.
 
@@ -204,31 +203,27 @@ class ControlFlowCallback(CallbackWrapper):
                 # exept "train" loader every 2 epochs
                 ControlFlowCallback(
                     ...
-                    filter_fn=lambda s, e, l: l != "train" and e % 2 == 0
+                    filter_fn=lambda e, l: l != "train" and e % 2 == 0
                     ...
                 )
                 # or with string equivalent
                 ControlFlowCallback(
                     ...
-                    filter_fn="lambda s, e, l: l != 'train' and e % 2 == 0"
+                    filter_fn="lambda e, l: l != 'train' and e % 2 == 0"
                     ...
                 )
-
-        use_global_epochs: if ``True`` then
-            will be used global epochs instead of epochs in
-            a stage, the default value is ``False``
 
     .. note::
 
         Please run experiment with
         :class:`check option
-        <catalyst.core.callbacks.early_stop.CheckRunCallback>`
+        <catalyst.callbacks.misc.CheckRunCallback>`
         to check if everything works as expected with this callback.
 
     For example, if you don't want to compute loss on a validation
     you can ignore
     :class:`CriterionCallback
-    <catalyst.core.callbacks.criterion.CriterionCallback>`,
+    <catalyst.callbacks.criterion.CriterionCallback>`,
     for **notebook API** need to wrap callback:
 
     .. code-block:: python
@@ -275,19 +270,6 @@ class ControlFlowCallback(CallbackWrapper):
             ]
         )
 
-    In **config API** need to use ``_wrapper`` argument:
-
-    .. code-block:: yaml
-
-        callbacks_params:
-          ...
-          loss:
-            _wrapper:
-               callback: ControlFlowCallback
-               ignore_loaders: valid
-            callback: CriterionCallback
-          ...
-
     """
 
     def __init__(
@@ -298,7 +280,6 @@ class ControlFlowCallback(CallbackWrapper):
         loaders: LOADERS = None,
         ignore_loaders: LOADERS = None,
         filter_fn: Union[str, FILTER_FN] = None,
-        use_global_epochs: bool = False,
     ):
         """Init."""
         required_args = (
@@ -317,7 +298,6 @@ class ControlFlowCallback(CallbackWrapper):
             )
 
         super().__init__(base_callback, True)
-        self.use_global_epochs = use_global_epochs
         # loader parameters
         self.filter_fn = None
 
@@ -334,32 +314,18 @@ class ControlFlowCallback(CallbackWrapper):
             self.filter_fn = _ArgsFilterFn(filter_fn)
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """
-        Check if current epoch should be skipped.
-
-        Args:
-            runner: current runner
-        """
-        stage = runner.stage_key
-        loader = runner.loader_key
-        epoch = runner.global_epoch_step if self.use_global_epochs else runner.stage_epoch_step
-
+        """Event handler."""
         if self.filter_fn is not None:
-            self._is_enabled = self.filter_fn(stage, epoch, loader)
+            self._is_enabled = self.filter_fn(runner.epoch_step, runner.loader_key)
 
         if self._is_enabled:
             self.callback.on_loader_start(runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """
-        Reset status of callback
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self._is_enabled:
             self.callback.on_loader_end(runner)
         self._is_enabled = True
 
 
-__all__ = ["ControlFlowCallback"]
+__all__ = ["ControlFlowCallbackWrapper"]

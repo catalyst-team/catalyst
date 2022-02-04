@@ -10,6 +10,8 @@ from torch.utils.data.sampler import BatchSampler, Sampler
 
 from catalyst.contrib.data._misc import find_value_ids
 
+LOGGER = logging.getLogger(__name__)
+
 
 class BalanceBatchSampler(Sampler):
     """
@@ -118,9 +120,9 @@ class BalanceBatchSampler(Sampler):
             num_samples_exists = len(all_cls_inds)
 
             if num_samples_exists < self._k:
-                selected_inds = random.sample(all_cls_inds, k=num_samples_exists) + random.choices(
-                    all_cls_inds, k=self._k - num_samples_exists
-                )
+                selected_inds = random.sample(
+                    all_cls_inds, k=num_samples_exists
+                ) + random.choices(all_cls_inds, k=self._k - num_samples_exists)
             else:
                 selected_inds = random.sample(all_cls_inds, k=self._k)
 
@@ -184,7 +186,7 @@ class DynamicBalanceClassSampler(Sampler):
         Args:
             labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
-            start_epoch: start epoch number, can be useful for multi-stage
+            start_epoch: start epoch number, can be useful for multistage
             experiments
             max_d: if not None, limit on the difference between the most
             frequent and the rarest classes, heuristic
@@ -206,8 +208,7 @@ class DynamicBalanceClassSampler(Sampler):
         self.min_class_size = min(samples_per_class.values())
 
         if self.min_class_size < 100 and not ignore_warning:
-            logger = logging.getLogger(__name__)
-            logger.warning(
+            LOGGER.warning(
                 f"the smallest class contains only"
                 f" {self.min_class_size} examples. At the end of"
                 f" training, epochs will contain only"
@@ -219,7 +220,8 @@ class DynamicBalanceClassSampler(Sampler):
             key: value / self.min_class_size for key, value in samples_per_class.items()
         }
         self.label2idxes = {
-            label: np.arange(len(labels))[labels == label].tolist() for label in set(labels)
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
         }
 
         if isinstance(mode, int):

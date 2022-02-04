@@ -1,7 +1,7 @@
 # flake8: noqa
 
+from collections import OrderedDict
 from distutils.version import LooseVersion
-import logging
 import os
 from tempfile import TemporaryDirectory
 
@@ -13,13 +13,11 @@ from torch.utils.data import DataLoader, Dataset
 
 HAS_REQUIRED_TORCH_VERSION = LooseVersion(torch.__version__) >= LooseVersion("1.8.1")
 
-from catalyst import dl  # noqa: E402
-from catalyst.settings import SETTINGS  # noqa: E402
+from catalyst import dl
+from catalyst.settings import SETTINGS
 
 if HAS_REQUIRED_TORCH_VERSION:
     from catalyst.callbacks import ProfilerCallback
-
-logger = logging.getLogger(__name__)
 
 
 class DummyDataset(Dataset):
@@ -79,9 +77,9 @@ class CustomRunner(dl.IRunner):
         )
 
     def get_engine(self):
-        return dl.DeviceEngine(self._device)
+        return dl.GPUEngine()
 
-    def get_callbacks(self, stage: str):
+    def get_callbacks(self):
         return {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
@@ -105,30 +103,24 @@ class CustomRunner(dl.IRunner):
         }
 
     @property
-    def stages(self) -> "Iterable[str]":
-        return ["train"]
-
-    def get_stage_len(self, stage: str) -> int:
+    def num_epochs(self) -> int:
         return 10
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self) -> "OrderedDict[str, DataLoader]":
         dataset = DummyDataset(6)
         loader = DataLoader(dataset, batch_size=4)
         return {"train": loader, "valid": loader}
 
-    def get_model(self, stage: str):
+    def get_model(self):
         return DummyModel(4, 2)
 
-    def get_criterion(self, stage: str):
+    def get_criterion(self):
         return torch.nn.MSELoss()
 
-    def get_optimizer(self, model, stage: str):
+    def get_optimizer(self, model):
         return torch.optim.Adam(model.parameters())
 
-    def get_scheduler(self, optimizer, stage: str):
-        return None
-
-    def get_trial(self):
+    def get_scheduler(self, optimizer):
         return None
 
     def get_loggers(self):
@@ -137,18 +129,6 @@ class CustomRunner(dl.IRunner):
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
         }
-        if SETTINGS.mlflow_required:
-            loggers["mlflow"] = dl.MLflowLogger(experiment=self.name)
-
-        if SETTINGS.wandb_required:
-            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", name=self.name)
-
-        if SETTINGS.neptune_required:
-            loggers["neptune"] = dl.NeptuneLogger(
-                base_namespace="catalyst-tests",
-                api_token="ANONYMOUS",
-                project="common/catalyst-integration",
-            )
 
         return loggers
 

@@ -2,9 +2,9 @@
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
+import gym
 import numpy as np
 
-import gym
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -81,7 +81,10 @@ def get_action(env, network: nn.Module, state: np.array) -> int:
 
 
 def generate_session(
-    env, network: nn.Module, t_max: int = 1000, rollout_buffer: Optional[RolloutBuffer] = None
+    env,
+    network: nn.Module,
+    t_max: int = 1000,
+    rollout_buffer: Optional[RolloutBuffer] = None,
 ) -> Tuple[float, int]:
     total_reward = 0
     states, actions, rewards = [], [], []
@@ -196,7 +199,9 @@ class CustomRunner(dl.Runner):
 
     def on_loader_start(self, runner: dl.IRunner):
         super().on_loader_start(runner)
-        self.meters = {key: metrics.AdditiveMetric(compute_on_call=False) for key in ["loss"]}
+        self.meters = {
+            key: metrics.AdditiveMetric(compute_on_call=False) for key in ["loss"]
+        }
 
     def handle_batch(self, batch: Sequence[np.array]):
         # model train/valid step
@@ -211,7 +216,9 @@ class CustomRunner(dl.Runner):
         probas = F.softmax(logits, -1)
         logprobas = F.log_softmax(logits, -1)
         n_actions = probas.shape[1]
-        logprobas_for_actions = torch.sum(logprobas * to_one_hot(actions, n_dims=n_actions), dim=1)
+        logprobas_for_actions = torch.sum(
+            logprobas * to_one_hot(actions, n_dims=n_actions), dim=1
+        )
 
         J_hat = torch.mean(logprobas_for_actions * cumulative_returns)
         entropy_reg = -torch.mean(torch.sum(probas * logprobas, dim=1))
@@ -248,11 +255,15 @@ if __name__ == "__main__":
 
     model = get_network(env)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loaders = {"train_game": DataLoader(RolloutDataset(rollout_buffer), batch_size=batch_size)}
+    loaders = {
+        "train_game": DataLoader(RolloutDataset(rollout_buffer), batch_size=batch_size)
+    }
 
     runner = CustomRunner(gamma=gamma)
     runner.train(
-        engine=dl.DeviceEngine("cpu"),  # for simplicity reasons, let's run everything on cpu
+        engine=dl.DeviceEngine(
+            "cpu"
+        ),  # for simplicity reasons, let's run everything on cpu
         model=model,
         optimizer=optimizer,
         loaders=loaders,
@@ -266,7 +277,9 @@ if __name__ == "__main__":
         callbacks=[GameCallback(env=env, rollout_buffer=rollout_buffer)],
     )
 
-    env = gym.wrappers.Monitor(gym.make(env_name), directory="videos_reinforce", force=True)
+    env = gym.wrappers.Monitor(
+        gym.make(env_name), directory="videos_reinforce", force=True
+    )
     generate_sessions(env=env, network=model, num_sessions=100)
     env.close()
 

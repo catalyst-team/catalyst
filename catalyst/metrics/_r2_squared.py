@@ -50,7 +50,9 @@ class R2Squared(ICallbackLoaderMetric):
         """
         Return accumulated metric
         """
-        return 1 - self.delta_sum / (self.y_sq_sum - (self.y_sum ** 2) / self.num_examples)
+        return 1 - self.delta_sum / (
+            self.y_sq_sum - (self.y_sum ** 2) / self.num_examples
+        )
 
     def compute_key_value(self) -> torch.Tensor:
         """

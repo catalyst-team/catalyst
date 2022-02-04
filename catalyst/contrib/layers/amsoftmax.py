@@ -68,7 +68,9 @@ class AMSoftmax(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, target: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,

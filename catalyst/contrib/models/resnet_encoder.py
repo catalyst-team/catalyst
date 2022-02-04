@@ -3,10 +3,11 @@
 from typing import Union
 from pathlib import Path
 
-import torch
-from torch import nn
 import torchvision
 from torchvision.models import ResNet
+
+import torch
+from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.layers import Flatten
@@ -70,7 +71,9 @@ class ResnetEncoder(nn.Module):
             modules += [pooling_layer]
 
             if hasattr(pooling_layer, "out_features"):
-                out_features = pooling_layer.out_features(in_features=resnet.fc.in_features)
+                out_features = pooling_layer.out_features(
+                    in_features=resnet.fc.in_features
+                )
             else:
                 out_features = None
         else:

@@ -170,7 +170,9 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
     return mean(losses)
 
 
-def _lovasz_softmax(probabilities, targets, classes="present", per_image=False, ignore=None):
+def _lovasz_softmax(
+    probabilities, targets, classes="present", per_image=False, ignore=None
+):
     """The multiclass Lovasz-Softmax loss.
 
     Args:
@@ -230,7 +232,9 @@ class LovaszLossBinary(_Loss):
 
         @TODO: Docs. Contribution is welcome.
         """
-        loss = _lovasz_hinge(logits, targets, per_image=self.per_image, ignore=self.ignore)
+        loss = _lovasz_hinge(
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 
@@ -261,7 +265,9 @@ class LovaszLossMultiClass(_Loss):
 
         @TODO: Docs. Contribution is welcome.
         """
-        loss = _lovasz_softmax(logits, targets, per_image=self.per_image, ignore=self.ignore)
+        loss = _lovasz_softmax(
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 

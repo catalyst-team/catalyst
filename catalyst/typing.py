@@ -8,37 +8,38 @@ from pathlib import Path
 import torch
 from torch import nn, optim
 from torch.optim import lr_scheduler
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils import data
 from torch.utils.data import sampler
 
 Directory = Path
 File = Path
 
-Model = nn.Module
-Criterion = nn.Module
-Optimizer = optim.Optimizer
-# @TODO: how to fix PyTorch? Union["lr_scheduler._LRScheduler", "lr_scheduler.ReduceLROnPlateau"]
-Scheduler = lr_scheduler._LRScheduler
-Dataset = data.Dataset
-Sampler = sampler.Sampler
-Device = Union[str, torch.device]
+TorchModel = nn.Module
+TorchCriterion = nn.Module
+TorchOptimizer = optim.Optimizer
+TorchScheduler = (lr_scheduler._LRScheduler, ReduceLROnPlateau)
+TorchDataset = data.Dataset
+TorchSampler = sampler.Sampler
 
-RunnerModel = Union[Model, Dict[str, Model]]
-RunnerCriterion = Union[Criterion, Dict[str, Criterion]]
-RunnerOptimizer = Union[Optimizer, Dict[str, Optimizer]]
-RunnerScheduler = Union[Scheduler, Dict[str, Scheduler]]
+RunnerDevice = Union[str, torch.device]
+RunnerModel = Union[TorchModel, Dict[str, TorchModel]]
+RunnerCriterion = Union[TorchCriterion, Dict[str, TorchCriterion]]
+RunnerOptimizer = Union[TorchOptimizer, Dict[str, TorchOptimizer]]
+_torch_scheduler = Union[lr_scheduler._LRScheduler, ReduceLROnPlateau]
+RunnerScheduler = Union[_torch_scheduler, Dict[str, _torch_scheduler]]
 
 __all__ = [
     "Number",
     "Directory",
     "File",
-    "Model",
-    "Criterion",
-    "Optimizer",
-    "Scheduler",
-    "Dataset",
-    "Sampler",
-    "Device",
+    "TorchModel",
+    "TorchCriterion",
+    "TorchOptimizer",
+    "TorchScheduler",
+    "TorchDataset",
+    "TorchSampler",
+    "RunnerDevice",
     "RunnerModel",
     "RunnerCriterion",
     "RunnerOptimizer",

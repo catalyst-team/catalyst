@@ -8,16 +8,16 @@ import torch
 
 from catalyst.callbacks import AccuracyCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.layers import Flatten
 from catalyst.runners import SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.utils.quantization import quantize_model
+from tests import DATA_ROOT
 
 
 def test_api():
     """Test if model can be quantize through API"""
     model = torch.nn.Sequential(
-        Flatten(),
+        torch.nn.Flatten(),
         torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),
@@ -52,17 +52,19 @@ def _evaluate_loader_accuracy(runner, loader):
 def test_accuracy():
     """Test if accuracy drops too low."""
     model = torch.nn.Sequential(
-        Flatten(),
+        torch.nn.Flatten(),
         torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),
         torch.nn.Linear(64, 10),
     )
     datasets = {
-        "train": MNIST("./data", train=False),
-        "valid": MNIST("./data", train=False),
+        "train": MNIST(DATA_ROOT, train=False),
+        "valid": MNIST(DATA_ROOT, train=False),
     }
-    dataloaders = {k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()}
+    dataloaders = {
+        k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()
+    }
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     runner = SupervisedRunner()
     runner.train(

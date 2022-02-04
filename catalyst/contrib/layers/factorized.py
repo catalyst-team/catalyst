@@ -16,7 +16,8 @@ class FactorizedLinear(nn.Module):
         super().__init__()
         self.bias = nn.parameter.Parameter(nn_linear.bias.data, requires_grad=True)
         u, vh = self._spectral_init(nn_linear.weight.data, dim_ratio=dim_ratio)
-        # print(f"Doing SVD of tensor {or_linear.weight.shape}, U: {u.shape}, Vh: {vh.shape}")
+        # print(f"Doing SVD of tensor {or_linear.weight.shape},
+        # U: {u.shape}, Vh: {vh.shape}")
         self.u = nn.parameter.Parameter(u, requires_grad=True)
         self.vh = nn.parameter.Parameter(vh, requires_grad=True)
         self.dim_ratio = dim_ratio

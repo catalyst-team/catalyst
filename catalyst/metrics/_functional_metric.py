@@ -2,7 +2,11 @@ from typing import Callable, Dict, Iterable
 
 import torch
 
-from catalyst.metrics import AccumulativeMetric, ICallbackBatchMetric, ICallbackLoaderMetric
+from catalyst.metrics import (
+    AccumulativeMetric,
+    ICallbackBatchMetric,
+    ICallbackLoaderMetric,
+)
 from catalyst.metrics._additive import AdditiveMetric
 
 
@@ -10,7 +14,8 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
     """Class for custom **batch-based** metrics in a functional way.
 
     Args:
-        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_fn: metric function, that get outputs,
+            targets and return score as torch.Tensor
         metric_key: metric name
         compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
@@ -81,7 +86,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         self.additive_metric.update(float(value), batch_size)
         return value
 
-    def update_key_value(self, batch_size: int, *args, **kwargs) -> Dict[str, torch.Tensor]:
+    def update_key_value(
+        self, batch_size: int, *args, **kwargs
+    ) -> Dict[str, torch.Tensor]:
         """
         Calculate metric and update average metric
 
@@ -124,7 +131,8 @@ class FunctionalLoaderMetric(ICallbackLoaderMetric):
     """Class for custom **loader-based** metrics in a functional way.
 
     Args:
-        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_fn: metric function, that get outputs,
+            targets and return score as torch.Tensor
         metric_key: metric name
         accumulative_fields: list of keys to accumulate data from batch
         compute_on_call: if True, allows compute metric's value on call

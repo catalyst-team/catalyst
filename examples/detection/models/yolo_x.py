@@ -25,7 +25,9 @@ def get_activation(name="silu", inplace=True):
 class BaseConv(nn.Module):
     """A Conv2d -> Batchnorm -> silu/leaky relu block"""
 
-    def __init__(self, in_channels, out_channels, ksize, stride, groups=1, bias=False, act="silu"):
+    def __init__(
+        self, in_channels, out_channels, ksize, stride, groups=1, bias=False, act="silu"
+    ):
         super().__init__()
         # same padding
         pad = (ksize - 1) // 2
@@ -61,7 +63,9 @@ class DWConv(nn.Module):
             groups=in_channels,
             act=act,
         )
-        self.pconv = BaseConv(in_channels, out_channels, ksize=1, stride=1, groups=1, act=act)
+        self.pconv = BaseConv(
+            in_channels, out_channels, ksize=1, stride=1, groups=1, act=act
+        )
 
     def forward(self, x):
         x = self.dconv(x)
@@ -110,12 +114,17 @@ class ResLayer(nn.Module):
 class SPPBottleneck(nn.Module):
     """Spatial pyramid pooling layer used in YOLOv3-SPP"""
 
-    def __init__(self, in_channels, out_channels, kernel_sizes=(5, 9, 13), activation="silu"):
+    def __init__(
+        self, in_channels, out_channels, kernel_sizes=(5, 9, 13), activation="silu"
+    ):
         super().__init__()
         hidden_channels = in_channels // 2
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=activation)
         self.m = nn.ModuleList(
-            [nn.MaxPool2d(kernel_size=ks, stride=1, padding=ks // 2) for ks in kernel_sizes]
+            [
+                nn.MaxPool2d(kernel_size=ks, stride=1, padding=ks // 2)
+                for ks in kernel_sizes
+            ]
         )
         conv2_channels = hidden_channels * (len(kernel_sizes) + 1)
         self.conv2 = BaseConv(conv2_channels, out_channels, 1, stride=1, act=activation)
@@ -153,7 +162,9 @@ class CSPLayer(nn.Module):
         self.conv2 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
         self.conv3 = BaseConv(2 * hidden_channels, out_channels, 1, stride=1, act=act)
         module_list = [
-            Bottleneck(hidden_channels, hidden_channels, shortcut, 1.0, depthwise, act=act)
+            Bottleneck(
+                hidden_channels, hidden_channels, shortcut, 1.0, depthwise, act=act
+            )
             for _ in range(n)
         ]
         self.m = nn.Sequential(*module_list)
@@ -222,11 +233,17 @@ class Darknet(nn.Module):
         num_blocks = Darknet.depth2blocks[depth]
         # create darknet with `stem_out_channels` and `num_blocks` layers.
         # to make model structure more clear, we don't use `for` statement in python.
-        self.dark2 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[0], stride=2))
+        self.dark2 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[0], stride=2)
+        )
         in_channels *= 2  # 128
-        self.dark3 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[1], stride=2))
+        self.dark3 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[1], stride=2)
+        )
         in_channels *= 2  # 256
-        self.dark4 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[2], stride=2))
+        self.dark4 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[2], stride=2)
+        )
         in_channels *= 2  # 512
 
         self.dark5 = nn.Sequential(
@@ -501,8 +518,12 @@ class IOUloss(nn.Module):
 
         pred = pred.view(-1, 4)
         target = target.view(-1, 4)
-        tl = torch.max((pred[:, :2] - pred[:, 2:] / 2), (target[:, :2] - target[:, 2:] / 2))
-        br = torch.min((pred[:, :2] + pred[:, 2:] / 2), (target[:, :2] + target[:, 2:] / 2))
+        tl = torch.max(
+            (pred[:, :2] - pred[:, 2:] / 2), (target[:, :2] - target[:, 2:] / 2)
+        )
+        br = torch.min(
+            (pred[:, :2] + pred[:, 2:] / 2), (target[:, :2] + target[:, 2:] / 2)
+        )
 
         area_p = torch.prod(pred[:, 2:], 1)
         area_g = torch.prod(target[:, 2:], 1)
@@ -514,8 +535,12 @@ class IOUloss(nn.Module):
         if self.loss_type == "iou":
             loss = 1 - iou ** 2
         elif self.loss_type == "giou":
-            c_tl = torch.min((pred[:, :2] - pred[:, 2:] / 2), (target[:, :2] - target[:, 2:] / 2))
-            c_br = torch.max((pred[:, :2] + pred[:, 2:] / 2), (target[:, :2] + target[:, 2:] / 2))
+            c_tl = torch.min(
+                (pred[:, :2] - pred[:, 2:] / 2), (target[:, :2] - target[:, 2:] / 2)
+            )
+            c_br = torch.max(
+                (pred[:, :2] + pred[:, 2:] / 2), (target[:, :2] + target[:, 2:] / 2)
+            )
             area_c = torch.prod(c_br - c_tl, 1)
             giou = iou - (area_c - area_i) / area_c.clamp(1e-16)
             loss = 1 - giou.clamp(min=-1.0, max=1.0)
@@ -688,17 +713,25 @@ class YOLOXHead(nn.Module):
                 x_shifts.append(grid[:, :, 0])
                 y_shifts.append(grid[:, :, 1])
                 expanded_strides.append(
-                    torch.zeros(1, grid.shape[1]).fill_(stride_this_level).type_as(xin[0])
+                    torch.zeros(1, grid.shape[1])
+                    .fill_(stride_this_level)
+                    .type_as(xin[0])
                 )
                 if self.use_l1:
                     batch_size = reg_output.shape[0]
                     hsize, wsize = reg_output.shape[-2:]
-                    reg_output = reg_output.view(batch_size, self.n_anchors, 4, hsize, wsize)
-                    reg_output = reg_output.permute(0, 1, 3, 4, 2).reshape(batch_size, -1, 4)
+                    reg_output = reg_output.view(
+                        batch_size, self.n_anchors, 4, hsize, wsize
+                    )
+                    reg_output = reg_output.permute(0, 1, 3, 4, 2).reshape(
+                        batch_size, -1, 4
+                    )
                     origin_preds.append(reg_output.clone())
 
             else:
-                output = torch.cat([reg_output, obj_output.sigmoid(), cls_output.sigmoid()], 1)
+                output = torch.cat(
+                    [reg_output, obj_output.sigmoid(), cls_output.sigmoid()], 1
+                )
 
             outputs.append(output)
 
@@ -716,7 +749,9 @@ class YOLOXHead(nn.Module):
         else:
             self.hw = [x.shape[-2:] for x in outputs]
             # [batch, n_anchors_all, 85]
-            outputs = torch.cat([x.flatten(start_dim=2) for x in outputs], dim=2).permute(0, 2, 1)
+            outputs = torch.cat(
+                [x.flatten(start_dim=2) for x in outputs], dim=2
+            ).permute(0, 2, 1)
             if self.decode_in_inference:
                 return self.decode_outputs(outputs, dtype=xin[0].type())
             else:
@@ -900,13 +935,21 @@ class YOLOXHead(nn.Module):
             l1_targets = torch.cat(l1_targets, 0)
 
         num_fg = max(num_fg, 1)
-        loss_iou = (self.iou_loss(bbox_preds.view(-1, 4)[fg_masks], reg_targets)).sum() / num_fg
-        loss_obj = (self.bcewithlog_loss(obj_preds.view(-1, 1), obj_targets)).sum() / num_fg
+        loss_iou = (
+            self.iou_loss(bbox_preds.view(-1, 4)[fg_masks], reg_targets)
+        ).sum() / num_fg
+        loss_obj = (
+            self.bcewithlog_loss(obj_preds.view(-1, 1), obj_targets)
+        ).sum() / num_fg
         loss_cls = (
-            self.bcewithlog_loss(cls_preds.view(-1, self.num_classes)[fg_masks], cls_targets)
+            self.bcewithlog_loss(
+                cls_preds.view(-1, self.num_classes)[fg_masks], cls_targets
+            )
         ).sum() / num_fg
         if self.use_l1:
-            loss_l1 = (self.l1_loss(origin_preds.view(-1, 4)[fg_masks], l1_targets)).sum() / num_fg
+            loss_l1 = (
+                self.l1_loss(origin_preds.view(-1, 4)[fg_masks], l1_targets)
+            ).sum() / num_fg
         else:
             loss_l1 = 0.0
 
@@ -999,7 +1042,9 @@ class YOLOXHead(nn.Module):
         del cls_preds_
 
         cost = (
-            pair_wise_cls_loss + 3.0 * pair_wise_ious_loss + 100000.0 * (~is_in_boxes_and_center)
+            pair_wise_cls_loss
+            + 3.0 * pair_wise_ious_loss
+            + 100000.0 * (~is_in_boxes_and_center)
         )
 
         (
@@ -1121,7 +1166,9 @@ class YOLOXHead(nn.Module):
         topk_ious, _ = torch.topk(ious_in_boxes_matrix, n_candidate_k, dim=1)
         dynamic_ks = torch.clamp(topk_ious.sum(1).int(), min=1)
         for gt_idx in range(num_gt):
-            _, pos_idx = torch.topk(cost[gt_idx], k=dynamic_ks[gt_idx].item(), largest=False)
+            _, pos_idx = torch.topk(
+                cost[gt_idx], k=dynamic_ks[gt_idx].item(), largest=False
+            )
             matching_matrix[gt_idx][pos_idx] = 1.0
 
         del topk_ious, dynamic_ks, pos_idx
@@ -1139,7 +1186,9 @@ class YOLOXHead(nn.Module):
         matched_gt_inds = matching_matrix[:, fg_mask_inboxes].argmax(0)
         gt_matched_classes = gt_classes[matched_gt_inds]
 
-        pred_ious_this_matching = (matching_matrix * pair_wise_ious).sum(0)[fg_mask_inboxes]
+        pred_ious_this_matching = (matching_matrix * pair_wise_ious).sum(0)[
+            fg_mask_inboxes
+        ]
         return num_fg, gt_matched_classes, pred_ious_this_matching, matched_gt_inds
 
 
@@ -1169,7 +1218,9 @@ class YOLOX(nn.Module):
 
         if self.training:
             assert targets is not None
-            loss, iou_loss, conf_loss, cls_loss, l1_loss, num_fg = self.head(fpn_outs, targets, x)
+            loss, iou_loss, conf_loss, cls_loss, l1_loss, num_fg = self.head(
+                fpn_outs, targets, x
+            )
             return loss
         else:
             outputs = self.head(fpn_outs)

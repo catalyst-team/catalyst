@@ -2,9 +2,9 @@
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
+import gym
 import numpy as np
 
-import gym
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -27,8 +27,12 @@ class ReplayBuffer:
         self.buffer.append(transition)
 
     def sample(self, size: int) -> Sequence[np.array]:
-        indices = np.random.choice(len(self.buffer), size, replace=size > len(self.buffer))
-        states, actions, rewards, dones, next_states = zip(*[self.buffer[idx] for idx in indices])
+        indices = np.random.choice(
+            len(self.buffer), size, replace=size > len(self.buffer)
+        )
+        states, actions, rewards, dones, next_states = zip(
+            *[self.buffer[idx] for idx in indices]
+        )
         states = np.array(states, dtype=np.float32)
         actions = np.array(actions, dtype=np.int64)
         rewards = np.array(rewards, dtype=np.float32)
@@ -48,7 +52,9 @@ class ReplayDataset(IterableDataset):
         self.epoch_size = epoch_size
 
     def __iter__(self) -> Iterator[Sequence[np.array]]:
-        states, actions, rewards, dones, next_states = self.buffer.sample(self.epoch_size)
+        states, actions, rewards, dones, next_states = self.buffer.sample(
+            self.epoch_size
+        )
         for i in range(len(dones)):
             yield states[i], actions[i], rewards[i], dones[i], next_states[i]
 
@@ -129,7 +135,9 @@ def generate_sessions(
 ) -> Tuple[float, int]:
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
-        r, t = generate_session(env=env, network=network, sigma=sigma, replay_buffer=replay_buffer)
+        r, t = generate_session(
+            env=env, network=network, sigma=sigma, replay_buffer=replay_buffer
+        )
         sessions_reward += r
         sessions_steps += t
     return sessions_reward, sessions_steps
@@ -140,7 +148,10 @@ def get_network_actor(env):
     outer_fn = utils.outer_init
 
     network = torch.nn.Sequential(
-        nn.Linear(env.observation_space.shape[0], 400), nn.ReLU(), nn.Linear(400, 300), nn.ReLU()
+        nn.Linear(env.observation_space.shape[0], 400),
+        nn.ReLU(),
+        nn.Linear(400, 300),
+        nn.ReLU(),
     )
     head = torch.nn.Sequential(nn.Linear(300, 1), nn.Tanh())
 
@@ -194,7 +205,7 @@ class GameCallback(dl.Callback):
         self.session_counter = 0
         self.session_steps = 0
 
-    def on_stage_start(self, runner: dl.IRunner):
+    def on_experiment_start(self, runner: dl.IRunner):
         self.actor = runner.model[self.actor_key]
 
         self.actor.eval()
@@ -280,8 +291,8 @@ class CustomRunner(dl.Runner):
         self.actor_optimizer: nn.Module = None
         self.critic_optimizer: nn.Module = None
 
-    def on_stage_start(self, runner: dl.IRunner):
-        super().on_stage_start(runner)
+    def on_experiment_start(self, runner: dl.IRunner):
+        super().on_experiment_start(runner)
         self.actor = self.model[self.actor_key]
         self.critic = self.model[self.critic_key]
         self.target_actor = self.model[self.target_actor_key]
@@ -341,7 +352,7 @@ class CustomRunner(dl.Runner):
             value_loss.backward()
             self.critic_optimizer.step()
 
-            if self.global_batch_step % self.tau_period == 0:
+            if self.batch_step % self.tau_period == 0:
                 soft_update(self.target_actor, self.actor, self.tau)
                 soft_update(self.target_critic, self.critic, self.tau)
 
@@ -402,7 +413,9 @@ if __name__ == "__main__":
     runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
 
     runner.train(
-        engine=dl.DeviceEngine("cpu"),  # for simplicity reasons, let's run everything on cpu
+        engine=dl.DeviceEngine(
+            "cpu"
+        ),  # for simplicity reasons, let's run everything on cpu
         model=models,
         criterion=criterion,
         optimizer=optimizer,

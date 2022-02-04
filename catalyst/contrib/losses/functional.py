@@ -109,8 +109,12 @@ def _create_margin_mask(labels: torch.Tensor) -> torch.Tensor:
     return marign_mask
 
 
-def _skip_labels_mask(labels: torch.Tensor, skip_labels: Union[int, List[int]]) -> torch.Tensor:
-    skip_labels = torch.tensor(skip_labels, dtype=labels.dtype, device=labels.device).reshape(-1)
+def _skip_labels_mask(
+    labels: torch.Tensor, skip_labels: Union[int, List[int]]
+) -> torch.Tensor:
+    skip_labels = torch.tensor(
+        skip_labels, dtype=labels.dtype, device=labels.device
+    ).reshape(-1)
     skip_condition = (labels.unsqueeze(-1) == skip_labels).any(-1)
     skip_mask = ~(skip_condition.unsqueeze(-1) & skip_condition.unsqueeze(0))
     return skip_mask
@@ -129,5 +133,7 @@ def margin_loss(
 
     margin_mask = _create_margin_mask(labels)
     skip_mask = _skip_labels_mask(labels, skip_labels).float()
-    loss = torch.mul(skip_mask, F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta))))
+    loss = torch.mul(
+        skip_mask, F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta)))
+    )
     return loss.sum() / (skip_mask.sum() + _EPS)

@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 import torch
 
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, ISchedulerCallback
-from catalyst.typing import Optimizer
+from catalyst.core.callback import ISchedulerCallback
+from catalyst.typing import TorchOptimizer
 from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
 
@@ -29,71 +29,10 @@ class SchedulerCallback(ISchedulerCallback):
             object, if ``None`` then will be used main metric
             specified in experiment.
 
-    Examples:
-
-    .. code-block:: python
-
-        import torch
-        from torch.utils.data import DataLoader, TensorDataset
-        from catalyst import dl
-
-        # sample data
-        num_users, num_features, num_items = int(1e4), int(1e1), 10
-        X = torch.rand(num_users, num_features)
-        y = (torch.rand(num_users, num_items) > 0.5).to(torch.float32)
-
-        # pytorch loaders
-        dataset = TensorDataset(X, y)
-        loader = DataLoader(dataset, batch_size=32, num_workers=1)
-        loaders = {"train": loader, "valid": loader}
-
-        # model, criterion, optimizer, scheduler
-        model = torch.nn.Linear(num_features, num_items)
-        criterion = torch.nn.BCEWithLogitsLoss()
-        optimizer = torch.optim.Adam(model.parameters())
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-        # model training
-        runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
-        )
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            loaders=loaders,
-            num_epochs=3,
-            verbose=True,
-            callbacks=[
-                dl.BatchTransformCallback(
-                    transform=torch.sigmoid,
-                    scope="on_batch_end",
-                    input_key="logits",
-                    output_key="scores"
-                ),
-                dl.CriterionCallback(
-                    input_key="logits", target_key="targets", metric_key="loss"
-                ),
-                dl.AUCCallback(input_key="scores", target_key="targets"),
-                dl.HitrateCallback(
-                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
-                ),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.OptimizerCallback(metric_key="loss"),
-                dl.SchedulerCallback(),
-                dl.CheckpointCallback(
-                    logdir="./logs", loader_key="valid", metric_key="loss", minimize=True
-                ),
-            ]
-        )
-
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
-        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(
@@ -104,7 +43,7 @@ class SchedulerCallback(ISchedulerCallback):
         metric_key: str = None,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        super().__init__()
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
                 "For metric reduction `SchedulerCallback` "
@@ -132,7 +71,10 @@ class SchedulerCallback(ISchedulerCallback):
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]]
+        self,
+        metrics_dict: dict,
+        lr_list: List[float],
+        momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)
@@ -151,7 +93,9 @@ class SchedulerCallback(ISchedulerCallback):
 
         if momentum is not None:
             momentum_key = (
-                f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
+                f"momentum/{self.scheduler_key}"
+                if self.scheduler_key is not None
+                else "momentum"
             )
             metrics_dict[momentum_key] = momentum
 
@@ -162,7 +106,9 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         lr_list, momentum_list = self._scheduler_step(scheduler=self.scheduler)
-        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics, lr_list, momentum_list)
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.batch_metrics, lr_list, momentum_list
+        )
 
     def make_epoch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics
@@ -177,17 +123,13 @@ class SchedulerCallback(ISchedulerCallback):
         lr_list, momentum_list = self._scheduler_step(
             scheduler=self.scheduler, reduced_metric=reduced_metric
         )
-        # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+        # @TODO: remove trick to save pure epoch-based metrics, like lr/momentum
         self._update_lr_and_momentum_in_metrics_dict(
             runner.epoch_metrics["_epoch_"], lr_list, momentum_list
         )
 
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Stage start hook.
-
-        Args:
-            runner: current runner
-        """
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
         self.scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
         assert self.scheduler is not None
 
@@ -208,11 +150,7 @@ class SchedulerCallback(ISchedulerCallback):
         assert self.mode is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """Loader start hook.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if (
             runner.is_train_loader
             and isinstance(self.scheduler, OneCycleLRWithWarmup)
@@ -220,29 +158,21 @@ class SchedulerCallback(ISchedulerCallback):
         ):
             self.scheduler.recalculate(
                 loader_batch_len=runner.loader_batch_len,
-                current_batch_step=runner.stage_batch_step,
+                current_batch_step=runner.batch_step,
             )
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """Batch end hook.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if runner.is_train_loader and self.mode == "batch":
             self.make_batch_step(runner=runner)
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """Epoch end hook.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if self.mode == "epoch":
             self.make_epoch_step(runner=runner)
 
 
-class ILRUpdater(ABC, Callback):
+class ILRUpdater(ABC, ISchedulerCallback):
     """Class interface for all Lr updaters."""
 
     def __init__(self, optimizer_key: str = None):
@@ -251,7 +181,7 @@ class ILRUpdater(ABC, Callback):
             optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
-        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        super().__init__()
         self.init_lr = 0
         self.optimizer_key = optimizer_key
         self.optimizer = None
@@ -267,12 +197,12 @@ class ILRUpdater(ABC, Callback):
         pass
 
     @staticmethod
-    def _update_lr(optimizer: Optimizer, new_lr: float) -> None:
+    def _update_lr(optimizer: TorchOptimizer, new_lr: float) -> None:
         for pg in optimizer.param_groups:
             pg["lr"] = new_lr
 
     @staticmethod
-    def _update_momentum(optimizer: Optimizer, new_momentum: float) -> None:
+    def _update_momentum(optimizer: TorchOptimizer, new_momentum: float) -> None:
         if "betas" in optimizer.param_groups[0]:
             for pg in optimizer.param_groups:
                 pg["betas"] = (new_momentum, pg["betas"][1])
@@ -280,7 +210,7 @@ class ILRUpdater(ABC, Callback):
             for pg in optimizer.param_groups:
                 pg["momentum"] = new_momentum
 
-    def _update_optimizer(self, optimizer: Optimizer) -> Tuple[float, float]:
+    def _update_optimizer(self, optimizer: TorchOptimizer) -> Tuple[float, float]:
         new_lr = self.calc_lr()
         if new_lr is not None:
             self._update_lr(optimizer, new_lr)
@@ -310,12 +240,8 @@ class ILRUpdater(ABC, Callback):
             runner.batch_metrics["lr"] = lr
             runner.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Stage start hook.
-
-        Args:
-            runner: current runner
-        """
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler."""
         self.optimizer = optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
         )
@@ -323,20 +249,12 @@ class ILRUpdater(ABC, Callback):
         self.init_lr = optimizer.param_groups[0]["lr"]
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """Loader start hook.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """Batch end hook.
-
-        Args:
-            runner: current runner
-        """
+        """Event handler."""
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
 

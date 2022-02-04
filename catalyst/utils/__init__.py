@@ -1,26 +1,21 @@
 # flake8: noqa
 from catalyst.settings import SETTINGS
 
-from catalyst.utils.config import load_config, save_config
-
+if SETTINGS.yaml_required:
+    from catalyst.utils.config import save_config, load_config
 from catalyst.utils.distributed import (
     get_backend,
     get_world_size,
-    get_distributed_params,
     get_rank,
     get_nn_from_ddp_module,
     sum_reduce,
     mean_reduce,
     all_gather,
     ddp_reduce,
-    ddp_sync_run,
 )
 
 from catalyst.utils.misc import (
-    get_fn_default_params,
-    get_fn_argsnames,
     get_utcnow_time,
-    is_exception,
     maybe_recursive_call,
     get_attr,
     set_global_seed,
@@ -40,24 +35,12 @@ if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model
 
 if SETTINGS.pruning_required:
-    from catalyst.utils.pruning import prune_model, remove_reparametrization, get_pruning_fn
+    from catalyst.utils.pruning import prune_model, remove_reparametrization
 
 if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model
 
-from catalyst.utils.swa import (
-    average_weights,
-    get_averaged_weights_by_path_mask,
-)
-
-from catalyst.utils.sys import (
-    import_module,
-    dump_code,
-    dump_environment,
-)
-
 from catalyst.utils.torch import (
-    get_optimizable_params,
     get_optimizer_momentum,
     get_optimizer_momentum_list,
     set_optimizer_momentum,
@@ -66,15 +49,8 @@ from catalyst.utils.torch import (
     get_available_engine,
     any2device,
     prepare_cudnn,
-    process_model_params,
     get_requires_grad,
     set_requires_grad,
-    get_network_output,
-    detach_tensor,
-    trim_tensors,
-    get_optimal_inner_init,
-    outer_init,
-    reset_weights_if_possible,
     pack_checkpoint,
     unpack_checkpoint,
     save_checkpoint,
@@ -86,4 +62,4 @@ from catalyst.utils.torch import (
 from catalyst.utils.tracing import trace_model
 
 
-from catalyst.contrib.utils import *
+# from catalyst.contrib.utils import *

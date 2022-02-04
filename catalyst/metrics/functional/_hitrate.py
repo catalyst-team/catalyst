@@ -27,7 +27,7 @@ def hitrate(
     Add up all of the hits for all users and then divide by number of users
 
     Compute top-N recommendation for each user in the training stage
-    and intentionally remove one of this items fro the training data.
+    and intentionally remove one of this items from the training data.
 
     Args:
         outputs (torch.Tensor):
@@ -67,7 +67,9 @@ def hitrate(
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
     for k in topk:
         k = min(outputs.size(1), k)
-        hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
+        hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(
+            dim=1
+        )
         hits_score = NAN_TO_NUM_FN(hits_score, zero_division)
         results.append(torch.mean(hits_score))
 

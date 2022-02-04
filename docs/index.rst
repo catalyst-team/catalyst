@@ -34,7 +34,7 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.contrib import MNIST
+    from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
     criterion = nn.CrossEntropyLoss()
@@ -59,23 +59,20 @@ Getting started
         loaders=loaders,
         num_epochs=1,
         callbacks=[
-            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            dl.PrecisionRecallF1SupportCallback(
-                input_key="logits", target_key="targets", num_classes=10
-            ),
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3, 5)),
+            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets"),
         ],
         logdir="./logs",
         valid_loader="valid",
         valid_metric="loss",
         minimize_valid_metric=True,
         verbose=True,
-        load_best_on_end=True,
     )
 
     # model evaluation
     metrics = runner.evaluate_loader(
         loader=loaders["valid"],
-        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
+        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3, 5))],
     )
     assert "accuracy01" in metrics.keys()
 
@@ -84,8 +81,6 @@ Getting started
         assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
 
     features_batch = next(iter(loaders["valid"]))[0]
-    # model stochastic weight averaging
-    model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
     # model tracing
     utils.trace_model(model=runner.model.cpu(), batch=features_batch)
     # model quantization
@@ -149,35 +144,20 @@ More specific with additional requirements:
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.3+.
+Catalyst is compatible with: Python 3.7+. PyTorch 1.4+.
 
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
-
-
-Features
-~~~~~~~~~~~~~~~~~~~~~~
-- Universal train/inference loop.
-- Configuration files for model/data hyperparameters.
-- Reproducibility – all source code and environment variables will be saved.
-- Callbacks – reusable train/inference pipeline parts with easy customization.
-- Training stages support.
-- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm support.
-
 
 Tests
 ~~~~~~~~~~~~~~~~~~~~~~
 All Catalyst code, features and pipelines `are fully tested`_
 with our own `catalyst-codestyle`_.
-
-In fact, we train a number of different models for various of tasks -
-image classification, image segmentation, text classification, GANs training
-and much more.
-During the tests, we compare their convergence metrics in order to verify
+During testing, we train a variety of different models: image classification,
+image segmentation, text classification, GANs, and much more.
+We then compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.
-
 As a result, Catalyst provides fully tested and reproducible
-best practices for your deep learning research.
+best practices for your deep learning research and development.
 
 .. _are fully tested: https://github.com/catalyst-team/catalyst/tree/master/tests
 .. _catalyst-codestyle: https://github.com/catalyst-team/codestyle
@@ -200,7 +180,7 @@ Indices and tables
     getting_started/quickstart
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
     Catalyst — Accelerated Deep Learning R&D <https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef>
-    
+
 
 .. toctree::
     :caption: Tutorials
@@ -226,10 +206,9 @@ Indices and tables
     :hidden:
 
     faq/intro
-    
+
     faq/architecture
     faq/checkpointing
-    faq/config_api
     faq/dataflow
     faq/dp
     faq/debugging
@@ -241,7 +220,6 @@ Indices and tables
     faq/mixed_precision
     faq/multi_components
     faq/multi_keys
-    faq/multi_stage
     faq/optuna
     faq/settings
 

@@ -4,7 +4,6 @@ from typing import Any, Mapping
 from collections import OrderedDict
 import enum
 import gc
-import os
 import time
 
 import numpy as np
@@ -15,11 +14,10 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 
-from catalyst import contrib, dl, utils
-from catalyst.typing import Criterion, Model, Optimizer
-
-DATA_ROOT = "."
-IS_BENCHMARK_REQUIRED = os.environ.get("BENCHMARK_REQUIRED", "0") == "1"
+from catalyst import dl, utils
+from catalyst.contrib.datasets import MNIST
+from catalyst.typing import TorchCriterion, TorchModel, TorchOptimizer
+from tests import DATA_ROOT
 
 
 class RunMode(str, enum.Enum):
@@ -30,14 +28,16 @@ class RunMode(str, enum.Enum):
 
 
 class TestMnistRunner(dl.Runner):
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self) -> "OrderedDict[str, DataLoader]":
         return {
             "train": DataLoader(
-                contrib.MNIST(DATA_ROOT, train=True, download=True), batch_size=128, num_workers=1
+                MNIST(DATA_ROOT, train=True, download=True),
+                batch_size=128,
+                num_workers=1,
             )
         }
 
-    def get_model(self, stage: str) -> Model:
+    def get_model(self) -> TorchModel:
         return nn.Sequential(
             nn.Flatten(),
             nn.Linear(in_features=28 * 28, out_features=128),
@@ -47,10 +47,10 @@ class TestMnistRunner(dl.Runner):
             nn.Linear(in_features=128, out_features=10),
         )
 
-    def get_criterion(self, stage: str) -> Criterion:
+    def get_criterion(self) -> TorchCriterion:
         return nn.CrossEntropyLoss()
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
+    def get_optimizer(self, model: TorchModel) -> TorchOptimizer:
         return torch.optim.Adam(model.parameters(), lr=0.02)
 
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
@@ -66,15 +66,16 @@ def _get_used_memory():
     return used_memory
 
 
-def run_pytorch(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10):
+def run_pytorch(
+    irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10
+):
     device = torch.device(device)
     utils.set_global_seed(idx)
 
-    stage: str = "train"
-    loader = irunner.get_loaders(stage)["train"]
-    model = irunner.get_model(stage).to(device)
-    criterion = irunner.get_criterion(stage)
-    optimizer = irunner.get_optimizer(stage, model)
+    loader = irunner.get_loaders()["train"]
+    model = irunner.get_model().to(device)
+    criterion = irunner.get_criterion()
+    optimizer = irunner.get_optimizer(model)
 
     epoch_scores = []
     epoch_losses = []
@@ -107,17 +108,18 @@ def run_pytorch(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs:
     return epoch_scores[-1], epoch_losses[-1], _get_used_memory()
 
 
-def run_catalyst(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10):
+def run_catalyst(
+    irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs: int = 10
+):
     utils.set_global_seed(idx)
-    stage: str = "train"
-    loader = irunner.get_loaders(stage)["train"]
-    model = irunner.get_model(stage).to(device)
-    criterion = irunner.get_criterion(stage)
-    optimizer = irunner.get_optimizer(stage, model)
+    loader = irunner.get_loaders()["train"]
+    model = irunner.get_model().to(device)
+    criterion = irunner.get_criterion()
+    optimizer = irunner.get_optimizer(model)
 
     runner = dl.SupervisedRunner()
     runner.train(
-        engine=dl.DeviceEngine(device),
+        engine=dl.GPUEngine() if device == "cuda" else dl.CPUEngine(),
         model=model,
         criterion=criterion,
         optimizer=optimizer,
@@ -128,7 +130,7 @@ def run_catalyst(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs
             dl.AccuracyCallback(
                 input_key=runner._output_key,
                 target_key=runner._target_key,
-                topk_args=(1,),
+                topk=(1,),
             )
         ],
     )
@@ -140,13 +142,18 @@ def run_catalyst(irunner: dl.IRunner, idx: int, device: str = "cuda", num_epochs
     )
 
 
-def score_runs(irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epochs: int = 10):
+def score_runs(
+    irunner: dl.IRunner,
+    mode: RunMode,
+    device: str,
+    num_runs: int = 10,
+    num_epochs: int = 10,
+):
     hist_scores = []
     hist_losses = []
     hist_time = []
     hist_memory = []
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
     torch.backends.cudnn.deterministic = True
     for i in tqdm(range(num_runs), desc=f"{mode} with {irunner.__class__.__name__}"):
         gc.collect()
@@ -180,7 +187,9 @@ def score_runs(irunner: dl.IRunner, mode: RunMode, num_runs: int = 10, num_epoch
     }
 
 
-def assert_relative_equal(catalyst_values, torch_values, max_diff: float, norm: float = 1):
+def assert_relative_equal(
+    catalyst_values, torch_values, max_diff: float, norm: float = 1
+):
     diffs = np.asarray(catalyst_values) - np.mean(torch_values)
     diffs = diffs / norm
     diffs = diffs / np.mean(torch_values)
@@ -189,22 +198,30 @@ def assert_relative_equal(catalyst_values, torch_values, max_diff: float, norm: 
     ), f"Catalyst diff {diffs} worse than PyTorch (threshold {max_diff})"
 
 
-def assert_absolute_equal(catalyst_values, torch_values, max_diff: float, norm: float = 1):
+def assert_absolute_equal(
+    catalyst_values, torch_values, max_diff: float, norm: float = 1
+):
     diffs = np.asarray(catalyst_values) - np.mean(torch_values)
     diffs = diffs / norm
-    assert np.mean(diffs) < max_diff, f"Catalyst {diffs} worse than PyTorch (threshold {max_diff})"
+    assert (
+        np.mean(diffs) < max_diff
+    ), f"Catalyst {diffs} worse than PyTorch (threshold {max_diff})"
+
+
+BENCHMARKS = [(TestMnistRunner, 4, "cpu", 3, 2, 0.15, 0.001)]
+if torch.cuda.is_available():
+    BENCHMARKS.append((TestMnistRunner, 4, "cuda", 3, 2, 0.15, 0.001))
 
 
 @pytest.mark.parametrize(
-    "irunner,num_epochs,num_runs,precision,max_diff_time,max_diff_memory",
-    [
-        (TestMnistRunner, 4, 3, 2, 0.1, 0.001),
-    ],
+    "irunner,num_epochs,device,num_runs,precision,max_diff_time,max_diff_memory",
+    BENCHMARKS,
 )
-@pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
+# @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
     tmpdir,
     irunner: dl.IRunner,
+    device: str,
     num_epochs: int,
     num_runs: int,
     precision: int,
@@ -214,24 +231,44 @@ def test_benchmark(
 
     irunner = irunner()
     # prepare data
-    _ = irunner.get_loaders(None)
+    _ = irunner.get_loaders()
 
     # score runs
-    pytorch = score_runs(irunner, mode=RunMode.pytorch, num_epochs=num_epochs, num_runs=num_runs)
-    catalyst = score_runs(irunner, mode=RunMode.catalyst, num_epochs=num_epochs, num_runs=num_runs)
+    pytorch = score_runs(
+        irunner,
+        mode=RunMode.pytorch,
+        device=device,
+        num_epochs=num_epochs,
+        num_runs=num_runs,
+    )
+    catalyst = score_runs(
+        irunner,
+        mode=RunMode.catalyst,
+        device=device,
+        num_epochs=num_epochs,
+        num_runs=num_runs,
+    )
 
     # check performance
-    print(f"Scores are for... \n PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}")
+    print(
+        "Scores are for... \n "
+        f"PyTorch: {pytorch['scores']} \n Catalyst: {catalyst['scores']}"
+    )
     for catalyst_, pytorch_ in zip(catalyst["scores"], pytorch["scores"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
 
     # check loss
-    print(f"Losses are for... \n PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}")
+    print(
+        "Losses are for... \n "
+        f"PyTorch: {pytorch['losses']} \n Catalyst: {catalyst['losses']}"
+    )
     for catalyst_, pytorch_ in zip(catalyst["losses"], pytorch["losses"]):
         np.testing.assert_almost_equal(catalyst_, pytorch_, precision)
 
     # check time
-    print(f"Times are for... \n PyTorch: {pytorch['time']} \n Catalyst: {catalyst['time']}")
+    print(
+        f"Times are for... \n PyTorch: {pytorch['time']} \n Catalyst: {catalyst['time']}"
+    )
     assert_absolute_equal(
         catalyst["time"],
         pytorch["time"],
@@ -242,6 +279,9 @@ def test_benchmark(
     # check memory
     if torch.cuda.is_available():
         print(
-            f"Memory usages are for... \n PyTorch: {pytorch['memory']} \n Catalyst: {catalyst['memory']}"
+            "Memory usages are for... \n "
+            f"PyTorch: {pytorch['memory']} \n Catalyst: {catalyst['memory']}"
         )
-        assert_relative_equal(catalyst["memory"], pytorch["memory"], max_diff=max_diff_memory)
+        assert_relative_equal(
+            catalyst["memory"], pytorch["memory"], max_diff=max_diff_memory
+        )
