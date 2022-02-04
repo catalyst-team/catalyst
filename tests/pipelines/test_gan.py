@@ -107,7 +107,7 @@ def train_experiment(engine=None):
         )
         discriminator = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 1))
 
-        model = {"generator": generator, "discriminator": discriminator}
+        model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
         criterion = {
             "generator": nn.BCEWithLogitsLoss(),
             "discriminator": nn.BCEWithLogitsLoss(),

@@ -1,6 +1,4 @@
 # flake8: noqa
-
-import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark

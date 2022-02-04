@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Mapping, Tuple, TYPE_CHECKING, Union
 import os
 
 import numpy as np
@@ -9,7 +9,17 @@ import torch.backends
 from torch.backends import cudnn
 
 from catalyst.settings import SETTINGS
-from catalyst.typing import RunnerDevice, TorchModel, TorchOptimizer
+from catalyst.typing import (
+    RunnerCriterion,
+    RunnerDevice,
+    RunnerModel,
+    RunnerOptimizer,
+    RunnerScheduler,
+    TorchModel,
+    TorchOptimizer,
+)
+from catalyst.utils.distributed import get_nn_from_ddp_module
+from catalyst.utils.misc import maybe_recursive_call
 
 if TYPE_CHECKING:
     from catalyst.core.engine import IEngine
@@ -258,123 +268,108 @@ def set_requires_grad(model: TorchModel, requires_grad: Union[bool, Dict[str, bo
             param.requires_grad = requires_grad
 
 
-# # TODO: add tests
-# def pack_checkpoint(
-#     model: RunnerModel = None,
-#     criterion: RunnerCriterion = None,
-#     optimizer: RunnerOptimizer = None,
-#     scheduler: RunnerScheduler = None,
-#     **kwargs,
-# ) -> Dict:
-#     """
-#     Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
-#     and some extra info ``**kwargs`` to torch-based checkpoint.
+def pack_checkpoint(
+    model: RunnerModel = None,
+    criterion: RunnerCriterion = None,
+    optimizer: RunnerOptimizer = None,
+    scheduler: RunnerScheduler = None,
+    **kwargs,
+) -> Dict:
+    """
+    Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+    and some extra info ``**kwargs`` to torch-based checkpoint.
 
-#     Args:
-#         model: torch model
-#         criterion: torch criterion
-#         optimizer: torch optimizer
-#         scheduler: torch scheduler
-#         **kwargs: some extra info to pack
+    Args:
+        model: torch model
+        criterion: torch criterion
+        optimizer: torch optimizer
+        scheduler: torch scheduler
+        **kwargs: some extra info to pack
 
-#     Returns:
-#         torch-based checkpoint with ``model_state_dict``,
-#         ``criterion_state_dict``, ``optimizer_state_dict``,
-#         ``scheduler_state_dict`` keys.
-#     """
-#     checkpoint = kwargs
+    Returns:
+        torch-based checkpoint with ``model_state_dict``,
+        ``criterion_state_dict``, ``optimizer_state_dict``,
+        ``scheduler_state_dict`` keys.
+    """
+    checkpoint = kwargs
 
-#     if isinstance(model, dict):
-#         for key, value in model.items():
-#             model_module = get_nn_from_ddp_module(value)
-#             checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(
-#                 model_module, "state_dict"
-#             )
-#     else:
-#         model_module = get_nn_from_ddp_module(model)
-#         checkpoint["model_state_dict"] = \
-# maybe_recursive_call(model_module, "state_dict")
-
-#     for dict2save, name2save in zip(
-#         [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
-#     ):
-#         if dict2save is None:
-#             continue
-#         if isinstance(dict2save, dict):
-#             for key, value in dict2save.items():
-#                 if value is not None:
-#                     state_dict2save = name2save + "_" + str(key)
-#                     # checkpoint[name2save_] = value
-#                     state_dict2save = state_dict2save + "_state_dict"
-#                     checkpoint[state_dict2save] = value.state_dict()
-#         else:
-#             # checkpoint[name2save] = dict2save
-#             name2save = name2save + "_state_dict"
-#             checkpoint[name2save] = dict2save.state_dict()
-#     return checkpoint
+    for dict2save, name2save in zip(
+        [model, criterion, optimizer, scheduler],
+        ["model", "criterion", "optimizer", "scheduler"],
+    ):
+        if dict2save is None:
+            continue
+        if isinstance(dict2save, dict):
+            for key, value in dict2save.items():
+                if value is not None:
+                    state_dict2save = name2save + "_" + str(key) + "_state_dict"
+                    value = get_nn_from_ddp_module(value)
+                    checkpoint[state_dict2save] = value.state_dict()
+        else:
+            # checkpoint[name2save] = dict2save
+            name2save = name2save + "_state_dict"
+            dict2save = get_nn_from_ddp_module(dict2save)
+            checkpoint[name2save] = dict2save.state_dict()
+    return checkpoint
 
 
-# def unpack_checkpoint(
-#     checkpoint: Dict,
-#     model: RunnerModel = None,
-#     criterion: RunnerCriterion = None,
-#     optimizer: RunnerOptimizer = None,
-#     scheduler: RunnerScheduler = None,
-# ) -> None:
-#     """Load checkpoint from file and unpack the content to a model
-#     (if not None), criterion (if not None), optimizer (if not None),
-#     scheduler (if not None).
+def unpack_checkpoint(
+    checkpoint: Dict,
+    model: RunnerModel = None,
+    criterion: RunnerCriterion = None,
+    optimizer: RunnerOptimizer = None,
+    scheduler: RunnerScheduler = None,
+) -> None:
+    """Load checkpoint from file and unpack the content to a model
+    (if not None), criterion (if not None), optimizer (if not None),
+    scheduler (if not None).
 
-#     Args:
-#         checkpoint: checkpoint to load
-#         model: model where should be updated state
-#         criterion: criterion where should be updated state
-#         optimizer: optimizer where should be updated state
-#         scheduler: scheduler where should be updated state
-#     """
-#     if model is not None:
-#         model = get_nn_from_ddp_module(model)
-#         maybe_recursive_call(
-#             model, "load_state_dict", recursive_args=checkpoint["model_state_dict"]
-#         )
+    Args:
+        checkpoint: checkpoint to load
+        model: model where should be updated state
+        criterion: criterion where should be updated state
+        optimizer: optimizer where should be updated state
+        scheduler: scheduler where should be updated state
+    """
 
-#     for dict2load, name2load in zip(
-#         [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"]
-#     ):
-#         if dict2load is None:
-#             continue
+    for dict2load, name2load in zip(
+        [model, criterion, optimizer, scheduler],
+        ["model", "criterion", "optimizer", "scheduler"],
+    ):
+        if dict2load is None:
+            continue
 
-#         if isinstance(dict2load, dict):
-#             for key, value in dict2load.items():
-#                 if value is not None:
-#                     state_dict2load = f"{name2load}_{key}_state_dict"
-#                     value.load_state_dict(checkpoint[state_dict2load])
-#         else:
-#             name2load = f"{name2load}_state_dict"
-#             dict2load.load_state_dict(checkpoint[name2load])
+        if isinstance(dict2load, dict):
+            for key, value in dict2load.items():
+                if value is not None:
+                    state_dict2load = f"{name2load}_{key}_state_dict"
+                    value.load_state_dict(checkpoint[state_dict2load])
+        else:
+            name2load = f"{name2load}_state_dict"
+            dict2load.load_state_dict(checkpoint[name2load])
 
 
-# def save_checkpoint(checkpoint: Mapping[str, Any], path: str):
-#     """Saves checkpoint to a file.
+def save_checkpoint(checkpoint: Mapping[str, Any], path: str):
+    """Saves checkpoint to a file.
 
-#     Args:
-#         checkpoint: data to save.
-#         path: filepath where checkpoint should be stored.
-#     """
-#     torch.save(checkpoint, path)
+    Args:
+        checkpoint: data to save.
+        path: filepath where checkpoint should be stored.
+    """
+    torch.save(checkpoint, path)
 
 
-# def load_checkpoint(path: str):
-#     """Load checkpoint from path.
+def load_checkpoint(path: str):
+    """Load checkpoint from path.
 
-#     Args:
-#         path: checkpoint file to load
+    Args:
+        path: checkpoint file to load
 
-#     Returns:
-#         checkpoint content
-#     """
-#     checkpoint = torch.load(path, map_location=lambda storage, loc: storage)
-#     return checkpoint
+    Returns:
+        checkpoint content
+    """
+    checkpoint = torch.load(path, map_location=lambda storage, loc: storage)
+    return checkpoint
 
 
 def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
