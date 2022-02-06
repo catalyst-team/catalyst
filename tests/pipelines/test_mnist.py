@@ -88,13 +88,14 @@ def train_experiment(engine=None):
             timeit=False,
             check=False,
             overfit=False,
-            fp16=False,
-            ddp=False,
+            # fp16=False,
+            # ddp=False,
         )
 
         # loader evaluation
         metrics = runner.evaluate_loader(
             model=runner.model,
+            engine=engine,
             loader=loaders["valid"],
             callbacks=[
                 dl.AccuracyCallback(
@@ -105,7 +106,7 @@ def train_experiment(engine=None):
         assert "accuracy01" in metrics.keys()
 
         # model inference
-        for prediction in runner.predict_loader(loader=loaders["valid"]):
+        for prediction in runner.predict_loader(loader=loaders["valid"], engine=engine):
             assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
         # model post-processing
         features_batch = next(iter(loaders["valid"]))[0]
