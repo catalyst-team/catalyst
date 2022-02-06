@@ -53,8 +53,7 @@ class DataParallelEngine(GPUEngine):
 class DistributedDataParallelEngine(IEngine):
     """Distributed multi-GPU-based engine."""
 
-    @staticmethod
-    def spawn(fn: Callable, *args, **kwargs):
+    def spawn(self, fn: Callable, *args, **kwargs):
         """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
 
         Args:
@@ -79,8 +78,7 @@ class DistributedDataParallelEngine(IEngine):
             join=True,
         )
 
-    @staticmethod
-    def setup(local_rank: int, world_size: int):
+    def setup(self, local_rank: int, world_size: int):
         """Initialize DDP variables and processes if required.
 
         Args:
@@ -97,8 +95,7 @@ class DistributedDataParallelEngine(IEngine):
         os.environ["LOCAL_RANK"] = str(local_rank)
         dist.init_process_group(**process_group_kwargs)
 
-    @staticmethod
-    def cleanup():
+    def cleanup(self):
         """Cleans DDP variables and processes."""
         dist.destroy_process_group()
 
@@ -120,12 +117,12 @@ class DistributedXLAEngine(IEngine):
     _spawned: bool = False
 
     def __init__(self, *args, **kwargs):
-        if DistributedXLAEngine._spawned:
+        """Init."""
+        if self._spawned:
             super().__init__(self, *args, **kwargs)
-            DistributedXLAEngine._spawned = False
+            self._spawned = False
 
-    @staticmethod
-    def spawn(fn: Callable, *args, **kwargs):
+    def spawn(self, fn: Callable, *args, **kwargs):
         """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
 
         Args:
@@ -142,7 +139,7 @@ class DistributedXLAEngine(IEngine):
         Returns:
             wrapped function (if needed).
         """
-        DistributedXLAEngine._spawned = True
+        self._spawned = True
         world_size: int = 8
         return xmp.spawn(fn, args=(world_size,), nprocs=world_size, start_method="fork")
 

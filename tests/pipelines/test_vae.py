@@ -134,7 +134,8 @@ def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(64, logdir, engine)
         runner.run()
-        runner.predict_batch(None)[0].cpu().numpy().reshape(28, 28)
+        if isinstance(engine, (dl.CPUEngine, dl.GPUEngine)):
+            runner.predict_batch(None)[0].cpu().numpy().reshape(28, 28)
 
 
 # Torch

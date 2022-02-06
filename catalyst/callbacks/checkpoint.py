@@ -82,12 +82,19 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _save(self, runner: "IRunner", obj: Any, logprefix: str) -> str:
         logpath = f"{logprefix}.pth"
-        if issubclass(obj.__class__, torch.nn.Module):  # mode: model
-            runner.engine.wait_for_everyone()
-            obj = runner.engine.unwrap_model(obj)
-            runner.engine.save(obj.state_dict(), logpath)
-        else:  # mode: runner
-            checkpoint = pack_checkpoint(obj)
+        if self.mode == "model":
+            if issubclass(obj.__class__, torch.nn.Module):
+                runner.engine.wait_for_everyone()
+                obj = runner.engine.unwrap_model(obj)
+                runner.engine.save(obj.state_dict(), logpath)
+            elif isinstance(obj, dict):
+                # obj = dict(model=obj)  # noqa: C408
+                checkpoint = pack_checkpoint(model=obj)
+                save_checkpoint(checkpoint, logpath)
+            else:
+                raise NotImplementedError()
+        else:
+            checkpoint = pack_checkpoint(**obj)
             save_checkpoint(checkpoint, logpath)
         return logpath
 
@@ -101,8 +108,12 @@ class CheckpointCallback(ICheckpointCallback):
         if resume_logpath is not None:
             runner.engine.wait_for_everyone()
             if self.mode == "model":
-                unwrapped_model = runner.engine.unwrap_model(runner.model)
-                unwrapped_model.load_state_dict(load_checkpoint(resume_logpath))
+                try:
+                    unwrapped_model = runner.engine.unwrap_model(runner.model)
+                    unwrapped_model.load_state_dict(load_checkpoint(resume_logpath))
+                except:
+                    checkpoint = load_checkpoint(resume_logpath)
+                    unpack_checkpoint(checkpoint=checkpoint, model=runner.model)
             else:
                 checkpoint = load_checkpoint(resume_logpath)
                 unpack_checkpoint(checkpoint=checkpoint, model=runner.model)
@@ -178,10 +189,10 @@ class CheckpointCallback(ICheckpointCallback):
     def on_experiment_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self._storage: List[Checkpoint] = []
-        assert issubclass(runner.model.__class__, torch.nn.Module), (
-            "Could not understand the model class. "
-            "Do you mean ``nn.Module`` or ``nn.ModuleDict``?"
-        )
+        # assert issubclass(runner.model.__class__, torch.nn.Module), (
+        #     "Could not understand the model class. "
+        #     "Do you mean ``nn.Module`` or ``nn.ModuleDict``?"
+        # )
         self._load(
             runner=runner,
             resume_runner=self._resume_runner,

@@ -63,7 +63,7 @@ def train_experiment(engine=None):
         # <--- multi-model setup --->
         encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 128))
         head = nn.Linear(128, 10)
-        model = nn.ModuleDict({"encoder": encoder, "head": head})
+        model = {"encoder": encoder, "head": head}
         optimizer = optim.Adam(
             [{"params": encoder.parameters()}, {"params": head.parameters()}], lr=0.02
         )

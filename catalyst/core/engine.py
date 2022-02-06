@@ -39,8 +39,7 @@ class IEngine(Accelerator):
         """Boolean flag for distributed type."""
         return self.distributed_type != DistributedType.NO
 
-    @staticmethod
-    def spawn(fn: Callable, *args, **kwargs):
+    def spawn(self, fn: Callable, *args, **kwargs):
         """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
 
         Args:
@@ -59,8 +58,7 @@ class IEngine(Accelerator):
         """
         return fn(*args, **kwargs)
 
-    @staticmethod
-    def setup(local_rank: int, world_size: int):
+    def setup(self, local_rank: int, world_size: int):
         """Initialize DDP variables and processes if required.
 
         Args:
@@ -70,8 +68,7 @@ class IEngine(Accelerator):
         """
         pass
 
-    @staticmethod
-    def cleanup():
+    def cleanup(self):
         """Cleans DDP variables and processes."""
         pass
 

@@ -107,7 +107,7 @@ def train_experiment(engine=None):
         )
         discriminator = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 1))
 
-        model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
+        model = {"generator": generator, "discriminator": discriminator}
         criterion = {
             "generator": nn.BCEWithLogitsLoss(),
             "discriminator": nn.BCEWithLogitsLoss(),
@@ -165,7 +165,7 @@ def train_experiment(engine=None):
             verbose=False,
             logdir=logdir,
         )
-        if not isinstance(engine, dl.DistributedDataParallelEngine):
+        if isinstance(engine, (dl.CPUEngine, dl.GPUEngine)):
             runner.predict_batch(None)[0, 0].cpu().numpy()
 
 
