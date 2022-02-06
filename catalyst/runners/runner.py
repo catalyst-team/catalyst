@@ -5,29 +5,18 @@ import os
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
-from catalyst.callbacks.optimizer import OptimizerCallback
 from catalyst.callbacks.profiler import ProfilerCallback
-from catalyst.callbacks.scheduler import SchedulerCallback
-from catalyst.core.callback import (
-    Callback,
-    IBackwardCallback,
-    ICriterionCallback,
-    IOptimizerCallback,
-    ISchedulerCallback,
-)
+from catalyst.core.callback import Callback
+from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
+from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner, IRunnerError
-from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     RunnerCriterion,
     RunnerModel,
@@ -237,7 +226,7 @@ class Runner(IRunner):
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for the experiment."""
-        callbacks = sort_callbacks_by_order(self._callbacks)
+        callbacks = self._callbacks
         callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
@@ -488,7 +477,6 @@ class Runner(IRunner):
         Raises:
             IRunnerError: if ``CheckpointCallback`` found in the callbacks
         """
-        callbacks = sort_callbacks_by_order(callbacks)
         for callback in callbacks.values():
             if callback_isinstance(callback, ICheckpointCallback):
                 raise IRunnerError(
@@ -512,91 +500,4 @@ class Runner(IRunner):
         return self.loader_metrics
 
 
-class SupervisedRunner(ISupervisedRunner, Runner):
-    """Runner for experiments with supervised model.
-
-    Args:
-        model: Torch model instance
-        engine: IEngine instance
-        input_key: key in ``runner.batch`` dict mapping for model input
-        output_key: key for ``runner.batch`` to store model output
-        target_key: key in ``runner.batch`` dict mapping for target
-        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
-
-    .. note::
-        Please follow the `minimal examples`_ sections for use cases.
-
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
-    """
-
-    def __init__(
-        self,
-        model: RunnerModel = None,
-        engine: IEngine = None,
-        input_key: Any = "features",
-        output_key: Any = "logits",
-        target_key: str = "targets",
-        loss_key: str = "loss",
-    ):
-        """Init."""
-        ISupervisedRunner.__init__(
-            self,
-            input_key=input_key,
-            output_key=output_key,
-            target_key=target_key,
-            loss_key=loss_key,
-        )
-        Runner.__init__(self, model=model, engine=engine)
-
-    @torch.no_grad()
-    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
-        """
-        Run model inference on specified data batch.
-
-        .. warning::
-            You should not override this method.
-            If you need specific model call, override runner.forward() method.
-
-        Args:
-            batch: dictionary with data batch from DataLoader.
-            **kwargs: additional kwargs to pass to the model
-
-        Returns:
-            Mapping[str, Any]: model output dictionary
-        """
-        batch = self._process_batch(batch)
-        output = self.forward(batch, **kwargs)
-        return output
-
-    def get_callbacks(self) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for the experiment."""
-        callbacks = super().get_callbacks()
-        callback_exists = lambda callback_fn: any(
-            callback_isinstance(x, callback_fn) for x in callbacks.values()
-        )
-        if isinstance(self._criterion, TorchCriterion) and not callback_exists(
-            ICriterionCallback
-        ):
-            callbacks["_criterion"] = CriterionCallback(
-                input_key=self._output_key,
-                target_key=self._target_key,
-                metric_key=self._loss_key,
-            )
-        if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
-            IBackwardCallback
-        ):
-            callbacks["_backward"] = BackwardCallback(metric_key=self._loss_key)
-        if isinstance(self._optimizer, TorchOptimizer) and not callback_exists(
-            IOptimizerCallback
-        ):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, TorchScheduler) and not callback_exists(
-            ISchedulerCallback
-        ):
-            callbacks["_scheduler"] = SchedulerCallback(
-                loader_key=self._valid_loader, metric_key=self._valid_metric
-            )
-        return callbacks
-
-
-__all__ = ["Runner", "SupervisedRunner"]
+__all__ = ["Runner"]

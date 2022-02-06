@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 import re
 
 import numpy as np
@@ -9,7 +9,8 @@ from catalyst.settings import SETTINGS
 if SETTINGS.mlflow_required:
     import mlflow
     from mlflow.tracking.fluent import ActiveRun
-
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 def _get_or_start_run(run_name: Optional[str]) -> "ActiveRun":
     """The function of MLflow. Gets the active run and gives it a name.
@@ -154,18 +155,7 @@ class MLflowLogger(ILogger):
         tag: str,
         artifact: object = None,
         path_to_artifact: str = None,
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        runner: IRunner = None,
     ) -> None:
         """Logs a local file or directory as an artifact to the logger."""
         mlflow.log_artifact(path_to_artifact)
@@ -174,23 +164,12 @@ class MLflowLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        runner: IRunner = None,
     ) -> None:
         """Logs image to MLflow for current scope on current step."""
-        mlflow.log_image(image, f"{tag}_scope_{scope}_epoch_{epoch_step}.png")
+        mlflow.log_image(image, f"{tag}_epoch_{runner.epoch_step}.png")
 
-    def log_hparams(self, hparams: Dict) -> None:
+    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs parameters for current scope.
 
         Args:
@@ -201,33 +180,23 @@ class MLflowLogger(ILogger):
     def log_metrics(
         self,
         metrics: Dict[str, float],
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        scope: str,
+        runner: IRunner,
     ) -> None:
         """Logs batch and epoch metrics to MLflow."""
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics,
-                step=batch_step,
-                loader_key=loader_key,
+                step=runner.batch_step,
+                loader_key=runner.loader_key,
                 suffix="/batch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
             for loader_key, per_loader_metrics in metrics.items():
                 self._log_metrics(
                     metrics=per_loader_metrics,
-                    step=epoch_step,
+                    step=runner.epoch_step,
                     loader_key=loader_key,
                     suffix="/epoch",
                 )

@@ -1,9 +1,10 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 import os
 
 from catalyst.core.logger import ILogger
 from catalyst.utils.config import save_config
-
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 class CSVLogger(ILogger):
     """CSV logger for the metrics storing under ``.csv`` file.
@@ -75,25 +76,15 @@ class CSVLogger(ILogger):
         log_line_csv = log_line_csv[:-1] + "\n"  # replace last "," with new line
         self.loggers[loader_key].write(log_line_csv)
 
-    def log_hparams(self, hparams: Dict) -> None:
+    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs hyperparameters to the logger."""
         save_config(config=hparams, path=os.path.join(self.logdir, "hparams.json"))
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        scope: str,
+        runner: IRunner,
     ) -> None:
         """Logs epoch metrics to csv file."""
         if scope == "epoch":
@@ -105,7 +96,7 @@ class CSVLogger(ILogger):
                     self._make_header(metrics=per_loader_metrics, loader_key=loader_key)
                 self._log_metrics(
                     metrics=per_loader_metrics,
-                    step=epoch_step,
+                    step=runner.epoch_step,
                     loader_key=loader_key,
                 )
 

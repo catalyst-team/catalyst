@@ -14,13 +14,14 @@ from catalyst.core.callback import (
     IMetricCallback,
     IOptimizerCallback,
     ISchedulerCallback,
+    ICheckpointCallback,
 )
 
 
 from catalyst.callbacks.backward import BackwardCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.batch_transform import BatchTransformCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
+from catalyst.callbacks.checkpoint import CheckpointCallback
 
 from catalyst.callbacks.control_flow import ControlFlowCallbackWrapper  # advanced
 from catalyst.callbacks.criterion import CriterionCallback
