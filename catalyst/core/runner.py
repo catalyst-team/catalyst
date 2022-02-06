@@ -268,7 +268,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.exception: Exception = None
         self.need_early_stop: bool = False
 
-        self.engine = self.get_engine()
+        # self.engine = self.get_engine()
         self.engine.setup(local_rank=self._local_rank, world_size=self._world_size)
         if self.engine.is_local_main_process:
             self.loggers = self.get_loggers()

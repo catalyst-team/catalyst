@@ -53,6 +53,11 @@ class DataParallelEngine(GPUEngine):
 class DistributedDataParallelEngine(IEngine):
     """Distributed multi-GPU-based engine."""
 
+    def __init__(self, *args, **kwargs):
+        """Init."""
+        self._args = args
+        self._kwargs = kwargs
+
     def spawn(self, fn: Callable, *args, **kwargs):
         """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
 
@@ -94,6 +99,7 @@ class DistributedDataParallelEngine(IEngine):
         os.environ["RANK"] = str(local_rank)
         os.environ["LOCAL_RANK"] = str(local_rank)
         dist.init_process_group(**process_group_kwargs)
+        super().__init__(self, *self._args, **self._kwargs)
 
     def cleanup(self):
         """Cleans DDP variables and processes."""
