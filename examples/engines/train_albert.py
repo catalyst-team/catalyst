@@ -62,13 +62,13 @@ class CustomRunner(dl.IRunner):
             train_sampler = DistributedSampler(
                 train_data,
                 num_replicas=self.engine.num_processes,
-                rank=self.engine.rank,
+                rank=self.engine.process_index,
                 shuffle=True,
             )
             valid_sampler = DistributedSampler(
                 valid_data,
                 num_replicas=self.engine.num_processes,
-                rank=self.engine.rank,
+                rank=self.engine.process_index,
                 shuffle=False,
             )
         else:
