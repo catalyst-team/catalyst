@@ -146,6 +146,13 @@ class DistributedXLAEngine(IEngine):
         return xmp.spawn(fn, args=(world_size,), nprocs=world_size, start_method="fork")
 
     def setup(self, local_rank: int, world_size: int):
+        """Initialize DDP variables and processes if required.
+
+        Args:
+            local_rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
         super().__init__(self, *self._args, **self._kwargs)
 
     def mean_reduce_ddp_metrics(self, metrics: Dict):

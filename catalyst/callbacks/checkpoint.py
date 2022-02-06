@@ -111,7 +111,7 @@ class CheckpointCallback(ICheckpointCallback):
                 try:
                     unwrapped_model = runner.engine.unwrap_model(runner.model)
                     unwrapped_model.load_state_dict(load_checkpoint(resume_logpath))
-                except:
+                except BaseException:
                     checkpoint = load_checkpoint(resume_logpath)
                     unpack_checkpoint(checkpoint=checkpoint, model=runner.model)
             else:
