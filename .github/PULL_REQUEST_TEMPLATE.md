@@ -37,7 +37,8 @@ If we didn't discuss your PR in Github issues there's a high chance it will not 
 - [ ] Have you updated tests for the new functionality?
 - [ ] Have you added your new classes/functions to the docs?
 - [ ] Have you updated the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
-- [ ] Have you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` and `minimal` requirements?
-- [ ] Have you checked XLA integration with [single](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_single_process.ipynb) and [multiple](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst_XLA_multi_process.ipynb) processes?
+- [ ] Have you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `latest` requirements? Please attach the notebook link.
+- [ ] Have you run [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) with `minimal` requirements? Please attach the notebook link.
+- [ ] Have you checked [XLA integration](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/XLA.ipynb)? Please attach the notebook link.
 
 <!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->

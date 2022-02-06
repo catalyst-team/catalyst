@@ -13,11 +13,7 @@ from catalyst.core.callback import (
     IOptimizerCallback,
     ISchedulerCallback,
 )
-from catalyst.typing import (
-    RunnerCriterion,
-    RunnerOptimizer,
-    RunnerScheduler,
-)
+from catalyst.typing import RunnerCriterion, RunnerOptimizer, RunnerScheduler
 
 
 def get_original_callback(callback: Callback) -> Callback:

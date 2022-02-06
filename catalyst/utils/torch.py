@@ -20,13 +20,11 @@ from catalyst.typing import (
 )
 from catalyst.utils.distributed import get_nn_from_ddp_module
 
-if TYPE_CHECKING:
-    from catalyst.core.engine import IEngine
-
 if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
 
-    from catalyst.engines.torch import DistributedXLAEngine
+if TYPE_CHECKING:
+    from catalyst.core.engine import IEngine
 
 
 def get_optimizer_momentum(optimizer: TorchOptimizer) -> float:
@@ -113,6 +111,8 @@ def get_available_engine(
     )
 
     if SETTINGS.xla_required:
+        from catalyst.engines.torch import DistributedXLAEngine
+
         return DistributedXLAEngine()
 
     if cpu or not torch.cuda.is_available():

@@ -1,9 +1,9 @@
 # flake8: noqa
-
 from typing import Any, Mapping
 from collections import OrderedDict
 import enum
 import gc
+import os
 import time
 
 import numpy as np
@@ -18,6 +18,8 @@ from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
 from catalyst.typing import TorchCriterion, TorchModel, TorchOptimizer
 from tests import DATA_ROOT
+
+IS_BENCHMARK_REQUIRED = os.environ.get("BENCHMARK_REQUIRED", "0") == "1"
 
 
 class RunMode(str, enum.Enum):
@@ -217,7 +219,7 @@ if torch.cuda.is_available():
     "irunner,num_epochs,device,num_runs,precision,max_diff_time,max_diff_memory",
     BENCHMARKS,
 )
-# @pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
+@pytest.mark.skipif(~IS_BENCHMARK_REQUIRED, reason="Benchmark is not required.")
 def test_benchmark(
     tmpdir,
     irunner: dl.IRunner,
