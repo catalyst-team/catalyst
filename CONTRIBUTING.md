@@ -60,7 +60,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ## Contribution best practices
 
-0. Install Python v3.6.2+
+0. Install Python v3.7.0+
 0. Install requirements
     ```bash
     # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
@@ -80,17 +80,16 @@ If you are not familiar with creating a Pull Request, here are some guides:
     # that's why the independent conda environment is preferable
     # Catalyst has a lot of extensions :)
     pip install \
-      -r requirements/requirements.txt \
-      -r requirements/requirements-cv.txt \
-      -r requirements/requirements-dev.txt \
-      -r requirements/requirements-hydra.txt \
-      -r requirements/requirements-ml.txt \
-      -r requirements/requirements-mlflow.txt \
-      -r requirements/requirements-nifti.txt \
-      -r requirements/requirements-onnx.txt \
-      -r requirements/requirements-optuna.txt \
-      -r requirements/requirements-neptune.txt \
-      -r requirements/requirements-albu.txt
+        -r ./catalyst/requirements/requirements.txt \
+        -r ./catalyst/requirements/requirements-dev.txt \
+        -r ./catalyst/requirements/requirements-cv.txt \
+        -r ./catalyst/requirements/requirements-ml.txt \
+        -r ./catalyst/requirements/requirements-optuna.txt \
+        -r ./catalyst/requirements/requirements-comet.txt \
+        -r ./catalyst/requirements/requirements-mlflow.txt \
+        -r ./catalyst/requirements/requirements-neptune.txt \
+        -r ./catalyst/requirements/requirements-wandb.txt \
+        -r ./catalyst/requirements/requirements-profiler.txt
     ```
 0. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
