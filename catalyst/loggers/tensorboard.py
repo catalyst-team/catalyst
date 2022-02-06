@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 import os
 
 import numpy as np
@@ -8,6 +8,9 @@ import torch
 
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
@@ -109,59 +112,39 @@ class TensorboardLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
+        runner: "IRunner",
         scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
     ) -> None:
         """Logs image to Tensorboard for current scope on current step."""
-        assert loader_key is not None
-        self._check_loader_key(loader_key=loader_key)
+        assert runner.loader_key is not None
+        self._check_loader_key(loader_key=runner.loader_key)
         tensor = _image_to_tensor(image)
-        self.loggers[loader_key].add_image(
-            f"{tag}/{scope}", tensor, global_step=epoch_step
+        self.loggers[runner.loader_key].add_image(
+            f"{tag}", tensor, global_step=runner.epoch_step
         )
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        scope: str,
+        runner: "IRunner",
     ) -> None:
         """Logs batch and epoch metrics to Tensorboard."""
         if scope == "batch" and self.log_batch_metrics:
-            self._check_loader_key(loader_key=loader_key)
+            self._check_loader_key(loader_key=runner.loader_key)
             # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics,
-                step=sample_step,
-                loader_key=loader_key,
+                step=runner.sample_step,
+                loader_key=runner.loader_key,
                 suffix="/batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
-            self._check_loader_key(loader_key=loader_key)
+            self._check_loader_key(loader_key=runner.loader_key)
             self._log_metrics(
                 metrics=metrics,
-                step=epoch_step,
-                loader_key=loader_key,
+                step=runner.epoch_step,
+                loader_key=runner.loader_key,
                 suffix="/epoch",
             )
         elif scope == "epoch" and self.log_epoch_metrics:
@@ -171,7 +154,7 @@ class TensorboardLogger(ILogger):
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
                 metrics=per_loader_metrics,
-                step=epoch_step,
+                step=runner.epoch_step,
                 loader_key=loader_key,
                 suffix="/epoch",
             )

@@ -1,7 +1,7 @@
 # flake8: noqa
 
-from catalyst.runners.supervised import ISupervisedRunner
-from catalyst.runners.runner import Runner, SupervisedRunner
+from catalyst.runners.runner import Runner
+from catalyst.runners.supervised import ISupervisedRunner, SupervisedRunner
 
 
 __all__ = [

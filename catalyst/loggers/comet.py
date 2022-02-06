@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 import pickle
 
 import numpy as np
@@ -8,6 +8,8 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.comet_required:
     import comet_ml
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CometLogger(ILogger):
@@ -137,23 +139,13 @@ class CometLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
     ) -> None:
         """Logs artifact (any arbitrary file or object) to the logger."""
-        metadata_parameters = {"loader_key": loader_key, "scope": scope}
+        metadata_parameters = {"loader_key": runner.loader_key, "scope": scope}
         passed_metadata_parameters = {
             k: v for k, v in metadata_parameters.items() if v is not None
         }
@@ -161,15 +153,15 @@ class CometLogger(ILogger):
             self.experiment.log_asset(
                 path_to_artifact,
                 file_name=tag,
-                step=batch_step,
+                step=runner.batch_step,
                 metadata=passed_metadata_parameters,
             )
         else:
             self.experiment.log_asset_data(
                 pickle.dumps(artifact),
                 file_name=tag,
-                step=batch_step,
-                epoch=epoch_step,
+                step=runner.batch_step,
+                epoch=runner.epoch_step,
                 metadata=passed_metadata_parameters,
             )
 
@@ -177,54 +169,34 @@ class CometLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
+        runner: "IRunner",
         scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
     ) -> None:
         """Logs image to the logger."""
-        image_name = f"{scope}_{tag}"
-        self.experiment.log_image(image, name=image_name, step=batch_step)
+        image_name = f"{scope}_{tag}" if scope is not None else tag
+        self.experiment.log_image(image, name=image_name, step=runner.batch_step)
 
-    def log_hparams(self, hparams: Dict) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         self.experiment.log_parameters(hparams)
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        scope: str,
+        runner: "IRunner",
     ) -> None:
         """Logs the metrics to the logger."""
         if (scope == "batch" and not self.log_batch_metrics) or (
             scope in ["loader", "epoch"] and not self.log_epoch_metrics
         ):
             return
-        if batch_step % self.logging_frequency == 0:
+        if runner.batch_step % self.logging_frequency == 0:
             self.experiment.log_metrics(
                 metrics,
-                step=batch_step,
-                epoch=epoch_step,
-                prefix=f"{loader_key}_{scope}",
+                step=runner.batch_step,
+                epoch=runner.epoch_step,
+                prefix=f"{runner.loader_key}_{scope}",
             )
 
     def flush_log(self) -> None:

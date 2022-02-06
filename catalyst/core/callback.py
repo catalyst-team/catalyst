@@ -55,35 +55,37 @@ class CallbackOrder(IntFlag):
 
     - **Internal** (0) - some Catalyst Extras,
       like PhaseCallbacks (used in GANs).
-    - **Metric** (20) - Callbacks with metrics and losses computation.
-    - **MetricAggregation** (40) - metrics aggregation callbacks,
+    - **Metric** (10) - Callbacks with metrics and losses computation.
+    - **MetricAggregation** (20) - metrics aggregation callbacks,
       like sum different losses into one.
-    - **Backward** (60) - backward step.
-    - **Optimizer** (80) - optimizer step,
+    - **Backward** (30) - backward step.
+    - **Optimizer** (40) - optimizer step,
       requires computed metrics for optimization.
-    - **Scheduler** (100) - scheduler step,
+    - **Scheduler** (50) - scheduler step,
       in `ReduceLROnPlateau` case
       requires computed validation metrics for optimizer schedule.
-    - **External** (120) - additional callbacks with custom logic.
+    - **Checkpoint** (60) - checkpoint step.
+    - **External** (100) - additional callbacks with custom logic.
 
     Nevertheless, you always can create CustomCallback with any order,
     for example::
 
         >>> class MyCustomCallback(Callback):
         >>>     def __init__(self):
-        >>>         super().__init__(order=33)
+        >>>         super().__init__(order=13)
         >>>     ...
         # MyCustomCallback will be executed after all `Metric`-Callbacks
         # but before all `MetricAggregation`-Callbacks.
     """
 
     Internal = internal = 0
-    Metric = metric = 20
-    MetricAggregation = metric_aggregation = 40
-    Backward = backward = 60
-    Optimizer = optimizer = 80
-    Scheduler = scheduler = 100
-    External = external = 120
+    Metric = metric = 10
+    MetricAggregation = metric_aggregation = 20
+    Backward = backward = 30
+    Optimizer = optimizer = 40
+    Scheduler = scheduler = 50
+    Checkpoint = checkpoint = 50
+    External = external = 100
 
 
 class Callback(ICallback):
@@ -169,6 +171,14 @@ class ISchedulerCallback(Callback):
         super().__init__(order=CallbackOrder.Scheduler)
 
 
+class ICheckpointCallback(Callback):
+    """Checkpoint callback interface, abstraction over checkpoint step."""
+
+    def __init__(self):
+        """Init."""
+        super().__init__(order=CallbackOrder.Checkpoint)
+
+
 class CallbackWrapper(Callback):
     """Enable/disable callback execution.
 
@@ -242,5 +252,6 @@ __all__ = [
     "IBackwardCallback",
     "IOptimizerCallback",
     "ISchedulerCallback",
+    "ICheckpointCallback",
     "CallbackWrapper",
 ]

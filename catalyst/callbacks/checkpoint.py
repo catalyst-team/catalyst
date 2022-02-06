@@ -6,7 +6,7 @@ import shutil
 
 import torch
 
-from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.callback import ICheckpointCallback
 from catalyst.core.runner import IRunner
 from catalyst.utils import (
     load_checkpoint,
@@ -16,12 +16,6 @@ from catalyst.utils import (
 )
 
 Checkpoint = namedtuple("Checkpoint", field_names=["obj", "logpath", "metric"])
-
-
-class ICheckpointCallback(Callback):
-    """Criterion callback interface, abstraction over checkpoint step."""
-
-    pass
 
 
 class CheckpointCallback(ICheckpointCallback):
@@ -58,15 +52,12 @@ class CheckpointCallback(ICheckpointCallback):
         load_best_on_end: bool = False,
     ):
         """Init."""
-        super().__init__(order=CallbackOrder.external)
+        super().__init__()
         assert topk >= 1
         assert mode in (
             "model",
             "runner",
         ), "`CheckpointCallback` could work only in `model` or `runner` modes."
-        # assert (
-        #     resume_model is None or resume_runner is None
-        # ), "`CheckpointCallback` could not load model and runner simultaneously "
 
         if minimize is not None:
             assert metric_key is not None, "please define the metric to track"
@@ -228,4 +219,4 @@ class CheckpointCallback(ICheckpointCallback):
             self._load(runner=runner, resume_logpath=self._storage[0].logpath)
 
 
-__all__ = ["ICheckpointCallback", "CheckpointCallback"]
+__all__ = ["CheckpointCallback"]

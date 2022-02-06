@@ -1,6 +1,9 @@
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class ILogger:
@@ -13,9 +16,9 @@ class ILogger:
     Abstraction, please check out implementations for more details:
 
         - :py:mod:`catalyst.loggers.console.ConsoleLogger`
-        - :py:mod:`catalyst.loggers.tensorboard.TensorboardLogger`
         - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`
         - :py:mod:`catalyst.loggers.neptune.NeptuneLogger`
+        - :py:mod:`catalyst.loggers.tensorboard.TensorboardLogger`
     """
 
     def __init__(self, log_batch_metrics: bool, log_epoch_metrics: bool) -> None:
@@ -52,20 +55,10 @@ class ILogger:
     def log_artifact(
         self,
         tag: str,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
     ) -> None:
         """Logs artifact (arbitrary file like audio, video, etc) to the logger."""
         pass
@@ -74,41 +67,21 @@ class ILogger:
         self,
         tag: str,
         image: np.ndarray,
+        runner: "IRunner",
         scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
     ) -> None:
         """Logs image to the logger."""
         pass
 
-    def log_hparams(self, hparams: Dict) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         pass
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
-        scope: str = None,
-        # experiment info
-        num_epochs: int = 0,
-        epoch_step: int = 0,
-        batch_step: int = 0,
-        sample_step: int = 0,
-        # loader info
-        loader_key: str = None,
-        loader_batch_len: int = 0,
-        loader_sample_len: int = 0,
-        loader_batch_step: int = 0,
-        loader_sample_step: int = 0,
+        scope: str,
+        runner: "IRunner",
     ) -> None:
         """Logs metrics to the logger."""
         pass
