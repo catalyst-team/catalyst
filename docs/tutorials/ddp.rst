@@ -5,9 +5,9 @@ If you have multiple GPUs,
 the most reliable way to utilize their full potential during training is to use the distributed package from PyTorch.
 For such a case, there are many distributed helpers in Catalyst to make this engineering stuff a bit more user-friendly.
 
-Please note that due to PyTorch multiprocessing realization, 
-GPU-based distributed training doesn't work in a notebook, 
-so prepare a script to run the training. 
+Please note that due to PyTorch multiprocessing realization,
+GPU-based distributed training doesn't work in a notebook,
+so prepare a script to run the training.
 Nevertheless, XLA-based training could be run directly in the notebook.
 
 
@@ -47,7 +47,7 @@ Let's start with a simple script for ResNet9 model training on CIFAR10:
             conv_block(sz4, sz8, pool=True),
             ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
             nn.Sequential(
-                nn.MaxPool2d(4), nn.Flatten(), 
+                nn.MaxPool2d(4), nn.Flatten(),
                 nn.Dropout(0.2), nn.Linear(sz8, num_classes)
             ),
         )
@@ -59,7 +59,7 @@ Let's start with a simple script for ResNet9 model training on CIFAR10:
 
         # data
         transform = Compose([
-            ImageToTensor(), 
+            ImageToTensor(),
             NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
         train_data = CIFAR10(
@@ -104,7 +104,7 @@ By default, without any additional specifications, Catalyst will utilize all ava
 Fast DDP
 ------------------------------------------------
 
-Tranks to Catalyst Python API, 
+Tranks to Catalyst Python API,
 you could run the same code without any change and get the distributed setup with only one line of code.
 Just pass ``ddp=True`` flag during ``.train`` call:
 
@@ -138,7 +138,7 @@ Just pass ``ddp=True`` flag during ``.train`` call:
             conv_block(sz4, sz8, pool=True),
             ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
             nn.Sequential(
-                nn.MaxPool2d(4), nn.Flatten(), 
+                nn.MaxPool2d(4), nn.Flatten(),
                 nn.Dropout(0.2), nn.Linear(sz8, num_classes)
             ),
         )
@@ -150,7 +150,7 @@ Just pass ``ddp=True`` flag during ``.train`` call:
 
         # data
         transform = Compose([
-            ImageToTensor(), 
+            ImageToTensor(),
             NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
         train_data = CIFAR10(
@@ -190,7 +190,7 @@ Just pass ``ddp=True`` flag during ``.train`` call:
 
 Please note that you could also specify automatic mixed-precision usage with the ``amp`` flag in the same way.
 
-In this way, 
+In this way,
 Catalyst will automatically try to make your loaders work in a distributed setup and run experiment training.
 
 Nevertheless, it has several disadvantages,
@@ -198,14 +198,14 @@ Nevertheless, it has several disadvantages,
     - you can't understand what is going under the hood of ``ddp=True``,
     - we can't always transfer your loaders to distributed mode correctly due to a large variety of data processing pipelines available.
 
-For such a reason, 
+For such a reason,
 Catalyst API also provides a proper "low-level" API for your data preparation for the distributed setup.
 
 
 DDP under the hood
 ------------------------------------------------
 
-Let's create our ``CustomSupervisedRunner`` 
+Let's create our ``CustomSupervisedRunner``
 and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
 
 .. code-block:: python
@@ -239,16 +239,16 @@ and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
             conv_block(sz4, sz8, pool=True),
             ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
             nn.Sequential(
-                nn.MaxPool2d(4), nn.Flatten(), 
+                nn.MaxPool2d(4), nn.Flatten(),
                 nn.Dropout(0.2), nn.Linear(sz8, num_classes)
             ),
         )
-    
+
     class CustomSupervisedRunner(dl.SupervisedRunner):
         # here is the trick:
         def get_loaders(self, stage: str):
             transform = Compose([
-                ImageToTensor(), 
+                ImageToTensor(),
                 NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
             train_data = CIFAR10(
@@ -310,7 +310,7 @@ and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
             amp=False,  # <-- you can still use this trick here ;)
         )
 
-As you can see, we have the same code, 
+As you can see, we have the same code,
 except that the ``CustomSupervisedRunner`` now knows all the details about data preprocessing under distributed setup.
 And thanks to the pure PyTorch, the code is easily readable and straightforward.
 
@@ -351,7 +351,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
             conv_block(sz4, sz8, pool=True),
             ResidualBlock(nn.Sequential(conv_block(sz8, sz8), conv_block(sz8, sz8))),
             nn.Sequential(
-                nn.MaxPool2d(4), nn.Flatten(), 
+                nn.MaxPool2d(4), nn.Flatten(),
                 nn.Dropout(0.2), nn.Linear(sz8, num_classes)
             ),
         )
@@ -380,7 +380,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
 
         def get_loaders(self, stage: str):
             transform = Compose([
-                ImageToTensor(), 
+                ImageToTensor(),
                 NormalizeImage((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
             train_data = CIFAR10(
@@ -392,19 +392,19 @@ As an extra point, you could also specify the whole experiment within ``Runner``
             if self.engine.is_ddp:
                 train_sampler = DistributedSampler(
                     train_data,
-                    num_replicas=self.engine.world_size,
+                    num_replicas=self.engine.num_processes,
                     rank=self.engine.rank,
                     shuffle=True,
                 )
                 valid_sampler = DistributedSampler(
                     valid_data,
-                    num_replicas=self.engine.world_size,
+                    num_replicas=self.engine.num_processes,
                     rank=self.engine.rank,
                     shuffle=False,
                 )
             else:
                 train_sampler = valid_sampler = None
-            
+
             train_loader = DataLoader(
                 train_data, batch_size=32, sampler=train_sampler, num_workers=4
             )
@@ -415,8 +415,8 @@ As an extra point, you could also specify the whole experiment within ``Runner``
 
         def get_model(self, stage: str):
             model = (
-                self.model 
-                if self.model is not None 
+                self.model
+                if self.model is not None
                 else resnet9(in_channels=3, num_classes=10)
             )
             return model
@@ -445,7 +445,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
                     loader_key="valid",
                     metric_key="accuracy",
                     minimize=False,
-                    save_n_best=1,
+                    topk=1,
                 ),
                 # "tqdm": dl.TqdmCallback(),
             }
@@ -458,7 +458,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
                 "targets": y,
                 "logits": logits,
             }
-    
+
      if __name__ == "__main__":
         # experiment setup
         logdir = "./logdir3"

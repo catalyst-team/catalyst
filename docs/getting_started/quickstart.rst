@@ -91,7 +91,7 @@ Let's **train** and **evaluate** your model (`supported metrics`_) with a few li
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.OptimizerCallback(metric_key="loss"),
             dl.CheckpointCallback(
-                "./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                "./logs", loader_key="valid", metric_key="loss", minimize=True, topk=3
             ),
         ]
     )

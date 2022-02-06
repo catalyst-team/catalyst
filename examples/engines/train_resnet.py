@@ -9,8 +9,8 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl
-from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.data import Compose, ImageToTensor, NormalizeImage
+from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.layers import ResidualBlock
 
 from src import E2E, parse_ddp_params
@@ -74,13 +74,13 @@ class CustomRunner(dl.IRunner):
         if self.engine.is_ddp:
             train_sampler = DistributedSampler(
                 train_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=True,
             )
             valid_sampler = DistributedSampler(
                 valid_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=False,
             )
