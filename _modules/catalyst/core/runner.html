@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.runner &mdash; Catalyst 22.01rc0 documentation</title>
+  <title>catalyst.core.runner &mdash; Catalyst 22.02rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
                 </div>
               
             
@@ -557,8 +557,6 @@
 
     <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="c1"># self.batch = self.engine.sync_device(tensor_or_module=self.batch)</span>
-
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
         <span class="k">else</span><span class="p">:</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.torch &mdash; Catalyst 22.01rc0 documentation</title>
+  <title>catalyst.engines.torch &mdash; Catalyst 22.02rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
                 </div>
               
             
@@ -291,6 +291,14 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DeviceEngine">[docs]</a><span class="k">class</span> <span class="nc">DeviceEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Singe-device engine.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelEngine</span><span class="p">(</span><span class="n">GPUEngine</span><span class="p">):</span>

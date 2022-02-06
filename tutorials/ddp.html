@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Distributed training tutorial &mdash; Catalyst 22.01rc0 documentation</title>
+  <title>Distributed training tutorial &mdash; Catalyst 22.02rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
                 </div>
               
             
@@ -639,13 +639,13 @@ And thanks to the pure PyTorch, the code is easily readable and straightforward.
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span><span class="p">:</span>
             <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
                 <span class="n">train_data</span><span class="p">,</span>
-                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">num_processes</span><span class="p">,</span>
                 <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">valid_sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
                 <span class="n">valid_data</span><span class="p">,</span>
-                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span><span class="p">,</span>
+                <span class="n">num_replicas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">num_processes</span><span class="p">,</span>
                 <span class="n">rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
@@ -692,7 +692,7 @@ And thanks to the pure PyTorch, the code is easily readable and straightforward.
                 <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
                 <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
                 <span class="n">minimize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">save_n_best</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">topk</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="c1"># &quot;tqdm&quot;: dl.TqdmCallback(),</span>
         <span class="p">}</span>
