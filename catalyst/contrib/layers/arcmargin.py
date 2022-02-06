@@ -23,7 +23,7 @@ class ArcMarginProduct(nn.Module):
         >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding)
         >>> loss = loss_fn(output, target)
-        >>> loss.backward()
+        >>> self.engine.backward(loss)
 
     """
 

@@ -40,7 +40,7 @@ class CurricularFace(nn.Module):
         >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
-        >>> loss.backward()
+        >>> self.engine.backward(loss)
 
     """  # noqa: RST215
 

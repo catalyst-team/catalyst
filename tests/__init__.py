@@ -14,3 +14,12 @@ MOVIELENS20M_ROOT = (
     .joinpath("./movielens20m")
     .abspath()
 )
+
+
+IS_CPU_REQUIRED = os.environ.get("CPU_REQUIRED", "0") == "1"
+IS_GPU_REQUIRED = os.environ.get("GPU_REQUIRED", "0") == "1"
+IS_GPU_AMP_REQUIRED = os.environ.get("GPU_AMP_REQUIRED", "0") == "1"
+IS_DP_REQUIRED = os.environ.get("DP_REQUIRED", "0") == "1"
+IS_DP_AMP_REQUIRED = os.environ.get("DP_AMP_REQUIRED", "0") == "1"
+IS_DDP_REQUIRED = os.environ.get("DDP_REQUIRED", "0") == "1"
+IS_DDP_AMP_REQUIRED = os.environ.get("DDP_AMP_REQUIRED", "0") == "1"

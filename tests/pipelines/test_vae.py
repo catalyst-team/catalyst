@@ -11,7 +11,16 @@ from torch.utils.data import DataLoader
 from catalyst import dl, metrics
 from catalyst.contrib.datasets import MNIST
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-from tests import DATA_ROOT
+from tests import (
+    DATA_ROOT,
+    IS_CPU_REQUIRED,
+    IS_DDP_AMP_REQUIRED,
+    IS_DDP_REQUIRED,
+    IS_DP_AMP_REQUIRED,
+    IS_DP_REQUIRED,
+    IS_GPU_AMP_REQUIRED,
+    IS_GPU_REQUIRED,
+)
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -134,15 +143,19 @@ def train_experiment(engine=None):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(64, logdir, engine)
         runner.run()
-        runner.predict_batch(None)[0].cpu().numpy().reshape(28, 28)
+        if isinstance(engine, (dl.CPUEngine, dl.GPUEngine)):
+            runner.predict_batch(None)[0].cpu().numpy().reshape(28, 28)
 
 
 # Torch
+@mark.skipif(not IS_CPU_REQUIRED, reason="CUDA device is not available")
 def test_classification_on_cpu():
     train_experiment(dl.CPUEngine())
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not all([IS_GPU_REQUIRED, IS_CUDA_AVAILABLE]), reason="CUDA device is not available"
+)
 def test_classification_on_torch_cuda0():
     train_experiment(dl.GPUEngine())
 
@@ -155,14 +168,16 @@ def test_classification_on_torch_cuda0():
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+    not all([IS_DP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found",
 )
 def test_classification_on_torch_dp():
     train_experiment(dl.DataParallelEngine())
 
 
 # @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
+#     not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+#     reason="No CUDA>=2 found",
 # )
 # def test_classification_on_torch_ddp():
 #     train_experiment(dl.DistributedDataParallelEngine())
@@ -170,14 +185,22 @@ def test_classification_on_torch_dp():
 
 # AMP
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
+    not all([IS_GPU_AMP_REQUIRED, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
+    reason="No CUDA or AMP found",
 )
 def test_classification_on_amp():
     train_experiment(dl.GPUEngine(fp16=True))
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    not all(
+        [
+            IS_DP_AMP_REQUIRED,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
+    ),
     reason="No CUDA>=2 or AMP found",
 )
 def test_classification_on_amp_dp():
@@ -185,7 +208,14 @@ def test_classification_on_amp_dp():
 
 
 # @mark.skipif(
-#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+#     not all(
+#         [
+#             IS_DDP_AMP_REQUIRED,
+#             IS_CUDA_AVAILABLE,
+#             NUM_CUDA_DEVICES >= 2,
+#             SETTINGS.amp_required,
+#         ]
+#     ),
 #     reason="No CUDA>=2 or AMP found",
 # )
 # def test_classification_on_amp_ddp():

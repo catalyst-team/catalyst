@@ -216,12 +216,12 @@ class CustomRunner(dl.Runner):
         if self.is_train_loader:
             self.actor.zero_grad()
             self.actor_optimizer.zero_grad()
-            policy_loss.backward()
+            policy_self.engine.backward(loss)
             self.actor_optimizer.step()
 
             self.critic.zero_grad()
             self.critic_optimizer.zero_grad()
-            value_loss.backward()
+            value_self.engine.backward(loss)
             self.critic_optimizer.step()
 
             if self.batch_step % self.tau_period == 0:

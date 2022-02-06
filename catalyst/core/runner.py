@@ -236,7 +236,24 @@ class IRunner(ICallback, ILogger, ABC):
         self.criterion = self._setup_criterion()
         self.optimizer = self._setup_optimizer(model=self.model)
         self.scheduler = self._setup_scheduler(optimizer=self.optimizer)
-        self.model, self.optimizer = self.engine.prepare(self.model, self.optimizer)
+
+        if isinstance(self.model, torch.nn.Module):
+            self.model = self.engine.prepare(self.model)
+        elif isinstance(self.model, dict):
+            self.model = {k: self.engine.prepare(v) for k, v in self.model.items()}
+        else:
+            raise NotImplementedError()
+
+        if isinstance(self.optimizer, torch.optim.Optimizer):
+            self.optimizer = self.engine.prepare(self.optimizer)
+        elif isinstance(self.optimizer, dict):
+            self.optimizer = {
+                k: self.engine.prepare(v) for k, v in self.optimizer.items()
+            }
+        elif self.optimizer is None:
+            pass
+        else:
+            raise NotImplementedError()
 
     def _setup_callbacks(self):
         set_global_seed(self.seed + max(0, self.engine.process_index) + self.epoch_step)
@@ -251,6 +268,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.exception: Exception = None
         self.need_early_stop: bool = False
 
+        # self.engine = self.get_engine()
         self.engine.setup(local_rank=self._local_rank, world_size=self._world_size)
         if self.engine.is_local_main_process:
             self.loggers = self.get_loggers()

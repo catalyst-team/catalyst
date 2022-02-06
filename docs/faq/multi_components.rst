@@ -61,7 +61,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
                 self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
             # run model backward pass
             if self.is_train_loader:
-                loss.backward()
+                self.engine.backward(loss)
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 
@@ -153,7 +153,7 @@ Multi-model example:
                 self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
             # run model backward pass
             if self.is_train_loader:
-                loss.backward()
+                self.engine.backward(loss)
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 
@@ -248,7 +248,7 @@ Multi-optimizer example:
                 self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
             # run model backward pass
             if self.is_train_loader:
-                loss.backward()
+                self.engine.backward(loss)
                 # <--- multi-model/optimizer usage --->
                 self.optimizer["encoder"].step()
                 self.optimizer["head"].step()
@@ -342,7 +342,7 @@ Multi-criterion example:
                 self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
             # run model backward pass
             if self.is_train_loader:
-                loss.backward()
+                self.engine.backward(loss)
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 

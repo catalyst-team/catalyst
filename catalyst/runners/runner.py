@@ -119,7 +119,7 @@ class Runner(IRunner):
                     )
                 # run model backward pass
                 if self.is_train_loader:
-                    loss.backward()
+                    self.engine.backward(loss)
                     self.optimizer.step()
                     self.optimizer.zero_grad()
 
@@ -447,6 +447,7 @@ class Runner(IRunner):
 
         self.model = self.engine.prepare(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
+        loader = self.engine.prepare(loader)
 
         set_global_seed(seed)
         for batch in loader:
@@ -457,6 +458,7 @@ class Runner(IRunner):
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         model: Optional[TorchModel] = None,
+        engine: Union["IEngine", str] = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict[str, Any]:
@@ -468,6 +470,7 @@ class Runner(IRunner):
             callbacks: list or dictionary with catalyst callbacks
             model: model, compatible with current runner.
                 If `None` simply takes current model from runner.
+            engine: engine to use for model evaluation
             seed: random seed to use before prediction
             verbose: if `True`, it displays the status of the evaluation to the console.
 
@@ -484,12 +487,15 @@ class Runner(IRunner):
                     "CheckpointCallback isn`t allowed for evaluation loader method"
                 )
 
+        if engine is None:
+            engine = self.engine
         if model is None:
             model = self.model
         assert model is not None
 
         self.train(
             model=model,
+            engine=engine,
             loaders=OrderedDict([("valid", loader)]),
             num_epochs=1,
             verbose=verbose,

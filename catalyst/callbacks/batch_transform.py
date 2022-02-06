@@ -5,13 +5,17 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 from catalyst.registry import REGISTRY
 
 
-def _tuple_wrapper(transform: Callable):
-    def wrapper(*inputs):
-        """Function wrapper for tuple output"""
-        output = transform(*inputs)
-        return (output,)
+class _TupleWrapper:
+    """Function wrapper for tuple output"""
 
-    return wrapper
+    def __init__(self, transform: Callable) -> None:
+        """Init."""
+        self.transform = transform
+
+    def __call__(self, *inputs) -> Any:
+        """Call."""
+        output = self.transform(*inputs)
+        return (output,)
 
 
 class BatchTransformCallback(Callback):
@@ -103,7 +107,7 @@ class BatchTransformCallback(Callback):
                     })
 
                     if self.is_train_loader:
-                        loss.backward()
+                        self.engine.backward(loss)
                         self.optimizer.step()
                         self.optimizer.zero_grad()
 
@@ -226,7 +230,7 @@ class BatchTransformCallback(Callback):
                 raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
                 output_key = [output_key]
-                transform = _tuple_wrapper(transform)
+                transform = _TupleWrapper(transform)
 
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
