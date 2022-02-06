@@ -280,13 +280,11 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
-
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">torch_xla.core.xla_model</span> <span class="k">as</span> <span class="nn">xm</span>
 
-    <span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DistributedXLAEngine</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
 
 
 <div class="viewcode-block" id="get_optimizer_momentum"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizer_momentum">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer_momentum</span><span class="p">(</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">TorchOptimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -373,6 +371,8 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DistributedXLAEngine</span>
+
         <span class="k">return</span> <span class="n">DistributedXLAEngine</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">cpu</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
