@@ -12,6 +12,7 @@ from catalyst.settings import SETTINGS
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+
 def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
     """
     Creates tensor from RGB image.
@@ -111,7 +112,8 @@ class TensorboardLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to Tensorboard for current scope on current step."""
         assert runner.loader_key is not None

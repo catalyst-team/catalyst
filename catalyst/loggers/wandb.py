@@ -12,6 +12,7 @@ if SETTINGS.wandb_required:
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+
 class WandbLogger(ILogger):
     """Wandb logger for parameters, metrics, images and other artifacts.
 
@@ -96,9 +97,10 @@ class WandbLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
+        runner: IRunner,
         artifact: object = None,
         path_to_artifact: str = None,
-        runner: IRunner = None,
+        scope: str = None,
     ) -> None:
         """Logs artifact (arbitrary file like audio, video, weights) to the logger."""
         if artifact is None and path_to_artifact is None:
@@ -107,7 +109,7 @@ class WandbLogger(ILogger):
         artifact = wandb.Artifact(
             name=self.run.id + "_aritfacts",
             type="artifact",
-            metadata={"loader_key": runner.loader_key},
+            metadata={"loader_key": runner.loader_key, "scope": scope},
         )
 
         if artifact:
@@ -127,10 +129,20 @@ class WandbLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to the logger."""
-        self.run.log({f"{tag}.png": wandb.Image(image)}, step=runner.sample_step)
+        if scope == "batch" or scope == "loader":
+            log_path = "_".join(
+                [tag, f"epoch-{runner.epoch_step:04d}", f"loader-{runner.loader}"]
+            )
+        elif scope == "epoch":
+            log_path = "_".join([tag, f"epoch-{runner.epoch_step:04d}"])
+        elif scope == "experiment" or scope is None:
+            log_path = tag
+
+        self.run.log({f"{log_path}.png": wandb.Image(image)}, step=runner.sample_step)
 
     def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs hyperparameters to the logger."""

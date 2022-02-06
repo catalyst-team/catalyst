@@ -3,8 +3,10 @@ import os
 
 from catalyst.core.logger import ILogger
 from catalyst.utils.config import save_config
+
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
+
 
 class CSVLogger(ILogger):
     """CSV logger for the metrics storing under ``.csv`` file.

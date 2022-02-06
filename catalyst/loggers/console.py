@@ -1,8 +1,10 @@
 from typing import Dict, TYPE_CHECKING
 
 from catalyst.core.logger import ILogger
+
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
+
 
 def _format_metrics(dct: Dict):
     return " | ".join([f"{k}: {float(dct[k])}" for k in sorted(dct.keys())])

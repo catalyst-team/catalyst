@@ -138,51 +138,35 @@ class IRunner(ICallback, ILogger, ABC):
         """Returns the number of epochs in the experiment."""
         return 1
 
-    @property
-    def _log_defaults(self) -> Dict:
-        return {
-            # experiment info
-            "num_epochs": self.num_epochs,
-            "epoch_step": self.epoch_step,
-            "batch_step": self.batch_step,
-            "sample_step": self.sample_step,
-            # loader info
-            "loader_key": self.loader_key,
-            "loader_batch_len": self.loader_batch_len,
-            "loader_sample_len": self.loader_sample_len,
-            "loader_batch_step": self.loader_batch_step,
-            "loader_sample_step": self.loader_sample_step,
-        }
-
     def log_artifact(self, *args, **kwargs) -> None:
         """Logs artifact (file like audio, video, csv, etc.) to available loggers."""
         for logger in self.loggers.values():
-            logger.log_artifact(*args, **kwargs, **self._log_defaults)
+            logger.log_artifact(*args, **kwargs, runner=self)
 
     def log_image(self, *args, **kwargs) -> None:
         """Logs image to available loggers."""
         for logger in self.loggers.values():
-            logger.log_image(*args, **kwargs, **self._log_defaults)
+            logger.log_image(*args, **kwargs, runner=self)
 
     def log_hparams(self, *args, **kwargs) -> None:
         """Logs hyperparameters to available loggers."""
         for logger in self.loggers.values():
-            logger.log_hparams(*args, **kwargs)
+            logger.log_hparams(*args, **kwargs, runner=self)
 
     def log_metrics(self, *args, **kwargs) -> None:
         """Logs batch, loader and epoch metrics to available loggers."""
         for logger in self.loggers.values():
-            logger.log_metrics(*args, **kwargs, **self._log_defaults)
+            logger.log_metrics(*args, **kwargs, runner=self)
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
         for logger in self.loggers.values():
             logger.flush_log()
 
-    def close_log(self, *args, **kwargs) -> None:
+    def close_log(self) -> None:
         """Closes the loggers."""
         for logger in self.loggers.values():
-            logger.close_log(*args, **kwargs)
+            logger.close_log()
 
     @abstractmethod
     def get_engine(self) -> IEngine:

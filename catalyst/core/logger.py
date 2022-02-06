@@ -55,9 +55,10 @@ class ILogger:
     def log_artifact(
         self,
         tag: str,
+        runner: IRunner,
         artifact: object = None,
         path_to_artifact: str = None,
-        runner: IRunner = None,
+        scope: str = None,
     ) -> None:
         """Logs artifact (arbitrary file like audio, video, etc) to the logger."""
         pass
@@ -66,7 +67,8 @@ class ILogger:
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to the logger."""
         pass

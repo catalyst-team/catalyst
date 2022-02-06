@@ -10,6 +10,7 @@ if SETTINGS.neptune_required:
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+
 def _prepare_metrics(metrics):
     conflict_keys = []
     processed_metrics = dict(metrics)
@@ -159,25 +160,73 @@ class NeptuneLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
+        runner: IRunner,
         artifact: object = None,
         path_to_artifact: str = None,
-        runner: IRunner = None,
+        scope: str = None,
     ) -> None:
         """Logs arbitrary file (audio, video, csv, etc.) to Neptune."""
         if artifact is not None and path_to_artifact is not None:
             ValueError("artifact and path_to_artifact are mutually exclusive")
-        neptune_path = "/".join([self.base_namespace, "_artifacts", tag])
+        if scope == "batch":
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    "_artifacts",
+                    f"epoch-{runner.epoch_step:04d}",
+                    f"loader-{runner.loader}",
+                    f"batch-{runner.batch_step:04d}",
+                    tag,
+                ]
+            )
+        elif scope == "loader":
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    "_artifacts",
+                    f"epoch-{runner.epoch_step:04d}",
+                    f"loader-{runner.loader}",
+                    tag,
+                ]
+            )
+        elif scope == "epoch":
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    "_artifacts",
+                    f"epoch-{runner.epoch_step:04d}",
+                    tag,
+                ]
+            )
+        elif scope == "experiment" or scope is None:
+            neptune_path = "/".join([self.base_namespace, "_artifacts", tag])
         self._log_artifact(artifact, path_to_artifact, neptune_path)
 
     def log_image(
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
-        neptune_path = "/".join([self.base_namespace, "_images", tag])
-        self._log_image(image, neptune_path)
+        if scope == "batch" or scope == "loader":
+            log_path = "/".join(
+                [
+                    self.base_namespace,
+                    "_images",
+                    f"epoch-{runner.epoch_step:04d}",
+                    f"loader-{runner.loader}",
+                    tag,
+                ]
+            )
+        elif scope == "epoch":
+            log_path = "/".join(
+                [self.base_namespace, "_images", f"epoch-{runner.epoch_step:04d}", tag]
+            )
+        elif scope == "experiment" or scope is None:
+            log_path = "/".join([self.base_namespace, "_images", tag])
+        self._log_image(image, log_path)
 
     def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs hyper-parameters to Neptune."""

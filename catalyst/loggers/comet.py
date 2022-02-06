@@ -11,6 +11,7 @@ if SETTINGS.comet_required:
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+
 class CometLogger(ILogger):
     """Comet logger for parameters, metrics, images and other artifacts
     (videos, audio, model checkpoints, etc.).
@@ -138,12 +139,13 @@ class CometLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
+        runner: IRunner,
         artifact: object = None,
         path_to_artifact: str = None,
-        runner: IRunner = None,
+        scope: str = None,
     ) -> None:
         """Logs artifact (any arbitrary file or object) to the logger."""
-        metadata_parameters = {"loader_key": runner.loader_key}
+        metadata_parameters = {"loader_key": runner.loader_key, "scope": scope}
         passed_metadata_parameters = {
             k: v for k, v in metadata_parameters.items() if v is not None
         }
@@ -167,10 +169,12 @@ class CometLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to the logger."""
-        self.experiment.log_image(image, name=tag, step=runner.batch_step)
+        image_name = f"{scope}_{tag}" if scope is not None else tag
+        self.experiment.log_image(image, name=image_name, step=runner.batch_step)
 
     def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs hyperparameters to the logger."""

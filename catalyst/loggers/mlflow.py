@@ -12,6 +12,7 @@ if SETTINGS.mlflow_required:
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+
 def _get_or_start_run(run_name: Optional[str]) -> "ActiveRun":
     """The function of MLflow. Gets the active run and gives it a name.
     If active run does not exist, starts a new one.
@@ -153,9 +154,10 @@ class MLflowLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
+        runner: IRunner,
         artifact: object = None,
         path_to_artifact: str = None,
-        runner: IRunner = None,
+        scope: str = None,
     ) -> None:
         """Logs a local file or directory as an artifact to the logger."""
         mlflow.log_artifact(path_to_artifact)
@@ -164,10 +166,11 @@ class MLflowLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner = None,
+        runner: IRunner,
+        scope: str = None,
     ) -> None:
         """Logs image to MLflow for current scope on current step."""
-        mlflow.log_image(image, f"{tag}_epoch_{runner.epoch_step}.png")
+        mlflow.log_image(image, f"{tag}_scope_{scope}_epoch_{epoch_step}.png")
 
     def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
         """Logs parameters for current scope.
