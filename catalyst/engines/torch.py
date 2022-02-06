@@ -114,13 +114,10 @@ class DistributedDataParallelEngine(IEngine):
 class DistributedXLAEngine(IEngine):
     """Distributed XLA-based engine."""
 
-    _spawned: bool = False
-
     def __init__(self, *args, **kwargs):
         """Init."""
-        if self._spawned:
-            super().__init__(self, *args, **kwargs)
-            self._spawned = False
+        self._args = args
+        self._kwargs = kwargs
 
     def spawn(self, fn: Callable, *args, **kwargs):
         """Spawns processes with specified ``fn`` and ``args``/``kwargs``.
@@ -139,9 +136,11 @@ class DistributedXLAEngine(IEngine):
         Returns:
             wrapped function (if needed).
         """
-        self._spawned = True
         world_size: int = 8
         return xmp.spawn(fn, args=(world_size,), nprocs=world_size, start_method="fork")
+
+    def setup(self, local_rank: int, world_size: int):
+        super().__init__(self, *self._args, **self._kwargs)
 
     def mean_reduce_ddp_metrics(self, metrics: Dict):
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
