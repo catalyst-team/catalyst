@@ -92,6 +92,9 @@ def train_experiment(engine=None):
             # ddp=False,
         )
 
+        if not isinstance(engine, (dl.CPUEngine, dl.GPUEngine)):
+            return
+
         # loader evaluation
         metrics = runner.evaluate_loader(
             model=runner.model,

@@ -48,7 +48,6 @@ def train_experiment(engine=None):
             dl.CriterionCallback(
                 input_key="logits", target_key="targets", metric_key="loss"
             ),
-            dl.AUCCallback(input_key="scores", target_key="targets"),
             dl.HitrateCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
             dl.MRRCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),
             dl.MAPCallback(input_key="scores", target_key="targets", topk=(1, 3, 5)),

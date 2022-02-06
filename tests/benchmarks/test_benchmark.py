@@ -95,7 +95,7 @@ def run_pytorch(
             pred = logits.argmax(dim=1, keepdim=True)
             epoch_score += pred.eq(targets.view_as(pred)).sum().item()
 
-            loss.backward()
+            self.engine.backward(loss)
             optimizer.step()
             optimizer.zero_grad()
 

@@ -115,12 +115,12 @@ def test_classification_on_torch_dp():
     train_experiment(dl.DataParallelEngine())
 
 
-@mark.skipif(
-    not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
-    reason="No CUDA>=2 found",
-)
-def test_classification_on_torch_ddp():
-    train_experiment(dl.DistributedDataParallelEngine())
+# @mark.skipif(
+#     not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+#     reason="No CUDA>=2 found",
+# )
+# def test_classification_on_torch_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine())
 
 
 # AMP
@@ -147,16 +147,16 @@ def test_classification_on_amp_dp():
     train_experiment(dl.DataParallelEngine(fp16=True))
 
 
-@mark.skipif(
-    not all(
-        [
-            IS_DDP_AMP_REQUIRED,
-            IS_CUDA_AVAILABLE,
-            NUM_CUDA_DEVICES >= 2,
-            SETTINGS.amp_required,
-        ]
-    ),
-    reason="No CUDA>=2 or AMP found",
-)
-def test_classification_on_amp_ddp():
-    train_experiment(dl.DistributedDataParallelEngine(fp16=True))
+# @mark.skipif(
+#     not all(
+#         [
+#             IS_DDP_AMP_REQUIRED,
+#             IS_CUDA_AVAILABLE,
+#             NUM_CUDA_DEVICES >= 2,
+#             SETTINGS.amp_required,
+#         ]
+#     ),
+#     reason="No CUDA>=2 or AMP found",
+# )
+# def test_classification_on_amp_ddp():
+#     train_experiment(dl.DistributedDataParallelEngine(fp16=True))

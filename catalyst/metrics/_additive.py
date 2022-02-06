@@ -104,7 +104,7 @@ class AdditiveMetric(IMetric):
                     )
                 # run model backward pass
                 if self.is_train_loader:
-                    loss.backward()
+                    self.engine.backward(loss)
                     self.optimizer.step()
                     self.optimizer.zero_grad()
 

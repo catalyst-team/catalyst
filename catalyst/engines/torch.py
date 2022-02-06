@@ -17,6 +17,14 @@ if SETTINGS.xla_required:
     import torch_xla.distributed.xla_multiprocessing as xmp
 
 
+class DeviceEngine(IEngine):
+    """Singe-device engine."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Init."""
+        super().__init__(*args, **kwargs)
+
+
 class CPUEngine(IEngine):
     """CPU-based engine."""
 
@@ -33,21 +41,17 @@ class GPUEngine(IEngine):
         super().__init__(*args, cpu=False, **kwargs)
 
 
-class DeviceEngine(IEngine):
-    """Singe-device engine."""
+class DataParallelEngine(IEngine):
+    """Multi-GPU-based engine."""
 
     def __init__(self, *args, **kwargs) -> None:
         """Init."""
-        super().__init__(*args, cpu=not torch.cuda.is_available(), **kwargs)
-
-
-class DataParallelEngine(GPUEngine):
-    """Multi-GPU-based engine."""
+        super().__init__(*args, cpu=False, **kwargs)
 
     def prepare_model(self, model):
         """Overrides."""
-        model = super().prepare_model(model)
         model = torch.nn.DataParallel(model)
+        model = super().prepare_model(model)
         return model
 
 
