@@ -17,9 +17,6 @@ from catalyst.typing import (
     RunnerCriterion,
     RunnerOptimizer,
     RunnerScheduler,
-    TorchCriterion,
-    TorchOptimizer,
-    TorchScheduler,
 )
 
 
