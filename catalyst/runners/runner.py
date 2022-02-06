@@ -477,6 +477,7 @@ class Runner(IRunner):
         Raises:
             IRunnerError: if ``CheckpointCallback`` found in the callbacks
         """
+        callbacks = sort_callbacks_by_order(callbacks)
         for callback in callbacks.values():
             if callback_isinstance(callback, ICheckpointCallback):
                 raise IRunnerError(

@@ -185,6 +185,7 @@ class MLflowLogger(ILogger):
 
         Args:
             hparams: Parameters to log.
+            runner: experiment runner
         """
         _mlflow_log_params_dict(hparams, log_type="param", exclude=self.exclude)
 
