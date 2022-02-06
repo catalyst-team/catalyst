@@ -447,6 +447,7 @@ class Runner(IRunner):
 
         self.model = self.engine.prepare(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
+        loader = self.engine.prepare(loader)
 
         set_global_seed(seed)
         for batch in loader:

@@ -108,6 +108,10 @@ def train_experiment(engine=None):
         # model inference
         for prediction in runner.predict_loader(loader=loaders["valid"], engine=engine):
             assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
+
+        if not isinstance(engine, dl.CPUEngine):
+            return
+
         # model post-processing
         features_batch = next(iter(loaders["valid"]))[0]
         # model stochastic weight averaging
