@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
 from catalyst.contrib.datasets import MovieLens
-from catalyst.utils import set_global_seed
+from catalyst.utils.misc import set_global_seed
 
 
 def collate_fn_train(batch: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
@@ -130,7 +130,7 @@ class RecSysRunner(dl.Runner):
 
         anneal = min(
             self.hparams["anneal_cap"],
-            self.global_batch_step / self.hparams["total_anneal_steps"],
+            self.batch_step / self.hparams["total_anneal_steps"],
         )
 
         loss_ae = -torch.mean(torch.sum(F.log_softmax(x_recon, 1) * x, -1))
@@ -197,5 +197,5 @@ if __name__ == "__main__":
         verbose=True,
         timeit=False,
         callbacks=callbacks,
-        logdir="./logs",
+        logdir="./logs_macridvae",
     )

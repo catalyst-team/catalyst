@@ -13,7 +13,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from catalyst import dl, metrics, utils
+from catalyst import dl, metrics
+from catalyst.contrib.utils.torch import get_optimal_inner_init, outer_init
+from catalyst.utils.torch import set_requires_grad
 
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -84,8 +86,8 @@ class Sampler(ISampler):
 
 
 def get_network_actor(env):
-    inner_fn = utils.get_optimal_inner_init(nn.ReLU)
-    outer_fn = utils.outer_init
+    inner_fn = get_optimal_inner_init(nn.ReLU)
+    outer_fn = outer_init
 
     network = torch.nn.Sequential(
         nn.Linear(env.observation_space.shape[0], 400),
@@ -102,8 +104,8 @@ def get_network_actor(env):
 
 
 def get_network_critic(env):
-    inner_fn = utils.get_optimal_inner_init(nn.LeakyReLU)
-    outer_fn = utils.outer_init
+    inner_fn = get_optimal_inner_init(nn.LeakyReLU)
+    outer_fn = outer_init
 
     network = torch.nn.Sequential(
         nn.Linear(env.observation_space.shape[0] + 1, 400),
@@ -265,8 +267,8 @@ if __name__ == "__main__":
 
     actor, target_actor = get_network_actor(env), get_network_actor(env)
     critic, target_critic = get_network_critic(env), get_network_critic(env)
-    utils.set_requires_grad(target_actor, requires_grad=False)
-    utils.set_requires_grad(target_critic, requires_grad=False)
+    set_requires_grad(target_actor, requires_grad=False)
+    set_requires_grad(target_critic, requires_grad=False)
 
     models = nn.ModuleDict(
         {
@@ -289,7 +291,7 @@ if __name__ == "__main__":
 
     runner.train(
         # for simplicity reasons, let's run everything on single gpu
-        engine=dl.DeviceEngine("cuda"),
+        engine=dl.GPUEngine(),
         model=models,
         criterion=criterion,
         optimizer=optimizer,

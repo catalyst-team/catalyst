@@ -6,9 +6,9 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.contrib import Normalize
 from catalyst.contrib.datasets import MovieLens
-from catalyst.utils import set_global_seed
+from catalyst.contrib.layers import Normalize
+from catalyst.utils.misc import set_global_seed
 
 
 def collate_fn_train(batch: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
@@ -112,5 +112,5 @@ if __name__ == "__main__":
         verbose=True,
         timeit=False,
         callbacks=callbacks,
-        logdir="./logs",
+        logdir="./logs_multidae",
     )

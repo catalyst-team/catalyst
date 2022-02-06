@@ -1,10 +1,10 @@
 # Self-Supervised Learning Examples
 ## Requriments
 
-To run examples you need catalyst[cv]==21.11 and catalyst[ml]==21.11
+To run examples you need catalyst[cv]==22.02rc0 and catalyst[ml]==22.02rc0
 ```
-pip install catalyst[cv]==21.11
-pip install catalyst[ml]==21.11
+pip install catalyst[cv]==22.02rc0
+pip install catalyst[ml]==22.02rc0
 ```
 
 ## Description
@@ -34,17 +34,17 @@ Implemented algorithms:
 
 You can run an algorithm with a command:
 ```
-python3 barlow_twins.py --batch_size 32
+python3 barlow_twins.py --batch-size 32
 ```
 Also, you can use the Docker:
 ```
 docker build . -t train-self-supervised
-docker run train-self-supervised python3 simCLR.py --batch_size 32
+docker run train-self-supervised python3 simCLR.py --batch-size 32
 ```
 
 ## Test
 
-You can test that all settled with ``run.sh``. 
+You can test that all settled with ``run.sh``.
 
 ## Results
 

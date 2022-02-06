@@ -1,15 +1,15 @@
 # flake8: noqa
 from typing import Dict, Optional
 
-from datasets import DATASETS
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst import utils
 from catalyst.contrib.layers import ResidualBlock
 from catalyst.data import SelfSupervisedDatasetWrapper
+from catalyst.utils.misc import boolean_flag
+
+from src.datasets import DATASETS
 
 
 def add_arguments(parser) -> None:
@@ -63,8 +63,8 @@ def add_arguments(parser) -> None:
     parser.add_argument(
         "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
     )
-    # utils.boolean_flag(parser=parser, name="check", default=False)
-    utils.boolean_flag(parser=parser, name="verbose", default=False)
+    # boolean_flag(parser=parser, name="check", default=False)
+    boolean_flag(parser=parser, name="verbose", default=False)
 
 
 class ContrastiveModel(torch.nn.Module):

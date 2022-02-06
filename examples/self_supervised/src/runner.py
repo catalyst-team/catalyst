@@ -16,6 +16,7 @@ from catalyst.core.callback import (
     IOptimizerCallback,
     ISchedulerCallback,
 )
+from catalyst.core.engine import IEngine
 from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
@@ -187,9 +188,9 @@ class ISelfSupervisedRunner(IRunner):
 
         return batch
 
-    def on_stage_start(self, runner: "IRunner"):
-        """on_stage_start event handler."""
-        super().on_stage_start(runner)
+    def on_experiment_start(self, runner: "IRunner"):
+        """on_experiment_start event handler."""
+        super().on_experiment_start(runner)
         self.is_kv_model = False
         if isinstance(self.model, (Mapping, nn.ModuleDict)):
             self.is_kv_model = True

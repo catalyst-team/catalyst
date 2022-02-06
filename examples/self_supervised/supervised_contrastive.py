@@ -1,7 +1,6 @@
 # flake8: noqa
 import argparse
 
-from datasets import DATASETS
 from sklearn.linear_model import LogisticRegression
 
 import torch
@@ -9,8 +8,10 @@ from torch.optim import Adam
 
 from catalyst import dl
 from catalyst.contrib.losses import SupervisedContrastiveLoss
-from .common import add_arguments, get_contrastive_model, get_loaders
-from .runner import SelfSupervisedRunner
+
+from src.common import add_arguments, get_contrastive_model, get_loaders
+from src.datasets import DATASETS
+from src.runner import SelfSupervisedRunner
 
 
 def concat(*tensors):

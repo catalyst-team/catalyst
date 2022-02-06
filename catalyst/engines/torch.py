@@ -33,6 +33,14 @@ class GPUEngine(IEngine):
         super().__init__(*args, cpu=False, **kwargs)
 
 
+class DeviceEngine(IEngine):
+    """Singe-device engine."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Init."""
+        super().__init__(*args, cpu=not torch.cuda.is_available(), **kwargs)
+
+
 class DataParallelEngine(GPUEngine):
     """Multi-GPU-based engine."""
 

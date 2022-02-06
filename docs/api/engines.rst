@@ -28,6 +28,13 @@ GPUEngine
     :undoc-members:
     :show-inheritance:
 
+DeviceEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.torch.DeviceEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 DataParallelEngine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.engines.torch.DataParallelEngine

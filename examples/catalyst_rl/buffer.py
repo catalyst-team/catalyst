@@ -6,7 +6,7 @@ from gym import spaces
 from misc import structed2dict
 import numpy as np
 
-from torch.utils.data.dataset import Dataset, IterableDataset
+from torch.utils.data.dataset import Dataset
 
 
 def _handle_array(array: np.ndarray):

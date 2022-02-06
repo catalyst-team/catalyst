@@ -13,7 +13,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from catalyst import dl, metrics, utils
+from catalyst import dl, metrics
+from catalyst.contrib.utils.torch import get_optimal_inner_init, outer_init
+from catalyst.utils.torch import set_requires_grad
 
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -67,8 +69,8 @@ class Sampler(ISampler):
 
 
 def get_network(env, num_hidden: int = 128):
-    inner_fn = utils.get_optimal_inner_init(nn.ReLU)
-    outer_fn = utils.outer_init
+    inner_fn = get_optimal_inner_init(nn.ReLU)
+    outer_fn = outer_init
 
     network = torch.nn.Sequential(
         nn.Linear(env.observation_space.shape[0], num_hidden),
@@ -199,7 +201,7 @@ if __name__ == "__main__":
     )
 
     network, target_network = get_network(env), get_network(env)
-    utils.set_requires_grad(target_network, requires_grad=False)
+    set_requires_grad(target_network, requires_grad=False)
     models = nn.ModuleDict({"origin": network, "target": target_network})
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(network.parameters(), lr=lr)
@@ -208,7 +210,7 @@ if __name__ == "__main__":
     runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
     runner.train(
         # for simplicity reasons, let's run everything on single gpu
-        engine=dl.DeviceEngine("cuda"),
+        engine=dl.GPUEngine(),
         model=models,
         criterion=criterion,
         optimizer=optimizer,
