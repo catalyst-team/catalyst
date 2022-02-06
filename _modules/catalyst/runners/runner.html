@@ -265,29 +265,18 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.backward</span> <span class="kn">import</span> <span class="n">BackwardCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.batch_overfit</span> <span class="kn">import</span> <span class="n">BatchOverfitCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.checkpoint</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ICheckpointCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.criterion</span> <span class="kn">import</span> <span class="n">CriterionCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.misc</span> <span class="kn">import</span> <span class="n">CheckRunCallback</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">,</span> <span class="n">TqdmCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="n">OptimizerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.profiler</span> <span class="kn">import</span> <span class="n">ProfilerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.scheduler</span> <span class="kn">import</span> <span class="n">SchedulerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span>
-    <span class="n">IBackwardCallback</span><span class="p">,</span>
-    <span class="n">ICriterionCallback</span><span class="p">,</span>
-    <span class="n">IOptimizerCallback</span><span class="p">,</span>
-    <span class="n">ISchedulerCallback</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">callback_isinstance</span><span class="p">,</span> <span class="n">sort_callbacks_by_order</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">IRunnerError</span>
-<span class="kn">from</span> <span class="nn">catalyst.engines</span> <span class="kn">import</span> <span class="n">IEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.console</span> <span class="kn">import</span> <span class="n">ConsoleLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.csv</span> <span class="kn">import</span> <span class="n">CSVLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
-<span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">RunnerCriterion</span><span class="p">,</span>
     <span class="n">RunnerModel</span><span class="p">,</span>
@@ -772,94 +761,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span></div></div>
 
 
-<div class="viewcode-block" id="SupervisedRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedRunner</span><span class="p">(</span><span class="n">ISupervisedRunner</span><span class="p">,</span> <span class="n">Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Runner for experiments with supervised model.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        model: Torch model instance</span>
-<span class="sd">        engine: IEngine instance</span>
-<span class="sd">        input_key: key in ``runner.batch`` dict mapping for model input</span>
-<span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
-<span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
-<span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
-
-<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">engine</span><span class="p">:</span> <span class="n">IEngine</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
-        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="n">ISupervisedRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
-            <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
-            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
-            <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">Runner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
-
-<div class="viewcode-block" id="SupervisedRunner.predict_batch"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run model inference on specified data batch.</span>
-
-<span class="sd">        .. warning::</span>
-<span class="sd">            You should not override this method.</span>
-<span class="sd">            If you need specific model call, override runner.forward() method.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            batch: dictionary with data batch from DataLoader.</span>
-<span class="sd">            **kwargs: additional kwargs to pass to the model</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Mapping[str, Any]: model output dictionary</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">output</span></div>
-
-<div class="viewcode-block" id="SupervisedRunner.get_callbacks"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the callbacks for the experiment.&quot;&quot;&quot;</span>
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">()</span>
-        <span class="n">callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
-            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">TorchCriterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callback_exists</span><span class="p">(</span>
-            <span class="n">ICriterionCallback</span>
-        <span class="p">):</span>
-            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CriterionCallback</span><span class="p">(</span>
-                <span class="n">input_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_key</span><span class="p">,</span>
-                <span class="n">target_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_key</span><span class="p">,</span>
-                <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">TorchOptimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callback_exists</span><span class="p">(</span>
-            <span class="n">IBackwardCallback</span>
-        <span class="p">):</span>
-            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_backward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BackwardCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">TorchOptimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callback_exists</span><span class="p">(</span>
-            <span class="n">IOptimizerCallback</span>
-        <span class="p">):</span>
-            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="n">TorchScheduler</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callback_exists</span><span class="p">(</span>
-            <span class="n">ISchedulerCallback</span>
-        <span class="p">):</span>
-            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchedulerCallback</span><span class="p">(</span>
-                <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">callbacks</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedRunner&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

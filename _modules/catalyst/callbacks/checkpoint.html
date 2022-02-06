@@ -266,7 +266,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">ICheckpointCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_checkpoint</span><span class="p">,</span>
@@ -276,12 +276,6 @@
 <span class="p">)</span>
 
 <span class="n">Checkpoint</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Checkpoint&quot;</span><span class="p">,</span> <span class="n">field_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">,</span> <span class="s2">&quot;logpath&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
-
-
-<span class="k">class</span> <span class="nc">ICheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Criterion callback interface, abstraction over checkpoint step.&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="CheckpointCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckpointCallback</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
@@ -318,15 +312,12 @@
         <span class="n">load_best_on_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">topk</span> <span class="o">&gt;=</span> <span class="mi">1</span>
         <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span>
             <span class="s2">&quot;model&quot;</span><span class="p">,</span>
             <span class="s2">&quot;runner&quot;</span><span class="p">,</span>
         <span class="p">),</span> <span class="s2">&quot;`CheckpointCallback` could work only in `model` or `runner` modes.&quot;</span>
-        <span class="c1"># assert (</span>
-        <span class="c1">#     resume_model is None or resume_runner is None</span>
-        <span class="c1"># ), &quot;`CheckpointCallback` could not load model and runner simultaneously &quot;</span>
 
         <span class="k">if</span> <span class="n">minimize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;please define the metric to track&quot;</span>
@@ -488,7 +479,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span> <span class="n">resume_logpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">logpath</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ICheckpointCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;CheckpointCallback&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CheckpointCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

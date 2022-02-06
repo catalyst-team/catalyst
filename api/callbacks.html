@@ -601,7 +601,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 <dl class="class">
 <dt id="catalyst.callbacks.checkpoint.CheckpointCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">metric_key: str = None</em>, <em class="sig-param">minimize: bool = None</em>, <em class="sig-param">topk: int = 1</em>, <em class="sig-param">mode: str = 'model'</em>, <em class="sig-param">save_last: bool = True</em>, <em class="sig-param">save_best: bool = True</em>, <em class="sig-param">resume_model: str = None</em>, <em class="sig-param">resume_runner: str = None</em>, <em class="sig-param">load_best_on_end: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.checkpoint.ICheckpointCallback</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICheckpointCallback</span></code></p>
 <p>Checkpoint callback to save/restore your model/runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

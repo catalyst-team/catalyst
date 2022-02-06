@@ -258,7 +258,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.loggers.comet</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -268,6 +268,8 @@
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">comet_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">comet_ml</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
 <div class="viewcode-block" id="CometLogger"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.comet.CometLogger">[docs]</a><span class="k">class</span> <span class="nc">CometLogger</span><span class="p">(</span><span class="n">ILogger</span><span class="p">):</span>
@@ -397,23 +399,13 @@
     <span class="k">def</span> <span class="nf">log_artifact</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
         <span class="n">artifact</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">path_to_artifact</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># experiment info</span>
-        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="c1"># loader info</span>
-        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs artifact (any arbitrary file or object) to the logger.&quot;&quot;&quot;</span>
-        <span class="n">metadata_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loader_key&quot;</span><span class="p">:</span> <span class="n">loader_key</span><span class="p">,</span> <span class="s2">&quot;scope&quot;</span><span class="p">:</span> <span class="n">scope</span><span class="p">}</span>
+        <span class="n">metadata_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loader_key&quot;</span><span class="p">:</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span> <span class="s2">&quot;scope&quot;</span><span class="p">:</span> <span class="n">scope</span><span class="p">}</span>
         <span class="n">passed_metadata_parameters</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metadata_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">}</span>
@@ -421,15 +413,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_asset</span><span class="p">(</span>
                 <span class="n">path_to_artifact</span><span class="p">,</span>
                 <span class="n">file_name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">batch_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_step</span><span class="p">,</span>
                 <span class="n">metadata</span><span class="o">=</span><span class="n">passed_metadata_parameters</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_asset_data</span><span class="p">(</span>
                 <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">artifact</span><span class="p">),</span>
                 <span class="n">file_name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">batch_step</span><span class="p">,</span>
-                <span class="n">epoch</span><span class="o">=</span><span class="n">epoch_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_step</span><span class="p">,</span>
+                <span class="n">epoch</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="p">,</span>
                 <span class="n">metadata</span><span class="o">=</span><span class="n">passed_metadata_parameters</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -437,54 +429,34 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
         <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># experiment info</span>
-        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="c1"># loader info</span>
-        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs image to the logger.&quot;&quot;&quot;</span>
-        <span class="n">image_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scope</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">batch_step</span><span class="p">)</span>
+        <span class="n">image_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scope</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">scope</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_step</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">log_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs hyperparameters to the logger.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_parameters</span><span class="p">(</span><span class="n">hparams</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># experiment info</span>
-        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="c1"># loader info</span>
-        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs the metrics to the logger.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loader&quot;</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_epoch_metrics</span>
         <span class="p">):</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">batch_step</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_step</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">batch_step</span><span class="p">,</span>
-                <span class="n">epoch</span><span class="o">=</span><span class="n">epoch_step</span><span class="p">,</span>
-                <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loader_key</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">scope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">batch_step</span><span class="p">,</span>
+                <span class="n">epoch</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">scope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">flush_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

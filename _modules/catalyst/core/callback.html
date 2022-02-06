@@ -315,35 +315,37 @@
 
 <span class="sd">    - **Internal** (0) - some Catalyst Extras,</span>
 <span class="sd">      like PhaseCallbacks (used in GANs).</span>
-<span class="sd">    - **Metric** (20) - Callbacks with metrics and losses computation.</span>
-<span class="sd">    - **MetricAggregation** (40) - metrics aggregation callbacks,</span>
+<span class="sd">    - **Metric** (10) - Callbacks with metrics and losses computation.</span>
+<span class="sd">    - **MetricAggregation** (20) - metrics aggregation callbacks,</span>
 <span class="sd">      like sum different losses into one.</span>
-<span class="sd">    - **Backward** (60) - backward step.</span>
-<span class="sd">    - **Optimizer** (80) - optimizer step,</span>
+<span class="sd">    - **Backward** (30) - backward step.</span>
+<span class="sd">    - **Optimizer** (40) - optimizer step,</span>
 <span class="sd">      requires computed metrics for optimization.</span>
-<span class="sd">    - **Scheduler** (100) - scheduler step,</span>
+<span class="sd">    - **Scheduler** (50) - scheduler step,</span>
 <span class="sd">      in `ReduceLROnPlateau` case</span>
 <span class="sd">      requires computed validation metrics for optimizer schedule.</span>
-<span class="sd">    - **External** (120) - additional callbacks with custom logic.</span>
+<span class="sd">    - **Checkpoint** (60) - checkpoint step.</span>
+<span class="sd">    - **External** (100) - additional callbacks with custom logic.</span>
 
 <span class="sd">    Nevertheless, you always can create CustomCallback with any order,</span>
 <span class="sd">    for example::</span>
 
 <span class="sd">        &gt;&gt;&gt; class MyCustomCallback(Callback):</span>
 <span class="sd">        &gt;&gt;&gt;     def __init__(self):</span>
-<span class="sd">        &gt;&gt;&gt;         super().__init__(order=33)</span>
+<span class="sd">        &gt;&gt;&gt;         super().__init__(order=13)</span>
 <span class="sd">        &gt;&gt;&gt;     ...</span>
 <span class="sd">        # MyCustomCallback will be executed after all `Metric`-Callbacks</span>
 <span class="sd">        # but before all `MetricAggregation`-Callbacks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Internal</span> <span class="o">=</span> <span class="n">internal</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">Metric</span> <span class="o">=</span> <span class="n">metric</span> <span class="o">=</span> <span class="mi">20</span>
-    <span class="n">MetricAggregation</span> <span class="o">=</span> <span class="n">metric_aggregation</span> <span class="o">=</span> <span class="mi">40</span>
-    <span class="n">Backward</span> <span class="o">=</span> <span class="n">backward</span> <span class="o">=</span> <span class="mi">60</span>
-    <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="mi">80</span>
-    <span class="n">Scheduler</span> <span class="o">=</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="mi">100</span>
-    <span class="n">External</span> <span class="o">=</span> <span class="n">external</span> <span class="o">=</span> <span class="mi">120</span></div>
+    <span class="n">Metric</span> <span class="o">=</span> <span class="n">metric</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">MetricAggregation</span> <span class="o">=</span> <span class="n">metric_aggregation</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">Backward</span> <span class="o">=</span> <span class="n">backward</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">Scheduler</span> <span class="o">=</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">Checkpoint</span> <span class="o">=</span> <span class="n">checkpoint</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">External</span> <span class="o">=</span> <span class="n">external</span> <span class="o">=</span> <span class="mi">100</span></div>
 
 
 <div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback">[docs]</a><span class="k">class</span> <span class="nc">Callback</span><span class="p">(</span><span class="n">ICallback</span><span class="p">):</span>
@@ -429,6 +431,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Scheduler</span><span class="p">)</span>
 
 
+<span class="k">class</span> <span class="nc">ICheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checkpoint callback interface, abstraction over checkpoint step.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Checkpoint</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="CallbackWrapper"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.CallbackWrapper">[docs]</a><span class="k">class</span> <span class="nc">CallbackWrapper</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enable/disable callback execution.</span>
 
@@ -502,6 +512,7 @@
     <span class="s2">&quot;IBackwardCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;IOptimizerCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ISchedulerCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ICheckpointCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CallbackWrapper&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

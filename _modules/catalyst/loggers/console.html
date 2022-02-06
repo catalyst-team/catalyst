@@ -258,9 +258,12 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.loggers.console</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
 <span class="k">def</span> <span class="nf">_format_metrics</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -282,7 +285,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">log_batch_metrics</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_epoch_metrics</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_hparams</span> <span class="o">=</span> <span class="n">log_hparams</span>
 
-    <span class="k">def</span> <span class="nf">log_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">log_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs hyperparameters to the console.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_hparams</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hparams: </span><span class="si">{</span><span class="n">hparams</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -290,27 +293,17 @@
     <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># experiment info</span>
-        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="c1"># loader info</span>
-        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs loader and epoch metrics to stdout.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;loader&quot;</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loader_key</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">_format_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span>
             <span class="c1"># @TODO: remove trick to save pure epoch-based metrics, like lr/momentum</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;* Epoch (</span><span class="si">{</span><span class="n">epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;* Epoch (</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">_format_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;_epoch_&quot;</span><span class="p">])</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 

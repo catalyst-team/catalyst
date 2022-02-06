@@ -613,22 +613,23 @@ of arguments.</p></li>
 <ul class="simple">
 <li><p><strong>Internal</strong> (0) - some Catalyst Extras,
 like PhaseCallbacks (used in GANs).</p></li>
-<li><p><strong>Metric</strong> (20) - Callbacks with metrics and losses computation.</p></li>
-<li><p><strong>MetricAggregation</strong> (40) - metrics aggregation callbacks,
+<li><p><strong>Metric</strong> (10) - Callbacks with metrics and losses computation.</p></li>
+<li><p><strong>MetricAggregation</strong> (20) - metrics aggregation callbacks,
 like sum different losses into one.</p></li>
-<li><p><strong>Backward</strong> (60) - backward step.</p></li>
-<li><p><strong>Optimizer</strong> (80) - optimizer step,
+<li><p><strong>Backward</strong> (30) - backward step.</p></li>
+<li><p><strong>Optimizer</strong> (40) - optimizer step,
 requires computed metrics for optimization.</p></li>
-<li><p><strong>Scheduler</strong> (100) - scheduler step,
+<li><p><strong>Scheduler</strong> (50) - scheduler step,
 in <cite>ReduceLROnPlateau</cite> case
 requires computed validation metrics for optimizer schedule.</p></li>
-<li><p><strong>External</strong> (120) - additional callbacks with custom logic.</p></li>
+<li><p><strong>Checkpoint</strong> (60) - checkpoint step.</p></li>
+<li><p><strong>External</strong> (100) - additional callbacks with custom logic.</p></li>
 </ul>
 <p>Nevertheless, you always can create CustomCallback with any order,
 for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyCustomCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">33</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
 <span class="go"># MyCustomCallback will be executed after all `Metric`-Callbacks</span>
 <span class="go"># but before all `MetricAggregation`-Callbacks.</span>
@@ -636,12 +637,17 @@ for example:</p>
 </div>
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Backward">
-<code class="sig-name descname">Backward</code><em class="property"> = 60</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Backward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Backward</code><em class="property"> = 30</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Backward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.Checkpoint">
+<code class="sig-name descname">Checkpoint</code><em class="property"> = 50</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.External">
-<code class="sig-name descname">External</code><em class="property"> = 120</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.External" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">External</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.External" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -651,32 +657,37 @@ for example:</p>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Metric">
-<code class="sig-name descname">Metric</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Metric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Metric</code><em class="property"> = 10</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Metric" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.MetricAggregation">
-<code class="sig-name descname">MetricAggregation</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.MetricAggregation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">MetricAggregation</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.MetricAggregation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Optimizer">
-<code class="sig-name descname">Optimizer</code><em class="property"> = 80</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Optimizer</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Optimizer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Scheduler">
-<code class="sig-name descname">Scheduler</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Scheduler</code><em class="property"> = 50</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.backward">
-<code class="sig-name descname">backward</code><em class="property"> = 60</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.backward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backward</code><em class="property"> = 30</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.backward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.checkpoint">
+<code class="sig-name descname">checkpoint</code><em class="property"> = 50</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.external">
-<code class="sig-name descname">external</code><em class="property"> = 120</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.external" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">external</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.external" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -686,22 +697,22 @@ for example:</p>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.metric">
-<code class="sig-name descname">metric</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">metric</code><em class="property"> = 10</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.metric_aggregation">
-<code class="sig-name descname">metric_aggregation</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric_aggregation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">metric_aggregation</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric_aggregation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.optimizer">
-<code class="sig-name descname">optimizer</code><em class="property"> = 80</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">optimizer</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.optimizer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.scheduler">
-<code class="sig-name descname">scheduler</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">scheduler</code><em class="property"> = 50</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.scheduler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -803,9 +814,9 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.console.ConsoleLogger" title="catalyst.loggers.console.ConsoleLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.console.ConsoleLogger</span></code></a></p></li>
-<li><p><a class="reference internal" href="loggers.html#catalyst.loggers.tensorboard.TensorboardLogger" title="catalyst.loggers.tensorboard.TensorboardLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.tensorboard.TensorboardLogger</span></code></a></p></li>
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.mlflow.MLflowLogger" title="catalyst.loggers.mlflow.MLflowLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.mlflow.MLflowLogger</span></code></a></p></li>
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.neptune.NeptuneLogger" title="catalyst.loggers.neptune.NeptuneLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.neptune.NeptuneLogger</span></code></a></p></li>
+<li><p><a class="reference internal" href="loggers.html#catalyst.loggers.tensorboard.TensorboardLogger" title="catalyst.loggers.tensorboard.TensorboardLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.tensorboard.TensorboardLogger</span></code></a></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -822,7 +833,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 
 <dl class="method">
 <dt id="catalyst.core.logger.ILogger.log_artifact">
-<code class="sig-name descname">log_artifact</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">artifact: object = None</em>, <em class="sig-param">path_to_artifact: str = None</em>, <em class="sig-param">scope: str = None</em>, <em class="sig-param">num_epochs: int = 0</em>, <em class="sig-param">epoch_step: int = 0</em>, <em class="sig-param">batch_step: int = 0</em>, <em class="sig-param">sample_step: int = 0</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">loader_batch_len: int = 0</em>, <em class="sig-param">loader_sample_len: int = 0</em>, <em class="sig-param">loader_batch_step: int = 0</em>, <em class="sig-param">loader_sample_step: int = 0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_artifact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_artifact" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">log_artifact</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">runner: IRunner</em>, <em class="sig-param">artifact: object = None</em>, <em class="sig-param">path_to_artifact: str = None</em>, <em class="sig-param">scope: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_artifact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_artifact" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs artifact (arbitrary file like audio, video, etc) to the logger.</p>
 </dd></dl>
 
@@ -856,19 +867,19 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 
 <dl class="method">
 <dt id="catalyst.core.logger.ILogger.log_hparams">
-<code class="sig-name descname">log_hparams</code><span class="sig-paren">(</span><em class="sig-param">hparams: Dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_hparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_hparams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">log_hparams</code><span class="sig-paren">(</span><em class="sig-param">hparams: Dict</em>, <em class="sig-param">runner: IRunner = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_hparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_hparams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs hyperparameters to the logger.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.logger.ILogger.log_image">
-<code class="sig-name descname">log_image</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">image: numpy.ndarray</em>, <em class="sig-param">scope: str = None</em>, <em class="sig-param">num_epochs: int = 0</em>, <em class="sig-param">epoch_step: int = 0</em>, <em class="sig-param">batch_step: int = 0</em>, <em class="sig-param">sample_step: int = 0</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">loader_batch_len: int = 0</em>, <em class="sig-param">loader_sample_len: int = 0</em>, <em class="sig-param">loader_batch_step: int = 0</em>, <em class="sig-param">loader_sample_step: int = 0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_image" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">log_image</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">image: numpy.ndarray</em>, <em class="sig-param">runner: IRunner</em>, <em class="sig-param">scope: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs image to the logger.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.logger.ILogger.log_metrics">
-<code class="sig-name descname">log_metrics</code><span class="sig-paren">(</span><em class="sig-param">metrics: Dict[str, float], scope: str = None, num_epochs: int = 0, epoch_step: int = 0, batch_step: int = 0, sample_step: int = 0, loader_key: str = None, loader_batch_len: int = 0, loader_sample_len: int = 0, loader_batch_step: int = 0, loader_sample_step: int = 0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_metrics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">log_metrics</code><span class="sig-paren">(</span><em class="sig-param">metrics: Dict[str, float], scope: str, runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs metrics to the logger.</p>
 </dd></dl>
 
