@@ -12,7 +12,7 @@ from catalyst.callbacks.profiler import ProfilerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import callback_isinstance
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, IRunnerError
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
@@ -226,7 +226,7 @@ class Runner(IRunner):
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for the experiment."""
-        callbacks = self._callbacks
+        callbacks = sort_callbacks_by_order(self._callbacks)
         callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )

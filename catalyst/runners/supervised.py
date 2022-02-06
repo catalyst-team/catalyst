@@ -15,7 +15,7 @@ from catalyst.core.callback import (
     ISchedulerCallback,
 )
 from catalyst.core.engine import IEngine
-from catalyst.core.misc import callback_isinstance
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
 from catalyst.typing import RunnerModel, TorchCriterion, TorchOptimizer, TorchScheduler
@@ -230,7 +230,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
 
     def get_callbacks(self) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for the experiment."""
-        callbacks = super().get_callbacks()
+        callbacks = sort_callbacks_by_order(super().get_callbacks())
         callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
