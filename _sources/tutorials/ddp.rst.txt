@@ -261,13 +261,13 @@ and pass the data preparation under ``CustomSupervisedRunner.get_loaders``.
                 train_sampler = DistributedSampler(
                     train_data,
                     num_replicas=self.engine.world_size,
-                    rank=self.engine.rank,
+                    rank=self.engine.process_index,
                     shuffle=True,
                 )
                 valid_sampler = DistributedSampler(
                     valid_data,
                     num_replicas=self.engine.world_size,
-                    rank=self.engine.rank,
+                    rank=self.engine.process_index,
                     shuffle=False,
                 )
             else:
@@ -393,13 +393,13 @@ As an extra point, you could also specify the whole experiment within ``Runner``
                 train_sampler = DistributedSampler(
                     train_data,
                     num_replicas=self.engine.num_processes,
-                    rank=self.engine.rank,
+                    rank=self.engine.process_index,
                     shuffle=True,
                 )
                 valid_sampler = DistributedSampler(
                     valid_data,
                     num_replicas=self.engine.num_processes,
-                    rank=self.engine.rank,
+                    rank=self.engine.process_index,
                     shuffle=False,
                 )
             else:

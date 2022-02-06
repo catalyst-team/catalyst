@@ -62,7 +62,7 @@ Suppose you have the following classification pipeline:
                 self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
             # run model backward pass
             if self.is_train_loader:
-                loss.backward()
+                self.engine.backward(loss)
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 

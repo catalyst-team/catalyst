@@ -483,7 +483,7 @@ different hardware-specific configurations.
 </dl>
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.cleanup">
-<em class="property">static </em><code class="sig-name descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.cleanup" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.cleanup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cleans DDP variables and processes.</p>
 </dd></dl>
 
@@ -501,7 +501,7 @@ different hardware-specific configurations.
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.setup">
-<em class="property">static </em><code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">local_rank: int</em>, <em class="sig-param">world_size: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.setup" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">local_rank: int</em>, <em class="sig-param">world_size: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize DDP variables and processes if required.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -516,7 +516,7 @@ Default is <cite>1</cite>.</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.spawn">
-<em class="property">static </em><code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.spawn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.spawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spawns processes with specified <code class="docutils literal notranslate"><span class="pre">fn</span></code> and <code class="docutils literal notranslate"><span class="pre">args</span></code>/<code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

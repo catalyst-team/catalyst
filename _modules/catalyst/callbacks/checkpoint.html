@@ -342,12 +342,19 @@
 
     <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">logprefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">logpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logprefix</span><span class="si">}</span><span class="s2">.pth&quot;</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>  <span class="c1"># mode: model</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">wait_for_everyone</span><span class="p">()</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unwrap_model</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">logpath</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># mode: runner</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">pack_checkpoint</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+                <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">wait_for_everyone</span><span class="p">()</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unwrap_model</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">logpath</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># obj = dict(model=obj)  # noqa: C408</span>
+                <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">pack_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+                <span class="n">save_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">logpath</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">pack_checkpoint</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
             <span class="n">save_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">logpath</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">logpath</span>
 
@@ -361,8 +368,12 @@
         <span class="k">if</span> <span class="n">resume_logpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">wait_for_everyone</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
-                <span class="n">unwrapped_model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unwrap_model</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
-                <span class="n">unwrapped_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume_logpath</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">unwrapped_model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unwrap_model</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+                    <span class="n">unwrapped_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume_logpath</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume_logpath</span><span class="p">)</span>
+                    <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume_logpath</span><span class="p">)</span>
                 <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
@@ -438,10 +449,10 @@
     <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Checkpoint</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Could not understand the model class. &quot;</span>
-            <span class="s2">&quot;Do you mean ``nn.Module`` or ``nn.ModuleDict``?&quot;</span>
-        <span class="p">)</span>
+        <span class="c1"># assert issubclass(runner.model.__class__, torch.nn.Module), (</span>
+        <span class="c1">#     &quot;Could not understand the model class. &quot;</span>
+        <span class="c1">#     &quot;Do you mean ``nn.Module`` or ``nn.ModuleDict``?&quot;</span>
+        <span class="c1"># )</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span>
             <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
             <span class="n">resume_runner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_resume_runner</span><span class="p">,</span>

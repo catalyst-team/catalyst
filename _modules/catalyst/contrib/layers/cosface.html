@@ -293,7 +293,7 @@
 <span class="sd">        &gt;&gt;&gt; target = torch.empty(3, dtype=torch.long).random_(10)</span>
 <span class="sd">        &gt;&gt;&gt; output = layer(embedding, target)</span>
 <span class="sd">        &gt;&gt;&gt; loss = loss_fn(output, target)</span>
-<span class="sd">        &gt;&gt;&gt; loss.backward()</span>
+<span class="sd">        &gt;&gt;&gt; self.engine.backward(loss)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -387,7 +387,7 @@
 <span class="sd">        &gt;&gt;&gt; target = torch.empty(3, dtype=torch.long).random_(10)</span>
 <span class="sd">        &gt;&gt;&gt; output = layer(embedding, target)</span>
 <span class="sd">        &gt;&gt;&gt; loss = loss_fn(output, target)</span>
-<span class="sd">        &gt;&gt;&gt; loss.backward()</span>
+<span class="sd">        &gt;&gt;&gt; self.engine.backward(loss)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501,W505</span>
 

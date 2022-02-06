@@ -510,7 +510,7 @@
 <span class="sd">                )</span>
 
 <span class="sd">                if self.is_train_loader:</span>
-<span class="sd">                    loss.backward()</span>
+<span class="sd">                    self.engine.backward(loss)</span>
 <span class="sd">                    self.optimizer.step()</span>
 <span class="sd">                    self.optimizer.zero_grad()</span>
 

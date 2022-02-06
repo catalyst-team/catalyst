@@ -453,7 +453,7 @@ or specify the required callbacks in <code class="docutils literal notranslate">
             <span class="p">)</span>
         <span class="c1"># run model backward pass</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
-            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
@@ -482,7 +482,7 @@ or specify the required callbacks in <code class="docutils literal notranslate">
 </div>
 <dl class="method">
 <dt id="catalyst.runners.runner.Runner.evaluate_loader">
-<code class="sig-name descname">evaluate_loader</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, model: Optional[torch.nn.modules.module.Module] = None, seed: int = 42, verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.evaluate_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.evaluate_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate_loader</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, model: Optional[torch.nn.modules.module.Module] = None, engine: Union[IEngine, str] = None, seed: int = 42, verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.evaluate_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.evaluate_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates dataloader with given model and returns obtained metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -491,6 +491,7 @@ or specify the required callbacks in <code class="docutils literal notranslate">
 <li><p><strong>callbacks</strong> – list or dictionary with catalyst callbacks</p></li>
 <li><p><strong>model</strong> – model, compatible with current runner.
 If <cite>None</cite> simply takes current model from runner.</p></li>
+<li><p><strong>engine</strong> – engine to use for model evaluation</p></li>
 <li><p><strong>seed</strong> – random seed to use before prediction</p></li>
 <li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the evaluation to the console.</p></li>
 </ul>

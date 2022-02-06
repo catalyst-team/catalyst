@@ -265,13 +265,17 @@
 <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 
 
-<span class="k">def</span> <span class="nf">_tuple_wrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Function wrapper for tuple output&quot;&quot;&quot;</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">output</span><span class="p">,)</span>
+<span class="k">class</span> <span class="nc">_TupleWrapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Function wrapper for tuple output&quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Call.&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">output</span><span class="p">,)</span>
 
 
 <div class="viewcode-block" id="BatchTransformCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.batch_transform.BatchTransformCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchTransformCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -363,7 +367,7 @@
 <span class="sd">                    })</span>
 
 <span class="sd">                    if self.is_train_loader:</span>
-<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.engine.backward(loss)</span>
 <span class="sd">                        self.optimizer.step()</span>
 <span class="sd">                        self.optimizer.zero_grad()</span>
 
@@ -486,7 +490,7 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;output key should be str or a list of str.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">output_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_key</span><span class="p">]</span>
-                <span class="n">transform</span> <span class="o">=</span> <span class="n">_tuple_wrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+                <span class="n">transform</span> <span class="o">=</span> <span class="n">_TupleWrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;on_batch_end&quot;</span><span class="p">,</span> <span class="s2">&quot;on_batch_start&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>

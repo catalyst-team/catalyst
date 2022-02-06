@@ -379,7 +379,7 @@
 <span class="sd">                    )</span>
 <span class="sd">                # run model backward pass</span>
 <span class="sd">                if self.is_train_loader:</span>
-<span class="sd">                    loss.backward()</span>
+<span class="sd">                    self.engine.backward(loss)</span>
 <span class="sd">                    self.optimizer.step()</span>
 <span class="sd">                    self.optimizer.zero_grad()</span>
 
@@ -707,6 +707,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
 
         <span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
@@ -717,6 +718,7 @@
         <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TorchModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -728,6 +730,7 @@
 <span class="sd">            callbacks: list or dictionary with catalyst callbacks</span>
 <span class="sd">            model: model, compatible with current runner.</span>
 <span class="sd">                If `None` simply takes current model from runner.</span>
+<span class="sd">            engine: engine to use for model evaluation</span>
 <span class="sd">            seed: random seed to use before prediction</span>
 <span class="sd">            verbose: if `True`, it displays the status of the evaluation to the console.</span>
 
@@ -744,12 +747,15 @@
                     <span class="s2">&quot;CheckpointCallback isn`t allowed for evaluation loader method&quot;</span>
                 <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
         <span class="k">assert</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span>
             <span class="n">loaders</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">loader</span><span class="p">)]),</span>
             <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>

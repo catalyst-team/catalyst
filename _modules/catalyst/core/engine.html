@@ -299,8 +299,7 @@
         <span class="sd">&quot;&quot;&quot;Boolean flag for distributed type.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_type</span> <span class="o">!=</span> <span class="n">DistributedType</span><span class="o">.</span><span class="n">NO</span>
 
-<div class="viewcode-block" id="IEngine.spawn"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.spawn">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IEngine.spawn"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Spawns processes with specified ``fn`` and ``args``/``kwargs``.</span>
 
 <span class="sd">        Args:</span>
@@ -319,8 +318,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IEngine.setup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.setup">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">local_rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="IEngine.setup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes if required.</span>
 
 <span class="sd">        Args:</span>
@@ -330,8 +328,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="IEngine.cleanup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.cleanup">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+<div class="viewcode-block" id="IEngine.cleanup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cleans DDP variables and processes.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
