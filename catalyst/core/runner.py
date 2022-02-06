@@ -297,8 +297,6 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler."""
-        # self.batch = self.engine.sync_device(tensor_or_module=self.batch)
-
         if isinstance(self.batch, dict):
             self.batch_size = len(next(iter(self.batch.values())))
         else:

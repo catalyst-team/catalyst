@@ -1,2 +1,3 @@
 xmltodict
 mean-average-precision
+catalyst==21.12

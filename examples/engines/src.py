@@ -7,6 +7,7 @@ from catalyst import dl, SETTINGS
 E2E = {
     "cpu": dl.CPUEngine,
     "gpu": dl.GPUEngine,
+    "de": dl.DeviceEngine,
     "gpu-amp": partial(dl.GPUEngine, fp16=True),
     "dp": dl.DataParallelEngine,
     "dp-amp": partial(dl.DataParallelEngine, fp16=True),

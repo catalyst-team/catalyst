@@ -341,6 +341,8 @@ class TqdmCallback(Callback):
 
     def on_loader_start(self, runner: "IRunner"):
         """Init tqdm progress bar."""
+        if runner.engine.process_index > 0:
+            pass
         self.step = 0
         self.tqdm = tqdm(
             total=runner.loader_batch_len,
@@ -350,6 +352,8 @@ class TqdmCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner"):
         """Update tqdm progress bar at the end of each batch."""
+        if runner.engine.process_index > 0:
+            pass
         batch_metrics = {k: float(v) for k, v in runner.batch_metrics.items()}
         self.tqdm.set_postfix(
             **{
@@ -361,6 +365,8 @@ class TqdmCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner"):
         """Cleanup and close tqdm progress bar."""
+        if runner.engine.process_index > 0:
+            pass
         # self.tqdm.visible = False
         # self.tqdm.leave = True
         # self.tqdm.disable = True
@@ -371,6 +377,8 @@ class TqdmCallback(Callback):
 
     def on_exception(self, runner: "IRunner"):
         """Called if an Exception was raised."""
+        if runner.engine.process_index > 0:
+            pass
         ex = runner.exception
         if not ((ex is not None) and isinstance(ex, BaseException)):
             return

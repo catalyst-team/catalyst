@@ -4,20 +4,16 @@ from typing import Optional
 from argparse import ArgumentParser, RawTextHelpFormatter
 import os
 
-from common import E2E, parse_ddp_params
-
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl
-from catalyst.contrib import (
-    CIFAR10,
-    Compose,
-    ImageToTensor,
-    NormalizeImage,
-    ResidualBlock,
-)
+from catalyst.contrib.data import Compose, ImageToTensor, NormalizeImage
+from catalyst.contrib.datasets import CIFAR10
+from catalyst.contrib.layers import ResidualBlock
+
+from src import E2E, parse_ddp_params
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -78,13 +74,13 @@ class CustomRunner(dl.IRunner):
         if self.engine.is_ddp:
             train_sampler = DistributedSampler(
                 train_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=True,
             )
             valid_sampler = DistributedSampler(
                 valid_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=False,
             )
@@ -122,6 +118,7 @@ class CustomRunner(dl.IRunner):
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
+            "backward": dl.BackwardCallback(metric_key="loss"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "accuracy": dl.AccuracyCallback(
@@ -134,7 +131,7 @@ class CustomRunner(dl.IRunner):
                 minimize=False,
                 topk=1,
             ),
-            # "tqdm": dl.TqdmCallback(),
+            "tqdm": dl.TqdmCallback(),
         }
 
     def handle_batch(self, batch):

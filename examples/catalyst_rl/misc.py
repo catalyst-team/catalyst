@@ -159,7 +159,7 @@ class GameCallback(dl.Callback):
 
             time.sleep(1.0)
 
-    def on_stage_start(self, runner: dl.IRunner) -> None:
+    def on_experiment_start(self, runner: dl.IRunner) -> None:
         # db sync
         self._sync_checkpoint(runner=runner)
         # self.db_server.add_message(IRLDatabaseMessage.ENABLE_TRAINING)  # deprecated?
@@ -208,7 +208,7 @@ class GameCallback(dl.Callback):
         self._sync_checkpoint(runner=runner)
         self.replay_buffer.recalculate_index()
 
-    def on_stage_end(self, runner: dl.IRunner) -> None:
+    def on_experiment_end(self, runner: dl.IRunner) -> None:
         from db import IRLDatabaseMessage
 
         for p in self.samplers:

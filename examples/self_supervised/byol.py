@@ -1,15 +1,16 @@
 # flake8: noqa
 import argparse
 
-from datasets import DATASETS
 from sklearn.linear_model import LogisticRegression
 
 from torch import nn, optim
 
 from catalyst import dl, utils
 from catalyst.contrib.losses import NTXentLoss
-from .common import add_arguments, get_contrastive_model, get_loaders
-from .runner import SelfSupervisedRunner
+
+from src.common import add_arguments, get_contrastive_model, get_loaders
+from src.datasets import DATASETS
+from src.runner import SelfSupervisedRunner
 
 if __name__ == "__main__":
     # parse args
@@ -45,6 +46,7 @@ if __name__ == "__main__":
             target_key="target_projection_right",
             metric_key="loss",
         ),
+        dl.BackwardCallback(metric_key="loss"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallbackWrapper(
             dl.SoftUpdateCallaback(

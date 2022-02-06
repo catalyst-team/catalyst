@@ -11,7 +11,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import IterableDataset
 
-from catalyst import dl, metrics, utils
+from catalyst import dl, metrics
+from catalyst.contrib.utils.torch import get_optimal_inner_init, outer_init
 
 # On-policy common
 
@@ -127,8 +128,8 @@ def generate_sessions(
 
 
 def get_network(env, num_hidden: int = 128):
-    inner_fn = utils.get_optimal_inner_init(nn.ReLU)
-    outer_fn = utils.outer_init
+    inner_fn = get_optimal_inner_init(nn.ReLU)
+    outer_fn = outer_init
 
     network = torch.nn.Sequential(
         nn.Linear(env.observation_space.shape[0], num_hidden),
@@ -261,9 +262,7 @@ if __name__ == "__main__":
 
     runner = CustomRunner(gamma=gamma)
     runner.train(
-        engine=dl.DeviceEngine(
-            "cpu"
-        ),  # for simplicity reasons, let's run everything on cpu
+        engine=dl.CPUEngine(),  # for simplicity reasons, let's run everything on cpu
         model=model,
         optimizer=optimizer,
         loaders=loaders,

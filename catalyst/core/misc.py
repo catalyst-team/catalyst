@@ -17,9 +17,6 @@ from catalyst.typing import (
     RunnerCriterion,
     RunnerOptimizer,
     RunnerScheduler,
-    TorchCriterion,
-    TorchOptimizer,
-    TorchScheduler,
 )
 
 
@@ -122,25 +119,27 @@ def check_callbacks(
     callback_exists = lambda callback_fn: any(
         callback_isinstance(x, callback_fn) for x in callbacks.values()
     )
-    if isinstance(criterion, TorchCriterion) and not callback_exists(ICriterionCallback):
+    if criterion is not None and not callback_exists(ICriterionCallback):
         warnings.warn(
             "No ``ICriterionCallback/CriterionCallback`` were found "
             "while runner.criterion is not None."
             "Do you compute the loss during ``runner.handle_batch``?"
         )
-    if isinstance(criterion, TorchCriterion) and not callback_exists(IBackwardCallback):
+    if (criterion is not None or optimizer is not None) and not callback_exists(
+        IBackwardCallback
+    ):
         warnings.warn(
             "No ``IBackwardCallback/BackwardCallback`` were found "
-            "while runner.criterion is not None."
+            "while runner.criterion/optimizer is not None."
             "Do you backward the loss during ``runner.handle_batch``?"
         )
-    if isinstance(optimizer, TorchOptimizer) and not callback_exists(IOptimizerCallback):
+    if optimizer is not None and not callback_exists(IOptimizerCallback):
         warnings.warn(
             "No ``IOptimizerCallback/OptimizerCallback`` were found "
             "while runner.optimizer is not None."
             "Do run optimisation step pass during ``runner.handle_batch``?"
         )
-    if isinstance(scheduler, TorchScheduler) and not callback_exists(ISchedulerCallback):
+    if scheduler is not None and not callback_exists(ISchedulerCallback):
         warnings.warn(
             "No ``ISchedulerCallback/SchedulerCallback`` were found "
             "while runner.scheduler is not None."

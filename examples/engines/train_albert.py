@@ -3,7 +3,6 @@
 from typing import Optional
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from common import E2E, parse_ddp_params
 from datasets import load_dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_scheduler
 
@@ -12,6 +11,8 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl
+
+from src import E2E, parse_ddp_params
 
 
 class CustomRunner(dl.IRunner):
@@ -60,13 +61,13 @@ class CustomRunner(dl.IRunner):
         if self.engine.is_ddp:
             train_sampler = DistributedSampler(
                 train_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=True,
             )
             valid_sampler = DistributedSampler(
                 valid_data,
-                num_replicas=self.engine.world_size,
+                num_replicas=self.engine.num_processes,
                 rank=self.engine.rank,
                 shuffle=False,
             )
@@ -116,6 +117,7 @@ class CustomRunner(dl.IRunner):
             "criterion": dl.CriterionCallback(
                 input_key="logits", target_key="labels", metric_key="loss"
             ),
+            "backward": dl.BackwardCallback(metric_key="loss"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "scheduler": dl.SchedulerCallback(
                 loader_key="valid", metric_key="loss", mode="batch"
@@ -130,7 +132,7 @@ class CustomRunner(dl.IRunner):
                 minimize=False,
                 topk=1,
             ),
-            # "tqdm": dl.TqdmCallback(),
+            "tqdm": dl.TqdmCallback(),
         }
 
     def handle_batch(self, batch):

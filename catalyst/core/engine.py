@@ -31,7 +31,13 @@ class IEngine(Accelerator):
         - :py:mod:`catalyst.engines.torch.GPUEngine`
         - :py:mod:`catalyst.engines.torch.DataParallelEngine`
         - :py:mod:`catalyst.engines.torch.DistributedDataParallelEngine`
+        - :py:mod:`catalyst.engines.torch.DistributedXLAEngine`
     """
+
+    @property
+    def is_ddp(self):
+        """Boolean flag for distributed type."""
+        return self.distributed_type != DistributedType.NO
 
     @staticmethod
     def spawn(fn: Callable, *args, **kwargs):

@@ -10,7 +10,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import IterableDataset
 
-from catalyst import dl, metrics, utils
+from catalyst import dl, metrics
+from catalyst.contrib.utils.torch import get_optimal_inner_init, outer_init
+from catalyst.utils.torch import set_requires_grad
 
 # Off-policy common
 
@@ -131,8 +133,8 @@ def generate_sessions(
 
 
 def get_network(env, num_hidden: int = 128):
-    inner_fn = utils.get_optimal_inner_init(nn.ReLU)
-    outer_fn = utils.outer_init
+    inner_fn = get_optimal_inner_init(nn.ReLU)
+    outer_fn = outer_init
 
     network = torch.nn.Sequential(
         nn.Linear(env.observation_space.shape[0], num_hidden),
@@ -196,7 +198,7 @@ class GameCallback(dl.Callback):
         self.session_steps = 0
 
     def on_batch_end(self, runner: dl.IRunner):
-        if runner.global_batch_step % self.session_period == 0:
+        if runner.batch_step % self.session_period == 0:
             self.actor.eval()
 
             session_reward, session_steps = generate_session(
@@ -329,7 +331,7 @@ if __name__ == "__main__":
     replay_buffer = ReplayBuffer(buffer_size)
 
     network, target_network = get_network(env), get_network(env)
-    utils.set_requires_grad(target_network, requires_grad=False)
+    set_requires_grad(target_network, requires_grad=False)
     models = nn.ModuleDict({"origin": network, "target": target_network})
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(network.parameters(), lr=lr)
@@ -341,9 +343,7 @@ if __name__ == "__main__":
 
     runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
     runner.train(
-        engine=dl.DeviceEngine(
-            "cpu"
-        ),  # for simplicity reasons, let's run everything on cpu
+        engine=dl.CPUEngine(),  # for simplicity reasons, let's run everything on cpu
         model=models,
         criterion=criterion,
         optimizer=optimizer,
