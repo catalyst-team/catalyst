@@ -36,6 +36,7 @@ class IEngine(Accelerator):
 
     @property
     def is_ddp(self):
+        """Boolean flag for distributed type."""
         return self.distributed_type != DistributedType.NO
 
     @staticmethod
