@@ -25,7 +25,7 @@ class ConsoleLogger(ILogger):
         super().__init__(log_batch_metrics=False, log_epoch_metrics=True)
         self._log_hparams = log_hparams
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the console."""
         if self._log_hparams:
             print(f"Hparams: {hparams}")
@@ -34,7 +34,7 @@ class ConsoleLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs loader and epoch metrics to stdout."""
         if scope == "loader":

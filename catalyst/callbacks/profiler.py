@@ -122,7 +122,7 @@ class ProfilerCallback(Callback):
             return True
         return False
 
-    def _enter_profiler(self, runner: IRunner) -> None:
+    def _enter_profiler(self, runner: "IRunner") -> None:
         loader_key = runner.loader_key
         epoch_step = runner.epoch_step
 
@@ -133,7 +133,7 @@ class ProfilerCallback(Callback):
             self.profiler = torch.profiler.profile(**self.profiler_kwargs)
             self.profiler.__enter__()
 
-    def _exit_profiler(self, runner: IRunner) -> None:
+    def _exit_profiler(self, runner: "IRunner") -> None:
         loader_key = runner.loader_key
         epoch_step = runner.epoch_step
 
@@ -170,22 +170,22 @@ class ProfilerCallback(Callback):
 
             print(table_txt)
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Event handler."""
         if self.loader_key is None:
             self.loader_key = runner.loader_key  # use first loader for profile
 
         self._enter_profiler(runner)
 
-    def on_loader_end(self, runner: IRunner) -> None:
+    def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler."""
         self._exit_profiler(runner)
 
-    def on_batch_start(self, runner: IRunner) -> None:
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self._enter_profiler(runner)
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Event handler."""
         if self.profiler is None:
             return

@@ -160,7 +160,7 @@ class NeptuneLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
-        runner: IRunner,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
@@ -206,7 +206,7 @@ class NeptuneLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
@@ -228,7 +228,7 @@ class NeptuneLogger(ILogger):
             log_path = "/".join([self.base_namespace, "_images", tag])
         self._log_image(image, log_path)
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyper-parameters to Neptune."""
         self.run[f"{self.base_namespace}/hparams"] = hparams
 
@@ -236,7 +236,7 @@ class NeptuneLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs batch, epoch and loader metrics to Neptune."""
         if scope == "batch" and self.log_batch_metrics:

@@ -97,7 +97,7 @@ class WandbLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
-        runner: IRunner,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
@@ -129,7 +129,7 @@ class WandbLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to the logger."""
@@ -144,7 +144,7 @@ class WandbLogger(ILogger):
 
         self.run.log({f"{log_path}.png": wandb.Image(image)}, step=runner.sample_step)
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         self.run.config.update(hparams)
 
@@ -152,7 +152,7 @@ class WandbLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs batch and epoch metrics to wandb."""
         if scope == "batch" and self.log_batch_metrics:

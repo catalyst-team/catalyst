@@ -78,7 +78,7 @@ class CSVLogger(ILogger):
         log_line_csv = log_line_csv[:-1] + "\n"  # replace last "," with new line
         self.loggers[loader_key].write(log_line_csv)
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         save_config(config=hparams, path=os.path.join(self.logdir, "hparams.json"))
 
@@ -86,7 +86,7 @@ class CSVLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs epoch metrics to csv file."""
         if scope == "epoch":

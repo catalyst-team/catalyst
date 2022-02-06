@@ -112,7 +112,7 @@ class TensorboardLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to Tensorboard for current scope on current step."""
@@ -127,7 +127,7 @@ class TensorboardLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs batch and epoch metrics to Tensorboard."""
         if scope == "batch" and self.log_batch_metrics:

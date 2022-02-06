@@ -55,7 +55,7 @@ class ILogger:
     def log_artifact(
         self,
         tag: str,
-        runner: IRunner,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
@@ -67,13 +67,13 @@ class ILogger:
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to the logger."""
         pass
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         pass
 
@@ -81,7 +81,7 @@ class ILogger:
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs metrics to the logger."""
         pass

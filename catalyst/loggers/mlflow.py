@@ -154,7 +154,7 @@ class MLflowLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
-        runner: IRunner,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
@@ -166,13 +166,21 @@ class MLflowLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to MLflow for current scope on current step."""
-        mlflow.log_image(image, f"{tag}_scope_{scope}_epoch_{epoch_step}.png")
+        if scope == "batch" or scope == "loader":
+            log_path = "_".join(
+                [tag, f"epoch-{runner.epoch_step:04d}", f"loader-{runner.loader}"]
+            )
+        elif scope == "epoch":
+            log_path = "_".join([tag, f"epoch-{runner.epoch_step:04d}"])
+        elif scope == "experiment" or scope is None:
+            log_path = tag
+        mlflow.log_image(image, f"{log_path}.png")
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs parameters for current scope.
 
         Args:
@@ -184,7 +192,7 @@ class MLflowLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs batch and epoch metrics to MLflow."""
         if scope == "batch" and self.log_batch_metrics:

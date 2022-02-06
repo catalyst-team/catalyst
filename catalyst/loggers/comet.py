@@ -139,7 +139,7 @@ class CometLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
-        runner: IRunner,
+        runner: "IRunner",
         artifact: object = None,
         path_to_artifact: str = None,
         scope: str = None,
@@ -169,14 +169,14 @@ class CometLogger(ILogger):
         self,
         tag: str,
         image: np.ndarray,
-        runner: IRunner,
+        runner: "IRunner",
         scope: str = None,
     ) -> None:
         """Logs image to the logger."""
         image_name = f"{scope}_{tag}" if scope is not None else tag
         self.experiment.log_image(image, name=image_name, step=runner.batch_step)
 
-    def log_hparams(self, hparams: Dict, runner: IRunner = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
         self.experiment.log_parameters(hparams)
 
@@ -184,7 +184,7 @@ class CometLogger(ILogger):
         self,
         metrics: Dict[str, float],
         scope: str,
-        runner: IRunner,
+        runner: "IRunner",
     ) -> None:
         """Logs the metrics to the logger."""
         if (scope == "batch" and not self.log_batch_metrics) or (
