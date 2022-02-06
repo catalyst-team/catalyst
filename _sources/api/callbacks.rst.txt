@@ -9,11 +9,18 @@ Callbacks
 
 
 Run-based
-----------------------
+------------------------------
 .. automodule:: catalyst.callbacks
     :members:
     :show-inheritance:
 
+
+BackwardCallback
+~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.backward.BackwardCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
 
 BatchOverfitCallback
 ~~~~~~~~~~~~~~~~~~~~
@@ -43,9 +50,9 @@ CheckRunCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-ControlFlowCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.control_flow.ControlFlowCallback
+ControlFlowCallbackWrapper
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.control_flow.ControlFlowCallbackWrapper
     :members:
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
@@ -85,13 +92,6 @@ MixupCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-OnnxCallback
-~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.onnx.OnnxCallback
-    :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
-    :show-inheritance:
-
 OptimizerCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.optimizer.OptimizerCallback
@@ -120,20 +120,6 @@ ProfilerCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-PruningCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.pruning.PruningCallback
-    :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
-    :show-inheritance:
-
-QuantizationCallback
-~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.quantization.QuantizationCallback
-    :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
-    :show-inheritance:
-
 SchedulerCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.scheduler.SchedulerCallback
@@ -155,15 +141,8 @@ TqdmCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-TracingCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.tracing.TracingCallback
-    :members:
-    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
-    :show-inheritance:
-
 Metric-based Interfaces
------------------------
+------------------------------
 
 BatchMetricCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +159,7 @@ LoaderMetricCallback
     :show-inheritance:
 
 Metric-based
-----------------------
+------------------------------
 .. automodule:: catalyst.callbacks.metrics
     :members:
     :show-inheritance:

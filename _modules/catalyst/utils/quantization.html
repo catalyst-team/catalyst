@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.quantization &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.utils.quantization &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -265,19 +263,22 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">quantization</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">TorchModel</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 
 
 <div class="viewcode-block" id="quantize_model"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.quantization.quantize_model">[docs]</a><span class="k">def</span> <span class="nf">quantize_model</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">qconfig_spec</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;qint8&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">TorchModel</span><span class="p">,</span>
+    <span class="n">qconfig_spec</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;qint8&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TorchModel</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Function to quantize model weights.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model: model to be quantized</span>
-<span class="sd">        qconfig_spec (Dict, optional): quantization config in PyTorch format. Defaults to None.</span>
-<span class="sd">        dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.</span>
+<span class="sd">        qconfig_spec (Dict, optional): quantization config in PyTorch format.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        dtype: Type of weights after quantization.</span>
 <span class="sd">            Defaults to &quot;qint8&quot;.</span>
 
 <span class="sd">    Returns:</span>
@@ -312,7 +313,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

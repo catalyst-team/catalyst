@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.distributed &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.utils.distributed &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -260,13 +258,9 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.distributed</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
@@ -285,12 +279,9 @@
 
 
 <span class="k">def</span> <span class="nf">_is_xla_distributed_initialized</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xenv</span><span class="o">.</span><span class="n">TORCH_DIST_ROOT</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-
-<span class="k">def</span> <span class="nf">_is_slurm_available</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Checks if slurm is available.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="ow">and</span> <span class="s2">&quot;SLURM_NODEID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xenv</span><span class="o">.</span><span class="n">TORCH_DIST_ROOT</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_is_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -305,9 +296,15 @@
         <span class="n">parallel_wrappers</span> <span class="o">=</span> <span class="n">parallel_wrappers</span> <span class="o">+</span> <span class="p">(</span><span class="n">apex_DDP</span><span class="p">,)</span>
 
     <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">fairscale_required</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">fairscale.nn.data_parallel</span> <span class="kn">import</span> <span class="n">FullyShardedDataParallel</span><span class="p">,</span> <span class="n">ShardedDataParallel</span>
+        <span class="kn">from</span> <span class="nn">fairscale.nn.data_parallel</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="n">FullyShardedDataParallel</span><span class="p">,</span>
+            <span class="n">ShardedDataParallel</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="n">parallel_wrappers</span> <span class="o">=</span> <span class="n">parallel_wrappers</span> <span class="o">+</span> <span class="p">(</span><span class="n">ShardedDataParallel</span><span class="p">,</span> <span class="n">FullyShardedDataParallel</span><span class="p">)</span>
+        <span class="n">parallel_wrappers</span> <span class="o">=</span> <span class="n">parallel_wrappers</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">ShardedDataParallel</span><span class="p">,</span>
+            <span class="n">FullyShardedDataParallel</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">deepspeed_required</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">deepspeed</span> <span class="kn">import</span> <span class="n">DeepSpeedEngine</span><span class="p">,</span> <span class="n">PipelineEngine</span>
@@ -385,64 +382,6 @@
 <span class="c1">#     pass</span>
 
 
-<span class="c1"># TODO: rename</span>
-<span class="c1"># TODO: remove, restore? deprecated part</span>
-<span class="k">def</span> <span class="nf">_get_slurm_params</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Return slurm params for experiment run.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple with current node index, number of nodes, master node</span>
-<span class="sd">            and master port</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;scontrol show hostnames &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_NODELIST&quot;</span><span class="p">]</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="n">num_nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span><span class="p">])</span>
-    <span class="n">current_node</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURMD_NODENAME&quot;</span><span class="p">]</span>
-    <span class="n">master_node</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">cur_node_idx</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">current_node</span><span class="p">)</span>
-    <span class="n">job_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_ID&quot;</span><span class="p">]</span>
-    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cur_node_idx</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_node</span><span class="p">,</span> <span class="n">master_port</span>
-
-
-<span class="c1"># TODO: rename</span>
-<span class="c1"># TODO: remove, restore? deprecated part</span>
-<div class="viewcode-block" id="get_distributed_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_params">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_params</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Returns distributed params for experiment run.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dictionary with distributed params</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">))</span>
-    <span class="n">master_addr</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
-    <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">_is_slurm_available</span><span class="p">():</span>
-        <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">,</span> <span class="n">master_port</span> <span class="o">=</span> <span class="n">_get_slurm_params</span><span class="p">()</span>
-
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">,</span> <span class="n">master_port</span><span class="p">)</span>
-
-    <span class="n">workers_per_node</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-    <span class="n">start_rank</span> <span class="o">=</span> <span class="n">cur_node</span> <span class="o">*</span> <span class="n">workers_per_node</span>
-    <span class="n">world_size</span> <span class="o">=</span> <span class="n">num_nodes</span> <span class="o">*</span> <span class="n">workers_per_node</span>
-
-    <span class="n">local_rank</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCAL_RANK&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">rank</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;RANK&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">local_rank</span><span class="p">,</span> <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">local_rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">]]</span>
-    <span class="n">world_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;WORLD_SIZE&quot;</span><span class="p">,</span> <span class="n">world_size</span><span class="p">))</span>
-
-    <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-        <span class="n">local_rank</span><span class="o">=</span><span class="n">local_rank</span><span class="p">,</span>
-        <span class="n">start_rank</span><span class="o">=</span><span class="n">start_rank</span><span class="p">,</span>
-        <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span>
-        <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
-        <span class="n">master_addr</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">],</span>
-        <span class="n">master_port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">],</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">output</span></div>
-
-
 <div class="viewcode-block" id="sum_reduce"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.sum_reduce">[docs]</a><span class="k">def</span> <span class="nf">sum_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Reduce tensor to all processes and compute total (sum) value.</span>
 
@@ -476,8 +415,9 @@
     <span class="sd">&quot;&quot;&quot;Run all_gather on arbitrary picklable data (not necessarily tensors).</span>
 
 <span class="sd">    .. note::</span>
-<span class="sd">        if data on different devices then data in resulted list will be on the same devices.</span>
-<span class="sd">        Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128</span>
+<span class="sd">        if data on different devices</span>
+<span class="sd">        then data in resulted list will be on the same devices.</span>
+<span class="sd">        Source: http://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data: any picklable object</span>
@@ -514,7 +454,9 @@
         <span class="n">tensor_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">max_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">local_size</span> <span class="o">!=</span> <span class="n">max_size</span><span class="p">:</span>
-        <span class="n">padding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">max_size</span> <span class="o">-</span> <span class="n">local_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+        <span class="n">padding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">max_size</span> <span class="o">-</span> <span class="n">local_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span>
+        <span class="p">)</span>
         <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">tensor</span><span class="p">,</span> <span class="n">padding</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dist</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">tensor_list</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span>
 
@@ -550,31 +492,15 @@
         <span class="k">return</span> <span class="n">all_gather</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ddp_sync_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.ddp_sync_run">[docs]</a><span class="k">def</span> <span class="nf">ddp_sync_run</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Runs function in a synchronous way: 0-rank first and all other processes after.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        function: callable function</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rank</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
-    <span class="n">function</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span></div>
-
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_backend&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_rank&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_world_size&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_distributed_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_nn_from_ddp_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sum_reduce&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mean_reduce&quot;</span><span class="p">,</span>
     <span class="s2">&quot;all_gather&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ddp_reduce&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ddp_sync_run&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 
@@ -588,7 +514,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

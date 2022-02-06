@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.image &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.contrib.utils.image &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -273,7 +271,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
@@ -286,10 +284,12 @@
             <span class="n">_test_img</span> <span class="o">=</span> <span class="n">jpeg</span><span class="o">.</span><span class="n">JPEG</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;jpeg4py not available. &quot;</span> <span class="s2">&quot;To install jpeg4py, run `pip install jpeg4py`.&quot;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;jpeg4py not available. &quot;</span> <span class="s2">&quot;To install jpeg4py, run `pip install jpeg4py`.&quot;</span>
+        <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ex</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;libjpeg-turbo not available. &quot;</span>
             <span class="s2">&quot;To install libjpeg-turbo, run `apt-get install libturbojpeg`.&quot;</span>
         <span class="p">)</span>
@@ -485,7 +485,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

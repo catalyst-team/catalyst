@@ -2,9 +2,6 @@ Distributed training (multi-gpu, multi-node)
 ==============================================================================
 Catalyst supports automatic experiments scaling with distributed training support.
 
-Notebook API
-----------------------------------------------------
-
 Suppose you have the following pipeline with MNIST Classification:
 
 .. code-block:: python
@@ -73,7 +70,7 @@ As a best practice scenario for this case:
         def get_engine(self):
             return dl.DistributedDataParallelEngine()
 
-        def get_loaders(self, stage: str):
+        def get_loaders(self):
             train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
             valid_data = MNIST(os.getcwd(), train=False)
             loaders = {
@@ -114,37 +111,6 @@ As a best practice scenario for this case:
             # ),
         ]
     )
-
-Config API
-----------------------------------------------------
-To run Catalyst experiments in the DDP-mode,
-the only thing you need to do for the Config API - pass required flag to the ``run`` command:
-
-.. code-block:: bash
-
-    catalyst-dl run -C=/path/to/configs --distributed
-
-Launch your training
-----------------------------------------------------
-
-In your terminal,
-type the following line (adapt `script_name` to your script name ending with .py).
-
-.. code-block:: bash
-
-    python {script_name}
-
-You can vary availble GPUs with ``CUDA_VIBIBLE_DEVICES`` option, for example,
-
-.. code-block:: bash
-
-    # run only on 1st and 2nd GPUs
-    CUDA_VISIBLE_DEVICES="1,2" python {script_name}
-
-.. code-block:: bash
-
-    # run only on 0, 1st and 3rd GPUs
-    CUDA_VISIBLE_DEVICES="0,1,3" python {script_name}
 
 
 What will happen is that the same model will be copied on all your available GPUs.

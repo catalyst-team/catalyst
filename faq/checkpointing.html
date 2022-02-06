@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Checkpointing &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Checkpointing &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Config API" href="config_api.html" />
+    <link rel="next" title="Dataflow" href="dataflow.html" />
     <link rel="prev" title="Architecture" href="architecture.html" /> 
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
 </ul>
@@ -275,14 +273,21 @@ Catalyst creates the following checkpoints structure under selected <code class=
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logdir/
     code/ &lt;-- code of your experiment and dump of the catalyst, <span class="k">for</span> reproducibility --&gt;
     checkpoints/ &lt;-- theme of the topic --&gt;
-        <span class="o">{</span>stage_name<span class="o">}</span>.<span class="o">{</span>epoch_index<span class="o">}</span>.pth &lt;-- topK checkpoints based on model selection logic --&gt;
+        <span class="o">{</span>model/runner<span class="o">}</span>.<span class="o">{</span>epoch_index:04d<span class="o">}</span>.pth &lt;-- topK checkpoints based on model selection logic --&gt;
         best.pth &lt;-- best model based on specified model selection logic --&gt;
         last.pth &lt;-- last model checkpoint <span class="k">in</span> the whole experiment run --&gt;
-        &lt;-- the same checkpoints with <span class="sb">``</span>_full<span class="sb">``</span> prefix --&gt;
     ...
 </pre></div>
 </div>
-<p>These checkpoints are pure PyTorch checkpoints without any mixins with the following structure:</p>
+</section>
+<section id="checkpoints">
+<h2>Checkpoints<a class="headerlink" href="#checkpoints" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst saves 2 types of checkpoints:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model.{suffix}.pth</span></code> - stores only model state dict and could be easily used for deploying in the production.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">runner.{suffix}.pth</span></code> - stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be used for experiment analysis purposes.</p></li>
+</ul>
+<p>Runner checkpoints are pure PyTorch checkpoints without any mixins with the following structure:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>checkpoint.pth <span class="o">=</span> <span class="o">{</span>
     <span class="s2">&quot;model_state_dict&quot;</span>: model.state_dict<span class="o">()</span>,
     <span class="s2">&quot;criterion_state_dict&quot;</span>: criterion.state_dict<span class="o">()</span>,
@@ -292,16 +297,8 @@ Catalyst creates the following checkpoints structure under selected <code class=
 </pre></div>
 </div>
 </section>
-<section id="full-checkpoints">
-<h2>Full checkpoints<a class="headerlink" href="#full-checkpoints" title="Permalink to this headline">¶</a></h2>
-<p>Catalyst saves 2 types of checkpoints:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}.pth</span></code> - stores only model state dict and could be easily used for deploying in the production.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}_full.pth</span></code> - stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be used for experiment analysis purposes.</p></li>
-</ul>
-</section>
-<section id="save-model">
-<h2>Save model<a class="headerlink" href="#save-model" title="Permalink to this headline">¶</a></h2>
+<section id="save-runner">
+<h2>Save runner<a class="headerlink" href="#save-runner" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst has a user-friendly utils to save the model:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 
@@ -312,8 +309,8 @@ Catalyst creates the following checkpoints structure under selected <code class=
 </pre></div>
 </div>
 </section>
-<section id="load-model">
-<h2>Load model<a class="headerlink" href="#load-model" title="Permalink to this headline">¶</a></h2>
+<section id="load-runner">
+<h2>Load runner<a class="headerlink" href="#load-runner" title="Permalink to this headline">¶</a></h2>
 <p>With Catalyst utils it’s very easy to load models after experiment run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 
@@ -342,7 +339,7 @@ Catalyst creates the following checkpoints structure under selected <code class=
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="config_api.html" class="btn btn-neutral float-right" title="Config API" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="dataflow.html" class="btn btn-neutral float-right" title="Dataflow" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="architecture.html" class="btn btn-neutral" title="Architecture" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
@@ -354,7 +351,7 @@ Catalyst creates the following checkpoints structure under selected <code class=
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>
@@ -375,9 +372,9 @@ Catalyst creates the following checkpoints structure under selected <code class=
               <ul>
 <li><a class="reference internal" href="#">Checkpointing</a><ul>
 <li><a class="reference internal" href="#experiment-checkpoints">Experiment checkpoints</a></li>
-<li><a class="reference internal" href="#full-checkpoints">Full checkpoints</a></li>
-<li><a class="reference internal" href="#save-model">Save model</a></li>
-<li><a class="reference internal" href="#load-model">Load model</a></li>
+<li><a class="reference internal" href="#checkpoints">Checkpoints</a></li>
+<li><a class="reference internal" href="#save-runner">Save runner</a></li>
+<li><a class="reference internal" href="#load-runner">Load runner</a></li>
 </ul>
 </li>
 </ul>

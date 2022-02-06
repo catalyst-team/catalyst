@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._accuracy &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.metrics._accuracy &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -270,7 +268,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._topk_metric</span> <span class="kn">import</span> <span class="n">TopKMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._accuracy</span> <span class="kn">import</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">multilabel_accuracy</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="n">get_default_topk_args</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="n">get_default_topk</span>
 
 
 <div class="viewcode-block" id="AccuracyMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._accuracy.AccuracyMetric">[docs]</a><span class="k">class</span> <span class="nc">AccuracyMetric</span><span class="p">(</span><span class="n">TopKMetric</span><span class="p">):</span>
@@ -280,7 +278,7 @@
 <span class="sd">    (note that it&#39;s not a real accuracy std but std of accuracy over batch mean values).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        topk_args: list of `topk` for accuracy@topk computing</span>
+<span class="sd">        topk: list of `topk` for accuracy@topk computing</span>
 <span class="sd">        num_classes: number of classes</span>
 <span class="sd">        compute_on_call: if True, computes and returns metric value during metric call</span>
 <span class="sd">        prefix: metric prefix</span>
@@ -300,7 +298,7 @@
 <span class="sd">            [0.0, 0.8, 0.2, 0.0],</span>
 <span class="sd">        ])</span>
 <span class="sd">        targets = torch.tensor([3, 0, 2, 2])</span>
-<span class="sd">        metric = metrics.AccuracyMetric(topk_args=(1, 3))</span>
+<span class="sd">        metric = metrics.AccuracyMetric(topk=(1, 3))</span>
 
 <span class="sd">        metric.reset()</span>
 <span class="sd">        metric.update(outputs, targets)</span>
@@ -349,7 +347,10 @@
 
 <span class="sd">        # model training</span>
 <span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">            input_key=&quot;features&quot;,</span>
+<span class="sd">            output_key=&quot;logits&quot;,</span>
+<span class="sd">            target_key=&quot;targets&quot;,</span>
+<span class="sd">            loss_key=&quot;loss&quot;</span>
 <span class="sd">        )</span>
 <span class="sd">        runner.train(</span>
 <span class="sd">            model=model,</span>
@@ -377,11 +378,11 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Metric names depending on input parameters:</span>
 
-<span class="sd">        - ``topk_args = None`` ---&gt; see \</span>
-<span class="sd">            :py:mod:`catalyst.metrics.functional._misc.get_default_topk_args`</span>
-<span class="sd">        - ``topk_args = (1,)`` ---&gt; ``&quot;accuracy01&quot;``</span>
-<span class="sd">        - ``topk_args = (1, 3)`` ---&gt; ``&quot;accuracy01&quot;``, ``&quot;accuracy03&quot;``</span>
-<span class="sd">        - ``topk_args = (1, 3, 5)`` ---&gt; ``&quot;accuracy01&quot;``, ``&quot;accuracy03&quot;``, ``&quot;accuracy05&quot;``</span>
+<span class="sd">        - ``topk = None`` ---&gt; see \</span>
+<span class="sd">            :py:mod:`catalyst.metrics.functional._misc.get_default_topk`</span>
+<span class="sd">        - ``topk = (1,)`` ---&gt; ``&quot;accuracy01&quot;``</span>
+<span class="sd">        - ``topk = (1, 3)`` ---&gt; ``&quot;accuracy01&quot;``, ``&quot;accuracy03&quot;``</span>
+<span class="sd">        - ``topk = (1, 3, 5)`` ---&gt; ``&quot;accuracy01&quot;``, ``&quot;accuracy03&quot;``, ``&quot;accuracy05&quot;``</span>
 
 <span class="sd">        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or</span>
 <span class="sd">        ``runner.epoch_metrics``.</span>
@@ -389,23 +390,23 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">topk</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init AccuracyMetric&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span> <span class="o">=</span> <span class="n">topk_args</span> <span class="ow">or</span> <span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topk</span> <span class="o">=</span> <span class="n">topk</span> <span class="ow">or</span> <span class="n">get_default_topk</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">metric_name</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
             <span class="n">metric_function</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
-            <span class="n">topk_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span>
+            <span class="n">topk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topk</span><span class="p">,</span>
             <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
@@ -484,7 +485,10 @@
 
 <span class="sd">        # model training</span>
 <span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">            input_key=&quot;features&quot;,</span>
+<span class="sd">            output_key=&quot;logits&quot;,</span>
+<span class="sd">            target_key=&quot;targets&quot;,</span>
+<span class="sd">            loss_key=&quot;loss&quot;</span>
 <span class="sd">        )</span>
 <span class="sd">        runner.train(</span>
 <span class="sd">            model=model,</span>
@@ -509,7 +513,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -529,7 +533,8 @@
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update metric value with accuracy for new data and return intermediate metric value.</span>
+<span class="sd">        Update metric value with accuracy for new data</span>
+<span class="sd">        and return intermediate metric value.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            outputs: tensor of outputs</span>
@@ -544,7 +549,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">metric</span>
 
-    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update metric value with accuracy for new data and return intermediate metric</span>
 <span class="sd">        value in key-value format.</span>
@@ -586,7 +593,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

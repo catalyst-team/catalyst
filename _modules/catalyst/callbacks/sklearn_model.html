@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.sklearn_model &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.sklearn_model &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -262,13 +260,13 @@
   <h1>Source code for catalyst.callbacks.sklearn_model</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._accumulative</span> <span class="kn">import</span> <span class="n">AccumulativeMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 
 
 <div class="viewcode-block" id="SklearnModelCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.sklearn_model.SklearnModelCallback">[docs]</a><span class="k">class</span> <span class="nc">SklearnModelCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -276,191 +274,19 @@
 <span class="sd">    to give predictions on the valid loader.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        feature_key: keys of tensors that should be used as features in the classifier calculations</span>
-<span class="sd">        target_key: keys of tensors that should be used as targets in the classifier calculations</span>
+<span class="sd">        feature_key: keys of tensors that should be used as features</span>
+<span class="sd">            for the classifier fit</span>
+<span class="sd">        target_key: keys of tensors that should be used as targets</span>
+<span class="sd">            for the classifier fit</span>
 <span class="sd">        train_loader: train loader name</span>
 <span class="sd">        valid_loaders: valid loaders where model should be predicted</span>
 <span class="sd">        model_fn: fabric to produce objects with .fit and predict method</span>
 <span class="sd">        predict_method: predict method name for the classifier</span>
-<span class="sd">        predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary</span>
+<span class="sd">        predict_key: key to store computed classifier predicts in ``runner.batch``</span>
 <span class="sd">        model_kwargs: additional parameters for ``model_fn``</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        catalyst[ml] required for this callback</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            import os</span>
-
-<span class="sd">            from sklearn.linear_model import LogisticRegression</span>
-<span class="sd">            from torch.optim import Adam</span>
-<span class="sd">            from torch.utils.data import DataLoader</span>
-
-<span class="sd">            from catalyst import data, dl</span>
-<span class="sd">            from catalyst.contrib import data, datasets, models, nn</span>
-
-<span class="sd">            # 1. train and valid loaders</span>
-<span class="sd">            train_dataset = datasets.MnistMLDataset(</span>
-<span class="sd">                root=os.getcwd(),</span>
-<span class="sd">                download=True,</span>
-<span class="sd">                transform=transforms</span>
-<span class="sd">            )</span>
-<span class="sd">            sampler = data.BatchBalanceClassSampler(</span>
-<span class="sd">                labels=train_dataset.get_labels(), num_classes=5, num_samples=10</span>
-<span class="sd">            )</span>
-<span class="sd">            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)</span>
-
-<span class="sd">            valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)</span>
-<span class="sd">            valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)</span>
-
-<span class="sd">            # 2. model and optimizer</span>
-<span class="sd">            model = models.MnistSimpleNet(out_features=16)</span>
-<span class="sd">            optimizer = Adam(model.parameters(), lr=0.001)</span>
-
-<span class="sd">            # 3. criterion with triplets sampling</span>
-<span class="sd">            sampler_inbatch = data.HardTripletsSampler(norm_required=False)</span>
-<span class="sd">            criterion = nn.TripletMarginLossWithSampler(</span>
-<span class="sd">                margin=0.5,</span>
-<span class="sd">                sampler_inbatch=sampler_inbatch</span>
-<span class="sd">            )</span>
-
-<span class="sd">            # 4. training with catalyst Runner</span>
-<span class="sd">            class CustomRunner(dl.SupervisedRunner):</span>
-<span class="sd">                def handle_batch(self, batch) -&gt; None:</span>
-<span class="sd">                    images, targets = batch[&quot;features&quot;].float(), batch[&quot;targets&quot;].long()</span>
-<span class="sd">                    features = self.model(images)</span>
-<span class="sd">                    self.batch = {</span>
-<span class="sd">                        &quot;embeddings&quot;: features,</span>
-<span class="sd">                        &quot;targets&quot;: targets,</span>
-<span class="sd">                    }</span>
-
-<span class="sd">            callbacks = [</span>
-<span class="sd">                dl.ControlFlowCallback(</span>
-<span class="sd">                    dl.CriterionCallback(</span>
-<span class="sd">                        input_key=&quot;embeddings&quot;,</span>
-<span class="sd">                        target_key=&quot;targets&quot;,</span>
-<span class="sd">                        metric_key=&quot;loss&quot;),</span>
-<span class="sd">                    loaders=&quot;train&quot;,</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.SklearnModelCallback(</span>
-<span class="sd">                    feature_key=&quot;embeddings&quot;,</span>
-<span class="sd">                    target_key=&quot;targets&quot;,</span>
-<span class="sd">                    train_loader=&quot;train&quot;,</span>
-<span class="sd">                    valid_loaders=&quot;valid&quot;,</span>
-<span class="sd">                    model_fn=LogisticRegression,</span>
-<span class="sd">                    predict_method=&quot;predict_proba&quot;,</span>
-<span class="sd">                    predict_key=&quot;sklearn_predict&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.ControlFlowCallback(</span>
-<span class="sd">                    dl.AccuracyCallback(</span>
-<span class="sd">                        target_key=&quot;targets&quot;, input_key=&quot;sklearn_predict&quot;, topk_args=(1, 3)</span>
-<span class="sd">                    ),</span>
-<span class="sd">                    loaders=&quot;valid&quot;</span>
-<span class="sd">                )</span>
-<span class="sd">            ]</span>
-
-<span class="sd">            runner = CustomRunner(input_key=&quot;features&quot;, output_key=&quot;embeddings&quot;)</span>
-<span class="sd">            runner.train(</span>
-<span class="sd">                model=model,</span>
-<span class="sd">                criterion=criterion,</span>
-<span class="sd">                optimizer=optimizer,</span>
-<span class="sd">                callbacks=callbacks,</span>
-<span class="sd">                loaders={&quot;train&quot;: train_loader, &quot;valid&quot;: valid_loader},</span>
-<span class="sd">                verbose=False,</span>
-<span class="sd">                logdir=&quot;./logs&quot;,</span>
-<span class="sd">                valid_loader=&quot;valid&quot;,</span>
-<span class="sd">                valid_metric=&quot;accuracy&quot;,</span>
-<span class="sd">                minimize_valid_metric=False,</span>
-<span class="sd">                num_epochs=100,</span>
-<span class="sd">            )</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            import os</span>
-
-<span class="sd">            from torch.optim import Adam</span>
-<span class="sd">            from torch.utils.data import DataLoader</span>
-
-<span class="sd">            from catalyst import data, dl</span>
-<span class="sd">            from catalyst.contrib import data, datasets, models, nn</span>
-
-<span class="sd">            # 1. train and valid loaders</span>
-<span class="sd">            train_dataset = datasets.MnistMLDataset(</span>
-<span class="sd">                root=os.getcwd(),</span>
-<span class="sd">                download=True,</span>
-<span class="sd">                transform=transforms</span>
-<span class="sd">            )</span>
-<span class="sd">            sampler = data.BatchBalanceClassSampler(</span>
-<span class="sd">                labels=train_dataset.get_labels(), num_classes=5, num_samples=10</span>
-<span class="sd">            )</span>
-<span class="sd">            train_loader = DataLoader(dataset=train_dataset, batch_sampler=sampler)</span>
-
-<span class="sd">            valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)</span>
-<span class="sd">            valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)</span>
-
-<span class="sd">            # 2. model and optimizer</span>
-<span class="sd">            model = models.MnistSimpleNet(out_features=16)</span>
-<span class="sd">            optimizer = Adam(model.parameters(), lr=0.001)</span>
-
-<span class="sd">            # 3. criterion with triplets sampling</span>
-<span class="sd">            sampler_inbatch = data.HardTripletsSampler(norm_required=False)</span>
-<span class="sd">            criterion = nn.TripletMarginLossWithSampler(</span>
-<span class="sd">                margin=0.5,</span>
-<span class="sd">                sampler_inbatch=sampler_inbatch</span>
-<span class="sd">            )</span>
-
-<span class="sd">            # 4. training with catalyst Runner</span>
-<span class="sd">            class CustomRunner(dl.SupervisedRunner):</span>
-<span class="sd">                def handle_batch(self, batch) -&gt; None:</span>
-<span class="sd">                    images, targets = batch[&quot;features&quot;].float(), batch[&quot;targets&quot;].long()</span>
-<span class="sd">                    features = self.model(images)</span>
-<span class="sd">                    self.batch = {</span>
-<span class="sd">                        &quot;embeddings&quot;: features,</span>
-<span class="sd">                        &quot;targets&quot;: targets,</span>
-<span class="sd">                    }</span>
-
-<span class="sd">            callbacks = [</span>
-<span class="sd">                dl.ControlFlowCallback(</span>
-<span class="sd">                    dl.CriterionCallback(</span>
-<span class="sd">                        input_key=&quot;embeddings&quot;,</span>
-<span class="sd">                        target_key=&quot;targets&quot;,</span>
-<span class="sd">                        metric_key=&quot;loss&quot;),</span>
-<span class="sd">                    loaders=&quot;train&quot;,</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.SklearnModelCallback(</span>
-<span class="sd">                    feature_key=&quot;embeddings&quot;,</span>
-<span class="sd">                    target_key=&quot;targets&quot;,</span>
-<span class="sd">                    train_loader=&quot;train&quot;,</span>
-<span class="sd">                    valid_loaders=&quot;valid&quot;,</span>
-<span class="sd">                    model_fn=&quot;linear_model.LogisticRegression&quot;,</span>
-<span class="sd">                    predict_method=&quot;predict_proba&quot;,</span>
-<span class="sd">                    predict_key=&quot;sklearn_predict&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.ControlFlowCallback(</span>
-<span class="sd">                    dl.AccuracyCallback(</span>
-<span class="sd">                        target_key=&quot;targets&quot;, input_key=&quot;sklearn_predict&quot;, topk_args=(1, 3)</span>
-<span class="sd">                    ),</span>
-<span class="sd">                    loaders=&quot;valid&quot;</span>
-<span class="sd">                )</span>
-<span class="sd">            ]</span>
-
-<span class="sd">            runner = CustomRunner(input_key=&quot;features&quot;, output_key=&quot;embeddings&quot;)</span>
-<span class="sd">            runner.train(</span>
-<span class="sd">                model=model,</span>
-<span class="sd">                criterion=criterion,</span>
-<span class="sd">                optimizer=optimizer,</span>
-<span class="sd">                callbacks=callbacks,</span>
-<span class="sd">                loaders={&quot;train&quot;: train_loader, &quot;valid&quot;: valid_loader},</span>
-<span class="sd">                verbose=False,</span>
-<span class="sd">                logdir=&quot;./logs&quot;,</span>
-<span class="sd">                valid_loader=&quot;valid&quot;,</span>
-<span class="sd">                valid_metric=&quot;accuracy&quot;,</span>
-<span class="sd">                minimize_valid_metric=False,</span>
-<span class="sd">                num_epochs=100,</span>
-<span class="sd">            )</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -477,11 +303,11 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_fn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">base</span><span class="p">,</span> <span class="n">clf</span> <span class="o">=</span> <span class="n">model_fn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-            <span class="n">base</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sklearn.</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">model_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">base</span><span class="p">),</span> <span class="n">clf</span><span class="p">)</span>
+            <span class="n">model_fn</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_fn</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model_fn</span><span class="p">(),</span> <span class="n">predict_method</span><span class="p">),</span> <span class="s2">&quot;The classifier must have the predict method!&quot;</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="n">model_fn</span><span class="p">(),</span> <span class="n">predict_method</span>
+        <span class="p">),</span> <span class="s2">&quot;The classifier must have the predict method!&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_loader</span> <span class="o">=</span> <span class="n">train_loader</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">valid_loaders</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -516,7 +342,8 @@
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;The train loader has to be processed first!&quot;</span>
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;On batch end action: get data from runner&#39;s batch and update a loader storage with it</span>
+        <span class="sd">&quot;&quot;&quot;On batch end action: get data from runner&#39;s batch</span>
+<span class="sd">        and update a loader storage with it</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: runner for the experiment.</span>
@@ -531,11 +358,13 @@
             <span class="c1"># classifier predict</span>
             <span class="n">classifier_predict</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_method</span><span class="p">)</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">classifier_predict</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                <span class="n">predictions</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">device</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loader end hook: for the train loader train classifier/for the test check the quality</span>
+        <span class="sd">&quot;&quot;&quot;Loader end hook: for the train loader train classifier,</span>
+<span class="sd">        for the test check the quality.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
@@ -547,7 +376,7 @@
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">collected_size</span> <span class="o">==</span> <span class="n">loader_len</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;collected samples - </span><span class="si">{</span><span class="n">collected_size</span><span class="si">}</span><span class="s2"> != loader sample len - </span><span class="si">{</span><span class="n">loader_len</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;collected samples - </span><span class="si">{</span><span class="n">collected_size</span><span class="si">}</span><span class="s2"> != loader len - </span><span class="si">{</span><span class="n">loader_len</span><span class="si">}</span><span class="s2">!&quot;</span>
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
@@ -586,7 +415,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.losses.supervised_contrastive &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.contrib.losses.supervised_contrastive &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -275,17 +273,19 @@
 <span class="sd">        https://arxiv.org/pdf/2004.11362.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SupervisedContrastiveLoss.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.losses.supervised_contrastive.SupervisedContrastiveLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">pos_aggregation</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="SupervisedContrastiveLoss.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.losses.supervised_contrastive.SupervisedContrastiveLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">pos_aggregation</span><span class="o">=</span><span class="s2">&quot;in&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            tau: temperature</span>
-<span class="sd">            reduction (string, optional): specifies the reduction to apply to the output:</span>
+<span class="sd">            reduction: specifies the reduction to apply to the output:</span>
 <span class="sd">                ``&quot;none&quot;`` | ``&quot;mean&quot;`` | ``&quot;sum&quot;``.</span>
 <span class="sd">                ``&quot;none&quot;``: no reduction will be applied,</span>
 <span class="sd">                ``&quot;mean&quot;``: the sum of the output will be divided by the number of</span>
 <span class="sd">                positive pairs in the output,</span>
 <span class="sd">                ``&quot;sum&quot;``: the output will be summed.</span>
-<span class="sd">            pos_aggregation (string, optional): specifies the place of positive pairs aggregation:</span>
+<span class="sd">            pos_aggregation: specifies the place of positive pairs aggregation:</span>
 <span class="sd">                ``&quot;in&quot;`` | ``&quot;out&quot;``.</span>
 <span class="sd">                ``&quot;in&quot;``: maximization of log(average positive exponentiate similarity)</span>
 <span class="sd">                ``&quot;out&quot;``: maximization of average positive similarity</span>
@@ -302,10 +302,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span> <span class="o">=</span> <span class="n">pos_aggregation</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reduction should be: mean, sum, none. But got - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Reduction should be: mean, sum, none. But got - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="s2">&quot;out&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Positive aggregation should be: in or out. But got - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span><span class="si">}</span><span class="s2">!&quot;</span>
+                <span class="s2">&quot;Positive aggregation should be: in or out.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;But got - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span><span class="si">}</span><span class="s2">!&quot;</span>
             <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -322,21 +325,28 @@
         <span class="n">cosine_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">exp_cosine_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">cosine_matrix</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
         <span class="c1"># positive part of the loss</span>
-        <span class="n">pos_place</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pos_place</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
+        <span class="p">)</span>
         <span class="c1"># aggregation of postive pairs</span>
 
         <span class="n">number_of_positives</span> <span class="o">=</span> <span class="n">pos_place</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">number_of_positives</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There must be at least one positive example for each sample!&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;There must be at least one positive example for each sample!&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span> <span class="o">==</span> <span class="s2">&quot;in&quot;</span><span class="p">:</span>
-            <span class="n">pos_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_cosine_matrix</span> <span class="o">*</span> <span class="n">pos_place</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_self_similarity</span>
+            <span class="n">pos_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_cosine_matrix</span> <span class="o">*</span> <span class="n">pos_place</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_self_similarity</span>
             <span class="n">pos_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pos_loss</span><span class="p">)</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">number_of_positives</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_aggregation</span> <span class="o">==</span> <span class="s2">&quot;out&quot;</span><span class="p">:</span>
             <span class="n">pos_loss</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">exp_cosine_matrix</span><span class="p">)</span> <span class="o">*</span> <span class="n">pos_place</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_similarity</span>
+                <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">exp_cosine_matrix</span><span class="p">)</span> <span class="o">*</span> <span class="n">pos_place</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_similarity</span>
             <span class="p">)</span> <span class="o">/</span> <span class="n">number_of_positives</span>
 
         <span class="c1"># neg part of the loss</span>
@@ -350,6 +360,9 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="n">SupervisedContrastiveLoss</span><span class="p">]</span>
 </pre></div>
 
              </article>
@@ -362,7 +375,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

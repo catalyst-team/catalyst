@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.visualization &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.contrib.utils.visualization &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -265,50 +263,6 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="c1"># def tensor_to_ndimage(</span>
-<span class="c1">#     images: torch.Tensor,</span>
-<span class="c1">#     denormalize: bool = True,</span>
-<span class="c1">#     mean: Tuple[float, float, float] = _IMAGENET_MEAN,</span>
-<span class="c1">#     std: Tuple[float, float, float] = _IMAGENET_STD,</span>
-<span class="c1">#     move_channels_dim: bool = True,</span>
-<span class="c1">#     dtype=np.float32,</span>
-<span class="c1"># ) -&gt; np.ndarray:</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Convert float image(s) with standard normalization to</span>
-<span class="c1">#     np.ndarray with [0..1] when dtype is np.float32 and [0..255]</span>
-<span class="c1">#     when dtype is `np.uint8`.</span>
-<span class="c1">#</span>
-<span class="c1">#     Args:</span>
-<span class="c1">#         images: [B]xCxHxW float tensor</span>
-<span class="c1">#         denormalize: if True, multiply image(s) by std and add mean</span>
-<span class="c1">#         mean (Tuple[float, float, float]): per channel mean to add</span>
-<span class="c1">#         std (Tuple[float, float, float]): per channel std to multiply</span>
-<span class="c1">#         move_channels_dim: if True, convert tensor to [B]xHxWxC format</span>
-<span class="c1">#         dtype: result ndarray dtype. Only float32 and uint8 are supported</span>
-<span class="c1">#</span>
-<span class="c1">#     Returns:</span>
-<span class="c1">#         [B]xHxWxC np.ndarray of dtype</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     if denormalize:</span>
-<span class="c1">#         has_batch_dim = len(images.shape) == 4</span>
-<span class="c1">#</span>
-<span class="c1">#         mean = images.new_tensor(mean).view(*((1) if has_batch_dim else ()), len(mean), 1, 1)</span>
-<span class="c1">#         std = images.new_tensor(std).view(*((1) if has_batch_dim else ()), len(std), 1, 1)</span>
-<span class="c1">#</span>
-<span class="c1">#         images = images * std + mean</span>
-<span class="c1">#</span>
-<span class="c1">#     images = images.clamp(0, 1).numpy()</span>
-<span class="c1">#</span>
-<span class="c1">#     if move_channels_dim:</span>
-<span class="c1">#         images = np.moveaxis(images, -3, -1)</span>
-<span class="c1">#</span>
-<span class="c1">#     if dtype == np.uint8:</span>
-<span class="c1">#         images = (images * 255).round().astype(dtype)</span>
-<span class="c1">#     else:</span>
-<span class="c1">#         assert dtype == np.float32, &quot;Only float32 and uint8 are supported&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#     return images</span>
-
 
 <div class="viewcode-block" id="plot_confusion_matrix"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.visualization.plot_confusion_matrix">[docs]</a><span class="k">def</span> <span class="nf">plot_confusion_matrix</span><span class="p">(</span>
     <span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -385,30 +339,11 @@
     <span class="k">return</span> <span class="n">figure</span></div>
 
 
-<span class="c1"># def render_figure_to_numpy(figure):</span>
-<span class="c1">#     &quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-<span class="c1">#     import matplotlib</span>
-<span class="c1">#</span>
-<span class="c1">#     matplotlib.use(&quot;Agg&quot;)</span>
-<span class="c1">#     import matplotlib.pyplot as plt</span>
-<span class="c1">#</span>
-<span class="c1">#     plt.ioff()</span>
-<span class="c1">#</span>
-<span class="c1">#     figure.canvas.draw()</span>
-<span class="c1">#</span>
-<span class="c1">#     image = np.array(figure.canvas.renderer._renderer)</span>
-<span class="c1">#     plt.close(figure)</span>
-<span class="c1">#     del figure</span>
-<span class="c1">#</span>
-<span class="c1">#     return image</span>
-
-
 <div class="viewcode-block" id="render_figure_to_array"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.visualization.render_figure_to_array">[docs]</a><span class="k">def</span> <span class="nf">render_figure_to_array</span><span class="p">(</span><span class="n">figure</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Renders matplotlib&quot;s figure to tensor.&quot;&quot;&quot;</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
 
     <span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-
     <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">_renderer</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
     <span class="k">del</span> <span class="n">figure</span>
@@ -433,7 +368,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

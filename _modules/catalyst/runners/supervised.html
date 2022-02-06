@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.supervised &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.runners.supervised &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -301,61 +299,8 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import os</span>
-<span class="sd">        from torch import nn, optim</span>
-<span class="sd">        from torch.utils.data import DataLoader</span>
-<span class="sd">        from catalyst import dl, utils</span>
-<span class="sd">        from catalyst.data import ToTensor</span>
-<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
-
-<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
-<span class="sd">        criterion = nn.CrossEntropyLoss()</span>
-<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
-
-<span class="sd">        loaders = {</span>
-<span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
-<span class="sd">                batch_size=32</span>
-<span class="sd">            ),</span>
-<span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False),</span>
-<span class="sd">                batch_size=32</span>
-<span class="sd">            ),</span>
-<span class="sd">        }</span>
-
-<span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
-<span class="sd">        )</span>
-<span class="sd">        # model training</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            criterion=criterion,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            num_epochs=1,</span>
-<span class="sd">            callbacks=[</span>
-<span class="sd">                dl.AccuracyCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3)),</span>
-<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
-<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
-<span class="sd">            ],</span>
-<span class="sd">            logdir=&quot;./logs&quot;,</span>
-<span class="sd">            valid_loader=&quot;valid&quot;,</span>
-<span class="sd">            valid_metric=&quot;loss&quot;,</span>
-<span class="sd">            minimize_valid_metric=True,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            load_best_on_end=True,</span>
-<span class="sd">        )</span>
-<span class="sd">        # model inference</span>
-<span class="sd">        for prediction in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
-<span class="sd">            assert prediction[&quot;logits&quot;].detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -453,7 +398,7 @@
 <div class="viewcode-block" id="ISupervisedRunner.handle_batch"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.supervised.ISupervisedRunner.handle_batch">[docs]</a>    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to handle specified data batch.</span>
-<span class="sd">        Used to make a train/valid/infer stage during Experiment run.</span>
+<span class="sd">        Used to make a train/valid/infer step during Experiment run.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            batch: dictionary with data batches from DataLoader.</span>
@@ -474,7 +419,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

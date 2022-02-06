@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Overview: module code &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/settings.html">Settings</a></li>
 </ul>
@@ -258,7 +256,8 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>All modules for which code is available</h1>
-<ul><li><a href="catalyst/callbacks/batch_overfit.html">catalyst.callbacks.batch_overfit</a></li>
+<ul><li><a href="catalyst/callbacks/backward.html">catalyst.callbacks.backward</a></li>
+<li><a href="catalyst/callbacks/batch_overfit.html">catalyst.callbacks.batch_overfit</a></li>
 <li><a href="catalyst/callbacks/batch_transform.html">catalyst.callbacks.batch_transform</a></li>
 <li><a href="catalyst/callbacks/checkpoint.html">catalyst.callbacks.checkpoint</a></li>
 <li><a href="catalyst/callbacks/control_flow.html">catalyst.callbacks.control_flow</a></li>
@@ -277,16 +276,12 @@
 <li><a href="catalyst/callbacks/metrics/segmentation.html">catalyst.callbacks.metrics.segmentation</a></li>
 <li><a href="catalyst/callbacks/misc.html">catalyst.callbacks.misc</a></li>
 <li><a href="catalyst/callbacks/mixup.html">catalyst.callbacks.mixup</a></li>
-<li><a href="catalyst/callbacks/onnx.html">catalyst.callbacks.onnx</a></li>
 <li><a href="catalyst/callbacks/optimizer.html">catalyst.callbacks.optimizer</a></li>
 <li><a href="catalyst/callbacks/optuna.html">catalyst.callbacks.optuna</a></li>
 <li><a href="catalyst/callbacks/periodic_loader.html">catalyst.callbacks.periodic_loader</a></li>
 <li><a href="catalyst/callbacks/profiler.html">catalyst.callbacks.profiler</a></li>
-<li><a href="catalyst/callbacks/pruning.html">catalyst.callbacks.pruning</a></li>
-<li><a href="catalyst/callbacks/quantization.html">catalyst.callbacks.quantization</a></li>
 <li><a href="catalyst/callbacks/scheduler.html">catalyst.callbacks.scheduler</a></li>
 <li><a href="catalyst/callbacks/sklearn_model.html">catalyst.callbacks.sklearn_model</a></li>
-<li><a href="catalyst/callbacks/tracing.html">catalyst.callbacks.tracing</a></li>
 <li><a href="catalyst/contrib/data/sampler.html">catalyst.contrib.data.sampler</a></li>
 <li><a href="catalyst/contrib/data/sampler_inbatch.html">catalyst.contrib.data.sampler_inbatch</a></li>
 <li><a href="catalyst/contrib/data/transforms.html">catalyst.contrib.data.transforms</a></li>
@@ -332,16 +327,10 @@
 <li><a href="catalyst/core/engine.html">catalyst.core.engine</a></li>
 <li><a href="catalyst/core/logger.html">catalyst.core.logger</a></li>
 <li><a href="catalyst/core/runner.html">catalyst.core.runner</a></li>
-<li><a href="catalyst/core/trial.html">catalyst.core.trial</a></li>
 <li><a href="catalyst/data/dataset.html">catalyst.data.dataset</a></li>
 <li><a href="catalyst/data/loader.html">catalyst.data.loader</a></li>
 <li><a href="catalyst/data/sampler.html">catalyst.data.sampler</a></li>
-<li><a href="catalyst/engines/amp.html">catalyst.engines.amp</a></li>
-<li><a href="catalyst/engines/apex.html">catalyst.engines.apex</a></li>
-<li><a href="catalyst/engines/deepspeed.html">catalyst.engines.deepspeed</a></li>
-<li><a href="catalyst/engines/fairscale.html">catalyst.engines.fairscale</a></li>
 <li><a href="catalyst/engines/torch.html">catalyst.engines.torch</a></li>
-<li><a href="catalyst/engines/xla.html">catalyst.engines.xla</a></li>
 <li><a href="catalyst/loggers/comet.html">catalyst.loggers.comet</a></li>
 <li><a href="catalyst/loggers/console.html">catalyst.loggers.console</a></li>
 <li><a href="catalyst/loggers/csv.html">catalyst.loggers.csv</a></li>
@@ -380,10 +369,7 @@
 <li><a href="catalyst/metrics/functional/_r2_squared.html">catalyst.metrics.functional._r2_squared</a></li>
 <li><a href="catalyst/metrics/functional/_recall.html">catalyst.metrics.functional._recall</a></li>
 <li><a href="catalyst/metrics/functional/_segmentation.html">catalyst.metrics.functional._segmentation</a></li>
-<li><a href="catalyst/runners/config.html">catalyst.runners.config</a></li>
-<li><a href="catalyst/runners/hydra.html">catalyst.runners.hydra</a></li>
 <li><a href="catalyst/runners/runner.html">catalyst.runners.runner</a></li>
-<li><a href="catalyst/runners/self_supervised.html">catalyst.runners.self_supervised</a></li>
 <li><a href="catalyst/runners/supervised.html">catalyst.runners.supervised</a></li>
 <li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
 <li><a href="catalyst/utils/distributed.html">catalyst.utils.distributed</a></li>
@@ -391,8 +377,6 @@
 <li><a href="catalyst/utils/onnx.html">catalyst.utils.onnx</a></li>
 <li><a href="catalyst/utils/pruning.html">catalyst.utils.pruning</a></li>
 <li><a href="catalyst/utils/quantization.html">catalyst.utils.quantization</a></li>
-<li><a href="catalyst/utils/swa.html">catalyst.utils.swa</a></li>
-<li><a href="catalyst/utils/sys.html">catalyst.utils.sys</a></li>
 <li><a href="catalyst/utils/torch.html">catalyst.utils.torch</a></li>
 <li><a href="catalyst/utils/tracing.html">catalyst.utils.tracing</a></li>
 </ul>
@@ -407,7 +391,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

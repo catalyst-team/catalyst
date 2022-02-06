@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.pruning &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.utils.pruning &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -265,7 +263,7 @@
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">Module</span>
 <span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">prune</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 
 <span class="n">PRUNING_FN</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;l1_unstructured&quot;</span><span class="p">:</span> <span class="n">prune</span><span class="o">.</span><span class="n">l1_unstructured</span><span class="p">,</span>
@@ -290,8 +288,8 @@
 <span class="sd">                `&quot;l1_unstructured&quot;`. See pytorch docs for more details.</span>
 <span class="sd">        dim (int, optional): if you are using structured pruning method you need</span>
 <span class="sd">                to specify dimension. Defaults to None.</span>
-<span class="sd">        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.</span>
-<span class="sd">            Defaults to None.</span>
+<span class="sd">        l_norm (int, optional): if you are using</span>
+<span class="sd">            ln_structured you need to specify l_norm. Defaults to None.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If ``dim`` or ``l_norm`` is not defined when it&#39;s required.</span>
@@ -308,12 +306,14 @@
         <span class="k">if</span> <span class="s2">&quot;unstructured&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pruning_fn</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;If you are using structured pruning you&quot;</span> <span class="s2">&quot;need to specify dim in args&quot;</span>
+                    <span class="s2">&quot;If you are using structured pruning you&quot;</span>
+                    <span class="s2">&quot;need to specify dim in args&quot;</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">pruning_fn</span> <span class="o">==</span> <span class="s2">&quot;ln_structured&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">l_norm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;If you are using ln_unstructured you&quot;</span> <span class="s2">&quot;need to specify l_norm in args&quot;</span>
+                        <span class="s2">&quot;If you are using ln_unstructured you&quot;</span>
+                        <span class="s2">&quot;need to specify l_norm in args&quot;</span>
                     <span class="p">)</span>
                 <span class="n">pruning_fn</span> <span class="o">=</span> <span class="n">_wrap_pruning_fn</span><span class="p">(</span><span class="n">prune</span><span class="o">.</span><span class="n">ln_structured</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">l_norm</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -340,7 +340,8 @@
 <span class="sd">        model: Model to be pruned.</span>
 <span class="sd">        pruning_fn: Pruning function with API same as in torch.nn.utils.pruning.</span>
 <span class="sd">            pruning_fn(module, name, amount).</span>
-<span class="sd">        keys_to_prune: list of strings. Determines which tensor in modules will be pruned.</span>
+<span class="sd">        keys_to_prune: list of strings.</span>
+<span class="sd">            Determines which tensor in modules will be pruned.</span>
 <span class="sd">        amount: quantity of parameters to prune.</span>
 <span class="sd">            If float, should be between 0.0 and 1.0 and</span>
 <span class="sd">            represent the fraction of parameters to prune.</span>
@@ -350,8 +351,8 @@
 <span class="sd">            If None provided then will try to prune every module in model.</span>
 <span class="sd">        dim (int, optional): if you are using structured pruning method you need</span>
 <span class="sd">            to specify dimension. Defaults to None.</span>
-<span class="sd">        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.</span>
-<span class="sd">            Defaults to None.</span>
+<span class="sd">        l_norm (int, optional): if you are using</span>
+<span class="sd">            ln_structured you need to specify l_norm. Defaults to None.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        .. code-block:: python</span>
@@ -419,7 +420,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

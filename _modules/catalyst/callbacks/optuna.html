@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.optuna &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.optuna &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -278,11 +276,13 @@
 <span class="sd">    This callback can be used for early stopping (pruning) unpromising runs.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        loader_key: loader key for best model selection (based on metric score over the dataset)</span>
-<span class="sd">        metric_key: metric key for best model selection (based on metric score over the dataset)</span>
+<span class="sd">        trial:  Optuna.Trial for the experiment.</span>
+<span class="sd">        loader_key: loader key for best model selection</span>
+<span class="sd">            (based on metric score over the dataset)</span>
+<span class="sd">        metric_key: metric key for best model selection</span>
+<span class="sd">            (based on metric score over the dataset)</span>
 <span class="sd">        minimize: boolean flag to minimize the required metric</span>
 <span class="sd">        min_delta: minimal delta for metric improve</span>
-<span class="sd">        trial:  Optuna.Trial for experiment.</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -310,50 +310,27 @@
 
 <span class="sd">        study = optuna.create_study()</span>
 <span class="sd">        study.optimize(objective, n_trials=100, timeout=600)</span>
-
-<span class="sd">    Config API is supported through `catalyst-dl tune` command.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">trial</span><span class="p">:</span> <span class="s2">&quot;optuna.Trial&quot;</span><span class="p">,</span>
         <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
-        <span class="n">trial</span><span class="p">:</span> <span class="s2">&quot;optuna.Trial&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">External</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="n">trial</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">loader_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span> <span class="o">=</span> <span class="n">minimize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="n">MetricHandler</span><span class="p">(</span><span class="n">minimize</span><span class="o">=</span><span class="n">minimize</span><span class="p">,</span> <span class="n">min_delta</span><span class="o">=</span><span class="n">min_delta</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="n">trial</span>
-
-    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On stage start hook.</span>
-<span class="sd">        Takes ``optuna_trial`` from ``Experiment`` for future usage if needed.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: runner for current experiment</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: if no Optuna trial was found on stage start.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">trial</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">trial</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">trial</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trial</span><span class="p">,</span> <span class="n">optuna</span><span class="o">.</span><span class="n">Trial</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="n">trial</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;No Optuna trial found for logging&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On epoch end hook.</span>
-
-<span class="sd">        Considering prune or not to prune current run at current epoch.</span>
+        <span class="sd">&quot;&quot;&quot;Considering prune or not to prune current run at the end of the epoch.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: runner for current experiment</span>
@@ -364,13 +341,13 @@
         <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="p">)</span>
 
         <span class="c1"># @TODO: hack</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="o">.</span><span class="n">should_prune</span><span class="p">():</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Trial was pruned at epoch </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Trial was pruned at epoch </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">optuna</span><span class="o">.</span><span class="n">TrialPruned</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
@@ -387,7 +364,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

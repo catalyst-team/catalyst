@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.dataset &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.data.dataset &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -311,7 +309,8 @@
 <span class="sd">        transform_left: transform only for left batch</span>
 <span class="sd">        transform_right: transform only for right batch</span>
 <span class="sd">        transform_original: transforms which will be applied to save original in batch</span>
-<span class="sd">        is_target: the flag for selection does dataset return (sample, target) or only sample</span>
+<span class="sd">        is_target: the flag for selection does dataset return (sample, target)</span>
+<span class="sd">            or only sample</span>
 
 <span class="sd">    Example:</span>
 
@@ -320,7 +319,7 @@
 <span class="sd">        import torchvision</span>
 <span class="sd">        from torchvision.datasets import CIFAR10</span>
 
-<span class="sd">        from catalyst.contrib.data.dataset import SelfSupervisedDatasetWrapper</span>
+<span class="sd">        from catalyst.data.dataset import SelfSupervisedDatasetWrapper</span>
 
 <span class="sd">        transforms = torchvision.transforms.Compose(</span>
 <span class="sd">            [</span>
@@ -334,7 +333,10 @@
 <span class="sd">        )</span>
 
 <span class="sd">        cifar_dataset = CIFAR10(root=&quot;./data&quot;, download=True, transform=None)</span>
-<span class="sd">        cifar_contrastive = SelfSupervisedDatasetWrapper(cifar_dataset, transforms=transforms)</span>
+<span class="sd">        cifar_contrastive = SelfSupervisedDatasetWrapper(</span>
+<span class="sd">            cifar_dataset,</span>
+<span class="sd">            transforms=transforms</span>
+<span class="sd">        )</span>
 
 <span class="sd">    .. _`A Simple Framework for Contrastive Learning of Visual Representations`:</span>
 <span class="sd">        https://arxiv.org/abs/2002.05709</span>
@@ -356,11 +358,14 @@
 <span class="sd">            left and right output batch.</span>
 <span class="sd">            transform_left: transform only for left batch</span>
 <span class="sd">            transform_right: transform only for right batch</span>
-<span class="sd">            transform_original: transforms which will be applied to save original in batch</span>
-<span class="sd">            is_target: the flag for selection does dataset return (sample, target) or only sample</span>
+<span class="sd">            transform_original: transforms which will be applied</span>
+<span class="sd">                to save original in batch</span>
+<span class="sd">            is_target: the flag for selection does dataset return (sample, target)</span>
+<span class="sd">                or only sample</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: should be specified transform_left and transform_right simultaneously</span>
+<span class="sd">            ValueError: should be specified transform_left</span>
+<span class="sd">                and transform_right simultaneously</span>
 <span class="sd">                or only transforms</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -373,7 +378,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">transform_left</span> <span class="o">=</span> <span class="n">transforms</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Specify transform_left and transform_right simultaneously or only transforms.&quot;</span>
+                <span class="s2">&quot;Specify `transform_left` and `transform_right` simultaneously &quot;</span>
+                <span class="s2">&quot;or only `transforms`.&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transform_original</span> <span class="o">=</span> <span class="n">transform_original</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
@@ -397,7 +403,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-        <span class="n">transformed_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_original</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_original</span> <span class="k">else</span> <span class="n">sample</span>
+        <span class="n">transformed_sample</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transform_original</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_original</span> <span class="k">else</span> <span class="n">sample</span>
+        <span class="p">)</span>
         <span class="n">aug_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_left</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
         <span class="n">aug_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_right</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 
@@ -419,7 +427,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

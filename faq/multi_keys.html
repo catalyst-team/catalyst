@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Multiple input and output keys &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Multiple input and output keys &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Multistage runs (and finetuning)" href="multi_stage.html" />
+    <link rel="next" title="Optuna integration" href="optuna.html" />
     <link rel="prev" title="Multiple components" href="multi_components.html" /> 
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
 </ul>
@@ -398,69 +396,6 @@ and returns embeddings for input batches and distance between them:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>For config API:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
-    <span class="nt">logdir</span><span class="p">:</span> <span class="nl">&amp;logdir</span> <span class="l l-Scalar l-Scalar-Plain">./siamese_logs</span>
-    <span class="nt">seed</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
-
-<span class="nt">runner</span><span class="p">:</span>
-    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SupervisedRunner</span>
-    <span class="nt">input_key</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
-    <span class="nt">output_key</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first_emb</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second_emb</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">l2_distance</span>
-    <span class="nt">target_key</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">labels</span>
-    <span class="nt">loss_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
-
-<span class="nt">engine</span><span class="p">:</span>
-    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DeviceEngine</span>
-
-<span class="nt">model</span><span class="p">:</span>
-    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SiameseNet</span>  <span class="c1"># don&#39;t forget to register model!</span>
-    <span class="c1"># ...</span>
-
-<span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">console</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ConsoleLogger</span>
-    <span class="nt">tensorboard</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TensorboardLogger</span>
-        <span class="nt">logdir</span><span class="p">:</span> <span class="nv">*logdir</span>
-        <span class="nt">use_logdir_postfix</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
-
-<span class="nt">stages</span><span class="p">:</span>
-    <span class="nt">train</span><span class="p">:</span>
-        <span class="nt">num_epochs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-        <span class="nt">loaders</span><span class="p">:</span>
-            <span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
-            <span class="nt">num_workers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-        <span class="nt">criterion</span><span class="p">:</span>
-            <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ContrastiveLoss</span> <span class="c1"># don&#39;t forget to register loss!</span>
-            <span class="c1"># ...</span>
-        <span class="nt">optimizer</span><span class="p">:</span>
-            <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Adam</span>
-            <span class="nt">lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.001</span>
-        <span class="nt">callbacks</span><span class="p">:</span> <span class="nl">&amp;callbacks</span>
-            <span class="nt">loss</span><span class="p">:</span>
-                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CriterionCallback</span>
-                <span class="nt">input_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">l2_distance</span>
-                <span class="nt">target_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">labels</span>
-                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
-            <span class="nt">optimizer</span><span class="p">:</span>
-                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OptimizerCallback</span>
-                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
-            <span class="nt">saver</span><span class="p">:</span>
-                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CheckpointCallback</span>
-                <span class="nt">logdir</span><span class="p">:</span> <span class="nv">*logdir</span>
-                <span class="nt">loader_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">valid</span>
-                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
-                <span class="nt">minimize</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
-                <span class="nt">use_logdir_postfix</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
-</pre></div>
-</div>
 </section>
 
 
@@ -471,7 +406,7 @@ and returns embeddings for input batches and distance between them:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="multi_stage.html" class="btn btn-neutral float-right" title="Multistage runs (and finetuning)" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="optuna.html" class="btn btn-neutral float-right" title="Optuna integration" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="multi_components.html" class="btn btn-neutral" title="Multiple components" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
@@ -483,7 +418,7 @@ and returns embeddings for input batches and distance between them:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

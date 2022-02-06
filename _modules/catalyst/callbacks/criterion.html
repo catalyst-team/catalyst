@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.criterion &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.criterion &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -276,71 +274,10 @@
 <span class="sd">        criterion_key: A key to take a criterion in case</span>
 <span class="sd">            there are several of them, and they are in a dictionary format.</span>
 
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        # sample data</span>
-<span class="sd">        num_users, num_features, num_items = int(1e4), int(1e1), 10</span>
-<span class="sd">        X = torch.rand(num_users, num_features)</span>
-<span class="sd">        y = (torch.rand(num_users, num_items) &gt; 0.5).to(torch.float32)</span>
-
-<span class="sd">        # pytorch loaders</span>
-<span class="sd">        dataset = TensorDataset(X, y)</span>
-<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
-<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
-
-<span class="sd">        # model, criterion, optimizer, scheduler</span>
-<span class="sd">        model = torch.nn.Linear(num_features, num_items)</span>
-<span class="sd">        criterion = torch.nn.BCEWithLogitsLoss()</span>
-<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
-<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
-
-<span class="sd">        # model training</span>
-<span class="sd">        runner = dl.SupervisedRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
-<span class="sd">        )</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            criterion=criterion,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            scheduler=scheduler,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            num_epochs=3,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            callbacks=[</span>
-<span class="sd">                dl.BatchTransformCallback(</span>
-<span class="sd">                    transform=torch.sigmoid,</span>
-<span class="sd">                    scope=&quot;on_batch_end&quot;,</span>
-<span class="sd">                    input_key=&quot;logits&quot;,</span>
-<span class="sd">                    output_key=&quot;scores&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.CriterionCallback(</span>
-<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.AUCCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
-<span class="sd">                dl.HitrateCallback(</span>
-<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
-<span class="sd">                ),</span>
-<span class="sd">                dl.MRRCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.NDCGCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
-<span class="sd">                dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
-<span class="sd">                dl.SchedulerCallback(),</span>
-<span class="sd">                dl.CheckpointCallback(</span>
-<span class="sd">                    logdir=&quot;./logs&quot;, loader_key=&quot;valid&quot;, metric_key=&quot;loss&quot;, minimize=True</span>
-<span class="sd">                ),</span>
-<span class="sd">            ]</span>
-<span class="sd">        )</span>
-
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -369,17 +306,13 @@
     <span class="k">def</span> <span class="nf">_metric_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct criterion.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">get_attr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ICriterionCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;CriterionCallback&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CriterionCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
@@ -392,7 +325,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

@@ -28,7 +28,7 @@ After that you could stop the pipeline in the place you prefer, for example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics
-    from catalyst.data.cv import ToTensor
+    from catalyst.contrib.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = torch.nn.Linear(28 * 28, 10)

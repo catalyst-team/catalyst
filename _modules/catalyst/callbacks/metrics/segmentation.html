@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metrics.segmentation &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.metrics.segmentation &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -320,10 +318,15 @@
 <span class="sd">                x = batch[self._input_key]</span>
 <span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
 <span class="sd">                x_ = self.model(x_noise)</span>
-<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+<span class="sd">                self.batch = {</span>
+<span class="sd">                    self._input_key: x, self._output_key: x_, self._target_key: x</span>
+<span class="sd">                }</span>
 
 <span class="sd">        runner = CustomRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">            input_key=&quot;features&quot;,</span>
+<span class="sd">            output_key=&quot;scores&quot;,</span>
+<span class="sd">            target_key=&quot;targets&quot;,</span>
+<span class="sd">            loss_key=&quot;loss&quot;</span>
 <span class="sd">        )</span>
 <span class="sd">        # model training</span>
 <span class="sd">        runner.train(</span>
@@ -347,7 +350,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -433,10 +436,15 @@
 <span class="sd">                x = batch[self._input_key]</span>
 <span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
 <span class="sd">                x_ = self.model(x_noise)</span>
-<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+<span class="sd">                self.batch = {</span>
+<span class="sd">                    self._input_key: x, self._output_key: x_, self._target_key: x</span>
+<span class="sd">                }</span>
 
 <span class="sd">        runner = CustomRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">            input_key=&quot;features&quot;,</span>
+<span class="sd">            output_key=&quot;scores&quot;,</span>
+<span class="sd">            target_key=&quot;targets&quot;,</span>
+<span class="sd">            loss_key=&quot;loss&quot;</span>
 <span class="sd">        )</span>
 <span class="sd">        # model training</span>
 <span class="sd">        runner.train(</span>
@@ -460,7 +468,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -548,10 +556,15 @@
 <span class="sd">                x = batch[self._input_key]</span>
 <span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
 <span class="sd">                x_ = self.model(x_noise)</span>
-<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+<span class="sd">                self.batch = {</span>
+<span class="sd">                    self._input_key: x, self._output_key: x_, self._target_key: x</span>
+<span class="sd">                }</span>
 
 <span class="sd">        runner = CustomRunner(</span>
-<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">            input_key=&quot;features&quot;,</span>
+<span class="sd">            output_key=&quot;scores&quot;,</span>
+<span class="sd">            target_key=&quot;targets&quot;,</span>
+<span class="sd">            loss_key=&quot;loss&quot;</span>
 <span class="sd">        )</span>
 <span class="sd">        # model training</span>
 <span class="sd">        runner.train(</span>
@@ -575,7 +588,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -625,7 +638,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

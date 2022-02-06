@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Contrib &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/settings.html">Settings</a></li>
 </ul>
@@ -522,7 +520,7 @@ ControlFlowCallback.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>labels</strong> – list of labels for each elem in the dataset</p></li>
 <li><p><strong>exp_lambda</strong> – exponent figure for schedule</p></li>
-<li><p><strong>start_epoch</strong> – start epoch number, can be useful for multi-stage</p></li>
+<li><p><strong>start_epoch</strong> – start epoch number, can be useful for multistage</p></li>
 <li><p><strong>experiments</strong> – </p></li>
 <li><p><strong>max_d</strong> – if not None, limit on the difference between the most</p></li>
 <li><p><strong>and the rarest classes</strong><strong>, </strong><strong>heuristic</strong> (<em>frequent</em>) – </p></li>
@@ -1853,7 +1851,8 @@ Self-Supervised Learning via Redundancy Reduction</a>.</p>
 <dt id="catalyst.contrib.losses.circle.CircleLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.losses.circle.</code><code class="sig-name descname">CircleLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">gamma: float</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/losses/circle.html#CircleLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.losses.circle.CircleLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>CircleLoss from <a class="reference external" href="https://arxiv.org/abs/2002.10857">Circle Loss: A Unified Perspective of Pair Similarity Optimization</a> paper.</p>
+<p>CircleLoss from
+<a class="reference external" href="https://arxiv.org/abs/2002.10857">Circle Loss: A Unified Perspective of Pair Similarity Optimization</a> paper.</p>
 <p>Adapter from:
 <a class="reference external" href="https://github.com/TinyZeaMays/CircleLoss">https://github.com/TinyZeaMays/CircleLoss</a></p>
 <p class="rubric">Example</p>
@@ -2263,13 +2262,13 @@ Default: <code class="docutils literal notranslate"><span class="pre">50</span><
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tau</strong> – temperature</p></li>
-<li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the reduction to apply to the output:
+<li><p><strong>reduction</strong> – specifies the reduction to apply to the output:
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: no reduction will be applied,
 <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>: the sum of the output will be divided by the number of
 positive pairs in the output,
 <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>: the output will be summed.</p></li>
-<li><p><strong>pos_aggregation</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the place of positive pairs aggregation:
+<li><p><strong>pos_aggregation</strong> – specifies the place of positive pairs aggregation:
 <code class="docutils literal notranslate"><span class="pre">&quot;in&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;out&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;in&quot;</span></code>: maximization of log(average positive exponentiate similarity)
 <code class="docutils literal notranslate"><span class="pre">&quot;out&quot;</span></code>: maximization of average positive similarity</p></li>
@@ -2761,7 +2760,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

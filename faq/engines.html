@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engines &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Engines &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
 </ul>
@@ -271,254 +269,17 @@
 <p>Catalyst has engines - it’s an abstraction over different hardware like CPU,
 GPUs or TPU cores. Engine manages all hardware-dependent operations
 like initializations, loading checkpoints, saving experiment components in DDP setup,
-casting values in APEX/AMP or loss scaling, etc.</p>
+casting values in AMP or loss scaling, etc.</p>
 <p>Based on device availability there are 3 groups:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CPUEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">GPUEngine</span></code> - run experiments using one device like CPU or GPU.</p></li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">DeviceEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">AMPEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">APEXEngine</span></code> -</dt><dd><p>run experiments using one device like CPU or GPU</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">DataParallelEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DataParallelAMPEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DataParallelApexEngine</span></code> -</dt><dd><p>run experiments using multiple GPUs using one process</p>
+<dt><code class="docutils literal notranslate"><span class="pre">DataParallelEngine</span></code> -</dt><dd><p>run experiments using multiple GPUs within one process</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">DistributedDataParallelEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelAMPEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelApexEngine</span></code> -</dt><dd><p>run experiments using multiple GPUs using multiple processes</p>
-</dd>
-</dl>
-</li>
-</ul>
-<p>Based on hardware features there are also 3 groups:</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">DeviceEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DataParallelEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelEngine</span></code> -</dt><dd><p>pure PyTorch without anything else (fp32 training)</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">AMPEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DataParallelAMPEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelAMPEngine</span></code> -</dt><dd><p>training with PyTorch automatic mixed precision package
-(some operations in fp32 and other in fp16),
-more information you can find from <a class="reference external" href="https://pytorch.org/docs/stable/amp.html">PyTorch docs</a>.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">APEXEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DataParallelApexEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelApexEngine</span></code> -</dt><dd><p>training with Nvidia’s automatic mixed precision package
-more information you can find from <a class="reference external" href="https://github.com/NVIDIA/apex">Nvidia APEX docs</a>.</p>
-</dd>
-</dl>
-</li>
-</ul>
-<p>The easiest way to implement a new Engine is to inherit from an already existed one.</p>
-<p>For example, if you want to add functionality to a device engine you can inherit
-from <code class="docutils literal notranslate"><span class="pre">DeviceEngine</span></code> and overload some methods.</p>
-<p>This approach was used during the dev process and you can see that
-<code class="docutils literal notranslate"><span class="pre">DataParallelEngine</span></code> inherits from <code class="docutils literal notranslate"><span class="pre">DeviceEngine</span></code> and extends it.</p>
-<p>The same for <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelApexEngine</span></code> and
-<code class="docutils literal notranslate"><span class="pre">DistributedDataParallelAMPEngine</span></code> - they both inherited from <code class="docutils literal notranslate"><span class="pre">DistributedDataParallelEngine</span></code>.</p>
-<p>If you want to do it in a hard way then need to inherit from <code class="docutils literal notranslate"><span class="pre">IEngine</span></code> and implement the required methods:</p>
-<ul>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">rank</span></code> - it’s a DDP <strong>property</strong> and should return a rank number of a process.</dt><dd><p>If engine is used outside DDP then should always return <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@property</span>
-<span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">world_size</span></code> - it’s a DDP <strong>property</strong> and should return a total number of processes inside a process group.</dt><dd><p>If engine is used outside DDP then should always return <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@property</span>
-<span class="k">def</span> <span class="nf">world_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">1</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">is_master_process</span></code> - it’s a DDP <strong>property</strong> and it’s a simple indicator for a master process.</dt><dd><p>If engine is used outside DDP then should always return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@property</span>
-<span class="k">def</span> <span class="nf">is_master_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">is_worker_process</span></code> - it’s a DDP <strong>property</strong> and it’s a simple indicator that the current process isn’t a master process.</dt><dd><p>If engine is used outside DDP then should always return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@property</span>
-<span class="k">def</span> <span class="nf">is_worker_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">False</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">sync_device</span></code> - function to move PyTorch tensor or module to a device specified in engine.</dt><dd><p>In general, it wraps <cite>tensor_or_module.to(device)</cite> function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sync_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor_or_module</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">tensor_or_module</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">sync_tensor</span></code> - it’s a DDP function to synchronize tensor across processes and perform sum/mean/all_gather operation.</dt><dd><p>If engine is used outside DDP then should always return the same tensor.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sync_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">tensor</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">init_components</span></code> - function to initialize model, criterion, optimizer, scheduler on a device specified in engine.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
-
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">deinit_components</span></code> - it’s a DDP function to destroy process components.</dt><dd><p>If engine is used outside DDP then should always do nothing.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ddp example</span>
-<span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
-    <span class="n">dist</span><span class="o">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">zero_grad</span></code> - abstraction over``model.zero_grad()``.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">backward_loss</span></code> - abstraction over <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code>.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
-    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">optimizer_step</span></code> - abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer.step()</span></code>.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pack_checkpoint</span></code> - function to collect components state dicts for later save to checkpoint file.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">):</span>
-    <span class="n">content</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">content</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">content</span><span class="p">[</span><span class="s2">&quot;criterion_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">criterion</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">content</span><span class="p">[</span><span class="s2">&quot;optimizer_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">content</span><span class="p">[</span><span class="s2">&quot;scheduler_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">content</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">unpack_checkpoint</span></code> - function to setup components from checkpoint state dict.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">unpack_checkpoint</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">checkpoint</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">state_dicts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">):</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">state_dict</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">state_dicts</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
-        <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">state_dict</span><span class="si">}</span><span class="s2">_state_dict&quot;</span> <span class="ow">in</span> <span class="n">checkpoint</span> <span class="ow">and</span> <span class="n">part</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">part</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">state_dict</span><span class="si">}</span><span class="s2">_state_dict&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">save_checkpoint</span></code> - function to save checkpoint dict to file.</dt><dd><p>It is an abstraction over <code class="docutils literal notranslate"><span class="pre">torch.save</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">load_checkpoint</span></code> - function to load checkpoint dict from file.</dt><dd><p>It is an abstraction over <code class="docutils literal notranslate"><span class="pre">torch.load</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="k">lambda</span> <span class="n">storage</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">storage</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">checkpoint</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">autocast</span></code> - it’s a AMP function for automatic casting values to a FP16 during the forward propagation.</dt><dd><p>It wraps forward of a model like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">autocast</span><span class="p">():</span>
-    <span class="n">output</span><span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>If engine is used outside AMP then always should yield nothing.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">autocast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-    <span class="kn">import</span> <span class="nn">contextlib</span>
-
-    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">nullcontext</span><span class="p">(</span><span class="n">to_yield</span><span class="p">):</span>
-        <span class="k">yield</span> <span class="n">to_yield</span>
-
-    <span class="k">return</span> <span class="n">nullcontext</span><span class="p">()</span>
-</pre></div>
-</div>
+<dt><code class="docutils literal notranslate"><span class="pre">DistributedDataParallelEngine</span></code>, <code class="docutils literal notranslate"><span class="pre">DistributedXLAEngine</span></code> -</dt><dd><p>run experiments using multiple GPUs/TPUs within several processes</p>
 </dd>
 </dl>
 </li>
@@ -545,7 +306,7 @@ from <code class="docutils literal notranslate"><span class="pre">DeviceEngine</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

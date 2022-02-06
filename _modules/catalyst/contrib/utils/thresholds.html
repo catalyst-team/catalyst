@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.thresholds &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.contrib.utils.thresholds &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -302,9 +300,13 @@
 
 
 <div class="viewcode-block" id="get_binary_threshold"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.thresholds.get_binary_threshold">[docs]</a><span class="k">def</span> <span class="nf">get_binary_threshold</span><span class="p">(</span>
-    <span class="n">scores</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">objective</span><span class="p">:</span> <span class="n">METRIC_FN</span><span class="p">,</span> <span class="n">num_thresholds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">scores</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">objective</span><span class="p">:</span> <span class="n">METRIC_FN</span><span class="p">,</span>
+    <span class="n">num_thresholds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Finds best threshold for binary classification task based on cross-validation estimates.</span>
+    <span class="sd">&quot;&quot;&quot;Finds best threshold for binary classification task</span>
+<span class="sd">    based on cross-validation estimates.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        scores: estimated per-class scores/probabilities predicted by the model,</span>
@@ -363,7 +365,9 @@
 
     <span class="k">for</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">classes_by_threshold</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">class_index</span> <span class="ow">in</span> <span class="n">classes_by_threshold</span><span class="p">[</span><span class="n">threshold</span><span class="p">]:</span>
-            <span class="n">metric_value</span> <span class="o">=</span> <span class="n">objective</span><span class="p">(</span><span class="n">labels</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span>
+            <span class="n">metric_value</span> <span class="o">=</span> <span class="n">objective</span><span class="p">(</span>
+                <span class="n">labels</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">metric_value</span> <span class="o">&gt;</span> <span class="n">metrics</span><span class="p">[</span><span class="n">class_index</span><span class="p">]:</span>
                 <span class="n">metrics</span><span class="p">[</span><span class="n">class_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_value</span>
                 <span class="n">thresholds</span><span class="p">[</span><span class="n">class_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">threshold</span>
@@ -371,7 +375,9 @@
     <span class="k">return</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">thresholds</span></div>
 
 
-<div class="viewcode-block" id="get_multilabel_thresholds"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.thresholds.get_multilabel_thresholds">[docs]</a><span class="k">def</span> <span class="nf">get_multilabel_thresholds</span><span class="p">(</span><span class="n">scores</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">objective</span><span class="p">:</span> <span class="n">METRIC_FN</span><span class="p">):</span>
+<div class="viewcode-block" id="get_multilabel_thresholds"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.thresholds.get_multilabel_thresholds">[docs]</a><span class="k">def</span> <span class="nf">get_multilabel_thresholds</span><span class="p">(</span>
+    <span class="n">scores</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">objective</span><span class="p">:</span> <span class="n">METRIC_FN</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds best thresholds for multilabel classification task.</span>
 
 <span class="sd">    Args:</span>
@@ -389,7 +395,9 @@
 
     <span class="k">for</span> <span class="n">class_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
         <span class="n">best_metric</span><span class="p">,</span> <span class="n">best_threshold</span> <span class="o">=</span> <span class="n">get_binary_threshold</span><span class="p">(</span>
-            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span> <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span> <span class="n">objective</span><span class="o">=</span><span class="n">objective</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">],</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">metrics</span><span class="p">[</span><span class="n">class_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_metric</span>
         <span class="n">thresholds</span><span class="p">[</span><span class="n">class_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_threshold</span>
@@ -405,8 +413,8 @@
     <span class="n">num_repeats</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Finds best threshold for binary classification task</span>
-<span class="sd">    based on cross-validation estimates.</span>
+    <span class="sd">&quot;&quot;&quot;Finds best threshold</span>
+<span class="sd">    for binary classification task based on cross-validation estimates.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        scores: estimated per-class scores/probabilities predicted by the model,</span>
@@ -524,7 +532,9 @@
             <span class="n">current_thresholds</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">class_scores</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">class_thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">num</span><span class="o">=</span><span class="n">num_thresholds</span>
+                <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                <span class="n">scores</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="n">num</span><span class="o">=</span><span class="n">num_thresholds</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">class_thresholds</span><span class="p">:</span>
@@ -557,7 +567,8 @@
     <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Finds best thresholds for multilabel classification task with brute-force algorithm.</span>
+    <span class="sd">&quot;&quot;&quot;Finds best thresholds</span>
+<span class="sd">    for multilabel classification task with brute-force algorithm.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        scores: estimated per-class scores/probabilities predicted by the model</span>
@@ -603,7 +614,8 @@
     <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Finds best thresholds for multiclass classification task with brute-force algorithm.</span>
+    <span class="sd">&quot;&quot;&quot;Finds best thresholds</span>
+<span class="sd">    for multiclass classification task with brute-force algorithm.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        scores: estimated per-class scores/probabilities predicted by the model</span>
@@ -660,7 +672,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseline_thresholds</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="n">baseline_thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline_thresholds</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_classes</span>
         <span class="n">metric_value</span><span class="p">,</span> <span class="n">thresholds_value</span> <span class="o">=</span> <span class="n">get_multilabel_thresholds_greedy</span><span class="p">(</span>
-            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">baseline_thresholds</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="n">baseline_thresholds</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">metric_value</span> <span class="o">&gt;</span> <span class="n">best_metric</span><span class="p">:</span>
             <span class="n">best_metric</span> <span class="o">=</span> <span class="n">metric_value</span>
@@ -699,7 +714,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseline_thresholds</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="n">baseline_thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline_thresholds</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_classes</span>
         <span class="n">metric_value</span><span class="p">,</span> <span class="n">thresholds_value</span> <span class="o">=</span> <span class="n">get_multiclass_thresholds_greedy</span><span class="p">(</span>
-            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">baseline_thresholds</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="n">baseline_thresholds</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">metric_value</span> <span class="o">&gt;</span> <span class="n">best_metric</span><span class="p">:</span>
             <span class="n">best_metric</span> <span class="o">=</span> <span class="n">metric_value</span>
@@ -733,7 +751,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

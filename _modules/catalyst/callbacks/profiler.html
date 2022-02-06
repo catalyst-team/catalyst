@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.profiler &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.profiler &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -266,7 +264,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
@@ -289,13 +287,13 @@
 <span class="sd">        export_stacks_kwargs: arguments to pass to a ``profiler.export_stacks`` method.</span>
 <span class="sd">            If ``None`` then triggering ``profiler.export_stacks`` will be avoided.</span>
 
-<span class="sd">            Example of using **FlameGraph** tool:</span>
+<span class="sd">    Example of using **FlameGraph** tool for ``profiler.export_stacks``:</span>
 
-<span class="sd">            .. code-block:: bash</span>
+<span class="sd">    .. code-block:: bash</span>
 
-<span class="sd">                git clone https://github.com/brendangregg/FlameGraph</span>
-<span class="sd">                cd FlameGraph</span>
-<span class="sd">                ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks &gt; perf_viz.svg</span>
+<span class="sd">        git clone https://github.com/brendangregg/FlameGraph</span>
+<span class="sd">        cd FlameGraph</span>
+<span class="sd">        ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks &gt; perf_viz.svg</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Export to tensorboard and chrome trace mutually exclusive and specifying both of</span>
@@ -315,17 +313,11 @@
 <span class="sd">            from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">            loaders = {</span>
-<span class="sd">                &quot;train&quot;: DataLoader(</span>
-<span class="sd">                    MNIST(os.getcwd(), train=False),</span>
-<span class="sd">                    batch_size=32,</span>
-<span class="sd">                ),</span>
-<span class="sd">                &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                    MNIST(os.getcwd(), train=False),</span>
-<span class="sd">                    batch_size=32,</span>
-<span class="sd">                ),</span>
+<span class="sd">                &quot;train&quot;: DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),</span>
 <span class="sd">            }</span>
 
-<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))</span>
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(784, 10))</span>
 <span class="sd">            criterion = nn.CrossEntropyLoss()</span>
 <span class="sd">            optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)</span>
 <span class="sd">            runner = dl.SupervisedRunner()</span>
@@ -366,18 +358,18 @@
         <span class="n">export_chrome_trace_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">export_stacks_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">loader_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">=</span> <span class="n">num_batches</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">profiler_kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">profiler_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">profiler_kwargs</span>
         <span class="k">if</span> <span class="n">tensorboard_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;on_trace_ready&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">profiler_kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">profiler_kwargs</span><span class="p">[</span><span class="s2">&quot;on_trace_ready&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">tensorboard_trace_handler</span><span class="p">(</span>
-                <span class="n">tensorboard_path</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">profiler_kwargs</span><span class="p">[</span>
+                <span class="s2">&quot;on_trace_ready&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">tensorboard_trace_handler</span><span class="p">(</span><span class="n">tensorboard_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_chrome_trace_path</span> <span class="o">=</span> <span class="n">export_chrome_trace_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_stacks_kwargs</span> <span class="o">=</span> <span class="n">export_stacks_kwargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="o">=</span> <span class="kc">None</span>
@@ -386,15 +378,15 @@
     <span class="k">def</span> <span class="nf">_should_use_profiler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">==</span> <span class="n">loader_key</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">==</span> <span class="n">epoch</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_cnt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_counter</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_enter_profiler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">loader_key</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
-        <span class="n">epoch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span>
+        <span class="n">epoch_step</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_use_profiler</span><span class="p">(</span><span class="n">loader_key</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_use_profiler</span><span class="p">(</span><span class="n">loader_key</span><span class="p">,</span> <span class="n">epoch_step</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -403,15 +395,21 @@
 
     <span class="k">def</span> <span class="nf">_exit_profiler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">loader_key</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
-        <span class="n">epoch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span>
+        <span class="n">epoch_step</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_use_profiler</span><span class="p">(</span><span class="n">loader_key</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_use_profiler</span><span class="p">(</span><span class="n">loader_key</span><span class="p">,</span> <span class="n">epoch_step</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="s2">&quot;on_trace_ready&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler_kwargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_chrome_trace_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;on_trace_ready&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler_kwargs</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_chrome_trace_path</span>
+            <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">export_chrome_trace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">export_chrome_trace_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_stacks_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -425,57 +423,42 @@
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">table_txt</span><span class="p">)</span>
                 <span class="n">runner</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span>
-                    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;profiler&quot;</span><span class="p">,</span> <span class="n">artifact</span><span class="o">=</span><span class="s2">&quot;profiler.txt&quot;</span><span class="p">,</span> <span class="n">path_to_artifact</span><span class="o">=</span><span class="n">artifact_path</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;profiler&quot;</span><span class="p">,</span>
+                    <span class="n">artifact</span><span class="o">=</span><span class="s2">&quot;profiler.txt&quot;</span><span class="p">,</span>
+                    <span class="n">path_to_artifact</span><span class="o">=</span><span class="n">artifact_path</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="nb">print</span><span class="p">(</span><span class="n">table_txt</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On loader start action</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>  <span class="c1"># use first loader for profile</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_enter_profiler</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On loader end action</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exit_profiler</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On batch start action</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_enter_profiler</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On batch end action</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            runner: current runner</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_cnt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_counter</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span><span class="p">:</span>
             <span class="c1"># do a profiling step after each batch</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">batch_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_exit_profiler</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ProfilerCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
@@ -488,7 +471,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

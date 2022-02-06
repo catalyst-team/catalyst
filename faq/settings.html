@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Settings &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Settings &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Settings</a></li>
 </ul>
@@ -273,17 +271,13 @@
 <p>Catalyst has a wide variety of framework extensions availabe if you need them.
 The base Catalyst package made as light as possible to extend only the PyTorch.
 Nevertheless, there are much more availabe:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>albu<span class="o">]</span> <span class="c1"># + albumentations</span>
-pip install catalyst<span class="o">[</span>comet<span class="o">]</span> <span class="c1"># + comet_ml</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>comet<span class="o">]</span> <span class="c1"># + comet_ml</span>
 pip install catalyst<span class="o">[</span>cv<span class="o">]</span> <span class="c1"># + imageio, opencv, scikit-image, torchvision, Pillow</span>
 pip install catalyst<span class="o">[</span>deepspeed<span class="o">]</span> <span class="c1"># + deepspeed</span>
 pip install catalyst<span class="o">[</span>dev<span class="o">]</span> <span class="c1"># used for Catalyst development and documentaiton rendering</span>
-pip install catalyst<span class="o">[</span>fairscale<span class="o">]</span> <span class="c1"># + fairscale</span>
-pip install catalyst<span class="o">[</span>hydra<span class="o">]</span> <span class="c1"># + hydra-core, omegaconf</span>
 pip install catalyst<span class="o">[</span>ml<span class="o">]</span> <span class="c1"># + scipy, matplotlib, pandas, scikit-learn</span>
 pip install catalyst<span class="o">[</span>mlflow<span class="o">]</span> <span class="c1"># + mlflow</span>
 pip install catalyst<span class="o">[</span>neptune<span class="o">]</span> <span class="c1"># + neptune-client</span>
-pip install catalyst<span class="o">[</span>nifti<span class="o">]</span> <span class="c1"># + nibabel</span>
 pip install catalyst<span class="o">[</span>onnx-gpu<span class="o">]</span> <span class="c1"># + onnx, onnxruntime-gpu</span>
 pip install catalyst<span class="o">[</span>onnx<span class="o">]</span> <span class="c1"># + onnx, onnxruntime</span>
 pip install catalyst<span class="o">[</span>optuna<span class="o">]</span> <span class="c1"># + optuna</span>
@@ -300,9 +294,7 @@ Please see the documentaiton for notes about extra requirements.</p>
 <p>To make your workflow reproducible, you could create a <code class="docutils literal notranslate"><span class="pre">.catalyst</span></code> file under your project or root directory so that Catalyst could understand all needed requirements during framework initialization.
 For example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>catalyst<span class="o">]</span>
-<span class="nv">albu_required</span> <span class="o">=</span> <span class="nb">false</span>
 <span class="nv">cv_required</span> <span class="o">=</span> <span class="nb">false</span>
-<span class="nv">hydra_required</span> <span class="o">=</span> <span class="nb">false</span>
 <span class="nv">mlflow_required</span> <span class="o">=</span> <span class="nb">false</span>
 <span class="nv">ml_required</span> <span class="o">=</span> <span class="nb">true</span>
 <span class="nv">neptune_required</span> <span class="o">=</span> <span class="nb">false</span>
@@ -334,7 +326,7 @@ For example:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

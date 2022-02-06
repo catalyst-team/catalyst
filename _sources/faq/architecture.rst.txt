@@ -44,7 +44,7 @@ There are 5 entrypoints to the framework, which are preferale to use:
 
 .. code-block:: python
 
-    from catalyst import contrib
+    from catalyst.contrib import data as cdata, datasets, layers, losses, models, optimizers, schedulers, utils as cutils
     from catalyst import data
     from catalyst import dl
     from catalyst import metrics

@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Optuna integration &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Optuna integration &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Settings" href="settings.html" />
-    <link rel="prev" title="Multistage runs (and finetuning)" href="multi_stage.html" /> 
+    <link rel="prev" title="Multiple input and output keys" href="multi_keys.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
 </ul>
@@ -277,7 +275,6 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">ToTensor</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 
 
@@ -287,7 +284,7 @@
 
     <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
-            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
         <span class="p">),</span>
         <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
@@ -330,27 +327,6 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">study</span><span class="o">.</span><span class="n">best_value</span><span class="p">,</span> <span class="n">study</span><span class="o">.</span><span class="n">best_params</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="config-api">
-<h2>Config API<a class="headerlink" href="#config-api" title="Permalink to this headline">¶</a></h2>
-<p>Firstly, prepare the Optuna-based config. For example, like:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">model_params</span><span class="p">:</span>
-    <span class="nt">model</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SimpleNet</span>
-    <span class="nt">num_filters1</span><span class="p">:</span> <span class="s">&quot;int(trial.suggest_loguniform(&#39;num_filters1&#39;,</span><span class="nv"> </span><span class="s">4,</span><span class="nv"> </span><span class="s">32))&quot;</span>
-    <span class="nt">num_filters2</span><span class="p">:</span> <span class="s">&quot;int(trial.suggest_loguniform(&#39;num_filters2&#39;,</span><span class="nv"> </span><span class="s">4,</span><span class="nv"> </span><span class="s">32))&quot;</span>
-    <span class="nt">num_hiddens1</span><span class="p">:</span> <span class="s">&quot;int(trial.suggest_loguniform(&#39;num_hiddens1&#39;,</span><span class="nv"> </span><span class="s">32,</span><span class="nv"> </span><span class="s">128))&quot;</span>
-    <span class="nt">num_hiddens2</span><span class="p">:</span> <span class="s">&quot;int(trial.suggest_loguniform(&#39;num_hiddens2&#39;,</span><span class="nv"> </span><span class="s">32,</span><span class="nv"> </span><span class="s">128))&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">...</span>
-</pre></div>
-</div>
-<p>After that just run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl tune --config<span class="o">=</span>/path/to/config.yml --verbose
-</pre></div>
-</div>
-<p>You also can visualize current training progress with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICE</span><span class="o">=</span><span class="s2">&quot;&quot;</span> tensorboard --logdir<span class="o">=</span>/path/to/logdir
-</pre></div>
-</div>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
 </section>
 </section>
@@ -366,7 +342,7 @@
         <a href="settings.html" class="btn btn-neutral float-right" title="Settings" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="multi_stage.html" class="btn btn-neutral" title="Multistage runs (and finetuning)" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="multi_keys.html" class="btn btn-neutral" title="Multiple input and output keys" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -375,7 +351,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>
@@ -396,7 +372,6 @@
               <ul>
 <li><a class="reference internal" href="#">Optuna integration</a><ul>
 <li><a class="reference internal" href="#notebook-api">Notebook API</a></li>
-<li><a class="reference internal" href="#config-api">Config API</a></li>
 </ul>
 </li>
 </ul>

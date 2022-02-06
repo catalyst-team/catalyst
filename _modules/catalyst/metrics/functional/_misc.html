@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.functional._misc &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.metrics.functional._misc &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -261,15 +259,12 @@
               
   <h1>Source code for catalyst.metrics.functional._misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">process_multiclass_components</span><span class="p">(</span>
@@ -302,13 +297,16 @@
     <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># looks like we have scores/probabilities in our outputs</span>
         <span class="c1"># let&#39;s convert them to final model predictions</span>
-        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">argmax_dim</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">argmax_dim</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># as far as we expect the outputs/targets tensors to be int64</span>
         <span class="c1"># we could find number of classes as max available number</span>
         <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="nb">int</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -336,7 +334,9 @@
     <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">num_classes</span>
 
 
-<div class="viewcode-block" id="process_recsys_components"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._misc.process_recsys_components">[docs]</a><span class="k">def</span> <span class="nf">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="process_recsys_components"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._misc.process_recsys_components">[docs]</a><span class="k">def</span> <span class="nf">process_recsys_components</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    General pre-processing for calculation recsys metrics</span>
 
@@ -463,7 +463,10 @@
 
 
 <div class="viewcode-block" id="get_multiclass_statistics"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._misc.get_multiclass_statistics">[docs]</a><span class="k">def</span> <span class="nf">get_multiclass_statistics</span><span class="p">(</span>
-    <span class="n">outputs</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">argmax_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the number of true negative, false positive,</span>
@@ -612,7 +615,7 @@
     <span class="k">return</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">num_classes</span></div>
 
 
-<div class="viewcode-block" id="get_default_topk_args"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._misc.get_default_topk_args">[docs]</a><span class="k">def</span> <span class="nf">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_default_topk"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._misc.get_default_topk">[docs]</a><span class="k">def</span> <span class="nf">get_default_topk</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Calculate list params for ``Accuracy@k``.</span>
 
 <span class="sd">    Args:</span>
@@ -622,10 +625,10 @@
 <span class="sd">        iterable: array of accuracy arguments</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; get_default_topk_args(num_classes=4)</span>
+<span class="sd">        &gt;&gt;&gt; get_default_topk(num_classes=4)</span>
 <span class="sd">        [1, 3]</span>
 
-<span class="sd">        &gt;&gt;&gt; get_default_topk_args(num_classes=8)</span>
+<span class="sd">        &gt;&gt;&gt; get_default_topk(num_classes=8)</span>
 <span class="sd">        [1, 3, 5]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -666,7 +669,7 @@
     <span class="s2">&quot;get_binary_statistics&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_multiclass_statistics&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_multilabel_statistics&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_default_topk_args&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_default_topk&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 
@@ -680,7 +683,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

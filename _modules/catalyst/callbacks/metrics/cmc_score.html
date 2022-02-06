@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metrics.cmc_score &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.metrics.cmc_score &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -260,10 +258,15 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.callbacks.metrics.cmc_score</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span> <span class="nn">accelerate.state</span> <span class="kn">import</span> <span class="n">DistributedType</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">LoaderMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._cmc_score</span> <span class="kn">import</span> <span class="n">CMCMetric</span><span class="p">,</span> <span class="n">ReidCMCMetric</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
 <div class="viewcode-block" id="CMCScoreCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.cmc_score.CMCScoreCallback">[docs]</a><span class="k">class</span> <span class="nc">CMCScoreCallback</span><span class="p">(</span><span class="n">LoaderMetricCallback</span><span class="p">):</span>
@@ -283,7 +286,7 @@
 <span class="sd">        embeddings_key: embeddings key in output dict</span>
 <span class="sd">        labels_key: labels key in output dict</span>
 <span class="sd">        is_query_key: bool key True if current object is from query</span>
-<span class="sd">        topk_args: specifies which cmc@K to log</span>
+<span class="sd">        topk: specifies which cmc@K to log</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
 
@@ -328,7 +331,9 @@
 
 <span class="sd">        # 3. criterion with triplets sampling</span>
 <span class="sd">        sampler_inbatch = data.HardTripletsSampler(norm_required=False)</span>
-<span class="sd">        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)</span>
+<span class="sd">        criterion = nn.TripletMarginLossWithSampler(</span>
+<span class="sd">            margin=0.5, sampler_inbatch=sampler_inbatch</span>
+<span class="sd">        )</span>
 
 <span class="sd">        # 4. training with catalyst Runner</span>
 <span class="sd">        class CustomRunner(dl.SupervisedRunner):</span>
@@ -336,7 +341,7 @@
 <span class="sd">                if self.is_train_loader:</span>
 <span class="sd">                    images, targets = batch[&quot;features&quot;].float(), batch[&quot;targets&quot;].long()</span>
 <span class="sd">                    features = self.model(images)</span>
-<span class="sd">                    self.batch = {&quot;embeddings&quot;: features, &quot;targets&quot;: targets,}</span>
+<span class="sd">                    self.batch = {&quot;embeddings&quot;: features, &quot;targets&quot;: targets}</span>
 <span class="sd">                else:</span>
 <span class="sd">                    images, targets, is_query = (</span>
 <span class="sd">                        batch[&quot;features&quot;].float(),</span>
@@ -360,12 +365,15 @@
 <span class="sd">                    embeddings_key=&quot;embeddings&quot;,</span>
 <span class="sd">                    labels_key=&quot;targets&quot;,</span>
 <span class="sd">                    is_query_key=&quot;is_query&quot;,</span>
-<span class="sd">                    topk_args=[1],</span>
+<span class="sd">                    topk=[1],</span>
 <span class="sd">                ),</span>
 <span class="sd">                loaders=&quot;valid&quot;,</span>
 <span class="sd">            ),</span>
 <span class="sd">            dl.PeriodicLoaderCallback(</span>
-<span class="sd">                valid_loader_key=&quot;valid&quot;, valid_metric_key=&quot;cmc01&quot;, minimize=False, valid=2</span>
+<span class="sd">                valid_loader_key=&quot;valid&quot;,</span>
+<span class="sd">                valid_metric_key=&quot;cmc01&quot;,</span>
+<span class="sd">                minimize=False,</span>
+<span class="sd">                valid=2</span>
 <span class="sd">            ),</span>
 <span class="sd">        ]</span>
 
@@ -387,9 +395,9 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Metric names depending on input parameters:</span>
 
-<span class="sd">        - ``topk_args = (1,) or None`` ---&gt; ``&quot;cmc01&quot;``</span>
-<span class="sd">        - ``topk_args = (1, 3)`` ---&gt; ``&quot;cmc01&quot;``, ``&quot;cmc03&quot;``</span>
-<span class="sd">        - ``topk_args = (1, 3, 5)`` ---&gt; ``&quot;cmc01&quot;``, ``&quot;cmc03&quot;``, ``&quot;cmc05&quot;``</span>
+<span class="sd">        - ``topk = (1,) or None`` ---&gt; ``&quot;cmc01&quot;``</span>
+<span class="sd">        - ``topk = (1, 3)`` ---&gt; ``&quot;cmc01&quot;``, ``&quot;cmc03&quot;``</span>
+<span class="sd">        - ``topk = (1, 3, 5)`` ---&gt; ``&quot;cmc01&quot;``, ``&quot;cmc03&quot;``, ``&quot;cmc05&quot;``</span>
 
 <span class="sd">        You can find them in ``runner.batch_metrics``, ``runner.loader_metrics`` or</span>
 <span class="sd">        ``runner.epoch_metrics``.</span>
@@ -397,7 +405,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -405,7 +413,7 @@
         <span class="n">embeddings_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">labels_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">is_query_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">topk</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -415,13 +423,21 @@
                 <span class="n">embeddings_key</span><span class="o">=</span><span class="n">embeddings_key</span><span class="p">,</span>
                 <span class="n">labels_key</span><span class="o">=</span><span class="n">labels_key</span><span class="p">,</span>
                 <span class="n">is_query_key</span><span class="o">=</span><span class="n">is_query_key</span><span class="p">,</span>
-                <span class="n">topk_args</span><span class="o">=</span><span class="n">topk_args</span><span class="p">,</span>
+                <span class="n">topk</span><span class="o">=</span><span class="n">topk</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="p">[</span><span class="n">embeddings_key</span><span class="p">,</span> <span class="n">is_query_key</span><span class="p">],</span>
             <span class="n">target_key</span><span class="o">=</span><span class="p">[</span><span class="n">labels_key</span><span class="p">],</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">distributed_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">DistributedType</span><span class="o">.</span><span class="n">MULTI_GPU</span><span class="p">,</span>
+            <span class="n">DistributedType</span><span class="o">.</span><span class="n">TPU</span><span class="p">,</span>
+        <span class="p">),</span> <span class="s2">&quot;CMCScoreCallback could not work within ddp training&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_experiment_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReidCMCScoreCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">[docs]</a><span class="k">class</span> <span class="nc">ReidCMCScoreCallback</span><span class="p">(</span><span class="n">LoaderMetricCallback</span><span class="p">):</span>
@@ -434,7 +450,7 @@
 <span class="sd">        pids_key: pids key in output dict</span>
 <span class="sd">        cids_key: cids key in output dict</span>
 <span class="sd">        is_query_key: bool key True if current object is from query</span>
-<span class="sd">        topk_args: specifies which cmc@K to log.</span>
+<span class="sd">        topk: specifies which cmc@K to log.</span>
 <span class="sd">            [1] - cmc@1</span>
 <span class="sd">            [1, 3] - cmc@1 and cmc@3</span>
 <span class="sd">            [1, 3, 5] - cmc@1, cmc@3 and cmc@5</span>
@@ -448,7 +464,7 @@
         <span class="n">pids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">cids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">is_query_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">topk</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -459,13 +475,21 @@
                 <span class="n">pids_key</span><span class="o">=</span><span class="n">pids_key</span><span class="p">,</span>
                 <span class="n">cids_key</span><span class="o">=</span><span class="n">cids_key</span><span class="p">,</span>
                 <span class="n">is_query_key</span><span class="o">=</span><span class="n">is_query_key</span><span class="p">,</span>
-                <span class="n">topk_args</span><span class="o">=</span><span class="n">topk_args</span><span class="p">,</span>
+                <span class="n">topk</span><span class="o">=</span><span class="n">topk</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="p">[</span><span class="n">embeddings_key</span><span class="p">,</span> <span class="n">is_query_key</span><span class="p">],</span>
             <span class="n">target_key</span><span class="o">=</span><span class="p">[</span><span class="n">pids_key</span><span class="p">,</span> <span class="n">cids_key</span><span class="p">],</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_experiment_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">distributed_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">DistributedType</span><span class="o">.</span><span class="n">MULTI_GPU</span><span class="p">,</span>
+            <span class="n">DistributedType</span><span class="o">.</span><span class="n">TPU</span><span class="p">,</span>
+        <span class="p">),</span> <span class="s2">&quot;ReidCMCScoreCallback could not work within ddp training&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_experiment_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CMCScoreCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;ReidCMCScoreCallback&quot;</span><span class="p">]</span>
@@ -481,7 +505,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

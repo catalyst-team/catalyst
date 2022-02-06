@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Data &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/settings.html">Settings</a></li>
 </ul>
@@ -331,7 +329,8 @@ for Contrastive Learning of Visual Representations</a>.)</p>
 <li><p><strong>transform_left</strong> – transform only for left batch</p></li>
 <li><p><strong>transform_right</strong> – transform only for right batch</p></li>
 <li><p><strong>transform_original</strong> – transforms which will be applied to save original in batch</p></li>
-<li><p><strong>is_target</strong> – the flag for selection does dataset return (sample, target) or only sample</p></li>
+<li><p><strong>is_target</strong> – the flag for selection does dataset return (sample, target)
+or only sample</p></li>
 </ul>
 </dd>
 </dl>
@@ -339,7 +338,7 @@ for Contrastive Learning of Visual Representations</a>.)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torchvision</span>
 <span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.data.dataset</span> <span class="kn">import</span> <span class="n">SelfSupervisedDatasetWrapper</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.dataset</span> <span class="kn">import</span> <span class="n">SelfSupervisedDatasetWrapper</span>
 
 <span class="n">transforms</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
     <span class="p">[</span>
@@ -353,7 +352,10 @@ for Contrastive Learning of Visual Representations</a>.)</p>
 <span class="p">)</span>
 
 <span class="n">cifar_dataset</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="n">cifar_contrastive</span> <span class="o">=</span> <span class="n">SelfSupervisedDatasetWrapper</span><span class="p">(</span><span class="n">cifar_dataset</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">)</span>
+<span class="n">cifar_contrastive</span> <span class="o">=</span> <span class="n">SelfSupervisedDatasetWrapper</span><span class="p">(</span>
+    <span class="n">cifar_dataset</span><span class="p">,</span>
+    <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -585,9 +587,10 @@ where P (<cite>num_classes</cite>) equals 32 and K (<cite>num_samples</cite>) eq
 <span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">ToTensor</span><span class="p">,</span> <span class="n">BatchBalanceClassSampler</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 
-<span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">train_labels</span> <span class="o">=</span> <span class="n">train_data</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">train_sampler</span> <span class="o">=</span> <span class="n">BatchBalanceClassSampler</span><span class="p">(</span><span class="n">train_labels</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">train_sampler</span> <span class="o">=</span> <span class="n">BatchBalanceClassSampler</span><span class="p">(</span>
+    <span class="n">train_labels</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">valid_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
@@ -737,7 +740,7 @@ The sampler will shuffle indices
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

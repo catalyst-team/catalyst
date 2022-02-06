@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.onnx &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.utils.onnx &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -268,7 +266,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.extras.forward_wrapper</span> <span class="kn">import</span> <span class="n">ModelForwardWrapper</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">onnx_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">onnx</span>
@@ -291,20 +289,20 @@
     <span class="sd">&quot;&quot;&quot;Converts model to onnx runtime.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): model</span>
-<span class="sd">        batch (Tensor): inputs</span>
-<span class="sd">        file (str, optional): file to save. Defaults to &quot;model.onnx&quot;.</span>
-<span class="sd">        method_name (str, optional): Forward pass method to be converted. Defaults to &quot;forward&quot;.</span>
-<span class="sd">        input_names (Iterable, optional): name of inputs in graph. Defaults to None.</span>
-<span class="sd">        output_names (List[str], optional): name of outputs in graph. Defaults to None.</span>
-<span class="sd">        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes</span>
+<span class="sd">        model: model</span>
+<span class="sd">        batch: inputs</span>
+<span class="sd">        file: file to save. Defaults to &quot;model.onnx&quot;.</span>
+<span class="sd">        method_name: Forward pass method to be converted. Defaults to &quot;forward&quot;.</span>
+<span class="sd">        input_names: name of inputs in graph. Defaults to None.</span>
+<span class="sd">        output_names: name of outputs in graph. Defaults to None.</span>
+<span class="sd">        dynamic_axes: axes</span>
 <span class="sd">            with dynamic shapes. Defaults to None.</span>
-<span class="sd">        opset_version (int, optional): Defaults to 9.</span>
-<span class="sd">        do_constant_folding (bool, optional): If True, the constant-folding optimization</span>
+<span class="sd">        opset_version: Defaults to 9.</span>
+<span class="sd">        do_constant_folding: If True, the constant-folding optimization</span>
 <span class="sd">            is applied to the model during export. Defaults to False.</span>
-<span class="sd">        return_model (bool, optional): If True then returns onnxruntime model (onnx required).</span>
+<span class="sd">        return_model: If True then returns onnxruntime model (onnx required).</span>
 <span class="sd">            Defaults to False.</span>
-<span class="sd">        verbose (bool, default False): if specified, we will print out a debug</span>
+<span class="sd">        verbose: if specified, we will print out a debug</span>
 <span class="sd">            description of the trace being exported.</span>
 
 <span class="sd">    Example:</span>
@@ -328,7 +326,9 @@
 
 <span class="sd">           lin_model = LinModel()</span>
 <span class="sd">           convert_to_onnx(</span>
-<span class="sd">               model, batch=torch.randn((1, 10)), file=&quot;model.onnx&quot;, method_name=&quot;first_only&quot;</span>
+<span class="sd">               model, batch=torch.randn((1, 10)),</span>
+<span class="sd">               file=&quot;model.onnx&quot;,</span>
+<span class="sd">               method_name=&quot;first_only&quot;</span>
 <span class="sd">           )</span>
 
 <span class="sd">    Raises:</span>
@@ -353,7 +353,9 @@
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">return_model</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">onnx_required</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;To use onnx model you should install it with ``pip install onnx``&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;To use onnx model you should install it with ``pip install onnx``&quot;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">onnx</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
@@ -366,11 +368,11 @@
     <span class="sd">&quot;&quot;&quot;Takes model converted to onnx runtime and applies pruning.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        onnx_model_path (Union[Path, str]): path to onnx model.</span>
-<span class="sd">        quantized_model_path (Union[Path, str]): path to quantized model.</span>
-<span class="sd">        qtype (str, optional): Type of weights in quantized model.</span>
+<span class="sd">        onnx_model_path: path to onnx model.</span>
+<span class="sd">        quantized_model_path: path to quantized model.</span>
+<span class="sd">        qtype: Type of weights in quantized model.</span>
 <span class="sd">            Can be `quint8` or `qint8`. Defaults to &quot;qint8&quot;.</span>
-<span class="sd">        verbose (bool, optional): If set to True prints model size before</span>
+<span class="sd">        verbose: If set to True prints model size before</span>
 <span class="sd">            and after quantization. Defaults to False.</span>
 
 <span class="sd">    Raises:</span>
@@ -381,13 +383,17 @@
         <span class="s2">&quot;quint8&quot;</span><span class="p">:</span> <span class="n">QuantType</span><span class="o">.</span><span class="n">QUInt8</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">qtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">type_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;type should be string one of &#39;quint8&#39; or &#39;qint8&#39;. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qtype</span><span class="p">))</span>
-    <span class="n">quantize_dynamic</span><span class="p">(</span><span class="n">onnx_model_path</span><span class="p">,</span> <span class="n">quantized_model_path</span><span class="p">,</span> <span class="n">weight_type</span><span class="o">=</span><span class="n">type_mapping</span><span class="p">[</span><span class="n">qtype</span><span class="p">])</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;type should be string one of &#39;quint8&#39; or &#39;qint8&#39;. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qtype</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">quantize_dynamic</span><span class="p">(</span>
+        <span class="n">onnx_model_path</span><span class="p">,</span> <span class="n">quantized_model_path</span><span class="p">,</span> <span class="n">weight_type</span><span class="o">=</span><span class="n">type_mapping</span><span class="p">[</span><span class="n">qtype</span><span class="p">]</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="n">v_str</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Model size before quantization (MB):&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">onnx_model_path</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Model size after quantization (MB): &quot;</span>
+            <span class="s2">&quot;Model size after quantization (MB):&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">quantized_model_path</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
@@ -408,7 +414,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

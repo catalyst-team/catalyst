@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._functional_metric &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.metrics._functional_metric &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -264,7 +262,11 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="n">AccumulativeMetric</span><span class="p">,</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AccumulativeMetric</span><span class="p">,</span>
+    <span class="n">ICallbackBatchMetric</span><span class="p">,</span>
+    <span class="n">ICallbackLoaderMetric</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveMetric</span>
 
 
@@ -272,7 +274,8 @@
     <span class="sd">&quot;&quot;&quot;Class for custom **batch-based** metrics in a functional way.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
+<span class="sd">        metric_fn: metric function, that get outputs,</span>
+<span class="sd">            targets and return score as torch.Tensor</span>
 <span class="sd">        metric_key: metric name</span>
 <span class="sd">        compute_on_call: Computes and returns metric value during metric call.</span>
 <span class="sd">            Used for per-batch logging. default: True</span>
@@ -343,7 +346,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate metric and update average metric</span>
 
@@ -386,7 +391,8 @@
     <span class="sd">&quot;&quot;&quot;Class for custom **loader-based** metrics in a functional way.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
+<span class="sd">        metric_fn: metric function, that get outputs,</span>
+<span class="sd">            targets and return score as torch.Tensor</span>
 <span class="sd">        metric_key: metric name</span>
 <span class="sd">        accumulative_fields: list of keys to accumulate data from batch</span>
 <span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
@@ -497,7 +503,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

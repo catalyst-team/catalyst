@@ -8,19 +8,12 @@ CPU training
 ----------------------------------------------------
 If you don't want to use GPUs at all you could set ``CUDA_VISIBLE_DEVICES=""``.
 
-For Notebook API case, do the following **before** your experiment code:
+In this case, do the following **before** your experiment code:
 
 .. code-block:: python
 
     import os
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
-
-
-For Config API case, it is a bit easier:
-
-.. code-block:: bash
-
-    CUDA_VISIBLE_DEVICES="" catalyst-dl run -C=/path/to/configs
 
 Single GPU training
 ----------------------------------------------------
@@ -69,21 +62,12 @@ To list them, do the following (with example output from my server):
     >>> GPU 2: GeForce GTX 1080 Ti (UUID: GPU-7269b4ac-2190-762c-dc34-fa144b1751f9)
     # Here we could see GPU indices and their UUIDs.
 
-With this info, it's also valid to specify GPU by their UUIDs.
-
-For Notebook API:
+With this info, it's also valid to specify GPU by their UUIDs:
 
 .. code-block:: python
 
     import os
     os.environ["CUDA_VISIBLE_DEVICES"] = "GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8"
-
-For Config API:
-
-.. code-block:: bash
-
-    CUDA_VISIBLE_DEVICES="GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8" \
-        catalyst-dl run -C=/path/to/configs
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 

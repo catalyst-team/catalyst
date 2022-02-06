@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Distributed training (multi-gpu, multi-node) &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Distributed training (multi-gpu, multi-node) &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
 </ul>
@@ -269,8 +267,6 @@
   <section id="distributed-training-multi-gpu-multi-node">
 <h1>Distributed training (multi-gpu, multi-node)<a class="headerlink" href="#distributed-training-multi-gpu-multi-node" title="Permalink to this headline">¶</a></h1>
 <p>Catalyst supports automatic experiments scaling with distributed training support.</p>
-<section id="notebook-api">
-<h2>Notebook API<a class="headerlink" href="#notebook-api" title="Permalink to this headline">¶</a></h2>
 <p>Suppose you have the following pipeline with MNIST Classification:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
@@ -332,7 +328,7 @@ and there would be no data re-creation on each worker.</p>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
         <span class="n">valid_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
@@ -375,31 +371,6 @@ and there would be no data re-creation on each worker.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="config-api">
-<h2>Config API<a class="headerlink" href="#config-api" title="Permalink to this headline">¶</a></h2>
-<p>To run Catalyst experiments in the DDP-mode,
-the only thing you need to do for the Config API - pass required flag to the <code class="docutils literal notranslate"><span class="pre">run</span></code> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl run -C<span class="o">=</span>/path/to/configs --distributed
-</pre></div>
-</div>
-</section>
-<section id="launch-your-training">
-<h2>Launch your training<a class="headerlink" href="#launch-your-training" title="Permalink to this headline">¶</a></h2>
-<p>In your terminal,
-type the following line (adapt <cite>script_name</cite> to your script name ending with .py).</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python <span class="o">{</span>script_name<span class="o">}</span>
-</pre></div>
-</div>
-<p>You can vary availble GPUs with <code class="docutils literal notranslate"><span class="pre">CUDA_VIBIBLE_DEVICES</span></code> option, for example,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 1st and 2nd GPUs</span>
-<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;1,2&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
-</pre></div>
-</div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 0, 1st and 3rd GPUs</span>
-<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0,1,3&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
-</pre></div>
-</div>
 <p>What will happen is that the same model will be copied on all your available GPUs.
 During training, the full dataset will randomly split between the GPUs
 (that will change at each epoch).
@@ -417,7 +388,6 @@ until the number of desired iterations is done.</p>
 <p>During training Catalyst will automatically average all metrics
 and log them on <code class="docutils literal notranslate"><span class="pre">Master</span></code> node only. Same logic used for model checkpointing.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
-</section>
 </section>
 
 
@@ -440,7 +410,7 @@ and log them on <code class="docutils literal notranslate"><span class="pre">Mas
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>
@@ -459,12 +429,7 @@ and log them on <code class="docutils literal notranslate"><span class="pre">Mas
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">Distributed training (multi-gpu, multi-node)</a><ul>
-<li><a class="reference internal" href="#notebook-api">Notebook API</a></li>
-<li><a class="reference internal" href="#config-api">Config API</a></li>
-<li><a class="reference internal" href="#launch-your-training">Launch your training</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Distributed training (multi-gpu, multi-node)</a></li>
 </ul>
 
             </div>

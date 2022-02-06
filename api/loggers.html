@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Loggers &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>Loggers &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -109,7 +109,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -161,7 +161,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Debugging</a></li>
@@ -173,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/settings.html">Settings</a></li>
 </ul>
@@ -343,22 +341,6 @@ the Experiment object</p></li>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">comet</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CometLogger</span>
-        <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_comet_project</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">comet</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.CometLogger</span>
-        <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_comet_project</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -399,15 +381,10 @@ Output the metric into the console during experiment.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code> in case of
-specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code>
+in case of specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.ConfigRunner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.HydraRunner</span></code> in case of
-specified logdir in config <code class="docutils literal notranslate"><span class="pre">args</span></code>.</p>
-</div>
-<p>Notebook API examples:</p>
+<p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
@@ -433,22 +410,6 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">csv</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CSVLogger</span>
-        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/logs</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">csv</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.CSVLogger</span>
-        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/logs</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -465,7 +426,8 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>experiment</strong> – Name of the experiment in MLflow to log to.</p></li>
 <li><p><strong>run</strong> – Name of the run in Mlflow to log to.</p></li>
-<li><p><strong>tracking_uri</strong> – URI of tracking server against which to log run information related.</p></li>
+<li><p><strong>tracking_uri</strong> – URI of tracking server against which
+to log run information related.</p></li>
 <li><p><strong>registry_uri</strong> – Address of local or remote model registry server.</p></li>
 <li><p><strong>exclude</strong> – Name of  to exclude from logging.</p></li>
 <li><p><strong>log_batch_metrics</strong> – boolean flag to log batch metrics
@@ -501,24 +463,6 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">mlflow</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">MLflowLogger</span>
-        <span class="nt">experiment</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
-        <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">mlflow</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.MLflowLogger</span>
-        <span class="nt">experiment</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
-        <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -536,7 +480,7 @@ model checkpoints, etc.).</p>
 It looks like this:
 <a class="reference external" href="https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379">https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379</a></p>
 <p>To start with Neptune please check
-<a class="reference external" href="https://docs.neptune.ai/getting-started/installation">Neptune getting-started docs</a>
+<a class="reference external" href="http://docs.neptune.ai/getting-started/installation">Neptune getting-started docs</a>
 because you will need <code class="docutils literal notranslate"><span class="pre">api_token</span></code> and project to log your Catalyst runs to.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -549,7 +493,7 @@ because you will need <code class="docutils literal notranslate"><span class="pr
 <li><p><strong>base_namespace</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>, root namespace within Neptune’s run.
 Default is “experiment”.</p></li>
 <li><p><strong>api_token</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>. Your Neptune API token. Read more about it in the
-<a class="reference external" href="https://docs.neptune.ai/getting-started/installation">Neptune installation docs</a>.</p></li>
+<a class="reference external" href="http://docs.neptune.ai/getting-started/installation">Neptune docs</a>.</p></li>
 <li><p><strong>project</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>. Name of the project to log runs to.
 It looks like this: “my_workspace/my_project”.</p></li>
 <li><p><strong>run</strong> – Optional, pass Neptune run object if you want to continue logging
@@ -560,8 +504,10 @@ Read more about it
 (default: SETTINGS.log_batch_metrics or False).</p></li>
 <li><p><strong>log_epoch_metrics</strong> – boolean flag to log epoch metrics
 (default: SETTINGS.log_epoch_metrics or True).</p></li>
-<li><p><strong>neptune_run_kwargs</strong> – Optional, additional keyword arguments to be passed directly to the
-<a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">neptune.init()</a> function.</p></li>
+<li><p><strong>neptune_run_kwargs</strong> – Optional, additional keyword arguments
+to be passed directly to the
+<a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">neptune.init()</a>
+function.</p></li>
 </ul>
 </dd>
 </dl>
@@ -597,23 +543,6 @@ Read more about it
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">neptune</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">NeptuneLogger</span>
-        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_workspace/my_project</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">neptune</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.NeptuneLogger</span>
-        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_workspace/my_project</span>
-        <span class="nt">base_namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -628,7 +557,8 @@ Read more about it
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logdir</strong> – path to logdir for tensorboard.</p></li>
-<li><p><strong>use_logdir_postfix</strong> – boolean flag to use extra <code class="docutils literal notranslate"><span class="pre">tensorboard</span></code> prefix in the logdir.</p></li>
+<li><p><strong>use_logdir_postfix</strong> – boolean flag
+to use extra <code class="docutils literal notranslate"><span class="pre">tensorboard</span></code> prefix in the logdir.</p></li>
 <li><p><strong>log_batch_metrics</strong> – boolean flag to log batch metrics
 (default: SETTINGS.log_batch_metrics or False).</p></li>
 <li><p><strong>log_epoch_metrics</strong> – boolean flag to log epoch metrics
@@ -638,15 +568,10 @@ Read more about it
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code> in case of
-specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code>
+in case of specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.ConfigRunner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.HydraRunner</span></code> in case of
-specified logdir in config <code class="docutils literal notranslate"><span class="pre">args</span></code>.</p>
-</div>
-<p>Notebook API examples:</p>
+<p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
@@ -672,22 +597,6 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">tensorboard</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TensorboardLogger</span>
-        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/tensorboard</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">tensorboard</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.TensorboardLogger</span>
-        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/tensorboard</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -710,7 +619,8 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 (default: SETTINGS.log_batch_metrics or False).</p></li>
 <li><p><strong>log_epoch_metrics</strong> – boolean flag to log epoch metrics
 (default: SETTINGS.log_epoch_metrics or True).</p></li>
-<li><p><strong>kwargs</strong> – Optional, additional keyword arguments to be passed directly to the wandb.init</p></li>
+<li><p><strong>kwargs</strong> – Optional,
+additional keyword arguments to be passed directly to the wandb.init</p></li>
 </ul>
 </dd>
 </dl>
@@ -740,24 +650,6 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Config API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">wandb</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">WandbLogger</span>
-        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
-        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
-<p>Hydra API example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">wandb</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.WandbLogger</span>
-        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
-        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
-<span class="nn">...</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -783,7 +675,7 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

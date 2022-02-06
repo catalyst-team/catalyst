@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metric &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.callbacks.metric &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -265,13 +263,13 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">IMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._functional_metric</span> <span class="kn">import</span> <span class="n">FunctionalBatchMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span><span class="p">,</span> <span class="n">IMetric</span>
 
 
-<span class="k">class</span> <span class="nc">IMetricCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_IMetricCallback</span><span class="p">(</span><span class="n">IMetricCallback</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Metric callback interface, abstraction over metric step.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
@@ -305,9 +303,10 @@
         <span class="k">pass</span>
 
 
-<span class="k">class</span> <span class="nc">MetricCallback</span><span class="p">(</span><span class="n">IMetricCallback</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_MetricCallback</span><span class="p">(</span><span class="n">_IMetricCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    MetricCallback is a base implementation of callback that updates metrics over batch or loader.</span>
+<span class="sd">    MetricCallback is a base implementation of callback</span>
+<span class="sd">    that updates metrics over batch or loader.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric: metric to calculate in callback</span>
@@ -322,7 +321,7 @@
         <span class="n">target_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init MetricCallback&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">IMetric</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metric_update_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">update</span>
@@ -351,7 +350,9 @@
         <span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_keys_to_kv</span><span class="p">(</span><span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_convert_keys_to_kv</span><span class="p">(</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert keys to key-value format</span>
 
@@ -428,8 +429,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_update_method</span><span class="p">(</span><span class="o">**</span><span class="n">kv_inputs</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BatchMetricCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.metric.BatchMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchMetricCallback</span><span class="p">(</span><span class="n">MetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;BatchMetricCallback implements batch-based metrics update and computation over loader</span>
+<div class="viewcode-block" id="BatchMetricCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.metric.BatchMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchMetricCallback</span><span class="p">(</span><span class="n">_MetricCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BatchMetricCallback implements batch-based metrics update</span>
+<span class="sd">    and computation over loader</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric: metric to calculate in callback</span>
@@ -460,7 +462,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;On batch end action: update metric with new batch data and log it&#39;s value if necessary</span>
+        <span class="sd">&quot;&quot;&quot;On batch end action: update metric with new batch data</span>
+<span class="sd">        and log it&#39;s value if necessary</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
@@ -471,13 +474,14 @@
             <span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;On loader end action: compute metric values and update runner&#39;s loader metrics with it</span>
+        <span class="sd">&quot;&quot;&quot;On loader end action: compute metric values</span>
+<span class="sd">        and update runner&#39;s loader metrics with it</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">loader_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span></div>
 
 
@@ -508,10 +512,15 @@
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">FunctionalBatchMetric</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span> <span class="n">log_on_batch</span><span class="o">=</span><span class="n">log_on_batch</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">log_on_batch</span><span class="o">=</span><span class="n">log_on_batch</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_value_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_get_value_inputs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get data from batch in value input case</span>
 
 <span class="sd">        Args:</span>
@@ -520,7 +529,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple of tensor of inputs and tensor of targets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">],</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">],</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_key</span><span class="p">],</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_key_value_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get data from batch in key-value input case</span>
@@ -538,8 +551,9 @@
         <span class="k">return</span> <span class="n">kv_inputs</span>
 
 
-<div class="viewcode-block" id="LoaderMetricCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.metric.LoaderMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">LoaderMetricCallback</span><span class="p">(</span><span class="n">MetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;LoaderMetricCallback implements loader-based metrics update and computation over loader</span>
+<div class="viewcode-block" id="LoaderMetricCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.metric.LoaderMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">LoaderMetricCallback</span><span class="p">(</span><span class="n">_MetricCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;LoaderMetricCallback implements loader-based metrics update</span>
+<span class="sd">    and computation over loader</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric: metric to calculate in callback</span>
@@ -557,7 +571,8 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;On loader star action: reset metric values in case of ICallbackLoaderMetric metric</span>
+        <span class="sd">&quot;&quot;&quot;On loader star action:</span>
+<span class="sd">        reset metric values in case of ICallbackLoaderMetric metric</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
@@ -576,7 +591,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_metric</span><span class="p">(</span><span class="n">metrics_inputs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;On loader end action: compute metric values and update runner&#39;s loader metrics with it</span>
+        <span class="sd">&quot;&quot;&quot;On loader end action:</span>
+<span class="sd">        compute metric values and update runner&#39;s loader metrics with it</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
@@ -586,7 +602,8 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;IMetricCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_IMetricCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_MetricCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BatchMetricCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;FunctionalBatchMetricCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;LoaderMetricCallback&quot;</span><span class="p">,</span>
@@ -603,7 +620,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>

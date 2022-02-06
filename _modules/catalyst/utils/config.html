@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.config &mdash; Catalyst 21.12rc1 documentation</title>
+  <title>catalyst.utils.config &mdash; Catalyst 22.01rc0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.12</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.01</a>
                 </div>
               
             
@@ -158,7 +158,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dataflow.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Debugging</a></li>
@@ -170,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/mixed_precision.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_keys.html">Multiple input and output keys</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_stage.html">Multistage runs (and finetuning)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../faq/settings.html">Settings</a></li>
 </ul>
@@ -263,39 +261,41 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">OrderedLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="k">def</span> <span class="nf">construct_mapping</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">flatten_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">construct_pairs</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
-
-
-<span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span><span class="p">,</span> <span class="n">construct_mapping</span><span class="p">)</span>
-<span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_implicit_resolver</span><span class="p">(</span>
-    <span class="s2">&quot;tag:yaml.org,2002:float&quot;</span><span class="p">,</span>
-    <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-        <span class="sd">&quot;&quot;&quot;^(?:</span>
-<span class="sd">        [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?</span>
-<span class="sd">        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)</span>
-<span class="sd">        |\\.[0-9_]+(?:[eE][-+][0-9]+)?</span>
-<span class="sd">        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*</span>
-<span class="sd">        |[-+]?\\.(?:inf|Inf|INF)</span>
-<span class="sd">        |\\.(?:nan|NaN|NAN))$&quot;&quot;&quot;</span><span class="p">,</span>
-        <span class="n">re</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;-+0123456789.&quot;</span><span class="p">),</span>
+<span class="n">YAML_MESSAGE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;could not find yaml package, please install with ``pip install PyYAML&gt;=5.1``&quot;</span>
 <span class="p">)</span>
+<span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">yaml_required</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">yaml</span>
+
+    <span class="k">class</span> <span class="nc">OrderedLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">construct_mapping</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">loader</span><span class="o">.</span><span class="n">flatten_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">construct_pairs</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+
+    <span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span><span class="p">,</span> <span class="n">construct_mapping</span>
+    <span class="p">)</span>
+    <span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_implicit_resolver</span><span class="p">(</span>
+        <span class="s2">&quot;tag:yaml.org,2002:float&quot;</span><span class="p">,</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;^(?:</span>
+<span class="sd">            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?</span>
+<span class="sd">            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)</span>
+<span class="sd">            |\\.[0-9_]+(?:[eE][-+][0-9]+)?</span>
+<span class="sd">            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*</span>
+<span class="sd">            |[-+]?\\.(?:inf|Inf|INF)</span>
+<span class="sd">            |\\.(?:nan|NaN|NAN))$&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;-+0123456789.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_load_ordered_yaml</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
@@ -326,11 +326,6 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: if path ``path`` doesn&#39;t exists</span>
 <span class="sd">            or file format is not YAML or JSON</span>
-
-<span class="sd">    Adapted from</span>
-<span class="sd">    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L63</span>
-<span class="sd">    which was adapted from</span>
-<span class="sd">    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -355,6 +350,7 @@
                 <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">object_pairs_hook</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">yaml_required</span><span class="p">,</span> <span class="n">YAML_MESSAGE</span>
             <span class="n">loader</span> <span class="o">=</span> <span class="n">OrderedLoader</span> <span class="k">if</span> <span class="n">ordered</span> <span class="k">else</span> <span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span>
 
@@ -383,11 +379,6 @@
 <span class="sd">        ensure_ascii: Used for JSON, if True non-ASCII</span>
 <span class="sd">        characters are escaped in JSON strings.</span>
 <span class="sd">        indent: Used for JSON</span>
-
-<span class="sd">    Adapted from</span>
-<span class="sd">    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110</span>
-<span class="sd">    which was adapted from</span>
-<span class="sd">    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L38</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -402,6 +393,7 @@
         <span class="k">if</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="n">ensure_ascii</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">yaml_required</span><span class="p">,</span> <span class="n">YAML_MESSAGE</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span></div>
 
 
@@ -418,7 +410,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Scitator.
+        &copy; Copyright 2022, Scitator.
 
     </p>
   </div>
