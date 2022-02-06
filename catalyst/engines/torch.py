@@ -46,8 +46,9 @@ class DataParallelEngine(GPUEngine):
 
     def prepare_model(self, model):
         """Overrides."""
+        model = super().prepare_model(model)
         model = torch.nn.DataParallel(model)
-        return super().prepare_model(model)
+        return model
 
 
 class DistributedDataParallelEngine(IEngine):
