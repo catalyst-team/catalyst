@@ -274,10 +274,9 @@
 <ul>
 <li><p><a class="reference internal" href="#cpuengine" id="id2">CPUEngine</a></p></li>
 <li><p><a class="reference internal" href="#gpuengine" id="id3">GPUEngine</a></p></li>
-<li><p><a class="reference internal" href="#deviceengine" id="id4">DeviceEngine</a></p></li>
-<li><p><a class="reference internal" href="#dataparallelengine" id="id5">DataParallelEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id6">DistributedDataParallelEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributedxlaengine" id="id7">DistributedXLAEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelengine" id="id4">DataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id5">DistributedDataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributedxlaengine" id="id6">DistributedXLAEngine</a></p></li>
 </ul>
 </li>
 </ul>
@@ -290,7 +289,7 @@
 <dl class="class">
 <dt id="catalyst.engines.torch.CPUEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">CPUEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#CPUEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.CPUEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p>
 <p>CPU-based engine.</p>
 </dd></dl>
 
@@ -300,47 +299,54 @@
 <dl class="class">
 <dt id="catalyst.engines.torch.GPUEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">GPUEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#GPUEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.GPUEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p>
 <p>Single-GPU-based engine.</p>
 </dd></dl>
 
 </section>
-<section id="deviceengine">
-<h3><a class="toc-backref" href="#id4">DeviceEngine</a><a class="headerlink" href="#deviceengine" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.engines.torch.DeviceEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DeviceEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DeviceEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DeviceEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
-<p>Singe-device engine.</p>
-</dd></dl>
-
-</section>
 <section id="dataparallelengine">
-<h3><a class="toc-backref" href="#id5">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DataParallelEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DataParallelEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p>
 <p>Multi-GPU-based engine.</p>
 </dd></dl>
 
 </section>
 <section id="distributeddataparallelengine">
-<h3><a class="toc-backref" href="#id6">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p>
 <p>Distributed multi-GPU-based engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – args for Accelerator.__init__</p></li>
+<li><p><strong>address</strong> – master node (rank 0)’s address, should be either the IP address or the hostname
+of node 0, for single node multi-proc training, can simply be 127.0.0.1</p></li>
+<li><p><strong>port</strong> – master node (rank 0)’s free port that needs to be used for communication
+during distributed training</p></li>
+<li><p><strong>world_size</strong> – the number of processes to use for distributed training.
+Should be less or equal to the number of GPUs</p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a>  # noqa: E501, W505</p></li>
+<li><p><strong>**kwargs</strong> – kwargs for Accelerator.__init__</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="distributedxlaengine">
-<h3><a class="toc-backref" href="#id7">DistributedXLAEngine</a><a class="headerlink" href="#distributedxlaengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">DistributedXLAEngine</a><a class="headerlink" href="#distributedxlaengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedXLAEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedXLAEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedXLAEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedXLAEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p>
 <p>Distributed XLA-based engine.</p>
 </dd></dl>
 
@@ -391,7 +397,6 @@
 <li><a class="reference internal" href="#torch">Torch</a><ul>
 <li><a class="reference internal" href="#cpuengine">CPUEngine</a></li>
 <li><a class="reference internal" href="#gpuengine">GPUEngine</a></li>
-<li><a class="reference internal" href="#deviceengine">DeviceEngine</a></li>
 <li><a class="reference internal" href="#dataparallelengine">DataParallelEngine</a></li>
 <li><a class="reference internal" href="#distributeddataparallelengine">DistributedDataParallelEngine</a></li>
 <li><a class="reference internal" href="#distributedxlaengine">DistributedXLAEngine</a></li>

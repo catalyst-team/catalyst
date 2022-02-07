@@ -287,7 +287,7 @@
 <h2><a class="toc-backref" href="#id2">Runner</a><a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.core.runner.IRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">engine: catalyst.core.engine.IEngine = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">engine: catalyst.core.engine.Engine = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.ICallback" title="catalyst.core.callback.ICallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICallback</span></code></a>, <a class="reference internal" href="#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>An abstraction that contains all the logic of how to run the experiment,
 epochs, loaders and batches.
@@ -296,7 +296,7 @@ Please check examples.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> – Torch model object</p></li>
-<li><p><strong>engine</strong> – IEngine instance</p></li>
+<li><p><strong>engine</strong> – Engine instance</p></li>
 </ul>
 </dd>
 </dl>
@@ -313,7 +313,7 @@ Please check examples.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p></li>
 <li><p><a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p></li>
 </ul>
 </div></blockquote>
@@ -336,7 +336,7 @@ Please check examples.</p>
 
 <dl class="method">
 <dt id="catalyst.core.runner.IRunner.get_engine">
-<em class="property">abstract </em><code class="sig-name descname">get_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; catalyst.core.engine.IEngine<a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.get_engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.get_engine" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; catalyst.core.engine.Engine<a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.get_engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.get_engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the engine for the experiment.</p>
 </dd></dl>
 
@@ -460,8 +460,8 @@ Used to make a train/valid/infer step during Experiment run.</p>
 <section id="engine">
 <h2><a class="toc-backref" href="#id3">Engine</a><a class="headerlink" href="#engine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="catalyst.core.engine.IEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.engine.</code><code class="sig-name descname">IEngine</code><span class="sig-paren">(</span><em class="sig-param">device_placement: bool = True</em>, <em class="sig-param">split_batches: bool = False</em>, <em class="sig-param">fp16: bool = None</em>, <em class="sig-param">cpu: bool = False</em>, <em class="sig-param">deepspeed_plugin: accelerate.utils.DeepSpeedPlugin = None</em>, <em class="sig-param">rng_types: Optional[List[Union[str</em>, <em class="sig-param">accelerate.utils.RNGType]]] = None</em>, <em class="sig-param">dispatch_batches: Optional[bool] = None</em>, <em class="sig-param">kwargs_handlers: Optional[List[accelerate.kwargs_handlers.KwargsHandler]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.engine.</code><code class="sig-name descname">Engine</code><span class="sig-paren">(</span><em class="sig-param">device_placement: bool = True</em>, <em class="sig-param">split_batches: bool = False</em>, <em class="sig-param">fp16: bool = None</em>, <em class="sig-param">cpu: bool = False</em>, <em class="sig-param">deepspeed_plugin: accelerate.utils.DeepSpeedPlugin = None</em>, <em class="sig-param">rng_types: Optional[List[Union[str</em>, <em class="sig-param">accelerate.utils.RNGType]]] = None</em>, <em class="sig-param">dispatch_batches: Optional[bool] = None</em>, <em class="sig-param">kwargs_handlers: Optional[List[accelerate.kwargs_handlers.KwargsHandler]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#Engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.Engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">accelerate.accelerator.Accelerator</span></code></p>
 <p>An abstraction that syncs experiment run with
 different hardware-specific configurations.
@@ -472,7 +472,7 @@ different hardware-specific configurations.
 - DDP (deepspeed, torch)
 - XLA</p>
 <dl class="simple">
-<dt>Abstraction, please check out implementations for more details:</dt><dd><ul class="simple">
+<dt>Please check out implementations for more details:</dt><dd><ul class="simple">
 <li><p><a class="reference internal" href="engines.html#catalyst.engines.torch.CPUEngine" title="catalyst.engines.torch.CPUEngine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.engines.torch.CPUEngine</span></code></a></p></li>
 <li><p><a class="reference internal" href="engines.html#catalyst.engines.torch.GPUEngine" title="catalyst.engines.torch.GPUEngine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.engines.torch.GPUEngine</span></code></a></p></li>
 <li><p><a class="reference internal" href="engines.html#catalyst.engines.torch.DataParallelEngine" title="catalyst.engines.torch.DataParallelEngine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.engines.torch.DataParallelEngine</span></code></a></p></li>
@@ -482,26 +482,26 @@ different hardware-specific configurations.
 </dd>
 </dl>
 <dl class="method">
-<dt id="catalyst.core.engine.IEngine.cleanup">
-<code class="sig-name descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.cleanup" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine.cleanup">
+<code class="sig-name descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#Engine.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.Engine.cleanup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cleans DDP variables and processes.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.engine.IEngine.is_ddp">
-<em class="property">property </em><code class="sig-name descname">is_ddp</code><a class="headerlink" href="#catalyst.core.engine.IEngine.is_ddp" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine.is_ddp">
+<em class="property">property </em><code class="sig-name descname">is_ddp</code><a class="headerlink" href="#catalyst.core.engine.Engine.is_ddp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Boolean flag for distributed type.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.engine.IEngine.mean_reduce_ddp_metrics">
-<code class="sig-name descname">mean_reduce_ddp_metrics</code><span class="sig-paren">(</span><em class="sig-param">metrics: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.mean_reduce_ddp_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.mean_reduce_ddp_metrics" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine.mean_reduce_ddp_metrics">
+<code class="sig-name descname">mean_reduce_ddp_metrics</code><span class="sig-paren">(</span><em class="sig-param">metrics: Dict</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/engine.html#Engine.mean_reduce_ddp_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.Engine.mean_reduce_ddp_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">metrics</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in the distributed mode.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.engine.IEngine.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">local_rank: int</em>, <em class="sig-param">world_size: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.setup" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">local_rank: int</em>, <em class="sig-param">world_size: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#Engine.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.Engine.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize DDP variables and processes if required.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -515,8 +515,8 @@ Default is <cite>1</cite>.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.engine.IEngine.spawn">
-<code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.spawn" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.engine.Engine.spawn">
+<code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#Engine.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.Engine.spawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spawns processes with specified <code class="docutils literal notranslate"><span class="pre">fn</span></code> and <code class="docutils literal notranslate"><span class="pre">args</span></code>/<code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -767,7 +767,7 @@ exception – <span class="k">if</span> an Exception was raised
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.core.engine.Engine" title="catalyst.core.engine.Engine"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.engine.Engine</span></code></a></p></li>
 <li><p><a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p></li>
 </ul>
 </div></blockquote>

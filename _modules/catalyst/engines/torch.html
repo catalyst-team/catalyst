@@ -259,7 +259,7 @@
               
   <h1>Source code for catalyst.engines.torch</h1><div class="highlight"><pre>
 <span></span><span class="c1"># taken from https://github.com/Scitator/animus/blob/main/animus/torch/accelerate.py</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -269,7 +269,7 @@
 <span class="kn">import</span> <span class="nn">torch.multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">mean_reduce</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span><span class="p">:</span>
@@ -277,15 +277,7 @@
     <span class="kn">import</span> <span class="nn">torch_xla.distributed.xla_multiprocessing</span> <span class="k">as</span> <span class="nn">xmp</span>
 
 
-<div class="viewcode-block" id="DeviceEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DeviceEngine">[docs]</a><span class="k">class</span> <span class="nc">DeviceEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Singe-device engine.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="CPUEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.CPUEngine">[docs]</a><span class="k">class</span> <span class="nc">CPUEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
+<div class="viewcode-block" id="CPUEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.CPUEngine">[docs]</a><span class="k">class</span> <span class="nc">CPUEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;CPU-based engine.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -293,7 +285,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="GPUEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.GPUEngine">[docs]</a><span class="k">class</span> <span class="nc">GPUEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
+<div class="viewcode-block" id="GPUEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.GPUEngine">[docs]</a><span class="k">class</span> <span class="nc">GPUEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Single-GPU-based engine.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -301,7 +293,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
+<div class="viewcode-block" id="DataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Multi-GPU-based engine.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -315,11 +307,38 @@
         <span class="k">return</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="DistributedDataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DistributedDataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedDataParallelEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Distributed multi-GPU-based engine.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DistributedDataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DistributedDataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedDataParallelEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Distributed multi-GPU-based engine.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">    Args:</span>
+<span class="sd">       *args: args for Accelerator.__init__</span>
+<span class="sd">       address: master node (rank 0)&#39;s address, should be either the IP address or the hostname</span>
+<span class="sd">           of node 0, for single node multi-proc training, can simply be 127.0.0.1</span>
+<span class="sd">       port: master node (rank 0)&#39;s free port that needs to be used for communication</span>
+<span class="sd">           during distributed training</span>
+<span class="sd">       world_size: the number of processes to use for distributed training.</span>
+<span class="sd">           Should be less or equal to the number of GPUs</span>
+<span class="sd">       process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">           More info here:</span>
+<span class="sd">           https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505</span>
+<span class="sd">       **kwargs: kwargs for Accelerator.__init__</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2112</span><span class="p">,</span>
+        <span class="n">world_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_address</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_group_kwargs</span> <span class="o">=</span> <span class="n">process_group_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
@@ -340,7 +359,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            wrapped function (if needed).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
+        <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">mp</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span>
             <span class="n">fn</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
@@ -359,7 +378,10 @@
         <span class="n">process_group_kwargs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;nccl&quot;</span><span class="p">,</span>
             <span class="s2">&quot;world_size&quot;</span><span class="p">:</span> <span class="n">world_size</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_group_kwargs</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_address</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;WORLD_SIZE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_rank</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LOCAL_RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_rank</span><span class="p">)</span>
@@ -370,7 +392,7 @@
         <span class="sd">&quot;&quot;&quot;Cleans DDP variables and processes.&quot;&quot;&quot;</span>
         <span class="n">dist</span><span class="o">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Syncs ``metrics`` over ``world_size`` in the distributed mode.&quot;&quot;&quot;</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">mean_reduce</span><span class="p">(</span>
@@ -382,7 +404,7 @@
         <span class="k">return</span> <span class="n">metrics</span></div>
 
 
-<div class="viewcode-block" id="DistributedXLAEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DistributedXLAEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedXLAEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
+<div class="viewcode-block" id="DistributedXLAEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DistributedXLAEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedXLAEngine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Distributed XLA-based engine.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -420,7 +442,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Syncs ``metrics`` over ``world_size`` in the distributed mode.&quot;&quot;&quot;</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">xm</span><span class="o">.</span><span class="n">mesh_reduce</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>

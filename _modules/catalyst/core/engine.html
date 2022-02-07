@@ -275,7 +275,7 @@
     <span class="kn">import</span> <span class="nn">torch_xla.core.xla_model</span> <span class="k">as</span> <span class="nn">xm</span>
 
 
-<div class="viewcode-block" id="IEngine"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine">[docs]</a><span class="k">class</span> <span class="nc">IEngine</span><span class="p">(</span><span class="n">Accelerator</span><span class="p">):</span>
+<div class="viewcode-block" id="Engine"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.Engine">[docs]</a><span class="k">class</span> <span class="nc">Engine</span><span class="p">(</span><span class="n">Accelerator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An abstraction that syncs experiment run with</span>
 <span class="sd">    different hardware-specific configurations.</span>
@@ -286,7 +286,7 @@
 <span class="sd">    - DDP (deepspeed, torch)</span>
 <span class="sd">    - XLA</span>
 
-<span class="sd">    Abstraction, please check out implementations for more details:</span>
+<span class="sd">    Please check out implementations for more details:</span>
 <span class="sd">        - :py:mod:`catalyst.engines.torch.CPUEngine`</span>
 <span class="sd">        - :py:mod:`catalyst.engines.torch.GPUEngine`</span>
 <span class="sd">        - :py:mod:`catalyst.engines.torch.DataParallelEngine`</span>
@@ -299,7 +299,7 @@
         <span class="sd">&quot;&quot;&quot;Boolean flag for distributed type.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_type</span> <span class="o">!=</span> <span class="n">DistributedType</span><span class="o">.</span><span class="n">NO</span>
 
-<div class="viewcode-block" id="IEngine.spawn"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Engine.spawn"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.Engine.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Spawns processes with specified ``fn`` and ``args``/``kwargs``.</span>
 
 <span class="sd">        Args:</span>
@@ -318,7 +318,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IEngine.setup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="Engine.setup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.Engine.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes if required.</span>
 
 <span class="sd">        Args:</span>
@@ -328,11 +328,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="IEngine.cleanup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Engine.cleanup"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.Engine.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cleans DDP variables and processes.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="IEngine.mean_reduce_ddp_metrics"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.mean_reduce_ddp_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+<div class="viewcode-block" id="Engine.mean_reduce_ddp_metrics"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.Engine.mean_reduce_ddp_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">mean_reduce_ddp_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Syncs ``metrics`` over ``world_size`` in the distributed mode.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">distributed_type</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="n">DistributedType</span><span class="o">.</span><span class="n">MULTI_CPU</span><span class="p">,</span>
@@ -355,7 +355,7 @@
         <span class="k">return</span> <span class="n">metrics</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Engine&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
