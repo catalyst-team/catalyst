@@ -130,7 +130,7 @@ requirements_satisfied = SETTINGS.ml_required
 
 # Torch
 @mark.skipif(not requirements_satisfied, reason="catalyst[ml] and catalyst[cv] required")
-def test_classification_on_cpu():
+def test_run_on_cpu():
     train_experiment(dl.CPUEngine())
 
 
@@ -138,14 +138,14 @@ def test_classification_on_cpu():
     not all([requirements_satisfied, IS_CUDA_AVAILABLE]),
     reason="CUDA device is not available",
 )
-def test_classification_on_torch_cuda0():
+def test_run_on_torch_cuda0():
     train_experiment(dl.GPUEngine())
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_classification_on_torch_cuda1():
+# def test_run_on_torch_cuda1():
 #     train_experiment("cuda:1")
 
 
@@ -153,7 +153,7 @@ def test_classification_on_torch_cuda0():
     not all([requirements_satisfied, (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2)]),
     reason="No CUDA>=2 found",
 )
-def test_classification_on_torch_dp():
+def test_run_on_torch_dp():
     train_experiment(dl.DataParallelEngine())
 
 
@@ -161,7 +161,7 @@ def test_classification_on_torch_dp():
 #     not all([requirements_satisfied, (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2)]),
 #     reason="No CUDA>=2 found",
 # )
-# def test_classification_on_torch_ddp():
+# def test_run_on_torch_ddp():
 #     train_experiment(dl.DistributedDataParallelEngine())
 
 
@@ -170,7 +170,7 @@ def test_classification_on_torch_dp():
     not all([requirements_satisfied, (IS_CUDA_AVAILABLE and SETTINGS.amp_required)]),
     reason="No CUDA or AMP found",
 )
-def test_classification_on_amp():
+def test_run_on_amp():
     train_experiment(dl.GPUEngine(fp16=True))
 
 
@@ -183,7 +183,7 @@ def test_classification_on_amp():
     ),
     reason="No CUDA>=2 or AMP found",
 )
-def test_classification_on_amp_dp():
+def test_run_on_amp_dp():
     train_experiment(dl.DataParallelEngine(fp16=True))
 
 
@@ -196,5 +196,5 @@ def test_classification_on_amp_dp():
 #     ),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_classification_on_amp_ddp():
+# def test_run_on_amp_ddp():
 #     train_experiment(dl.DistributedDataParallelEngine(fp16=True))

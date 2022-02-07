@@ -16,7 +16,7 @@ from catalyst.core.callback import (
     IOptimizerCallback,
     ISchedulerCallback,
 )
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
@@ -129,7 +129,6 @@ class ISelfSupervisedRunner(IRunner):
         logdir = "./logdir"
         runner.train(
             model=model,
-            engine=engine or dl.DeviceEngine(device),
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
@@ -353,7 +352,6 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
         logdir = "./logdir"
         runner.train(
             model=model,
-            engine=engine or dl.DeviceEngine(device),
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
@@ -370,7 +368,7 @@ class SelfSupervisedRunner(ISelfSupervisedRunner, Runner):
     def __init__(
         self,
         model: RunnerModel = None,
-        engine: IEngine = None,
+        engine: Engine = None,
         input_key: str = "features",
         target_key: str = "target",
         loss_key: str = "loss",

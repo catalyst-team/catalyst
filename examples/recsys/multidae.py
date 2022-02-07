@@ -89,7 +89,7 @@ if __name__ == "__main__":
     model = MultiDAE([200, 600, item_num], dropout=0.5)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    engine = dl.DeviceEngine()
+    engine = dl.Engine()
     callbacks = [
         dl.NDCGCallback("logits", "targets", [20, 50, 100]),
         dl.MAPCallback("logits", "targets", [20, 50, 100]),

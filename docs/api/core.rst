@@ -28,7 +28,7 @@ Runner
 
 Engine
 ----------------------
-.. autoclass:: catalyst.core.engine.IEngine
+.. autoclass:: catalyst.core.engine.Engine
     :members:
     :exclude-members: __init__
     :undoc-members:

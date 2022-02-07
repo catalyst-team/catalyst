@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import (
     check_callbacks,
@@ -45,7 +45,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     Args:
         model: Torch model object
-        engine: IEngine instance
+        engine: Engine instance
 
     Abstraction, please check out implementations for more details:
 
@@ -56,7 +56,7 @@ class IRunner(ICallback, ILogger, ABC):
         To learn more about Catalyst Core concepts, please check out
 
             - :py:mod:`catalyst.core.runner.IRunner`
-            - :py:mod:`catalyst.core.engine.IEngine`
+            - :py:mod:`catalyst.core.engine.Engine`
             - :py:mod:`catalyst.core.callback.Callback`
 
     .. note::
@@ -66,9 +66,9 @@ class IRunner(ICallback, ILogger, ABC):
 
     """
 
-    def __init__(self, model: RunnerModel = None, engine: IEngine = None):
+    def __init__(self, model: RunnerModel = None, engine: Engine = None):
         """Init."""
-        self.engine: IEngine = engine
+        self.engine: Engine = engine
         self.loggers: Dict[str, ILogger] = {}
         self.loaders: Dict[str, DataLoader] = None
         self.model: RunnerModel = model
@@ -169,7 +169,7 @@ class IRunner(ICallback, ILogger, ABC):
             logger.close_log()
 
     @abstractmethod
-    def get_engine(self) -> IEngine:
+    def get_engine(self) -> Engine:
         """Returns the engine for the experiment."""
         pass
 

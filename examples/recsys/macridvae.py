@@ -172,7 +172,7 @@ if __name__ == "__main__":
     item_num = len(train_dataset[0])
     model = MacridVAE([item_num, 600, 200])
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    engine = dl.DeviceEngine()
+    engine = dl.Engine()
     hparams = {
         "anneal_cap": 0.2,
         "total_anneal_steps": 6000,

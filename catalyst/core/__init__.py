@@ -5,7 +5,7 @@
 # callback
 # logger
 
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.core.runner import IRunner, IRunnerError
 from catalyst.core.callback import (
     ICallback,

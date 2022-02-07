@@ -14,7 +14,7 @@ from catalyst.core.callback import (
     IOptimizerCallback,
     ISchedulerCallback,
 )
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
@@ -167,7 +167,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
 
     Args:
         model: Torch model instance
-        engine: IEngine instance
+        engine: Engine instance
         input_key: key in ``runner.batch`` dict mapping for model input
         output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
@@ -192,7 +192,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
     def __init__(
         self,
         model: RunnerModel = None,
-        engine: IEngine = None,
+        engine: Engine = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",

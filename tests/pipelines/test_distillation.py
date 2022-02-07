@@ -109,33 +109,33 @@
 
 
 # # Torch
-# def test_classification_on_cpu():
+# def test_run_on_cpu():
 #     train_experiment(dl.CPUEngine())
 
 
 # @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-# def test_classification_on_torch_cuda0():
+# def test_run_on_torch_cuda0():
 #     train_experiment(dl.GPUEngine())
 
 
 # # @mark.skipif(
 # #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # # )
-# # def test_classification_on_torch_cuda1():
+# # def test_run_on_torch_cuda1():
 # #     train_experiment("cuda:1")
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_classification_on_torch_dp():
+# def test_run_on_torch_dp():
 #     train_experiment(dl.DataParallelEngine())
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found"
 # )
-# def test_classification_on_torch_ddp():
+# def test_run_on_torch_ddp():
 #     train_experiment(dl.DistributedDataParallelEngine())
 
 
@@ -143,7 +143,7 @@
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found"
 # )
-# def test_classification_on_amp():
+# def test_run_on_amp():
 #     train_experiment(dl.GPUEngine(fp16=True))
 
 
@@ -151,7 +151,7 @@
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_classification_on_amp_dp():
+# def test_run_on_amp_dp():
 #     train_experiment(dl.DataParallelEngine(fp16=True))
 
 
@@ -159,5 +159,5 @@
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_classification_on_amp_ddp():
+# def test_run_on_amp_ddp():
 #     train_experiment(dl.DistributedDataParallelEngine(fp16=True))
