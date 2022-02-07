@@ -72,7 +72,7 @@ class Engine(Accelerator):
         """Cleans DDP variables and processes."""
         pass
 
-    def mean_reduce_ddp_metrics(self, metrics: Dict):
+    def mean_reduce_ddp_metrics(self, metrics: Dict) -> Dict:
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         if self.state.distributed_type in [
             DistributedType.MULTI_CPU,

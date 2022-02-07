@@ -132,7 +132,7 @@ class DistributedDataParallelEngine(Engine):
         """Cleans DDP variables and processes."""
         dist.destroy_process_group()
 
-    def mean_reduce_ddp_metrics(self, metrics: Dict):
+    def mean_reduce_ddp_metrics(self, metrics: Dict) -> Dict:
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         metrics = {
             k: mean_reduce(
@@ -182,7 +182,7 @@ class DistributedXLAEngine(Engine):
         """
         super().__init__(self, *self._args, **self._kwargs)
 
-    def mean_reduce_ddp_metrics(self, metrics: Dict):
+    def mean_reduce_ddp_metrics(self, metrics: Dict) -> Dict:
         """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         metrics = {
             k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
