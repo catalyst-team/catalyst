@@ -51,17 +51,18 @@ class DistributedDataParallelEngine(Engine):
     """Distributed multi-GPU-based engine.
 
     Args:
-       *args: args for Accelerator.__init__
-       address: master node (rank 0)'s address, should be either the IP address or the hostname
-           of node 0, for single node multi-proc training, can simply be 127.0.0.1
-       port: master node (rank 0)'s free port that needs to be used for communication
-           during distributed training
-       world_size: the number of processes to use for distributed training.
-           Should be less or equal to the number of GPUs
-       process_group_kwargs: parameters for `torch.distributed.init_process_group`.
-           More info here:
-           https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505
-       **kwargs: kwargs for Accelerator.__init__
+        *args: args for Accelerator.__init__
+        address: master node (rank 0)'s address,
+            should be either the IP address or the hostname
+            of node 0, for single node multi-proc training, can simply be 127.0.0.1
+        port: master node (rank 0)'s free port that needs to be used for communication
+            during distributed training
+        world_size: the number of processes to use for distributed training.
+            Should be less or equal to the number of GPUs
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505
+        **kwargs: kwargs for Accelerator.__init__
 
     """
 
