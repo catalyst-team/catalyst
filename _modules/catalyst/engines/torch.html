@@ -311,17 +311,18 @@
     <span class="sd">&quot;&quot;&quot;Distributed multi-GPU-based engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">       *args: args for Accelerator.__init__</span>
-<span class="sd">       address: master node (rank 0)&#39;s address, should be either the IP address or the hostname</span>
-<span class="sd">           of node 0, for single node multi-proc training, can simply be 127.0.0.1</span>
-<span class="sd">       port: master node (rank 0)&#39;s free port that needs to be used for communication</span>
-<span class="sd">           during distributed training</span>
-<span class="sd">       world_size: the number of processes to use for distributed training.</span>
-<span class="sd">           Should be less or equal to the number of GPUs</span>
-<span class="sd">       process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
-<span class="sd">           More info here:</span>
-<span class="sd">           https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505</span>
-<span class="sd">       **kwargs: kwargs for Accelerator.__init__</span>
+<span class="sd">        *args: args for Accelerator.__init__</span>
+<span class="sd">        address: master node (rank 0)&#39;s address,</span>
+<span class="sd">            should be either the IP address or the hostname</span>
+<span class="sd">            of node 0, for single node multi-proc training, can simply be 127.0.0.1</span>
+<span class="sd">        port: master node (rank 0)&#39;s free port that needs to be used for communication</span>
+<span class="sd">            during distributed training</span>
+<span class="sd">        world_size: the number of processes to use for distributed training.</span>
+<span class="sd">            Should be less or equal to the number of GPUs</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505</span>
+<span class="sd">        **kwargs: kwargs for Accelerator.__init__</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
