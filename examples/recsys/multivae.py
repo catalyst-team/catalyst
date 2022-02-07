@@ -147,7 +147,7 @@ if __name__ == "__main__":
     model = MultiVAE([200, 600, item_num], dropout=0.5)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     lr_scheduler = StepLR(optimizer, step_size=20, gamma=0.1)
-    engine = dl.DeviceEngine()
+    engine = dl.Engine()
     hparams = {
         "anneal_cap": 0.2,
         "total_anneal_steps": 6000,

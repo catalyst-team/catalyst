@@ -1,20 +1,20 @@
 # flake8: noqa
 
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 
 from catalyst.engines.torch import (
     CPUEngine,
     GPUEngine,
-    DeviceEngine,
+    Engine,
     DataParallelEngine,
     DistributedDataParallelEngine,
 )
 
 __all__ = [
-    "IEngine",
+    "Engine",
     "CPUEngine",
     "GPUEngine",
-    "DeviceEngine",
+    "Engine",
     "DataParallelEngine",
     "DistributedDataParallelEngine",
 ]

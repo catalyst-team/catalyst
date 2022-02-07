@@ -10,7 +10,7 @@ from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallbac
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.profiler import ProfilerCallback
 from catalyst.core.callback import Callback
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, IRunnerError
@@ -182,7 +182,7 @@ class Runner(IRunner):
         """Returns the number of epochs in the experiment."""
         return self._num_epochs
 
-    def get_engine(self) -> IEngine:
+    def get_engine(self) -> Engine:
         """Returns the engine for the experiment."""
         return self._engine
 
@@ -271,7 +271,7 @@ class Runner(IRunner):
         loaders: "OrderedDict[str, DataLoader]",
         # the core
         model: TorchModel,
-        engine: Union["IEngine", str] = None,
+        engine: Union["Engine", str] = None,
         # the components
         criterion: TorchCriterion = None,
         optimizer: TorchOptimizer = None,
@@ -405,7 +405,7 @@ class Runner(IRunner):
         *,
         loader: DataLoader,
         model: TorchModel = None,
-        engine: Union["IEngine", str] = None,
+        engine: Union["Engine", str] = None,
         seed: int = 42,
         # extra info
         resume: str = None,
@@ -458,7 +458,7 @@ class Runner(IRunner):
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         model: Optional[TorchModel] = None,
-        engine: Union["IEngine", str] = None,
+        engine: Union["Engine", str] = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict[str, Any]:

@@ -1,5 +1,5 @@
 # taken from https://github.com/Scitator/animus/blob/main/animus/torch/accelerate.py
-from typing import Callable, Dict
+from typing import Any, Callable, Dict, Optional, Union
 import os
 
 import numpy as np
@@ -9,7 +9,7 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 
 from catalyst import SETTINGS
-from catalyst.core.engine import IEngine
+from catalyst.core.engine import Engine
 from catalyst.utils.distributed import mean_reduce
 
 if SETTINGS.xla_required:
@@ -17,15 +17,7 @@ if SETTINGS.xla_required:
     import torch_xla.distributed.xla_multiprocessing as xmp
 
 
-class DeviceEngine(IEngine):
-    """Singe-device engine."""
-
-    def __init__(self, *args, **kwargs) -> None:
-        """Init."""
-        super().__init__(*args, **kwargs)
-
-
-class CPUEngine(IEngine):
+class CPUEngine(Engine):
     """CPU-based engine."""
 
     def __init__(self, *args, **kwargs) -> None:
@@ -33,7 +25,7 @@ class CPUEngine(IEngine):
         super().__init__(*args, cpu=True, **kwargs)
 
 
-class GPUEngine(IEngine):
+class GPUEngine(Engine):
     """Single-GPU-based engine."""
 
     def __init__(self, *args, **kwargs) -> None:
@@ -41,7 +33,7 @@ class GPUEngine(IEngine):
         super().__init__(*args, cpu=False, **kwargs)
 
 
-class DataParallelEngine(IEngine):
+class DataParallelEngine(Engine):
     """Multi-GPU-based engine."""
 
     def __init__(self, *args, **kwargs) -> None:
@@ -55,11 +47,38 @@ class DataParallelEngine(IEngine):
         return model
 
 
-class DistributedDataParallelEngine(IEngine):
-    """Distributed multi-GPU-based engine."""
+class DistributedDataParallelEngine(Engine):
+    """Distributed multi-GPU-based engine.
 
-    def __init__(self, *args, **kwargs):
+    Args:
+       *args: args for Accelerator.__init__
+       address: master node (rank 0)'s address, should be either the IP address or the hostname
+           of node 0, for single node multi-proc training, can simply be 127.0.0.1
+       port: master node (rank 0)'s free port that needs to be used for communication
+           during distributed training
+       world_size: the number of processes to use for distributed training.
+           Should be less or equal to the number of GPUs
+       process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+           More info here:
+           https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505
+       **kwargs: kwargs for Accelerator.__init__
+
+    """
+
+    def __init__(
+        self,
+        *args,
+        address: str = "127.0.0.1",
+        port: Union[str, int] = 2112,
+        world_size: Optional[int] = None,
+        process_group_kwargs: Dict[str, Any] = None,
+        **kwargs
+    ):
         """Init."""
+        self._address = os.environ.get("MASTER_ADDR", address)
+        self._port = os.environ.get("MASTER_PORT", port)
+        self._world_size = world_size
+        self._process_group_kwargs = process_group_kwargs or {}
         self._args = args
         self._kwargs = kwargs
 
@@ -80,7 +99,7 @@ class DistributedDataParallelEngine(IEngine):
         Returns:
             wrapped function (if needed).
         """
-        world_size: int = torch.cuda.device_count()
+        world_size: int = self._world_size or torch.cuda.device_count()
         return mp.spawn(
             fn,
             args=(world_size,),
@@ -99,7 +118,10 @@ class DistributedDataParallelEngine(IEngine):
         process_group_kwargs = {
             "backend": "nccl",
             "world_size": world_size,
+            **self._process_group_kwargs,
         }
+        os.environ["MASTER_ADDR"] = str(self._address)
+        os.environ["MASTER_PORT"] = str(self._port)
         os.environ["WORLD_SIZE"] = str(world_size)
         os.environ["RANK"] = str(local_rank)
         os.environ["LOCAL_RANK"] = str(local_rank)
@@ -122,7 +144,7 @@ class DistributedDataParallelEngine(IEngine):
         return metrics
 
 
-class DistributedXLAEngine(IEngine):
+class DistributedXLAEngine(Engine):
     """Distributed XLA-based engine."""
 
     def __init__(self, *args, **kwargs):

@@ -24,7 +24,7 @@ if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
 
 if TYPE_CHECKING:
-    from catalyst.core.engine import IEngine
+    from catalyst.core.engine import Engine
 
 
 def get_optimizer_momentum(optimizer: TorchOptimizer) -> float:
@@ -92,7 +92,7 @@ def get_available_engine(
     cpu: bool = False,
     fp16: bool = False,
     ddp: bool = False,
-) -> "IEngine":
+) -> "Engine":
     """Returns available engine based on given arguments.
 
     Args:
@@ -101,7 +101,7 @@ def get_available_engine(
         fp16 (bool): option to use APEX for training. Default is `False`.
 
     Returns:
-        IEngine which match requirements.
+        Engine which match requirements.
     """
     from catalyst.engines.torch import (
         CPUEngine,

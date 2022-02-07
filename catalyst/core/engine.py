@@ -15,7 +15,7 @@ if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
 
 
-class IEngine(Accelerator):
+class Engine(Accelerator):
     """
     An abstraction that syncs experiment run with
     different hardware-specific configurations.
@@ -26,7 +26,7 @@ class IEngine(Accelerator):
     - DDP (deepspeed, torch)
     - XLA
 
-    Abstraction, please check out implementations for more details:
+    Please check out implementations for more details:
         - :py:mod:`catalyst.engines.torch.CPUEngine`
         - :py:mod:`catalyst.engines.torch.GPUEngine`
         - :py:mod:`catalyst.engines.torch.DataParallelEngine`
@@ -95,4 +95,4 @@ class IEngine(Accelerator):
         return metrics
 
 
-__all__ = ["IEngine"]
+__all__ = ["Engine"]
