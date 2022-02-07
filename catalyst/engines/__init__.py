@@ -14,7 +14,6 @@ __all__ = [
     "Engine",
     "CPUEngine",
     "GPUEngine",
-    "Engine",
     "DataParallelEngine",
     "DistributedDataParallelEngine",
 ]
