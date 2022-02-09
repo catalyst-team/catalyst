@@ -59,6 +59,14 @@ class DistributedDataParallelEngine(Engine):
             during distributed training
         world_size: the number of processes to use for distributed training.
             Should be less or equal to the number of GPUs
+        workers_dist_rank: the rank of the first process to run on the node.
+            It should be a number between `number of initialized processes`
+            and `world_size - 1`, the other processes on the node wiil have ranks
+            `# of initialized processes + 1`, `# of initialized processes + 2`, ...,
+            `# of initialized processes + num_node_workers - 1`
+        num_node_workers: the number of processes to launch on the node.
+            For GPU training, this is recommended to be set to the number of GPUs
+            on the current node so that each process can be bound to a single GPU
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505
@@ -72,13 +80,17 @@ class DistributedDataParallelEngine(Engine):
         address: str = "127.0.0.1",
         port: Union[str, int] = 2112,
         world_size: Optional[int] = None,
+        workers_dist_rank: int = 0,
+        num_node_workers: Optional[int] = None,
         process_group_kwargs: Dict[str, Any] = None,
         **kwargs
     ):
         """Init."""
         self._address = os.environ.get("MASTER_ADDR", address)
         self._port = os.environ.get("MASTER_PORT", port)
-        self._world_size = world_size
+        self._num_local_workers = num_node_workers or torch.cuda.device_count() or 1
+        self._workers_global_rank = workers_dist_rank
+        self._world_size = world_size or self._num_local_workers
         self._process_group_kwargs = process_group_kwargs or {}
         self._args = args
         self._kwargs = kwargs
@@ -100,11 +112,10 @@ class DistributedDataParallelEngine(Engine):
         Returns:
             wrapped function (if needed).
         """
-        world_size: int = self._world_size or torch.cuda.device_count()
         return mp.spawn(
             fn,
-            args=(world_size,),
-            nprocs=world_size,
+            args=(self._world_size,),
+            nprocs=self._num_local_workers,
             join=True,
         )
 
@@ -121,10 +132,12 @@ class DistributedDataParallelEngine(Engine):
             "world_size": world_size,
             **self._process_group_kwargs,
         }
+        global_rank = self._workers_global_rank + local_rank
+
         os.environ["MASTER_ADDR"] = str(self._address)
         os.environ["MASTER_PORT"] = str(self._port)
         os.environ["WORLD_SIZE"] = str(world_size)
-        os.environ["RANK"] = str(local_rank)
+        os.environ["RANK"] = str(global_rank)
         os.environ["LOCAL_RANK"] = str(local_rank)
         dist.init_process_group(**process_group_kwargs)
         super().__init__(self, *self._args, **self._kwargs)

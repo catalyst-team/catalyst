@@ -15,9 +15,22 @@ E2E = {
     "ddp-amp": partial(dl.DistributedDataParallelEngine, fp16=True),
 }
 
-
 if SETTINGS.xla_required:
     E2E.update({"xla": dl.DistributedXLAEngine})
+
+
+def parse_runner_params(exp_name: str) -> Tuple[dict, List[str]]:
+    """Constructs the command-line arguments for ``train_*.py``."""
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--engine", type=str, choices=list(E2E.keys()), default="e")
+    args, unknown_args = parser.parse_known_args()
+    args = vars(args)
+
+    default_logdir = f"logs_{exp_name}_{args['engine']}".replace("-", "_")
+    args["logdir"] = args["logdir"] or default_logdir
+
+    return args, unknown_args
 
 
 def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
@@ -45,13 +58,14 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
         dest="port",
     )
     parser.add_argument(
-        "--worldsize",
+        "--world-size",
         default=None,
         type=int,
         help=(
             "the number of processes to use for distributed training."
             " Should be less or equal to the number of GPUs."
         ),
+        dest="world_size",
     )
     parser.add_argument(
         "--dist-rank",
@@ -77,4 +91,15 @@ def parse_ddp_params(args: List[str]) -> Tuple[dict, List[str]]:
     )
 
     args, unknown_args = parser.parse_known_args(args)
+
     return vars(args), unknown_args
+
+
+def parse_params(exp_name: str) -> Tuple[dict, List[str]]:
+    """Constructs the command-line arguments for ``train_*.py``."""
+    args, unknown_args = parse_runner_params(exp_name)
+    if "ddp" in args["engine"]:
+        ddp_args, unknown_args = parse_ddp_params(unknown_args)
+        args = {**args, **ddp_args}
+
+    return args, unknown_args

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # flake8: noqa
-from typing import Optional
+from typing import Any, Optional
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from datasets import load_dataset
@@ -12,15 +12,15 @@ from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl
 
-from src import E2E, parse_ddp_params
+from src import E2E, parse_params
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir: str, engine: str, engine_params: Optional[dict] = None):
+    def __init__(self, logdir: str, engine: str, **engine_params: Any):
         super().__init__()
         self._logdir = logdir
         self._engine = engine
-        self._engine_params = engine_params or {}
+        self._engine_params = engine_params
 
     def get_engine(self):
         return E2E[self._engine](**self._engine_params)
@@ -146,15 +146,6 @@ class CustomRunner(dl.IRunner):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
-    parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--engine", type=str, choices=list(E2E.keys()))
-    args, unknown_args = parser.parse_known_args()
-    args.logdir = args.logdir or f"logs_albert_{args.engine}".replace("-", "_")
-    if args.engine in ("ddp", "ddp-amp"):
-        engine_params, _ = parse_ddp_params(unknown_args)
-    else:
-        engine_params = None
-
-    runner = CustomRunner(args.logdir, args.engine, engine_params)
+    kwargs, _ = parse_params("albert")
+    runner = CustomRunner(**kwargs)
     runner.run()
