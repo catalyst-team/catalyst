@@ -319,6 +319,14 @@
 <span class="sd">            during distributed training</span>
 <span class="sd">        world_size: the number of processes to use for distributed training.</span>
 <span class="sd">            Should be less or equal to the number of GPUs</span>
+<span class="sd">        workers_dist_rank: the rank of the first process to run on the node.</span>
+<span class="sd">            It should be a number between `number of initialized processes`</span>
+<span class="sd">            and `world_size - 1`, the other processes on the node wiil have ranks</span>
+<span class="sd">            `# of initialized processes + 1`, `# of initialized processes + 2`, ...,</span>
+<span class="sd">            `# of initialized processes + num_node_workers - 1`</span>
+<span class="sd">        num_node_workers: the number of processes to launch on the node.</span>
+<span class="sd">            For GPU training, this is recommended to be set to the number of GPUs</span>
+<span class="sd">            on the current node so that each process can be bound to a single GPU</span>
 <span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
 <span class="sd">            More info here:</span>
 <span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group  # noqa: E501, W505</span>
@@ -332,13 +340,17 @@
         <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2112</span><span class="p">,</span>
         <span class="n">world_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">workers_dist_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">num_node_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_address</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_local_workers</span> <span class="o">=</span> <span class="n">num_node_workers</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workers_global_rank</span> <span class="o">=</span> <span class="n">workers_dist_rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_local_workers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_group_kwargs</span> <span class="o">=</span> <span class="n">process_group_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
@@ -360,11 +372,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            wrapped function (if needed).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">mp</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span>
             <span class="n">fn</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
-            <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span><span class="p">,),</span>
+            <span class="n">nprocs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_local_workers</span><span class="p">,</span>
             <span class="n">join</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -381,10 +392,12 @@
             <span class="s2">&quot;world_size&quot;</span><span class="p">:</span> <span class="n">world_size</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_group_kwargs</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="n">global_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers_global_rank</span> <span class="o">+</span> <span class="n">local_rank</span>
+
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_address</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;WORLD_SIZE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_rank</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">global_rank</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LOCAL_RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_rank</span><span class="p">)</span>
         <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="o">**</span><span class="n">process_group_kwargs</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
