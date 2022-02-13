@@ -23,6 +23,44 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 -
 
 
+## [22.02] - 2022-02-13
+
+### Tl;dr
+- Catalyst architecture simplification.
+- [#1395](https://github.com/catalyst-team/catalyst/issues/1395), [#1396](https://github.com/catalyst-team/catalyst/issues/1396), [#1397](https://github.com/catalyst-team/catalyst/issues/1397), [#1398](https://github.com/catalyst-team/catalyst/issues/1398), [#1399](https://github.com/catalyst-team/catalyst/issues/1399), [#1400](https://github.com/catalyst-team/catalyst/issues/1400), [#1401](https://github.com/catalyst-team/catalyst/issues/1401), [#1402](https://github.com/catalyst-team/catalyst/issues/1402), [#1403](https://github.com/catalyst-team/catalyst/issues/1403).
+
+### Added
+
+- Additional tests for different hardware accelerators setups. Please check out the `tests/pipelines` folder for more information.
+- `BackwardCallback` and `BackwardCallbackOrder` as an abstraction on top of `loss.backward`. Now you could easily log model gradients or transform them before `OptimizerCallback`.
+- `CheckpointCallbackOrder` for `ICheckpointCallback`.
+
+### Changed
+
+- Minimal python version moved to `3.7`, minimal pytorch version moved to `1.4.0`.
+- Engines rewritten on top of Accelerate. First, we found these two abstractions very close to each other. Second, Accelerate provides additional user-friendly API and more stable API for "Nvidia APEX" and "Facebook Fairscale" - it does not support them.
+- SelfSupervisedRunner moved to the `examples` folder from the Catalyst API. The only Runners API, that will be supported in the future: `IRunner`, `Runner`, `ISupervisedRunner`, `SupervisedRunner` due to their consistency. If you are interested in any other Runner API - feel free to write your own `CustomRunner` and use `SelfSupervisedRunner` as an example.
+- `Runner.{global/stage}_{batch/loader/epoch}_metrics` renamed to `Runner.{batch/loader/epoch}_metrics`
+- `CheckpointCallback` rewritten from scratch.
+- Catalyst registry moved to full-imports-paths only.
+- Logger API changed to receive `IRunner` for all `log_*` methods.
+- Metric API: `topk_args` renamed to `topk`
+- Contrib API: init imports from `catalyst.contrib` - removed, use `from catalyst.contrib.{smth} import {smth}`. Could be change to full-imports-only in future versions for stability.
+- All quickstarts, minimal examples, notebooks and pipelines moved to new version.
+- Codestyle moved to `89` right margin. Honestly speaking, it's much easier to maintain Catalyst with `89` right margin on MBP'16.
+
+### Removed
+
+- `ITrial` removed.
+- Stages support removed. While we embrace stages in deep learning experiments, current hardware accelerators are not prepared well for such setups. Additionally, ~95% of dl pipelines are single-stage. Multi-stage runner support is under review. For multi-stage support, please define a `CustomRunner` with rewritten API.
+- Config/Hydra API support removed. Config API is under review. For now, you could write your own Config API with [hydra-slayer](https://github.com/catalyst-team/hydra-slayer) if needed.
+- `catalyst-dl` scripts removed. Without Config API we don't need them anymore.
+- `Nvidia Apex`, `Fairscale`, `Albumentations`, `Nifti`, `Hydra` requiremets removed.
+- `OnnxCallback`, `PruningCallback`, `QuantizationCallback`, `TracingCallback` removed from callbacks API. Theese callbacks are under review now.
+
+If you have any questions on the Catalyst 22 edition updates, please join Catalyst slack for discussion.
+
+
 ## [21.12] - 2021-12-28
 
 ### Added
