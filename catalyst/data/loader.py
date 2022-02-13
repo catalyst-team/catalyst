@@ -26,16 +26,13 @@ class ILoaderWrapper(DataLoader):
         Gets attribute by ``key``.
         Firstly, looks at the ``origin`` for the appropriate ``key``.
         If none founds - looks at the wrappers attributes.
-        If could not found anything - raises ``NotImplementedError``.
+        If could not found anything - returns ``None``.
 
         Args:
             key: attribute key
 
         Returns:
             attribute value
-
-        Raises:
-            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``
         """
         some_default_value = "_no_attr_found_"
         value = self.origin.__dict__.get(key, some_default_value)
@@ -46,7 +43,7 @@ class ILoaderWrapper(DataLoader):
         # value = getattr(self, key, None)
         if value != some_default_value:
             return value
-        raise NotImplementedError()
+        return None
 
     def __len__(self) -> int:
         """Returns length of the wrapper loader.
