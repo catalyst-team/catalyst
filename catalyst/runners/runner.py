@@ -70,21 +70,13 @@ class Runner(IRunner):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         optimizer = optim.Adam(model.parameters(), lr=0.02)
-
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
         }
 
         class CustomRunner(dl.Runner):

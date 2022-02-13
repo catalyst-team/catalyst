@@ -8,12 +8,6 @@ Utils
    :local:
 
 
-Main
-----------------------
-.. automodule:: catalyst.utils
-    :members:
-    :show-inheritance:
-
 Config
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.config
@@ -71,36 +65,29 @@ Tracing
     :show-inheritance:
 
 
-Contrib
-----------------------
-.. automodule:: catalyst.contrib.utils
-    :members:
-    :show-inheritance:
-
-
-Image
+Image (contrib)
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.image
     :members:
     :undoc-members:
     :show-inheritance:
 
-Report
+Report (contrib)
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.report
     :members:
     :undoc-members:
     :show-inheritance:
 
-Thresholds
+Thresholds (contrib)
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.thresholds
     :members:
     :undoc-members:
     :show-inheritance:
 
-Visualization
-~~~~~~~~~~~~~~~~~~~~~~
+Visualization (contrib)
+~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.visualization
     :members:
     :undoc-members:

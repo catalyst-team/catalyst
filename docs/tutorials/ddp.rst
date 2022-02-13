@@ -435,6 +435,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
                 "criterion": dl.CriterionCallback(
                     metric_key="loss", input_key="logits", target_key="targets"
                 ),
+                "backward": dl.BackwardCallback(metric_key="loss"),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
                 "accuracy": dl.AccuracyCallback(

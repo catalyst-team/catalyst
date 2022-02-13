@@ -33,8 +33,6 @@ class ISupervisedRunner(Runner):
     Abstraction, please check out implementations for more details:
 
         - :py:mod:`catalyst.runners.runner.SupervisedRunner`
-        - :py:mod:`catalyst.runners.config.SupervisedConfigRunner`
-        - :py:mod:`catalyst.runners.hydra.SupervisedHydraRunner`
 
     .. note::
         ISupervisedRunner contains only the logic with batch handling.

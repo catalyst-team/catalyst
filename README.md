@@ -182,6 +182,7 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsyst
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [22.02](https://catalyst-team.github.io/catalyst/v22.02/index.html)
 
 - <details>
   <summary>2021 edition</summary>
