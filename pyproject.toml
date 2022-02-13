@@ -2,4 +2,4 @@
 style = "https://raw.githubusercontent.com/catalyst-team/codestyle/v21.09.2/styles/nitpick-style-catalyst.toml"
 
 [tool.black]
-line-length = 99
+line-length = 89

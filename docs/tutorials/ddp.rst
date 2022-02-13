@@ -438,7 +438,7 @@ As an extra point, you could also specify the whole experiment within ``Runner``
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
                 "accuracy": dl.AccuracyCallback(
-                    input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+                    input_key="logits", target_key="targets", topk=(1, 3, 5)
                 ),
                 "checkpoint": dl.CheckpointCallback(
                     self._logdir,
