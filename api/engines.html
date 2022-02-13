@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engines &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>Engines &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -270,22 +270,16 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#torch" id="id1">Torch</a></p>
-<ul>
-<li><p><a class="reference internal" href="#cpuengine" id="id2">CPUEngine</a></p></li>
-<li><p><a class="reference internal" href="#gpuengine" id="id3">GPUEngine</a></p></li>
-<li><p><a class="reference internal" href="#dataparallelengine" id="id4">DataParallelEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id5">DistributedDataParallelEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributedxlaengine" id="id6">DistributedXLAEngine</a></p></li>
-</ul>
-</li>
+<li><p><a class="reference internal" href="#cpuengine" id="id1">CPUEngine</a></p></li>
+<li><p><a class="reference internal" href="#gpuengine" id="id2">GPUEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelengine" id="id3">DataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id4">DistributedDataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributedxlaengine" id="id5">DistributedXLAEngine</a></p></li>
 </ul>
 </div>
 <p>You could check engines overview under <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples/engines">examples/engines</a> section.</p>
-<section id="torch">
-<h2><a class="toc-backref" href="#id1">Torch</a><a class="headerlink" href="#torch" title="Permalink to this headline">¶</a></h2>
 <section id="cpuengine">
-<h3><a class="toc-backref" href="#id2">CPUEngine</a><a class="headerlink" href="#cpuengine" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id1">CPUEngine</a><a class="headerlink" href="#cpuengine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.engines.torch.CPUEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">CPUEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#CPUEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.CPUEngine" title="Permalink to this definition">¶</a></dt>
@@ -295,7 +289,7 @@
 
 </section>
 <section id="gpuengine">
-<h3><a class="toc-backref" href="#id3">GPUEngine</a><a class="headerlink" href="#gpuengine" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id2">GPUEngine</a><a class="headerlink" href="#gpuengine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.engines.torch.GPUEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">GPUEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#GPUEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.GPUEngine" title="Permalink to this definition">¶</a></dt>
@@ -305,7 +299,7 @@
 
 </section>
 <section id="dataparallelengine">
-<h3><a class="toc-backref" href="#id4">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id3">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.engines.torch.DataParallelEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DataParallelEngine" title="Permalink to this definition">¶</a></dt>
@@ -315,7 +309,7 @@
 
 </section>
 <section id="distributeddataparallelengine">
-<h3><a class="toc-backref" href="#id5">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id4">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">address: str = '127.0.0.1'</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = 2112</em>, <em class="sig-param">world_size: Optional[int] = None</em>, <em class="sig-param">workers_dist_rank: int = 0</em>, <em class="sig-param">num_node_workers: Optional[int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
@@ -351,7 +345,7 @@ More info here:
 
 </section>
 <section id="distributedxlaengine">
-<h3><a class="toc-backref" href="#id6">DistributedXLAEngine</a><a class="headerlink" href="#distributedxlaengine" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id5">DistributedXLAEngine</a><a class="headerlink" href="#distributedxlaengine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedXLAEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedXLAEngine</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedXLAEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedXLAEngine" title="Permalink to this definition">¶</a></dt>
@@ -359,7 +353,6 @@ More info here:
 <p>Distributed XLA-based engine.</p>
 </dd></dl>
 
-</section>
 </section>
 </section>
 
@@ -403,14 +396,11 @@ More info here:
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Engines</a><ul>
-<li><a class="reference internal" href="#torch">Torch</a><ul>
 <li><a class="reference internal" href="#cpuengine">CPUEngine</a></li>
 <li><a class="reference internal" href="#gpuengine">GPUEngine</a></li>
 <li><a class="reference internal" href="#dataparallelengine">DataParallelEngine</a></li>
 <li><a class="reference internal" href="#distributeddataparallelengine">DistributedDataParallelEngine</a></li>
 <li><a class="reference internal" href="#distributedxlaengine">DistributedXLAEngine</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

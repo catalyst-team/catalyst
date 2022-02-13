@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.runner &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>catalyst.runners.runner &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -319,7 +319,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 
 <span class="sd">    Examples:</span>
 
@@ -330,21 +330,13 @@
 <span class="sd">        from torch.nn import functional as F</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl, metrics</span>
-<span class="sd">        from catalyst.data import ToTensor</span>
 <span class="sd">        from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
 <span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
-
 <span class="sd">        loaders = {</span>
-<span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
-<span class="sd">                batch_size=32</span>
-<span class="sd">            ),</span>
-<span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False),</span>
-<span class="sd">                batch_size=32</span>
-<span class="sd">            ),</span>
+<span class="sd">            &quot;train&quot;: DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),</span>
 <span class="sd">        }</span>
 
 <span class="sd">        class CustomRunner(dl.Runner):</span>
@@ -608,7 +600,7 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
 
-<span class="sd">            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># experiment setup</span>
@@ -692,7 +684,7 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
 
-<span class="sd">            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">,</span> <span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">)</span>
 

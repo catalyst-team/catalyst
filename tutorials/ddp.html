@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Distributed training tutorial &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>Distributed training tutorial &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -682,10 +682,11 @@ And thanks to the pure PyTorch, the code is easily readable and straightforward.
             <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
                 <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span>
             <span class="p">),</span>
+            <span class="s2">&quot;backward&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">BackwardCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
             <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
             <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">SchedulerCallback</span><span class="p">(</span><span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
             <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
-                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
             <span class="p">),</span>
             <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.runner &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>catalyst.core.runner &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -322,7 +322,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
 
-<span class="sd">        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -530,7 +530,7 @@
 
         <span class="c1"># self.engine = self.get_engine()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">local_rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_local_main_process</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_main_process</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loggers</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_hparams</span><span class="p">(</span><span class="n">hparams</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">local_main_process_first</span><span class="p">():</span>

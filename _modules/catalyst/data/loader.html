@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.loader &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>catalyst.data.loader &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -286,16 +286,13 @@
 <span class="sd">        Gets attribute by ``key``.</span>
 <span class="sd">        Firstly, looks at the ``origin`` for the appropriate ``key``.</span>
 <span class="sd">        If none founds - looks at the wrappers attributes.</span>
-<span class="sd">        If could not found anything - raises ``NotImplementedError``.</span>
+<span class="sd">        If could not found anything - returns ``None``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: attribute key</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            attribute value</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">some_default_value</span> <span class="o">=</span> <span class="s2">&quot;_no_attr_found_&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">some_default_value</span><span class="p">)</span>
@@ -306,7 +303,7 @@
         <span class="c1"># value = getattr(self, key, None)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">some_default_value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns length of the wrapper loader.</span>

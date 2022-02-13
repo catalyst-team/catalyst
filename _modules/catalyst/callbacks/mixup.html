@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.mixup &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>catalyst.callbacks.mixup &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -367,6 +367,7 @@
 <span class="sd">                    input_key=&quot;clf_logits&quot;,</span>
 <span class="sd">                    target_key=&quot;clf_targets_one_hot&quot;</span>
 <span class="sd">                ),</span>
+<span class="sd">                &quot;backward&quot;: dl.BackwardCallback(metric_key=&quot;loss&quot;),</span>
 <span class="sd">                &quot;optimizer&quot;: dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
 <span class="sd">                &quot;classification&quot;: dl.ControlFlowCallback(</span>
 <span class="sd">                    dl.PrecisionRecallF1SupportCallback(</span>

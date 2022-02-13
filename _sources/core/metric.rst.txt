@@ -4,7 +4,7 @@ Metric
 Catalyst API also involves ``Metric`` abstraction
 for convenient metric computation during an experiment run. Its API is quite simple:
 
-.. image:: https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_metric21.png
+.. image:: https://raw.githubusercontent.com/Scitator/catalyst22-post-pics/main/metric.png
     :alt: Runner
 
 

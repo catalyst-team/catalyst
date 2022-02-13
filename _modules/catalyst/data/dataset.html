@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.dataset &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>catalyst.data.dataset &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -305,7 +305,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        dataset: original dataset for augmentation</span>
 <span class="sd">        transforms: transforms which will be applied to original batch to get both</span>
-<span class="sd">        left and right output batch.</span>
+<span class="sd">            left and right output batch.</span>
 <span class="sd">        transform_left: transform only for left batch</span>
 <span class="sd">        transform_right: transform only for right batch</span>
 <span class="sd">        transform_original: transforms which will be applied to save original in batch</span>
@@ -337,6 +337,9 @@
 <span class="sd">            cifar_dataset,</span>
 <span class="sd">            transforms=transforms</span>
 <span class="sd">        )</span>
+
+<span class="sd">        for transformed_sample, aug_1, aug_2 in cifar_contrastive:</span>
+<span class="sd">            pass</span>
 
 <span class="sd">    .. _`A Simple Framework for Contrastive Learning of Visual Representations`:</span>
 <span class="sd">        https://arxiv.org/abs/2002.05709</span>

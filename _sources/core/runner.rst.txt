@@ -5,7 +5,7 @@ Runner
 the data you are using, the model you are training,
 the batch handling logic, and everything about the selected metrics and monitoring systems:
 
-.. image:: https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_runner21.png
+.. image:: https://raw.githubusercontent.com/Scitator/catalyst22-post-pics/main/runner.png
     :alt: Runner
 
 
@@ -22,6 +22,8 @@ For example, you could:
 - Mix these approaches: `CV — MNIST GAN`_, `CV — MNIST VAE`_ examples.
 
 Finally, the ``Runner`` architecture does not depend on PyTorch in any case, providing directions for adoption for Tensorflow2 or JAX support. 
+If you are interested in this, please check out the `Animus`_ project.
+
 Supported Runners are listed under the `Runner API section`_.
 
 
@@ -32,4 +34,5 @@ If you haven't found the answer for your question, feel free to `join our slack`
 .. _`CV — MNIST GAN`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`CV — MNIST VAE`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`Runner API section`: https://catalyst-team.github.io/catalyst/api/runners.html
+.. _`Animus`: https://github.com/Scitator/animus
 .. _`join our slack`: https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw

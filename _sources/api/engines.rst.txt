@@ -11,8 +11,6 @@ You could check engines overview under `examples/engines`_ section.
 
 .. _`examples/engines`: https://github.com/catalyst-team/catalyst/tree/master/examples/engines
 
-Torch
-----------------------
 
 CPUEngine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

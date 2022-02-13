@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engine &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>Engine &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -269,17 +269,16 @@
 <p><code class="docutils literal notranslate"><span class="pre">Engine</span></code> is the main force of the <code class="docutils literal notranslate"><span class="pre">Runner</span></code>.
 It defines the logic of hardware communication and different deep learning techniques usage
 like distributed or half-precision training:</p>
-<img alt="Engine" src="https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_engine21.png" />
+<img alt="Engine" src="https://raw.githubusercontent.com/Scitator/catalyst22-post-pics/main/engine.png" />
 <p>Thanks to the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> design,
 it’s straightforward to adapt your pipeline for different hardware accelerators.
 For example, you could easily support:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html#distributeddataparallelampengine">PyTorch distribute setup</a>.</p></li>
-<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html#distributeddataparallelapexengine">Nvidia-Apex setup</a>.</p></li>
-<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html#distributeddataparallelampengine">AMP distributed setup</a>.</p></li>
+<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html">PyTorch distributed setup</a>.</p></li>
+<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html">AMP distributed setup</a>.</p></li>
+<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html">DeepSpeed distributed setup</a>.</p></li>
+<li><p><a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html">TPU distributed setup</a>.</p></li>
 </ul>
-<p>Moreover, we are working on other hardware accelerators support like DeepSpeed, Horovod, or TPU.
-You could watch the progress of engine development under the <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/engines.html">Engine API section</a>.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
 </section>
 

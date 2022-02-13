@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>Utils &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -269,32 +269,22 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#module-catalyst.utils" id="id1">Main</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.utils.config" id="id2">Config</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.distributed" id="id3">Distributed</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.misc" id="id4">Misc</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.onnx" id="id5">Onnx</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.pruning" id="id6">Pruning</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.quantization" id="id7">Quantization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.torch" id="id8">Torch</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tracing" id="id9">Tracing</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils" id="id10">Contrib</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.image" id="id11">Image</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.report" id="id12">Report</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id13">Thresholds</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id14">Visualization</a></p></li>
-</ul>
-</li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.config" id="id1">Config</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.distributed" id="id2">Distributed</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.misc" id="id3">Misc</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.onnx" id="id4">Onnx</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.pruning" id="id5">Pruning</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.quantization" id="id6">Quantization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.torch" id="id7">Torch</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.tracing" id="id8">Tracing</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.image" id="id9">Image (contrib)</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.report" id="id10">Report (contrib)</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id11">Thresholds (contrib)</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id12">Visualization (contrib)</a></p></li>
 </ul>
 </div>
-<section id="module-catalyst.utils">
-<span id="main"></span><h2><a class="toc-backref" href="#id1">Main</a><a class="headerlink" href="#module-catalyst.utils" title="Permalink to this headline">¶</a></h2>
 <section id="module-catalyst.utils.config">
-<span id="config"></span><h3><a class="toc-backref" href="#id2">Config</a><a class="headerlink" href="#module-catalyst.utils.config" title="Permalink to this headline">¶</a></h3>
+<span id="config"></span><h2><a class="toc-backref" href="#id1">Config</a><a class="headerlink" href="#module-catalyst.utils.config" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.config.load_config">
 <code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">load_config</code><span class="sig-paren">(</span><em class="sig-param">path: Union[str, pathlib.Path], ordered: bool = False, data_format: str = None, encoding: str = 'utf-8'</em><span class="sig-paren">)</span> &#x2192; Union[Dict, List]<a class="reference internal" href="../_modules/catalyst/utils/config.html#load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.load_config" title="Permalink to this definition">¶</a></dt>
@@ -346,7 +336,7 @@
 
 </section>
 <section id="module-catalyst.utils.distributed">
-<span id="distributed"></span><h3><a class="toc-backref" href="#id3">Distributed</a><a class="headerlink" href="#module-catalyst.utils.distributed" title="Permalink to this headline">¶</a></h3>
+<span id="distributed"></span><h2><a class="toc-backref" href="#id2">Distributed</a><a class="headerlink" href="#module-catalyst.utils.distributed" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.distributed.get_backend">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_backend</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional[str]<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_backend" title="Permalink to this definition">¶</a></dt>
@@ -463,7 +453,7 @@ Source: <a class="reference external" href="http://github.com/facebookresearch/d
 
 </section>
 <section id="module-catalyst.utils.misc">
-<span id="misc"></span><h3><a class="toc-backref" href="#id4">Misc</a><a class="headerlink" href="#module-catalyst.utils.misc" title="Permalink to this headline">¶</a></h3>
+<span id="misc"></span><h2><a class="toc-backref" href="#id3">Misc</a><a class="headerlink" href="#module-catalyst.utils.misc" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.misc.boolean_flag">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">boolean_flag</code><span class="sig-paren">(</span><em class="sig-param">parser: argparse.ArgumentParser</em>, <em class="sig-param">name: str</em>, <em class="sig-param">default: Optional[bool] = False</em>, <em class="sig-param">help: str = None</em>, <em class="sig-param">shorthand: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.boolean_flag" title="Permalink to this definition">¶</a></dt>
@@ -706,7 +696,7 @@ string <code class="docutils literal notranslate"><span class="pre">parent_key</
 
 </section>
 <section id="module-catalyst.utils.onnx">
-<span id="onnx"></span><h3><a class="toc-backref" href="#id5">Onnx</a><a class="headerlink" href="#module-catalyst.utils.onnx" title="Permalink to this headline">¶</a></h3>
+<span id="onnx"></span><h2><a class="toc-backref" href="#id4">Onnx</a><a class="headerlink" href="#module-catalyst.utils.onnx" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.onnx.onnx_export">
 <code class="sig-prename descclassname">catalyst.utils.onnx.</code><code class="sig-name descname">onnx_export</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, batch: torch.Tensor, file: str, method_name: str = 'forward', input_names: Iterable = None, output_names: List[str] = None, dynamic_axes: Union[Dict[str, int], Dict[str, Dict[str, int]]] = None, opset_version: int = 9, do_constant_folding: bool = False, return_model: bool = False, verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; Union[None, onnx]<a class="reference internal" href="../_modules/catalyst/utils/onnx.html#onnx_export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.onnx.onnx_export" title="Permalink to this definition">¶</a></dt>
@@ -793,7 +783,7 @@ and after quantization. Defaults to False.</p></li>
 
 </section>
 <section id="module-catalyst.utils.pruning">
-<span id="pruning"></span><h3><a class="toc-backref" href="#id6">Pruning</a><a class="headerlink" href="#module-catalyst.utils.pruning" title="Permalink to this headline">¶</a></h3>
+<span id="pruning"></span><h2><a class="toc-backref" href="#id5">Pruning</a><a class="headerlink" href="#module-catalyst.utils.pruning" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.pruning.prune_model">
 <code class="sig-prename descclassname">catalyst.utils.pruning.</code><code class="sig-name descname">prune_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, pruning_fn: Union[Callable, str], amount: Union[float, int], keys_to_prune: Optional[List[str]] = None, layers_to_prune: Optional[List[str]] = None, dim: int = None, l_norm: int = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/pruning.html#prune_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pruning.prune_model" title="Permalink to this definition">¶</a></dt>
@@ -885,7 +875,7 @@ ln_structured you need to specify l_norm. Defaults to None.</p></li>
 
 </section>
 <section id="module-catalyst.utils.quantization">
-<span id="quantization"></span><h3><a class="toc-backref" href="#id7">Quantization</a><a class="headerlink" href="#module-catalyst.utils.quantization" title="Permalink to this headline">¶</a></h3>
+<span id="quantization"></span><h2><a class="toc-backref" href="#id6">Quantization</a><a class="headerlink" href="#module-catalyst.utils.quantization" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.quantization.quantize_model">
 <code class="sig-prename descclassname">catalyst.utils.quantization.</code><code class="sig-name descname">quantize_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">qconfig_spec: Dict = None</em>, <em class="sig-param">dtype: Union[str</em>, <em class="sig-param">torch.dtype</em>, <em class="sig-param">None] = 'qint8'</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/utils/quantization.html#quantize_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.quantization.quantize_model" title="Permalink to this definition">¶</a></dt>
@@ -911,7 +901,7 @@ Defaults to “qint8”.</p></li>
 
 </section>
 <section id="module-catalyst.utils.torch">
-<span id="torch"></span><h3><a class="toc-backref" href="#id8">Torch</a><a class="headerlink" href="#module-catalyst.utils.torch" title="Permalink to this headline">¶</a></h3>
+<span id="torch"></span><h2><a class="toc-backref" href="#id7">Torch</a><a class="headerlink" href="#module-catalyst.utils.torch" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.torch.get_optimizer_momentum">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
@@ -1140,7 +1130,7 @@ the batch size increases by 2 times.</p></li>
 
 </section>
 <section id="module-catalyst.utils.tracing">
-<span id="tracing"></span><h3><a class="toc-backref" href="#id9">Tracing</a><a class="headerlink" href="#module-catalyst.utils.tracing" title="Permalink to this headline">¶</a></h3>
+<span id="tracing"></span><h2><a class="toc-backref" href="#id8">Tracing</a><a class="headerlink" href="#module-catalyst.utils.tracing" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.utils.tracing.trace_model">
 <code class="sig-prename descclassname">catalyst.utils.tracing.</code><code class="sig-name descname">trace_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, batch: Union[Tuple[torch.Tensor], torch.Tensor], method_name: str = 'forward'</em><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="../_modules/catalyst/utils/tracing.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tracing.trace_model" title="Permalink to this definition">¶</a></dt>
@@ -1189,11 +1179,8 @@ used as entrypoint during tracing</p></li>
 </dd></dl>
 
 </section>
-</section>
-<section id="module-catalyst.contrib.utils">
-<span id="contrib"></span><h2><a class="toc-backref" href="#id10">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.utils" title="Permalink to this headline">¶</a></h2>
 <section id="module-catalyst.contrib.utils.image">
-<span id="image"></span><h3><a class="toc-backref" href="#id11">Image</a><a class="headerlink" href="#module-catalyst.contrib.utils.image" title="Permalink to this headline">¶</a></h3>
+<span id="image-contrib"></span><h2><a class="toc-backref" href="#id9">Image (contrib)</a><a class="headerlink" href="#module-catalyst.contrib.utils.image" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.contrib.utils.image.has_image_extension">
 <code class="sig-prename descclassname">catalyst.contrib.utils.image.</code><code class="sig-name descname">has_image_extension</code><span class="sig-paren">(</span><em class="sig-param">uri</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/contrib/utils/image.html#has_image_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.image.has_image_extension" title="Permalink to this definition">¶</a></dt>
@@ -1302,7 +1289,7 @@ rootpath (Union[str, pathlib.Path]): path to the resource with image
 
 </section>
 <section id="module-catalyst.contrib.utils.report">
-<span id="report"></span><h3><a class="toc-backref" href="#id12">Report</a><a class="headerlink" href="#module-catalyst.contrib.utils.report" title="Permalink to this headline">¶</a></h3>
+<span id="report-contrib"></span><h2><a class="toc-backref" href="#id10">Report (contrib)</a><a class="headerlink" href="#module-catalyst.contrib.utils.report" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.contrib.utils.report.get_classification_report">
 <code class="sig-prename descclassname">catalyst.contrib.utils.report.</code><code class="sig-name descname">get_classification_report</code><span class="sig-paren">(</span><em class="sig-param">y_true: numpy.ndarray</em>, <em class="sig-param">y_pred: numpy.ndarray</em>, <em class="sig-param">y_scores: numpy.ndarray = None</em>, <em class="sig-param">beta: float = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/contrib/utils/report.html#get_classification_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.report.get_classification_report" title="Permalink to this definition">¶</a></dt>
@@ -1361,7 +1348,7 @@ Defaults to None.</p></li>
 
 </section>
 <section id="module-catalyst.contrib.utils.thresholds">
-<span id="thresholds"></span><h3><a class="toc-backref" href="#id13">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
+<span id="thresholds-contrib"></span><h2><a class="toc-backref" href="#id11">Thresholds (contrib)</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.contrib.utils.thresholds.get_baseline_thresholds">
 <code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_baseline_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_baseline_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_baseline_thresholds" title="Permalink to this definition">¶</a></dt>
@@ -1596,7 +1583,7 @@ for multiclass classification task with brute-force algorithm.</p>
 
 </section>
 <section id="module-catalyst.contrib.utils.visualization">
-<span id="visualization"></span><h3><a class="toc-backref" href="#id14">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
+<span id="visualization-contrib"></span><h2><a class="toc-backref" href="#id12">Visualization (contrib)</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.contrib.utils.visualization.plot_confusion_matrix">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param">cm: numpy.ndarray</em>, <em class="sig-param">class_names=None</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">title='confusion matrix'</em>, <em class="sig-param">fname=None</em>, <em class="sig-param">show=True</em>, <em class="sig-param">figsize=12</em>, <em class="sig-param">fontsize=32</em>, <em class="sig-param">colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
@@ -1628,7 +1615,6 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <dd><p>Renders matplotlib”s figure to tensor.</p>
 </dd></dl>
 
-</section>
 </section>
 </section>
 
@@ -1670,7 +1656,6 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Utils</a><ul>
-<li><a class="reference internal" href="#module-catalyst.utils">Main</a><ul>
 <li><a class="reference internal" href="#module-catalyst.utils.config">Config</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.distributed">Distributed</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.misc">Misc</a></li>
@@ -1679,15 +1664,10 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><a class="reference internal" href="#module-catalyst.utils.quantization">Quantization</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.torch">Torch</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.tracing">Tracing</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils">Contrib</a><ul>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils.image">Image</a></li>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils.report">Report</a></li>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds">Thresholds</a></li>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils.visualization">Visualization</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.image">Image (contrib)</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.report">Report (contrib)</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds">Thresholds (contrib)</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.visualization">Visualization (contrib)</a></li>
 </ul>
 </li>
 </ul>

@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quickstart 101 &mdash; Catalyst 22.02rc0 documentation</title>
+  <title>Quickstart 101 &mdash; Catalyst 22.02 documentation</title>
   
 
   
@@ -315,7 +315,7 @@
 
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="c1"># model inference step</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="c1"># model train/valid step</span>
@@ -329,6 +329,7 @@
 <h2>Step 5 - Train the model<a class="headerlink" href="#step-5-train-the-model" title="Permalink to this headline">¶</a></h2>
 <p>Let’s <strong>train</strong> and <strong>evaluate</strong> your model (<a class="reference external" href="https://catalyst-team.github.io/catalyst/api/metrics.html">supported metrics</a>) with a few lines of code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
+
 <span class="c1"># model training</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -338,25 +339,32 @@
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
             <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
         <span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">BackwardCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
             <span class="s2">&quot;./logs&quot;</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="mi">3</span>
         <span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
+
+<span class="c1"># model evaluation</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">evaluate_loader</span><span class="p">(</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">],</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="step-6-make-predictions">
 <h2>Step 6 - Make predictions<a class="headerlink" href="#step-6-make-predictions" title="Permalink to this headline">¶</a></h2>
-<p>You could easily use your custom logic for model inference on batch or loader thanks to <code class="docutils literal notranslate"><span class="pre">runner.predict_batch</span></code> method.</p>
+<p>You could easily use your custom logic for model inference on batch
+or loader thanks to <code class="docutils literal notranslate"><span class="pre">runner.predict_batch</span></code> and <code class="docutils literal notranslate"><span class="pre">runner.predict_loader</span></code> methods.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># model batch inference</span>
 <span class="n">features_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">prediction_batch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">features_batch</span><span class="p">)</span>
@@ -369,19 +377,16 @@
 <section id="step-7-prepare-for-development-stage">
 <h2>Step 7 - Prepare for development stage<a class="headerlink" href="#step-7-prepare-for-development-stage" title="Permalink to this headline">¶</a></h2>
 <p>Finally, you could use a large number of model post-processing utils for production use cases.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">features_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
-<span class="c1"># model stochastic weight averaging</span>
-<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_averaged_weights_by_path_mask</span><span class="p">(</span><span class="n">path_mask</span><span class="o">=</span><span class="s2">&quot;./logs/*.pth&quot;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
 <span class="c1"># model tracing</span>
-<span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">batch</span><span class="o">=</span><span class="n">features_batch</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
 <span class="c1"># model quantization</span>
-<span class="n">utils</span><span class="o">.</span><span class="n">quantize_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">quantize_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
 <span class="c1"># model pruning</span>
-<span class="n">utils</span><span class="o">.</span><span class="n">prune_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">pruning_fn</span><span class="o">=</span><span class="s2">&quot;l1_unstructured&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">prune_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">pruning_fn</span><span class="o">=</span><span class="s2">&quot;l1_unstructured&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="c1"># onnx export</span>
-<span class="n">utils</span><span class="o">.</span><span class="n">onnx_export</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">batch</span><span class="o">=</span><span class="n">features_batch</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;./logs/mnist.onnx&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">onnx_export</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;./logs/mnist.onnx&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
