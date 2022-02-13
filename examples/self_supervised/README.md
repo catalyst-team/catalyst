@@ -1,10 +1,10 @@
 # Self-Supervised Learning Examples
 ## Requriments
 
-To run examples you need catalyst[cv]==22.02rc0 and catalyst[ml]==22.02rc0
+To run examples you need catalyst[cv]==22.02 and catalyst[ml]==22.02
 ```
-pip install catalyst[cv]==22.02rc0
-pip install catalyst[ml]==22.02rc0
+pip install catalyst[cv]==22.02
+pip install catalyst[ml]==22.02
 ```
 
 ## Description

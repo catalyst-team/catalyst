@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# pip install catalyst[cv]==21.11
-# pip install catalyst[ml]==21.11
+# pip install catalyst[cv]==22.02
+# pip install catalyst[ml]==22.02
 
 export NUM_EPOCHS=20
 export BATCH_SIZE=256

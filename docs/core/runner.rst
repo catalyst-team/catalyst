@@ -22,7 +22,8 @@ For example, you could:
 - Mix these approaches: `CV — MNIST GAN`_, `CV — MNIST VAE`_ examples.
 
 Finally, the ``Runner`` architecture does not depend on PyTorch in any case, providing directions for adoption for Tensorflow2 or JAX support. 
-If you are interested in this, please check out the `Animus` project.
+If you are interested in this, please check out the `Animus`_ project.
+
 Supported Runners are listed under the `Runner API section`_.
 
 
