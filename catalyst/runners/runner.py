@@ -59,7 +59,7 @@ class Runner(IRunner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
     Examples:
 
@@ -70,21 +70,13 @@ class Runner(IRunner):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         optimizer = optim.Adam(model.parameters(), lr=0.02)
-
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
-                batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False),
-                batch_size=32
-            ),
+            "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),
+            "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
         }
 
         class CustomRunner(dl.Runner):
@@ -348,7 +340,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
         """
         # experiment setup
@@ -432,7 +424,7 @@ class Runner(IRunner):
         .. note::
             Please follow the `minimal examples`_ sections for use cases.
 
-            .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
         """
         self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
 

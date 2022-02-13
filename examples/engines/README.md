@@ -6,8 +6,6 @@ PS. multi-node included as well!
 
 > Note: for the Albert training please install requirements with ``pip install datasets transformers``.
 
-## Core
-
 ### PyTorch
 ```bash
 pip install catalyst
@@ -110,11 +108,11 @@ CUDA_VISIBLE_DEVICES="0,1" python train_albert.py --engine=ddp-amp \
 </p>
 </details>
 
-<!--
 ### PyTorch XLA
 ```bash
-pip install catalyst
+!pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/cu111/torch_stable.html
 pip install cloud-tpu-client==0.10 https://storage.googleapis.com/tpu-pytorch/wheels/torch_xla-1.9-cp37-cp37m-linux_x86_64.whl
+pip install catalyst
 ```
 
 <details open>
@@ -122,9 +120,9 @@ pip install cloud-tpu-client==0.10 https://storage.googleapis.com/tpu-pytorch/wh
 <p>
 
 ```bash
-python train_resnet.py --engine=xla
+python train_resnet.py --engine=e
 
-python train_resnet.py --engine=xla-ddp
+python train_resnet.py --engine=xla
 ```
 </p>
 </details>
@@ -136,10 +134,9 @@ python train_resnet.py --engine=xla-ddp
 ```bash
 pip install datasets transformers
 
-python train_albert.py --engine=xla
+python train_albert.py --engine=e
 
-python train_albert.py --engine=xla-ddp
+python train_albert.py --engine=xla
 ```
 </p>
 </details>
--->

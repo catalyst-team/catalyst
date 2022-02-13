@@ -62,7 +62,7 @@ class IRunner(ICallback, ILogger, ABC):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
     """
 
@@ -270,7 +270,7 @@ class IRunner(ICallback, ILogger, ABC):
 
         # self.engine = self.get_engine()
         self.engine.setup(local_rank=self._local_rank, world_size=self._world_size)
-        if self.engine.is_local_main_process:
+        if self.engine.is_main_process:
             self.loggers = self.get_loggers()
             self.log_hparams(hparams=self.hparams)
         with self.engine.local_main_process_first():

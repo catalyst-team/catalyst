@@ -12,7 +12,7 @@ For example, it's much more convenient to define the required metrics:
 
 The Callback API is very straightforward and repeats main for-loops in our train-loop abstraction:
 
-.. image:: https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_callback21.png
+.. image:: https://raw.githubusercontent.com/Scitator/catalyst22-post-pics/main/callback.png
     :alt: Runner
 
 You could find a large variety of supported callbacks under the `Callback API section`_.

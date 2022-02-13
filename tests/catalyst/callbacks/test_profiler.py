@@ -84,6 +84,7 @@ class CustomRunner(dl.IRunner):
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
+            "backward": dl.BackwardCallback(metric_key="loss"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "profiler": ProfilerCallback(
                 loader_key="train",

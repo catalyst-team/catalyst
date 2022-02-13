@@ -1,6 +1,6 @@
 # Requirements
 ```bash
-pip install catalyst==22.02rc0 gym==0.18.0
+pip install catalyst==22.02 gym==0.18.0
 ```
 
 # Run

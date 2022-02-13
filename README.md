@@ -75,12 +75,9 @@ from catalyst.contrib.datasets import MNIST
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
-
-train_data = MNIST(os.getcwd(), train=True)
-valid_data = MNIST(os.getcwd(), train=False)
 loaders = {
-    "train": DataLoader(train_data, batch_size=32),
-    "valid": DataLoader(valid_data, batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False), batch_size=32),
 }
 
 runner = dl.SupervisedRunner(
@@ -110,21 +107,18 @@ metrics = runner.evaluate_loader(
     loader=loaders["valid"],
     callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3, 5))],
 )
-assert "accuracy01" in metrics.keys()
 
 # model inference
 for prediction in runner.predict_loader(loader=loaders["valid"]):
     assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
 
-features_batch = next(iter(loaders["valid"]))[0]
-# model tracing
-utils.trace_model(model=runner.model.cpu(), batch=features_batch)
-# model quantization
-utils.quantize_model(model=runner.model)
-# model pruning
-utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
-# onnx export
-utils.onnx_export(model=runner.model.cpu(), batch=features_batch, file="./logs/mnist.onnx", verbose=True)
+# model post-processing
+model = runner.model.cpu()
+batch = next(iter(loaders["valid"]))[0]
+utils.trace_model(model=model, batch=batch)
+utils.quantize_model(model=model)
+utils.prune_model(model=model, pruning_fn="l1_unstructured", amount=0.8)
+utils.onnx_export(model=model, batch=batch, file="./logs/mnist.onnx", verbose=True)
 ```
 
 ### Step-by-step Guide
@@ -188,6 +182,7 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsyst
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [22.02](https://catalyst-team.github.io/catalyst/v22.02/index.html)
 
 - <details>
   <summary>2021 edition</summary>

@@ -7,6 +7,7 @@ Loggers
 .. contents::
    :local:
 
+
 CometLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.comet.CometLogger

@@ -8,9 +8,6 @@ Runners
    :local:
 
 
-Runner Interfaces
-----------------------
-
 ISupervisedRunner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.runners.supervised.ISupervisedRunner
@@ -19,9 +16,6 @@ ISupervisedRunner
     :undoc-members:
     :show-inheritance:
 
-
-Python API
-----------------------
 
 Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

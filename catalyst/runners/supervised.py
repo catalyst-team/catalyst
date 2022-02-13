@@ -33,8 +33,6 @@ class ISupervisedRunner(Runner):
     Abstraction, please check out implementations for more details:
 
         - :py:mod:`catalyst.runners.runner.SupervisedRunner`
-        - :py:mod:`catalyst.runners.config.SupervisedConfigRunner`
-        - :py:mod:`catalyst.runners.hydra.SupervisedHydraRunner`
 
     .. note::
         ISupervisedRunner contains only the logic with batch handling.
@@ -55,7 +53,7 @@ class ISupervisedRunner(Runner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
     """
 
@@ -186,7 +184,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
     .. note::
         Please follow the `minimal examples`_ sections for use cases.
 
-        .. _`minimal examples`: http://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
     """
 
     def __init__(

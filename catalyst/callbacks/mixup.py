@@ -107,6 +107,7 @@ class MixupCallback(Callback):
                     input_key="clf_logits",
                     target_key="clf_targets_one_hot"
                 ),
+                "backward": dl.BackwardCallback(metric_key="loss"),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "classification": dl.ControlFlowCallback(
                     dl.PrecisionRecallF1SupportCallback(

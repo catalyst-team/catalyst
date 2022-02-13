@@ -45,7 +45,7 @@ class SelfSupervisedDatasetWrapper(Dataset):
     Args:
         dataset: original dataset for augmentation
         transforms: transforms which will be applied to original batch to get both
-        left and right output batch.
+            left and right output batch.
         transform_left: transform only for left batch
         transform_right: transform only for right batch
         transform_original: transforms which will be applied to save original in batch
@@ -77,6 +77,9 @@ class SelfSupervisedDatasetWrapper(Dataset):
             cifar_dataset,
             transforms=transforms
         )
+
+        for transformed_sample, aug_1, aug_2 in cifar_contrastive:
+            pass
 
     .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
         https://arxiv.org/abs/2002.05709

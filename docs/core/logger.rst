@@ -3,14 +3,12 @@ Logger
 
 Speaking about the logging, Catalyst united the monitoring system API support into one abstraction:
 
-.. image:: https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_logger21.png
+.. image:: https://raw.githubusercontent.com/Scitator/catalyst22-post-pics/main/logger.png
     :alt: Runner
 
 
 With such a simple API,
-we already provide integrations for `Tensorboard`_ and `MLFlow`_ monitoring systems.
-More advanced loggers for Neptune and Wandb with artifacts and hyperparameters storing
-are in development thanks to joint collaborations between our teams!
+we already provide integrations for `Tensorboard`_, `MLFlow`_, Comet, Neptune and Wandb monitoring systems.
 All currently supported loggers you could find under the `Logger API section`_.
 
 
