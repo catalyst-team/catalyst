@@ -99,6 +99,7 @@ setup(
     entry_points={
         "console_scripts": [
             "catalyst-contrib=catalyst.contrib.__main__:main",
+            "catalyst-run=catalyst.contrib.scripts.run:main",
         ],
     },
     scripts=[

@@ -1162,6 +1162,88 @@ print(study.best_value, study.best_params)
 </p>
 </details>
 
+<details>
+<summary>Config API - minimal example</summary>
+<p>
+
+```yaml title="example.yaml"
+runner:
+  _target_: catalyst.runners.SupervisedRunner
+  model:
+    _var_: model
+    _target_: torch.nn.Sequential
+    args:
+      - _target_: torch.nn.Flatten
+      - _target_: torch.nn.Linear
+        in_features: 784  # 28 * 28
+        out_features: 10
+  input_key: features
+  output_key: &output_key logits
+  target_key: &target_key targets
+  loss_key: &loss_key loss
+
+run:
+  # ≈ stage 1
+  - _call_: train  # runner.train(...)
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _target_: torch.optim.Adam
+      params:  # model.parameters()
+        _var_: model.parameters
+      lr: 0.02
+
+    loaders:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: data
+          train: y
+        batch_size: 32
+
+      &valid_loader_key valid:
+        &valid_loader
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: data
+          train: n
+        batch_size: 32
+
+    callbacks:
+      - &accuracy_metric
+        _target_: catalyst.callbacks.AccuracyCallback
+        input_key: *output_key
+        target_key: *target_key
+        topk: [1,3,5]
+      - _target_: catalyst.callbacks.PrecisionRecallF1SupportCallback
+        input_key: *output_key
+        target_key: *target_key
+
+    num_epochs: 1
+    logdir: logs
+    valid_loader: *valid_loader_key
+    valid_metric: *loss_key
+    minimize_valid_metric: y
+    verbose: y
+
+  # ≈ stage 2
+  - _call_: evaluate_loader  # runner.evaluate_loader(...)
+    loader: *valid_loader
+    callbacks:
+      - *accuracy_metric
+
+```
+
+```sh
+catalyst-run --config example.yaml
+```
+</p>
+</details>
+
 ### Tests
 All Catalyst code, features, and pipelines [are fully tested](./tests).
 We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.

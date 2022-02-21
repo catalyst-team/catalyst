@@ -262,7 +262,7 @@ class Runner(IRunner):
         # the data
         loaders: "OrderedDict[str, DataLoader]",
         # the core
-        model: TorchModel,
+        model: TorchModel = None,
         engine: Union["Engine", str] = None,
         # the components
         criterion: TorchCriterion = None,
@@ -344,13 +344,15 @@ class Runner(IRunner):
 
         """
         # experiment setup
-        self._engine = engine or get_available_engine(cpu=cpu, fp16=fp16, ddp=ddp)
+        self._engine = (
+            engine or self.engine or get_available_engine(cpu=cpu, fp16=fp16, ddp=ddp)
+        )
         # self._trial = trial
         self._loggers = loggers
         # the data
         self._loaders = loaders
         # the components
-        self._model = model
+        self._model = model or self.model
         self._criterion = criterion
         self._optimizer = optimizer
         self._scheduler = scheduler
