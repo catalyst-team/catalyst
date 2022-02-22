@@ -81,10 +81,37 @@ def train_experiment(engine=None):
         )
 
 
+def train_experiment_from_configs(engine_config: str = None):
+    from pathlib import Path
+    from catalyst.contrib.scripts.run import run_from_config
+    from catalyst import utils, registry
+
+    configs_dir = Path("tests", "pipelines", "configs")
+    main_config = configs_dir / "test_classification.yml"
+
+    d = utils.load_config(main_config, ordered=True)["shared"]
+    X = torch.rand(d["num_samples"], d["num_features"])
+    y = (torch.rand(d["num_samples"]) * d["num_classes"]).to(torch.int64)
+    torch.save(X, Path("data") / "X.pt")
+    torch.save(y, Path("data") / "y.pt")
+
+    run_from_config(
+        [main_config, configs_dir / engine_config] if engine_config else [main_config]
+    )
+
+    # reset state of the registry since vars can be (re)defined in other tests
+    registry.REGISTRY._vars_dict = {}
+
+
 # Device
-@mark.skipif(not IS_CPU_REQUIRED, reason="CUDA device is not available")
+@mark.skipif(not IS_CPU_REQUIRED, reason="CPU device is not available")
 def test_run_on_cpu():
     train_experiment(dl.CPUEngine())
+
+
+@mark.skipif(not IS_CPU_REQUIRED, reason="CPU device is not available")
+def test_config_run_on_cpu():
+    train_experiment_from_configs("engine_cpu.yml")
 
 
 @mark.skipif(
@@ -95,11 +122,26 @@ def test_run_on_torch_cuda0():
 
 
 @mark.skipif(
+    not all([IS_GPU_REQUIRED, IS_CUDA_AVAILABLE]), reason="CUDA device is not available"
+)
+def test_config_run_on_torch_cuda0():
+    train_experiment_from_configs("engine_gpu.yml")
+
+
+@mark.skipif(
     not all([IS_GPU_AMP_REQUIRED, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
     reason="No CUDA or AMP found",
 )
 def test_run_on_amp():
     train_experiment(dl.GPUEngine(fp16=True))
+
+
+@mark.skipif(
+    not all([IS_GPU_AMP_REQUIRED, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
+    reason="No CUDA or AMP found",
+)
+def test_config_run_on_amp():
+    train_experiment_from_configs("engine_gpu_amp.yml")
 
 
 # DP
@@ -109,6 +151,14 @@ def test_run_on_amp():
 )
 def test_run_on_torch_dp():
     train_experiment(dl.DataParallelEngine())
+
+
+@mark.skipif(
+    not all([IS_DP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found",
+)
+def test_config_run_on_torch_dp():
+    train_experiment_from_configs("engine_dp.yml")
 
 
 @mark.skipif(
@@ -126,6 +176,21 @@ def test_run_on_amp_dp():
     train_experiment(dl.DataParallelEngine(fp16=True))
 
 
+@mark.skipif(
+    not all(
+        [
+            IS_DP_AMP_REQUIRED,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
+    ),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_config_run_on_amp_dp():
+    train_experiment_from_configs("engine_dp_amp.yml")
+
+
 # DDP
 @mark.skipif(
     not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
@@ -133,6 +198,14 @@ def test_run_on_amp_dp():
 )
 def test_run_on_torch_ddp():
     train_experiment(dl.DistributedDataParallelEngine())
+
+
+@mark.skipif(
+    not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    reason="No CUDA>=2 found",
+)
+def test_config_run_on_torch_ddp():
+    train_experiment_from_configs("engine_ddp.yml")
 
 
 @mark.skipif(
@@ -148,6 +221,21 @@ def test_run_on_torch_ddp():
 )
 def test_run_on_amp_ddp():
     train_experiment(dl.DistributedDataParallelEngine(fp16=True))
+
+
+@mark.skipif(
+    not all(
+        [
+            IS_DDP_AMP_REQUIRED,
+            IS_CUDA_AVAILABLE,
+            NUM_CUDA_DEVICES >= 2,
+            SETTINGS.amp_required,
+        ]
+    ),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_config_run_on_amp_ddp():
+    train_experiment_from_configs("engine_ddp_amp.yml")
 
 
 def _train_fn(local_rank, world_size):

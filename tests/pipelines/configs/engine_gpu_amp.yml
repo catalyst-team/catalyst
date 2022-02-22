@@ -1,0 +1,4 @@
+runner:
+  engine:
+    _target_: catalyst.engines.GPUEngine
+    fp16: y
