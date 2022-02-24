@@ -187,7 +187,8 @@ def train_experiment_from_configs(*auxiliary_configs: str):
     main_config = str(configs_dir / f"{Path(__file__).stem}.yml")
     auxiliary_configs = " ".join(str(configs_dir / c) for c in auxiliary_configs)
 
-    cmd = f"python catalyst/contrib/scripts/run.py -C {main_config} {auxiliary_configs}"
+    script = Path("catalyst", "contrib", "scripts", "run.py")
+    cmd = f"python {script} -C {main_config} {auxiliary_configs}"
     subprocess.run(cmd.split(), check=True)
 
 
