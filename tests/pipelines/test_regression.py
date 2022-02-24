@@ -68,7 +68,7 @@ def train_experiment_from_configs(*auxiliary_configs: str):
     torch.save(X, Path("tests") / "X.pt")
     torch.save(y, Path("tests") / "y.pt")
 
-    cmd = f"catalyst-run -C {main_config} {auxiliary_configs}"
+    cmd = f"python catalyst/contrib/scripts/run.py -C {main_config} {auxiliary_configs}"
     subprocess.run(cmd.split(), check=True)
 
 
