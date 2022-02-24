@@ -1,5 +1,7 @@
 # flake8: noqa
 import os
+from pathlib import Path
+import subprocess
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -119,10 +121,24 @@ def train_experiment(engine=None):
         )
 
 
+def train_experiment_from_configs(*auxiliary_configs: str):
+    configs_dir = Path("tests", "pipelines", "configs")
+    main_config = str(configs_dir / f"{Path(__file__).stem}.yml")
+    auxiliary_configs = " ".join(str(configs_dir / c) for c in auxiliary_configs)
+
+    cmd = f"catalyst-run -C {main_config} {auxiliary_configs}"
+    subprocess.run(cmd.split(), check=True)
+
+
 # Device
 @mark.skipif(not IS_CPU_REQUIRED, reason="CUDA device is not available")
 def test_run_on_cpu():
     train_experiment(dl.CPUEngine())
+
+
+@mark.skipif(not IS_CPU_REQUIRED, reason="CPU device is not available")
+def test_config_run_on_cpu():
+    train_experiment_from_configs("engine_cpu.yml")
 
 
 @mark.skipif(

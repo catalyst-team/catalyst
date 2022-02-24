@@ -1,7 +1,6 @@
 shared:
   num_samples: &num_samples 10000
   num_features: &num_features 10
-  num_classes: &num_classes 4
   loader: &loader
     _var_: loader
     _target_: torch.utils.data.DataLoader
@@ -23,17 +22,13 @@ runner:
     _var_: model
     _target_: torch.nn.Linear
     in_features: *num_features
-    out_features: *num_classes
-  input_key: features
-  output_key: &output_key logits
-  target_key: &target_key targets
-  loss_key: &loss_key loss
+    out_features: 1
 
 run:
   - _call_: train
 
     criterion:
-      _target_: torch.nn.CrossEntropyLoss
+      _target_: torch.nn.MSELoss
 
     optimizer:
       _var_: optimizer
@@ -45,7 +40,7 @@ run:
       _target_: torch.optim.lr_scheduler.MultiStepLR
       optimizer:
         _var_: optimizer
-      milestones: [2]
+      milestones: [3,6]
 
     loaders:
       train:
@@ -54,18 +49,13 @@ run:
         _var_: loader
 
     callbacks:
-      - _target_: catalyst.callbacks.AccuracyCallback
-        input_key: *output_key
-        target_key: *target_key
-        num_classes: *num_classes
-      - _target_: catalyst.callbacks.PrecisionRecallF1SupportCallback
-        input_key: *output_key
-        target_key: *target_key
-        num_classes: *num_classes
+      - _target_: catalyst.callbacks.R2SquaredCallback
+        input_key: logits
+        target_key: targets
 
-    num_epochs: 1
-    logdir: tests/logs  # TODO: use `tempfile.TemporaryDirectory`
+    logdir: tests/logs
     valid_loader: valid
-    valid_metric: accuracy03
-    minimize_valid_metric: n
+    valid_metric: loss
+    minimize_valid_metric: y
+    num_epochs: 1
     verbose: n

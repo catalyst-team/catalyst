@@ -1,5 +1,7 @@
 # flake8: noqa
 import os
+from pathlib import Path
+import subprocess
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -9,7 +11,7 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.utils.data import DataLoader, TensorDataset
 
-from catalyst import dl
+from catalyst import dl, utils
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from tests import (
     IS_CPU_REQUIRED,
@@ -81,26 +83,19 @@ def train_experiment(engine=None):
         )
 
 
-def train_experiment_from_configs(engine_config: str = None):
-    from pathlib import Path
-    from catalyst.contrib.scripts.run import run_from_config
-    from catalyst import utils, registry
-
+def train_experiment_from_configs(*auxiliary_configs: str):
     configs_dir = Path("tests", "pipelines", "configs")
-    main_config = configs_dir / "test_classification.yml"
+    main_config = str(configs_dir / f"{Path(__file__).stem}.yml")
+    auxiliary_configs = " ".join(str(configs_dir / c) for c in auxiliary_configs)
 
     d = utils.load_config(main_config, ordered=True)["shared"]
     X = torch.rand(d["num_samples"], d["num_features"])
     y = (torch.rand(d["num_samples"]) * d["num_classes"]).to(torch.int64)
-    torch.save(X, Path("data") / "X.pt")
-    torch.save(y, Path("data") / "y.pt")
+    torch.save(X, Path("tests") / "X.pt")
+    torch.save(y, Path("tests") / "y.pt")
 
-    run_from_config(
-        [main_config, configs_dir / engine_config] if engine_config else [main_config]
-    )
-
-    # reset state of the registry since vars can be (re)defined in other tests
-    registry.REGISTRY._vars_dict = {}
+    cmd = f"catalyst-run -C {main_config} {auxiliary_configs}"
+    subprocess.run(cmd.split(), check=True)
 
 
 # Device
