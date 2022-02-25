@@ -18,6 +18,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from tests import (
     DATA_ROOT,
+    IS_CONFIGS_REQUIRED,
     IS_CPU_REQUIRED,
     IS_DDP_AMP_REQUIRED,
     IS_DDP_REQUIRED,
@@ -168,7 +169,9 @@ def test_run_on_cpu():
     train_experiment(dl.CPUEngine())
 
 
-@mark.skipif(not IS_CPU_REQUIRED, reason="CPU device is not available")
+@mark.skipif(
+    not IS_CONFIGS_REQUIRED or not IS_CPU_REQUIRED, reason="CPU device is not available"
+)
 def test_config_run_on_cpu():
     train_experiment_from_configs("engine_cpu.yml")
 
@@ -181,7 +184,8 @@ def test_run_on_torch_cuda0():
 
 
 @mark.skipif(
-    not all([IS_GPU_REQUIRED, IS_CUDA_AVAILABLE]), reason="CUDA device is not available"
+    not IS_CONFIGS_REQUIRED or not all([IS_GPU_REQUIRED, IS_CUDA_AVAILABLE]),
+    reason="CUDA device is not available",
 )
 def test_config_run_on_torch_cuda0():
     train_experiment_from_configs("engine_gpu.yml")
@@ -196,7 +200,8 @@ def test_run_on_amp():
 
 
 @mark.skipif(
-    not all([IS_GPU_AMP_REQUIRED, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
+    not IS_CONFIGS_REQUIRED
+    or not all([IS_GPU_AMP_REQUIRED, IS_CUDA_AVAILABLE, SETTINGS.amp_required]),
     reason="No CUDA or AMP found",
 )
 def test_config_run_on_amp():
@@ -213,7 +218,8 @@ def test_run_on_torch_dp():
 
 
 @mark.skipif(
-    not all([IS_DP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+    not IS_CONFIGS_REQUIRED
+    or not all([IS_DP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
     reason="No CUDA>=2 found",
 )
 def test_config_run_on_torch_dp():
@@ -236,7 +242,8 @@ def test_run_on_amp_dp():
 
 
 @mark.skipif(
-    not all(
+    not IS_CONFIGS_REQUIRED
+    or not all(
         [
             IS_DP_AMP_REQUIRED,
             IS_CUDA_AVAILABLE,
@@ -260,7 +267,8 @@ def test_config_run_on_amp_dp():
 
 
 # @mark.skipif(
-#     not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
+#     not IS_CONFIGS_REQUIRED
+#     or not all([IS_DDP_REQUIRED, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES >= 2]),
 #     reason="No CUDA>=2 found",
 # )
 # def test_config_run_on_torch_ddp():
@@ -283,7 +291,8 @@ def test_config_run_on_amp_dp():
 
 
 # @mark.skipif(
-#     not all(
+#     not IS_CONFIGS_REQUIRED
+#     or not all(
 #         [
 #             IS_DDP_AMP_REQUIRED,
 #             IS_CUDA_AVAILABLE,
