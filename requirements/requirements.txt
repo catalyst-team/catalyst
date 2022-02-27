@@ -6,7 +6,7 @@ torch>=1.4.0
 accelerate
 
 # registry
-hydra-slayer>=0.1.1
+hydra-slayer>=0.4.0
 
 # progress bar
 tqdm>=4.33.0
