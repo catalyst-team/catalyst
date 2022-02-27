@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.loggers.mlflow &mdash; Catalyst 22.02 documentation</title>
+  <title>catalyst.loggers.mlflow &mdash; Catalyst 22.02.1 documentation</title>
   
 
   
@@ -432,7 +432,7 @@
         <span class="sd">&quot;&quot;&quot;Logs image to MLflow for current scope on current step.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span> <span class="ow">or</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;loader&quot;</span><span class="p">:</span>
             <span class="n">log_path</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">tag</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;epoch-</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;loader-</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                <span class="p">[</span><span class="n">tag</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;epoch-</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;loader-</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span>
             <span class="n">log_path</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tag</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;epoch-</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>

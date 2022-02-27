@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.loggers.wandb &mdash; Catalyst 22.02 documentation</title>
+  <title>catalyst.loggers.wandb &mdash; Catalyst 22.02.1 documentation</title>
   
 
   
@@ -261,6 +261,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -332,6 +333,12 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">log_batch_metrics</span><span class="o">=</span><span class="n">log_batch_metrics</span><span class="p">,</span> <span class="n">log_epoch_metrics</span><span class="o">=</span><span class="n">log_epoch_metrics</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Wandb does NOT support several x-axes for logging.&quot;</span>
+                <span class="s2">&quot;For this reason, everything has to be logged in the batch-based regime.&quot;</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span>
@@ -402,7 +409,8 @@
         <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span> <span class="ow">or</span> <span class="n">scope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log_path</span> <span class="o">=</span> <span class="n">tag</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">log</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_path</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">:</span> <span class="n">wandb</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">image</span><span class="p">)},</span> <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span> <span class="k">else</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">log</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_path</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">:</span> <span class="n">wandb</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">image</span><span class="p">)},</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">log_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs hyperparameters to the logger.&quot;&quot;&quot;</span>
@@ -415,18 +423,19 @@
         <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs batch and epoch metrics to wandb.&quot;&quot;&quot;</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span> <span class="k">else</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_step</span>
         <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_batch_metrics</span><span class="p">:</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
                 <span class="n">loader_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;loader&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_epoch_metrics</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
                 <span class="n">loader_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
             <span class="p">)</span>
@@ -435,7 +444,7 @@
             <span class="n">per_loader_metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="n">loader_key</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">per_loader_metrics</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">sample_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
                 <span class="n">loader_key</span><span class="o">=</span><span class="n">loader_key</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
             <span class="p">)</span>
