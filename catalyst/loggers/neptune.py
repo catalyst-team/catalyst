@@ -174,7 +174,7 @@ class NeptuneLogger(ILogger):
                     self.base_namespace,
                     "_artifacts",
                     f"epoch-{runner.epoch_step:04d}",
-                    f"loader-{runner.loader}",
+                    f"loader-{runner.loader_key}",
                     f"batch-{runner.batch_step:04d}",
                     tag,
                 ]
@@ -185,7 +185,7 @@ class NeptuneLogger(ILogger):
                     self.base_namespace,
                     "_artifacts",
                     f"epoch-{runner.epoch_step:04d}",
-                    f"loader-{runner.loader}",
+                    f"loader-{runner.loader_key}",
                     tag,
                 ]
             )
@@ -216,7 +216,7 @@ class NeptuneLogger(ILogger):
                     self.base_namespace,
                     "_images",
                     f"epoch-{runner.epoch_step:04d}",
-                    f"loader-{runner.loader}",
+                    f"loader-{runner.loader_key}",
                     tag,
                 ]
             )
