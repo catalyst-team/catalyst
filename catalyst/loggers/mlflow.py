@@ -172,7 +172,7 @@ class MLflowLogger(ILogger):
         """Logs image to MLflow for current scope on current step."""
         if scope == "batch" or scope == "loader":
             log_path = "_".join(
-                [tag, f"epoch-{runner.epoch_step:04d}", f"loader-{runner.loader}"]
+                [tag, f"epoch-{runner.epoch_step:04d}", f"loader-{runner.loader_key}"]
             )
         elif scope == "epoch":
             log_path = "_".join([tag, f"epoch-{runner.epoch_step:04d}"])

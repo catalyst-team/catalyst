@@ -1,6 +1,7 @@
 from typing import Dict, Optional, TYPE_CHECKING
 import os
 import pickle
+import warnings
 
 import numpy as np
 
@@ -72,6 +73,12 @@ class WandbLogger(ILogger):
         super().__init__(
             log_batch_metrics=log_batch_metrics, log_epoch_metrics=log_epoch_metrics
         )
+        if self.log_batch_metrics:
+            warnings.warn(
+                "Wandb does NOT support several x-axes for logging."
+                "For this reason, everything has to be logged in the batch-based regime."
+            )
+
         self.project = project
         self.name = name
         self.entity = entity
@@ -142,7 +149,8 @@ class WandbLogger(ILogger):
         elif scope == "experiment" or scope is None:
             log_path = tag
 
-        self.run.log({f"{log_path}.png": wandb.Image(image)}, step=runner.sample_step)
+        step = runner.sample_step if self.log_batch_metrics else runner.epoch_step
+        self.run.log({f"{log_path}.png": wandb.Image(image)}, step=step)
 
     def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyperparameters to the logger."""
@@ -155,18 +163,19 @@ class WandbLogger(ILogger):
         runner: "IRunner",
     ) -> None:
         """Logs batch and epoch metrics to wandb."""
+        step = runner.sample_step if self.log_batch_metrics else runner.epoch_step
         if scope == "batch" and self.log_batch_metrics:
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics,
-                step=runner.sample_step,
+                step=step,
                 loader_key=runner.loader_key,
                 prefix="batch",
             )
         elif scope == "loader" and self.log_epoch_metrics:
             self._log_metrics(
                 metrics=metrics,
-                step=runner.sample_step,
+                step=step,
                 loader_key=runner.loader_key,
                 prefix="epoch",
             )
@@ -175,7 +184,7 @@ class WandbLogger(ILogger):
             per_loader_metrics = metrics[loader_key]
             self._log_metrics(
                 metrics=per_loader_metrics,
-                step=runner.sample_step,
+                step=step,
                 loader_key=loader_key,
                 prefix="epoch",
             )
