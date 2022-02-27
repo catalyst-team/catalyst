@@ -1,0 +1,94 @@
+shared:
+  num_users: &num_users 10000
+  num_features: &num_features 10
+  num_items: &num_items 10
+  loader: &loader
+    _var_: loader
+    _target_: torch.utils.data.DataLoader
+    dataset:
+      _target_: tests.misc.TensorDataset
+      args:
+        - _target_: torch.load
+          f: tests/X.pt
+          _mode_: call
+        - _target_: torch.load
+          f: tests/y.pt
+          _mode_: call
+    batch_size: 32
+    num_workers: 1
+
+runner:
+  _target_: catalyst.runners.SupervisedRunner
+  model:
+    _var_: model
+    _target_: torch.nn.Linear
+    in_features: *num_features
+    out_features: *num_items
+  input_key: features
+  output_key: logits
+  target_key: targets
+  loss_key: loss
+
+run:
+  - _call_: train
+
+    criterion:
+      _target_: torch.nn.BCEWithLogitsLoss
+
+    optimizer:
+      _var_: optimizer
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      optimizer:
+        _var_: optimizer
+      milestones: [2]
+
+    loaders:
+      train:
+        _var_: loader
+      valid:
+        _var_: loader
+
+    callbacks:
+      - _target_: catalyst.callbacks.BatchTransformCallback
+        input_key: logits
+        output_key: scores
+        transform: torch.sigmoid
+        scope: on_batch_end
+      - _target_: catalyst.callbacks.CriterionCallback
+        input_key: logits
+        target_key: targets
+        metric_key: loss
+      - _target_: catalyst.callbacks.HitrateCallback
+        input_key: scores
+        target_key: targets
+        topk: [1,3,5]
+      - _target_: catalyst.callbacks.MRRCallback
+        input_key: scores
+        target_key: targets
+        topk: [1,3,5]
+      - _target_: catalyst.callbacks.MAPCallback
+        input_key: scores
+        target_key: targets
+        topk: [1,3,5]
+      - _target_: catalyst.callbacks.NDCGCallback
+        input_key: scores
+        target_key: targets
+        topk: [1,3]
+      - _target_: catalyst.callbacks.BackwardCallback
+        metric_key: loss
+      - _target_: catalyst.callbacks.OptimizerCallback
+        metric_key: loss
+      - _target_: catalyst.callbacks.SchedulerCallback
+      - _target_: catalyst.callbacks.CheckpointCallback
+        logdir: tests/logs
+        loader_key: valid
+        metric_key: map01
+        minimize: n
+
+    num_epochs: 1
+    verbose: n

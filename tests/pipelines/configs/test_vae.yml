@@ -1,0 +1,7 @@
+runner:
+  _target_: tests.pipelines.test_vae.CustomRunner
+  hid_features: 64
+  logdir: tests/logs
+
+run:
+  - _call_: run

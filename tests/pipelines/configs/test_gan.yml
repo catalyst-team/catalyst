@@ -1,0 +1,87 @@
+shared:
+  latent_dim: &latent_dim 32
+
+runner:
+  _target_: tests.pipelines.test_gan.CustomRunner
+  model:
+    generator:
+      _var_: model_generator
+      _target_: torch.nn.Sequential
+      args:
+          - _target_: torch.nn.Linear
+            in_features: *latent_dim
+            out_features: &out_features 784  # 28 * 28
+          - _target_: catalyst.contrib.layers.Lambda
+            lambda_fn:
+              _target_: tests.pipelines.test_gan._ddp_hack
+          - _target_: torch.nn.Sigmoid
+    discriminator:
+      _var_: model_discriminator
+      _target_: torch.nn.Sequential
+      args:
+        - _target_: torch.nn.Flatten
+        - _target_: torch.nn.Linear
+          in_features: *out_features
+          out_features: 1
+  latent_dim: *latent_dim
+
+run:
+  - _call_: train
+
+    criterion:
+      generator:
+        _target_: torch.nn.BCEWithLogitsLoss
+      discriminator:
+        _target_: torch.nn.BCEWithLogitsLoss
+
+    optimizer:
+      generator:
+        _target_: torch.optim.Adam
+        params:
+          _var_: model_generator.parameters
+        lr: 0.0003
+        betas: [0.5, 0.999]
+      discriminator:
+        _target_: torch.optim.Adam
+        params:
+          _var_: model_discriminator.parameters
+        lr: 0.0003
+        betas: [0.5, 0.999]
+
+    loaders:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: tests
+          train: n
+        batch_size: 32
+
+    callbacks:
+      - _target_: catalyst.callbacks.CriterionCallback
+        input_key: combined_predictions
+        target_key: labels
+        metric_key: loss_discriminator
+        criterion_key: discriminator
+      - _target_: catalyst.callbacks.BackwardCallback
+        metric_key: loss_discriminator
+      - _target_: catalyst.callbacks.OptimizerCallback
+        optimizer_key: discriminator
+        metric_key: loss_discriminator
+      - _target_: catalyst.callbacks.CriterionCallback
+        input_key: generated_predictions
+        target_key: misleading_labels
+        metric_key: loss_generator
+        criterion_key: generator
+      - _target_: catalyst.callbacks.BackwardCallback
+        metric_key: loss_generator
+      - _target_: catalyst.callbacks.OptimizerCallback
+        optimizer_key: generator
+        metric_key: loss_generator
+
+    valid_loader: train
+    valid_metric: loss_generator
+    minimize_valid_metric: y
+    num_epochs: 1
+    verbose: n
+    logdir: tests/logs  # TODO: use `tempfile.TemporaryDirectory`

@@ -1,0 +1,4 @@
+runner:
+  engine:
+    _target_: catalyst.engines.DataParallelEngine
+    fp16: y

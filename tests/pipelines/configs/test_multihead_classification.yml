@@ -1,0 +1,105 @@
+shared:
+  num_samples: &num_samples 10000
+  num_features: &num_features 10
+  num_classes1: &num_classes1 4
+  num_classes2: &num_classes2 10
+  loader: &loader
+    _var_: loader
+    _target_: torch.utils.data.DataLoader
+    dataset:
+      _target_: tests.misc.TensorDataset
+      args:
+        - _target_: torch.load
+          f: tests/X.pt
+          _mode_: call
+        - _target_: torch.load
+          f: tests/y1.pt
+          _mode_: call
+        - _target_: torch.load
+          f: tests/y2.pt
+          _mode_: call
+    batch_size: 32
+    num_workers: 1
+
+runner:
+  _target_: tests.pipelines.test_multihead_classification.CustomRunner
+  model:
+    _var_: model
+    _target_: tests.pipelines.test_multihead_classification.CustomModule
+    in_features: *num_features
+    out_features1: *num_classes1
+    out_features2: *num_classes2
+
+run:
+  - _call_: train
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _var_: optimizer
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      optimizer:
+        _var_: optimizer
+      milestones: [2]
+
+    loaders:
+      train:
+        _var_: loader
+      valid:
+        _var_: loader
+
+    callbacks:
+      - _target_: catalyst.callbacks.CriterionCallback
+        metric_key: loss1
+        input_key: logits1
+        target_key: targets1
+      - _target_: catalyst.callbacks.CriterionCallback
+        metric_key: loss2
+        input_key: logits2
+        target_key: targets2
+      - _target_: catalyst.callbacks.MetricAggregationCallback
+        metric_key: loss
+        metrics: [loss1,loss2]
+        mode: mean
+      - _target_: catalyst.callbacks.BackwardCallback
+        metric_key: loss
+      - _target_: catalyst.callbacks.OptimizerCallback
+        metric_key: loss
+      - _target_: catalyst.callbacks.SchedulerCallback
+      - _target_: catalyst.callbacks.AccuracyCallback
+        input_key: logits1
+        target_key: targets1
+        num_classes: *num_classes1
+        prefix: one_
+      - _target_: catalyst.callbacks.AccuracyCallback
+        input_key: logits2
+        target_key: targets2
+        num_classes: *num_classes2
+        prefix: two_
+      - _target_: catalyst.callbacks.CheckpointCallback
+        logdir: tests/logs/one
+        loader_key: valid
+        metric_key: one_accuracy01
+        minimize: n
+        topk: 1
+      - _target_: catalyst.callbacks.CheckpointCallback
+        logdir: tests/logs/two
+        loader_key: valid
+        metric_key: two_accuracy03
+        minimize: n
+        topk: 3
+
+    num_epochs: 1
+    verbose: n
+    loggers:
+      console:
+        _target_: catalyst.loggers.ConsoleLogger
+      tb:
+        _target_: catalyst.loggers.TensorboardLogger
+        logdir: tests/logs/tb

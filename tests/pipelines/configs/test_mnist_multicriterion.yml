@@ -1,0 +1,49 @@
+runner:
+  _target_: tests.pipelines.test_mnist_multicriterion.CustomRunner
+  model:
+    _var_: model
+    _target_: torch.nn.Sequential
+    args:
+      - _target_: torch.nn.Flatten
+      - _target_: torch.nn.Linear
+        in_features: 784  # 28 * 28
+        out_features: 10
+
+run:
+  - _call_: train
+
+    criterion:
+      multiclass:
+        _target_: torch.nn.CrossEntropyLoss
+      multilabel:
+        _target_: torch.nn.BCEWithLogitsLoss
+
+    optimizer:
+      _var_: optimizer
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+      lr: 0.02
+
+    loaders:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: tests
+          train: y
+        batch_size: 32
+      valid:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: tests
+          train: n
+        batch_size: 32
+
+    logdir: tests/logs  # TODO: use `tempfile.TemporaryDirectory`
+    num_epochs: 1
+    verbose: n
+    valid_loader: valid
+    valid_metric: loss
+    minimize_valid_metric: y

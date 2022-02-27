@@ -1,0 +1,63 @@
+runner:
+  _target_: catalyst.runners.SupervisedRunner
+  model:
+    _var_: model
+    _target_: torch.nn.Sequential
+    args:
+      - _target_: torch.nn.Flatten
+      - _target_: torch.nn.Linear
+        in_features: 784  # 28 * 28
+        out_features: 10
+  input_key: features
+  output_key: logits
+  target_key: targets
+  loss_key: loss
+
+run:
+  - _call_: train
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+      lr: 0.02
+
+    loaders:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: tests
+          train: y
+        batch_size: 32
+      valid:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: tests
+          train: n
+        batch_size: 32
+
+    callbacks:
+      - _target_: catalyst.callbacks.AccuracyCallback
+        input_key: logits
+        target_key: targets
+        topk: [1,3,5]
+      - _target_: catalyst.callbacks.PrecisionRecallF1SupportCallback
+        input_key: logits
+        target_key: targets
+        num_classes: 10
+
+    num_epochs: 1
+    logdir: tests/logs  # TODO: use `tempfile.TemporaryDirectory`
+    valid_loader: valid
+    valid_metric: loss
+    minimize_valid_metric: y
+    verbose: n
+    load_best_on_end: y
+    timeit: n
+    check: n
+    overfit: n

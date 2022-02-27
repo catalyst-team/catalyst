@@ -1,0 +1,72 @@
+shared:
+  num_samples: &num_samples 10000
+  num_features: &num_features 10
+  num_classes: &num_classes 4
+  loader: &loader
+    _var_: loader
+    _target_: torch.utils.data.DataLoader
+    dataset:
+      _target_: tests.misc.TensorDataset
+      args:
+        - _target_: torch.load
+          f: tests/X.pt
+          _mode_: call
+        - _target_: torch.load
+          f: tests/y.pt
+          _mode_: call
+    batch_size: 32
+    num_workers: 1
+
+runner:
+  _target_: catalyst.runners.SupervisedRunner
+  model:
+    _var_: model
+    _target_: torch.nn.Linear
+    in_features: *num_features
+    out_features: *num_classes
+
+run:
+  - _call_: train
+
+    criterion:
+      _target_: torch.nn.BCEWithLogitsLoss
+
+    optimizer:
+      _var_: optimizer
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      optimizer:
+        _var_: optimizer
+      milestones: [2]
+
+    loaders:
+      train:
+        _var_: loader
+      valid:
+        _var_: loader
+
+    callbacks:
+      - _target_: catalyst.callbacks.BatchTransformCallback
+        transform: torch.sigmoid
+        scope: on_batch_end
+        input_key: logits
+        output_key: scores
+      - _target_: catalyst.callbacks.MultilabelAccuracyCallback
+        input_key: scores
+        target_key: targets
+        threshold: 0.5
+      - _target_: catalyst.callbacks.MultilabelPrecisionRecallF1SupportCallback
+        input_key: scores
+        target_key: targets
+        num_classes: *num_classes
+
+    logdir: tests/logs
+    num_epochs: 1
+    valid_loader: valid
+    valid_metric: accuracy
+    minimize_valid_metric: n
+    verbose: n

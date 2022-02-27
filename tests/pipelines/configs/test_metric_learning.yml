@@ -1,0 +1,81 @@
+shared:
+  latent_dim: &latent_dim 32
+  train_dataset:
+    _var_: train_dataset
+    _target_: catalyst.contrib.datasets.MnistMLDataset
+    root: tests
+
+runner:
+  _target_: tests.pipelines.test_metric_learning.CustomRunner
+  model:
+    _var_: model
+    _target_: catalyst.contrib.models.MnistSimpleNet
+    out_features: 16
+  input_key: features
+  output_key: embeddings
+
+run:
+  - _call_: train
+
+    criterion:
+      _target_: catalyst.contrib.losses.TripletMarginLossWithSampler
+      margin: 0.5
+      sampler_inbatch:
+        _target_: catalyst.contrib.data.HardTripletsSampler
+        norm_required: n
+
+    optimizer:
+      _var_: optimizer
+      _target_: torch.optim.Adam
+      params:
+        _var_: model.parameters
+      lr: 0.001
+
+    loaders:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _var_: train_dataset
+        batch_sampler:
+          _target_: catalyst.data.sampler.BatchBalanceClassSampler
+          labels:
+            _var_: train_dataset.get_labels
+          num_classes: 5
+          num_samples: 10
+          num_batches: 10
+      valid:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: catalyst.contrib.datasets.MnistQGDataset
+          root: tests
+          gallery_fraq: 0.2
+        batch_size: 1024
+
+    callbacks:
+      - _target_: catalyst.callbacks.ControlFlowCallbackWrapper
+        base_callback:
+          _target_: catalyst.callbacks.CriterionCallback
+          input_key: embeddings
+          target_key: targets
+          metric_key: loss
+        loaders: train
+      - _target_: catalyst.callbacks.ControlFlowCallbackWrapper
+        base_callback:
+          _target_: catalyst.callbacks.CMCScoreCallback
+          embeddings_key: embeddings
+          labels_key: targets
+          is_query_key: is_query
+          topk: [1]
+        loaders: valid
+      - _target_: catalyst.callbacks.PeriodicLoaderCallback
+        valid_loader_key: valid
+        valid_metric_key: cmc01
+        minimize: n
+        valid: 2
+
+    verbose: n
+    logdir: tests/logs  # TODO: use `tempfile.TemporaryDirectory`
+    valid_loader: valid
+    valid_metric: cmc01
+    minimize_valid_metric: n
+    num_epochs: 2

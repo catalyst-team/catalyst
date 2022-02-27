@@ -1,0 +1,3 @@
+runner:
+  engine:
+    _target_: catalyst.engines.DataParallelEngine

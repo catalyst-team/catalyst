@@ -112,6 +112,8 @@ ENV/
 *.csv
 *.tsv
 *.ipynb
+*.pt
+*.pth
 
 tmp/
 logs/
