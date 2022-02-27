@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- `catalyst-run` for Config API support added [#1406](https://github.com/catalyst-team/catalyst/pull/1406)
+-
 
 ### Changed
 
@@ -21,6 +21,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 -
+
+
+## [22.02.1] - 2022-02-27
+
+### Added
+
+- `catalyst-run` for Config API support added [#1406](https://github.com/catalyst-team/catalyst/pull/1406)
+
+
+### Fixed
+
+- Logger API naming [#1405](https://github.com/catalyst-team/catalyst/pull/1405)
 
 
 ## [22.02] - 2022-02-13
