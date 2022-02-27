@@ -522,7 +522,7 @@
         <span class="c1"># the data</span>
         <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
         <span class="c1"># the core</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">TorchModel</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">TorchModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Engine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="c1"># the components</span>
         <span class="n">criterion</span><span class="p">:</span> <span class="n">TorchCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -604,13 +604,15 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># experiment setup</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">,</span> <span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">engine</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">,</span> <span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="c1"># self._trial = trial</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loggers</span> <span class="o">=</span> <span class="n">loggers</span>
         <span class="c1"># the data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">loaders</span>
         <span class="c1"># the components</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="n">criterion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
