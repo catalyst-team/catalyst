@@ -1,7 +1,6 @@
 # flake8: noqa
 import os
 from pathlib import Path
-import subprocess
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -25,6 +24,7 @@ from tests import (
     IS_GPU_AMP_REQUIRED,
     IS_GPU_REQUIRED,
 )
+from tests.misc import run_experiment_from_configs
 
 
 class CustomRunner(dl.Runner):
@@ -112,13 +112,11 @@ def train_experiment(engine=None):
 
 
 def train_experiment_from_configs(*auxiliary_configs: str):
-    configs_dir = Path("tests", "pipelines", "configs")
-    main_config = str(configs_dir / f"{Path(__file__).stem}.yml")
-    auxiliary_configs = " ".join(str(configs_dir / c) for c in auxiliary_configs)
-
-    script = Path("catalyst", "contrib", "scripts", "run.py")
-    cmd = f"python {script} -C {main_config} {auxiliary_configs}"
-    subprocess.run(cmd.split(), check=True)
+    run_experiment_from_configs(
+        Path(__file__).parent / "configs",
+        f"{Path(__file__).stem}.yml",
+        *auxiliary_configs,
+    )
 
 
 # Device

@@ -6,7 +6,7 @@ shared:
     _var_: loader
     _target_: torch.utils.data.DataLoader
     dataset:
-      _target_: torch.utils.data.TensorDataset
+      _target_: tests.misc.TensorDataset
       args:
         - _target_: torch.load
           f: tests/X.pt

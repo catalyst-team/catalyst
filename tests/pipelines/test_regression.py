@@ -1,7 +1,6 @@
 # flake8: noqa
 import os
 from pathlib import Path
-import subprocess
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -23,6 +22,7 @@ from tests import (
     IS_GPU_AMP_REQUIRED,
     IS_GPU_REQUIRED,
 )
+from tests.misc import run_experiment_from_configs
 
 
 def train_experiment(engine=None):
@@ -60,18 +60,15 @@ def train_experiment(engine=None):
 
 
 def train_experiment_from_configs(*auxiliary_configs: str):
-    configs_dir = Path("tests", "pipelines", "configs")
-    main_config = str(configs_dir / f"{Path(__file__).stem}.yml")
-    auxiliary_configs = " ".join(str(configs_dir / c) for c in auxiliary_configs)
+    configs_dir = Path(__file__).parent / "configs"
+    main_config = f"{Path(__file__).stem}.yml"
 
-    d = utils.load_config(main_config, ordered=True)["shared"]
+    d = utils.load_config(str(configs_dir / main_config), ordered=True)["shared"]
     X, y = torch.rand(d["num_samples"], d["num_features"]), torch.rand(d["num_samples"])
     torch.save(X, Path("tests") / "X.pt")
     torch.save(y, Path("tests") / "y.pt")
 
-    script = Path("catalyst", "contrib", "scripts", "run.py")
-    cmd = f"python {script} -C {main_config} {auxiliary_configs}"
-    subprocess.run(cmd.split(), check=True)
+    run_experiment_from_configs(configs_dir, main_config, *auxiliary_configs)
 
 
 # Device
