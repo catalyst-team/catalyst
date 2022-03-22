@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 
 from torch.utils.data.dataloader import default_collate
 
@@ -27,7 +27,7 @@ class FilteringCollateFn:
         Returns:
             batch values filtered by `keys`
         """
-        if isinstance(batch[0], collections.Mapping):
+        if isinstance(batch[0], collections.abc.Mapping):
             result = {}
             for key in batch[0]:
                 items = [d[key] for d in batch]

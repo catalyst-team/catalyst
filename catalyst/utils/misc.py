@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar, Unio
 import argparse
 from base64 import urlsafe_b64encode
 import collections
+import collections.abc
 import copy
 from datetime import datetime
 from hashlib import sha256
@@ -203,7 +204,7 @@ def merge_dicts(*dicts: dict) -> dict:
             if (
                 k in dict_
                 and isinstance(dict_[k], dict)
-                and isinstance(merge_dict[k], collections.Mapping)
+                and isinstance(merge_dict[k], collections.abc.Mapping)
             ):
                 dict_[k] = merge_dicts(dict_[k], merge_dict[k])
             else:
@@ -230,7 +231,7 @@ def flatten_dict(
     items = []
     for key, value in dictionary.items():
         new_key = parent_key + separator + key if parent_key else key
-        if isinstance(value, collections.MutableMapping):
+        if isinstance(value, collections.abc.MutableMapping):
             items.extend(flatten_dict(value, new_key, separator=separator).items())
         else:
             items.append((new_key, value))
