@@ -4,9 +4,8 @@ study:
   sampler: null
   pruner: null
   study_name: null
-  direction: null
+  direction: minimize
   load_if_exists: false
-  directions: null
   _mode_: call
 
 runner:
