@@ -1,0 +1,595 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview: module code &mdash; Catalyst 22.02.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/settings.html">Settings</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Overview: module code</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="catalyst/callbacks/backward.html">catalyst.callbacks.backward</a></li>
+<li><a href="catalyst/callbacks/batch_overfit.html">catalyst.callbacks.batch_overfit</a></li>
+<li><a href="catalyst/callbacks/batch_transform.html">catalyst.callbacks.batch_transform</a></li>
+<li><a href="catalyst/callbacks/checkpoint.html">catalyst.callbacks.checkpoint</a></li>
+<li><a href="catalyst/callbacks/control_flow.html">catalyst.callbacks.control_flow</a></li>
+<li><a href="catalyst/callbacks/criterion.html">catalyst.callbacks.criterion</a></li>
+<li><a href="catalyst/callbacks/metric.html">catalyst.callbacks.metric</a></li>
+<li><a href="catalyst/callbacks/metric_aggregation.html">catalyst.callbacks.metric_aggregation</a></li>
+<li><a href="catalyst/callbacks/metrics/accuracy.html">catalyst.callbacks.metrics.accuracy</a></li>
+<li><a href="catalyst/callbacks/metrics/auc.html">catalyst.callbacks.metrics.auc</a></li>
+<li><a href="catalyst/callbacks/metrics/classification.html">catalyst.callbacks.metrics.classification</a></li>
+<li><a href="catalyst/callbacks/metrics/cmc_score.html">catalyst.callbacks.metrics.cmc_score</a></li>
+<li><a href="catalyst/callbacks/metrics/confusion_matrix.html">catalyst.callbacks.metrics.confusion_matrix</a></li>
+<li><a href="catalyst/callbacks/metrics/functional_metric.html">catalyst.callbacks.metrics.functional_metric</a></li>
+<li><a href="catalyst/callbacks/metrics/r2_squared.html">catalyst.callbacks.metrics.r2_squared</a></li>
+<li><a href="catalyst/callbacks/metrics/recsys.html">catalyst.callbacks.metrics.recsys</a></li>
+<li><a href="catalyst/callbacks/metrics/scikit_learn.html">catalyst.callbacks.metrics.scikit_learn</a></li>
+<li><a href="catalyst/callbacks/metrics/segmentation.html">catalyst.callbacks.metrics.segmentation</a></li>
+<li><a href="catalyst/callbacks/misc.html">catalyst.callbacks.misc</a></li>
+<li><a href="catalyst/callbacks/mixup.html">catalyst.callbacks.mixup</a></li>
+<li><a href="catalyst/callbacks/optimizer.html">catalyst.callbacks.optimizer</a></li>
+<li><a href="catalyst/callbacks/optuna.html">catalyst.callbacks.optuna</a></li>
+<li><a href="catalyst/callbacks/periodic_loader.html">catalyst.callbacks.periodic_loader</a></li>
+<li><a href="catalyst/callbacks/profiler.html">catalyst.callbacks.profiler</a></li>
+<li><a href="catalyst/callbacks/scheduler.html">catalyst.callbacks.scheduler</a></li>
+<li><a href="catalyst/callbacks/sklearn_model.html">catalyst.callbacks.sklearn_model</a></li>
+<li><a href="catalyst/contrib/data/sampler.html">catalyst.contrib.data.sampler</a></li>
+<li><a href="catalyst/contrib/data/sampler_inbatch.html">catalyst.contrib.data.sampler_inbatch</a></li>
+<li><a href="catalyst/contrib/data/transforms.html">catalyst.contrib.data.transforms</a></li>
+<li><a href="catalyst/contrib/datasets/cifar.html">catalyst.contrib.datasets.cifar</a></li>
+<li><a href="catalyst/contrib/datasets/imagenette.html">catalyst.contrib.datasets.imagenette</a></li>
+<li><a href="catalyst/contrib/datasets/imagewang.html">catalyst.contrib.datasets.imagewang</a></li>
+<li><a href="catalyst/contrib/datasets/imagewoof.html">catalyst.contrib.datasets.imagewoof</a></li>
+<li><a href="catalyst/contrib/datasets/mnist.html">catalyst.contrib.datasets.mnist</a></li>
+<li><a href="catalyst/contrib/datasets/movielens.html">catalyst.contrib.datasets.movielens</a></li>
+<li><a href="catalyst/contrib/layers/amsoftmax.html">catalyst.contrib.layers.amsoftmax</a></li>
+<li><a href="catalyst/contrib/layers/arcface.html">catalyst.contrib.layers.arcface</a></li>
+<li><a href="catalyst/contrib/layers/arcmargin.html">catalyst.contrib.layers.arcmargin</a></li>
+<li><a href="catalyst/contrib/layers/cosface.html">catalyst.contrib.layers.cosface</a></li>
+<li><a href="catalyst/contrib/layers/curricularface.html">catalyst.contrib.layers.curricularface</a></li>
+<li><a href="catalyst/contrib/layers/factorized.html">catalyst.contrib.layers.factorized</a></li>
+<li><a href="catalyst/contrib/layers/se.html">catalyst.contrib.layers.se</a></li>
+<li><a href="catalyst/contrib/layers/softmax.html">catalyst.contrib.layers.softmax</a></li>
+<li><a href="catalyst/contrib/losses/circle.html">catalyst.contrib.losses.circle</a></li>
+<li><a href="catalyst/contrib/losses/contrastive.html">catalyst.contrib.losses.contrastive</a></li>
+<li><a href="catalyst/contrib/losses/dice.html">catalyst.contrib.losses.dice</a></li>
+<li><a href="catalyst/contrib/losses/focal.html">catalyst.contrib.losses.focal</a></li>
+<li><a href="catalyst/contrib/losses/iou.html">catalyst.contrib.losses.iou</a></li>
+<li><a href="catalyst/contrib/losses/ntxent.html">catalyst.contrib.losses.ntxent</a></li>
+<li><a href="catalyst/contrib/losses/recsys.html">catalyst.contrib.losses.recsys</a></li>
+<li><a href="catalyst/contrib/losses/regression.html">catalyst.contrib.losses.regression</a></li>
+<li><a href="catalyst/contrib/losses/supervised_contrastive.html">catalyst.contrib.losses.supervised_contrastive</a></li>
+<li><a href="catalyst/contrib/losses/trevsky.html">catalyst.contrib.losses.trevsky</a></li>
+<li><a href="catalyst/contrib/losses/triplet.html">catalyst.contrib.losses.triplet</a></li>
+<li><a href="catalyst/contrib/optimizers/adamp.html">catalyst.contrib.optimizers.adamp</a></li>
+<li><a href="catalyst/contrib/optimizers/lamb.html">catalyst.contrib.optimizers.lamb</a></li>
+<li><a href="catalyst/contrib/optimizers/lookahead.html">catalyst.contrib.optimizers.lookahead</a></li>
+<li><a href="catalyst/contrib/optimizers/qhadamw.html">catalyst.contrib.optimizers.qhadamw</a></li>
+<li><a href="catalyst/contrib/optimizers/radam.html">catalyst.contrib.optimizers.radam</a></li>
+<li><a href="catalyst/contrib/optimizers/ralamb.html">catalyst.contrib.optimizers.ralamb</a></li>
+<li><a href="catalyst/contrib/optimizers/sgdp.html">catalyst.contrib.optimizers.sgdp</a></li>
+<li><a href="catalyst/contrib/schedulers/onecycle.html">catalyst.contrib.schedulers.onecycle</a></li>
+<li><a href="catalyst/contrib/utils/image.html">catalyst.contrib.utils.image</a></li>
+<li><a href="catalyst/contrib/utils/report.html">catalyst.contrib.utils.report</a></li>
+<li><a href="catalyst/contrib/utils/thresholds.html">catalyst.contrib.utils.thresholds</a></li>
+<li><a href="catalyst/contrib/utils/visualization.html">catalyst.contrib.utils.visualization</a></li>
+<li><a href="catalyst/core/callback.html">catalyst.core.callback</a></li>
+<li><a href="catalyst/core/engine.html">catalyst.core.engine</a></li>
+<li><a href="catalyst/core/logger.html">catalyst.core.logger</a></li>
+<li><a href="catalyst/core/runner.html">catalyst.core.runner</a></li>
+<li><a href="catalyst/data/dataset.html">catalyst.data.dataset</a></li>
+<li><a href="catalyst/data/loader.html">catalyst.data.loader</a></li>
+<li><a href="catalyst/data/sampler.html">catalyst.data.sampler</a></li>
+<li><a href="catalyst/engines/torch.html">catalyst.engines.torch</a></li>
+<li><a href="catalyst/loggers/comet.html">catalyst.loggers.comet</a></li>
+<li><a href="catalyst/loggers/console.html">catalyst.loggers.console</a></li>
+<li><a href="catalyst/loggers/csv.html">catalyst.loggers.csv</a></li>
+<li><a href="catalyst/loggers/mlflow.html">catalyst.loggers.mlflow</a></li>
+<li><a href="catalyst/loggers/neptune.html">catalyst.loggers.neptune</a></li>
+<li><a href="catalyst/loggers/tensorboard.html">catalyst.loggers.tensorboard</a></li>
+<li><a href="catalyst/loggers/wandb.html">catalyst.loggers.wandb</a></li>
+<li><a href="catalyst/metrics/_accumulative.html">catalyst.metrics._accumulative</a></li>
+<li><a href="catalyst/metrics/_accuracy.html">catalyst.metrics._accuracy</a></li>
+<li><a href="catalyst/metrics/_additive.html">catalyst.metrics._additive</a></li>
+<li><a href="catalyst/metrics/_auc.html">catalyst.metrics._auc</a></li>
+<li><a href="catalyst/metrics/_classification.html">catalyst.metrics._classification</a></li>
+<li><a href="catalyst/metrics/_cmc_score.html">catalyst.metrics._cmc_score</a></li>
+<li><a href="catalyst/metrics/_confusion_matrix.html">catalyst.metrics._confusion_matrix</a></li>
+<li><a href="catalyst/metrics/_functional_metric.html">catalyst.metrics._functional_metric</a></li>
+<li><a href="catalyst/metrics/_hitrate.html">catalyst.metrics._hitrate</a></li>
+<li><a href="catalyst/metrics/_map.html">catalyst.metrics._map</a></li>
+<li><a href="catalyst/metrics/_metric.html">catalyst.metrics._metric</a></li>
+<li><a href="catalyst/metrics/_mrr.html">catalyst.metrics._mrr</a></li>
+<li><a href="catalyst/metrics/_ndcg.html">catalyst.metrics._ndcg</a></li>
+<li><a href="catalyst/metrics/_r2_squared.html">catalyst.metrics._r2_squared</a></li>
+<li><a href="catalyst/metrics/_segmentation.html">catalyst.metrics._segmentation</a></li>
+<li><a href="catalyst/metrics/_topk_metric.html">catalyst.metrics._topk_metric</a></li>
+<li><a href="catalyst/metrics/functional/_accuracy.html">catalyst.metrics.functional._accuracy</a></li>
+<li><a href="catalyst/metrics/functional/_auc.html">catalyst.metrics.functional._auc</a></li>
+<li><a href="catalyst/metrics/functional/_average_precision.html">catalyst.metrics.functional._average_precision</a></li>
+<li><a href="catalyst/metrics/functional/_classification.html">catalyst.metrics.functional._classification</a></li>
+<li><a href="catalyst/metrics/functional/_cmc_score.html">catalyst.metrics.functional._cmc_score</a></li>
+<li><a href="catalyst/metrics/functional/_f1_score.html">catalyst.metrics.functional._f1_score</a></li>
+<li><a href="catalyst/metrics/functional/_focal.html">catalyst.metrics.functional._focal</a></li>
+<li><a href="catalyst/metrics/functional/_hitrate.html">catalyst.metrics.functional._hitrate</a></li>
+<li><a href="catalyst/metrics/functional/_misc.html">catalyst.metrics.functional._misc</a></li>
+<li><a href="catalyst/metrics/functional/_mrr.html">catalyst.metrics.functional._mrr</a></li>
+<li><a href="catalyst/metrics/functional/_ndcg.html">catalyst.metrics.functional._ndcg</a></li>
+<li><a href="catalyst/metrics/functional/_precision.html">catalyst.metrics.functional._precision</a></li>
+<li><a href="catalyst/metrics/functional/_r2_squared.html">catalyst.metrics.functional._r2_squared</a></li>
+<li><a href="catalyst/metrics/functional/_recall.html">catalyst.metrics.functional._recall</a></li>
+<li><a href="catalyst/metrics/functional/_segmentation.html">catalyst.metrics.functional._segmentation</a></li>
+<li><a href="catalyst/runners/runner.html">catalyst.runners.runner</a></li>
+<li><a href="catalyst/runners/supervised.html">catalyst.runners.supervised</a></li>
+<li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
+<li><a href="catalyst/utils/distributed.html">catalyst.utils.distributed</a></li>
+<li><a href="catalyst/utils/misc.html">catalyst.utils.misc</a></li>
+<li><a href="catalyst/utils/onnx.html">catalyst.utils.onnx</a></li>
+<li><a href="catalyst/utils/pruning.html">catalyst.utils.pruning</a></li>
+<li><a href="catalyst/utils/quantization.html">catalyst.utils.quantization</a></li>
+<li><a href="catalyst/utils/torch.html">catalyst.utils.torch</a></li>
+<li><a href="catalyst/utils/tracing.html">catalyst.utils.tracing</a></li>
+</ul>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+         <script src="../_static/jquery.js"></script>
+         <script src="../_static/underscore.js"></script>
+         <script src="../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

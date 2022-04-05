@@ -1,0 +1,830 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.contrib.data.sampler &mdash; Catalyst 22.02.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/runner.html">Runner</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/settings.html">Settings</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.contrib.data.sampler</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.contrib.data.sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">Sampler</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data._misc</span> <span class="kn">import</span> <span class="n">find_value_ids</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BalanceBatchSampler"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.data.sampler.BalanceBatchSampler">[docs]</a><span class="k">class</span> <span class="nc">BalanceBatchSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This kind of sampler can be used for both metric learning and</span>
+<span class="sd">    classification task.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        Deprecated realization, used for backward compatibility.</span>
+<span class="sd">        Please use `BatchBalanceClassSampler` instead.</span>
+
+<span class="sd">    Sampler with the given strategy for the C unique classes dataset:</span>
+<span class="sd">    - Selection P of C classes for the 1st batch</span>
+<span class="sd">    - Selection K instances for each class for the 1st batch</span>
+<span class="sd">    - Selection P of C - P remaining classes for 2nd batch</span>
+<span class="sd">    - Selection K instances for each class for the 2nd batch</span>
+<span class="sd">    - ...</span>
+<span class="sd">    The epoch ends when there are no classes left.</span>
+<span class="sd">    So, the batch sise is P * K except the last one.</span>
+
+<span class="sd">    Thus, in each epoch, all the classes will be selected once, but this</span>
+<span class="sd">    does not mean that all the instances will be selected during the epoch.</span>
+
+<span class="sd">    One of the purposes of this sampler is to be used for</span>
+<span class="sd">    forming triplets and pos/neg pairs inside the batch.</span>
+<span class="sd">    To guarante existance of these pairs in the batch,</span>
+<span class="sd">    P and K should be &gt; 1. (1)</span>
+
+<span class="sd">    Behavior in corner cases:</span>
+<span class="sd">    - If a class does not contain K instances,</span>
+<span class="sd">    a choice will be made with repetition.</span>
+<span class="sd">    - If C % P == 1 then one of the classes should be dropped</span>
+<span class="sd">    otherwise statement (1) will not be met.</span>
+
+<span class="sd">    This type of sampling can be found in the classical paper of Person Re-Id,</span>
+<span class="sd">    where P equals 32 and K equals 4:</span>
+<span class="sd">    `In Defense of the Triplet Loss for Person Re-Identification`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        labels: list of classes labeles for each elem in the dataset</span>
+<span class="sd">        p: number of classes in a batch, should be &gt; 1</span>
+<span class="sd">        k: number of instances of each class in a batch, should be &gt; 1</span>
+
+<span class="sd">    .. _In Defense of the Triplet Loss for Person Re-Identification:</span>
+<span class="sd">        https://arxiv.org/abs/1703.07737</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BalanceBatchSampler.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.data.sampler.BalanceBatchSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sampler initialisation.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;Each class shoud contain at least 2 instances to fit (1)&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="n">classes</span>
+
+        <span class="c1"># to satisfy statement (1)</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_classes</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">=</span> <span class="n">num_classes</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">=</span> <span class="n">num_classes</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            this value should be used in DataLoader as batch size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">batches_in_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            number of batches in an epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            number of samples in an epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            indeces for sampling dataset elems during an epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">cls_id</span> <span class="ow">in</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span><span class="p">):</span>
+            <span class="n">all_cls_inds</span> <span class="o">=</span> <span class="n">find_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="n">cls_id</span><span class="p">)</span>
+
+            <span class="c1"># we&#39;ve checked in __init__ that this value must be &gt; 1</span>
+            <span class="n">num_samples_exists</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_cls_inds</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">num_samples_exists</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k</span><span class="p">:</span>
+                <span class="n">selected_inds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                    <span class="n">all_cls_inds</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">num_samples_exists</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">all_cls_inds</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_k</span> <span class="o">-</span> <span class="n">num_samples_exists</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_inds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">all_cls_inds</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_k</span><span class="p">)</span>
+
+            <span class="n">inds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">selected_inds</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.data.sampler.DynamicBalanceClassSampler">[docs]</a><span class="k">class</span> <span class="nc">DynamicBalanceClassSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This kind of sampler can be used for classification tasks with significant</span>
+<span class="sd">    class imbalance.</span>
+
+<span class="sd">    The idea of this sampler that we start with the original class distribution</span>
+<span class="sd">    and gradually move to uniform class distribution like with downsampling.</span>
+
+<span class="sd">    Let&#39;s define :math: D_i = #C_i/ #C_min where :math: #C_i is a size of class</span>
+<span class="sd">    i and :math: #C_min is a size of the rarest class, so :math: D_i define</span>
+<span class="sd">    class distribution. Also define :math: g(n_epoch) is a exponential</span>
+<span class="sd">    scheduler. On each epoch current :math: D_i  calculated as</span>
+<span class="sd">    :math: current D_i  = D_i ^ g(n_epoch),</span>
+<span class="sd">    after this data samples according this distribution.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">         In the end of the training, epochs will contain only</span>
+<span class="sd">         min_size_class * n_classes examples. So, possible it will not</span>
+<span class="sd">         necessary to do validation on each epoch. For this reason use</span>
+<span class="sd">         ControlFlowCallback.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+
+<span class="sd">        &gt;&gt;&gt; from catalyst.data import DynamicBalanceClassSampler</span>
+<span class="sd">        &gt;&gt;&gt; from torch.utils import data</span>
+
+<span class="sd">        &gt;&gt;&gt; features = torch.Tensor(np.random.random((200, 100)))</span>
+<span class="sd">        &gt;&gt;&gt; labels = np.random.randint(0, 4, size=(200,))</span>
+<span class="sd">        &gt;&gt;&gt; sampler = DynamicBalanceClassSampler(labels)</span>
+<span class="sd">        &gt;&gt;&gt; labels = torch.LongTensor(labels)</span>
+<span class="sd">        &gt;&gt;&gt; dataset = data.TensorDataset(features, labels)</span>
+<span class="sd">        &gt;&gt;&gt; loader = data.dataloader.DataLoader(dataset, batch_size=8)</span>
+
+<span class="sd">        &gt;&gt;&gt; for batch in loader:</span>
+<span class="sd">        &gt;&gt;&gt;     b_features, b_labels = batch</span>
+
+<span class="sd">    Sampler was inspired by https://arxiv.org/abs/1901.06783</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.data.sampler.DynamicBalanceClassSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">exp_lambda</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">start_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">max_d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">,</span>
+        <span class="n">ignore_warning</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            labels: list of labels for each elem in the dataset</span>
+<span class="sd">            exp_lambda: exponent figure for schedule</span>
+<span class="sd">            start_epoch: start epoch number, can be useful for multistage</span>
+<span class="sd">            experiments</span>
+<span class="sd">            max_d: if not None, limit on the difference between the most</span>
+<span class="sd">            frequent and the rarest classes, heuristic</span>
+<span class="sd">            mode: number of samples per class in the end of training. Must be</span>
+<span class="sd">            &quot;downsampling&quot; or number. Before change it, make sure that you</span>
+<span class="sd">            understand how does it work</span>
+<span class="sd">            ignore_warning: ignore warning about min class size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_epoch</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">exp_lambda</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;exp_lambda must be in (0, 1)&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_lambda</span> <span class="o">=</span> <span class="n">exp_lambda</span>
+        <span class="k">if</span> <span class="n">max_d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_d</span> <span class="o">=</span> <span class="n">max_d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">start_epoch</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">samples_per_class</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_per_class</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ignore_warning</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the smallest class contains only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span><span class="si">}</span><span class="s2"> examples. At the end of&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; training, epochs will contain only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples_per_class</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; examples&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">samples_per_class</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">label</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))[</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;downsampling&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update d coefficients.&quot;&quot;&quot;</span>
+        <span class="n">current_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_scheduler</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_d</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">samples_per_classes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">current_d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_classes</span> <span class="o">=</span> <span class="n">samples_per_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">samples_per_classes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_exp_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_lambda</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            iterator of indices of stratified sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">):</span>
+            <span class="n">samples_per_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">replace_flag</span> <span class="o">=</span> <span class="n">samples_per_class</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace_flag</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">             length of result sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span></div>
+
+
+<span class="k">class</span> <span class="nc">DynamicLenBatchSampler</span><span class="p">(</span><span class="n">BatchSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dynamic batch length data sampler.</span>
+<span class="sd">    Should be used with `catalyst.utils.trim_tensors`.</span>
+
+<span class="sd">    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sampler: Base sampler.</span>
+<span class="sd">        batch_size: Size of minibatch.</span>
+<span class="sd">        drop_last: If ``True``, the sampler will drop the last batch</span>
+<span class="sd">        if its size would be less than ``batch_size``.</span>
+
+<span class="sd">    Usage example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from torch.utils import data</span>
+<span class="sd">        &gt;&gt;&gt; from catalyst.data import DynamicLenBatchSampler</span>
+<span class="sd">        &gt;&gt;&gt; from catalyst import utils</span>
+<span class="sd">        &gt;&gt;&gt; dataset = data.TensorDataset(</span>
+<span class="sd">        &gt;&gt;&gt;     input_ids, input_mask, segment_ids, labels</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        &gt;&gt;&gt; sampler_ = data.RandomSampler(dataset)</span>
+<span class="sd">        &gt;&gt;&gt; sampler = DynamicLenBatchSampler(</span>
+<span class="sd">        &gt;&gt;&gt;     sampler_, batch_size=16, drop_last=False</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        &gt;&gt;&gt; loader = data.DataLoader(dataset, batch_sampler=sampler)</span>
+<span class="sd">        &gt;&gt;&gt; for batch in loader:</span>
+<span class="sd">        &gt;&gt;&gt;     tensors = utils.trim_tensors(batch)</span>
+<span class="sd">        &gt;&gt;&gt;     b_input_ids, b_input_mask, b_segment_ids, b_labels = \</span>
+<span class="sd">        &gt;&gt;&gt;         tuple(t.to(device) for t in tensors)</span>
+
+<span class="sd">    .. _`Dynamic minibatch trimming to improve BERT training speed`:</span>
+<span class="sd">        https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iteration over BatchSampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">buckets</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">yielded</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">:</span>
+            <span class="n">count_zeros</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">data_source</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">count_zeros</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count_zeros</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span>
+                <span class="k">yield</span> <span class="n">batch</span>
+                <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">leftover</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx2</span> <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">buckets</span> <span class="k">for</span> <span class="n">idx2</span> <span class="ow">in</span> <span class="n">bucket</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">idx3</span> <span class="ow">in</span> <span class="n">leftover</span><span class="p">:</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx3</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">yield</span> <span class="n">batch</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_last</span><span class="p">:</span>
+            <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="n">batch</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">yielded</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;produced an inccorect number of batches.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; expected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">, but yielded </span><span class="si">{</span><span class="n">yielded</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;BalanceBatchSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DynamicBalanceClassSampler&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

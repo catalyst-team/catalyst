@@ -1,0 +1,922 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Catalyst &mdash; Catalyst 22.02.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quickstart 101" href="getting_started/quickstart.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="_static/js/googleanalytics.min.js"></script>
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">22.02</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/checkpointing.html">Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/dataflow.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/dp.html">Dataparallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/ddp.html">Distributed training (multi-gpu, multi-node)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/mixed_precision.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/multi_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/settings.html">Settings</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="#">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Catalyst</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <section id="catalyst">
+<h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
+<section id="pytorch-framework-for-deep-learning-r-d">
+<h2>PyTorch framework for Deep Learning R&amp;D.<a class="headerlink" href="#pytorch-framework-for-deep-learning-r-d" title="Permalink to this headline">¶</a></h2>
+<p>It focuses on reproducibility, rapid experimentation, and codebase reuse
+so you can <strong>create</strong> something new rather than write yet another train loop.
+Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md">Project Manifest</a></p></li>
+<li><p><a class="reference external" href="https://miro.com/app/board/o9J_lxBO-2k=/">Framework architecture</a></p></li>
+<li><p><a class="reference external" href="https://landscape.lfai.foundation/selected=catalyst">Catalyst at AI Landscape</a></p></li>
+<li><p>Part of the <a class="reference external" href="https://pytorch.org/ecosystem/">PyTorch Ecosystem</a></p></li>
+</ul>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span>
+    <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">loss_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># model evaluation</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">evaluate_loader</span><span class="p">(</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">],</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))],</span>
+<span class="p">)</span>
+
+<span class="c1"># model inference</span>
+<span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_loader</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]):</span>
+    <span class="k">assert</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+
+<span class="c1"># model post-processing</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">quantize_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">prune_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">pruning_fn</span><span class="o">=</span><span class="s2">&quot;l1_unstructured&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">onnx_export</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;./logs/mnist.onnx&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="step-by-step-guide">
+<h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Start with <a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — A PyTorch Framework for Accelerated Deep Learning R&amp;D</a> introduction.</p></li>
+<li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">notebook tutorials</a> or check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a> for first deep dive.</p></li>
+<li><p>Read <a class="reference external" href="https://catalyst-team.com/post/">blogposts</a> with use-cases and guides.</p></li>
+<li><p>Learn machine learning with our <a class="reference external" href="https://github.com/catalyst-team/dl-course">“Deep Learning with Catalyst” course</a>.</p></li>
+<li><p>And do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
+</ol>
+</section>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst helps you write compact
+but full-featured Deep Learning pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.</p>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<p>Common installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U catalyst
+</pre></div>
+</div>
+<p>More specific with additional requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>ml<span class="o">]</span>         <span class="c1"># installs ML-based Catalyst</span>
+pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs CV-based Catalyst</span>
+<span class="c1"># master version installation</span>
+pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
+</pre></div>
+</div>
+<p>Catalyst is compatible with: Python 3.7+. PyTorch 1.4+.</p>
+<p>Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.</p>
+</section>
+<section id="tests">
+<h3>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h3>
+<p>All Catalyst code, features and pipelines <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/tests">are fully tested</a>
+with our own <a class="reference external" href="https://github.com/catalyst-team/codestyle">catalyst-codestyle</a>.
+During testing, we train a variety of different models: image classification,
+image segmentation, text classification, GANs, and much more.
+We then compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+As a result, Catalyst provides fully tested and reproducible
+best practices for your deep learning research and development.</p>
+</section>
+</section>
+<section id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks">Run-based</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#backwardcallback">BackwardCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchoverfitcallback">BatchOverfitCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchtransformcallback">BatchTransformCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#checkpointcallback">CheckpointCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#checkruncallback">CheckRunCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#controlflowcallbackwrapper">ControlFlowCallbackWrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#criterioncallback">CriterionCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#earlystoppingcallback">EarlyStoppingCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#lrfinder">LRFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#metricaggregationcallback">MetricAggregationCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mixupcallback">MixupCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#optimizercallback">OptimizerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#optunapruningcallback">OptunaPruningCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#periodicloadercallback">PeriodicLoaderCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#profilercallback">ProfilerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#schedulercallback">SchedulerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#timercallback">TimerCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#tqdmcallback">TqdmCallback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#metric-based-interfaces">Metric-based Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#batchmetriccallback">BatchMetricCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#loadermetriccallback">LoaderMetricCallback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics">Metric-based</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#accuracycallback">AccuracyCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#auccallback">AUCCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#cmcscorecallback">CMCScoreCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#confusionmatrixcallback">ConfusionMatrixCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#dicecallback">DiceCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#functionalmetriccallback">FunctionalMetricCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#hitratecallback">HitrateCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#ioucallback">IOUCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mapcallback">MAPCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#multilabelaccuracycallback">MultilabelAccuracyCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#multilabelprecisionrecallf1supportcallback">MultilabelPrecisionRecallF1SupportCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#mrrcallback">MRRCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#ndcgcallback">NDCGCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#precisionrecallf1supportcallback">PrecisionRecallF1SupportCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#r2squaredcallback">R2SquaredCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#reidcmcscorecallback">ReidCMCScoreCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnbatchcallback">SklearnBatchCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnloadercallback">SklearnLoaderCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#sklearnmodelcallback">SklearnModelCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#trevskycallback">TrevskyCallback</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data">Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#inbatchsamplers">InBatchSamplers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#inbatchtripletssampler">InBatchTripletsSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#alltripletssampler">AllTripletsSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#hardtripletssampler">HardTripletsSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#hardclustersampler">HardClusterSampler</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#samplers">Samplers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#balancebatchsampler">BalanceBatchSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#dynamicbalanceclasssampler">DynamicBalanceClassSampler</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#transforms">Transforms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#compose">Compose</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#imagetotensor">ImageToTensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#normalizeimage">NormalizeImage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets">Datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#cifar10">CIFAR10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#cifar100">CIFAR100</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagenette">Imagenette</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagenette160">Imagenette160</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagenette320">Imagenette320</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewang">Imagewang</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewang160">Imagewang160</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewang320">Imagewang320</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewoof">Imagewoof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewoof160">Imagewoof160</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#imagewoof320">Imagewoof320</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#mnist">MNIST</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#movielens">MovieLens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#layers">Layers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#adacos">AdaCos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#amsoftmax">AMSoftmax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#arcface">ArcFace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#arcmarginproduct">ArcMarginProduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#cse">cSE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#cosface">CosFace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#curricularface">CurricularFace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#factorizedlinear">FactorizedLinear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#scse">scSE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.layers.softmax">SoftMax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#sse">sSE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#subcenterarcface">SubCenterArcFace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#losses">Losses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#adaptivehingeloss">AdaptiveHingeLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#barlowtwinsloss">BarlowTwinsLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#bprloss">BPRLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#circleloss">CircleLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#diceloss">DiceLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#focallossbinary">FocalLossBinary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#focallossmulticlass">FocalLossMultiClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#focaltrevskyloss">FocalTrevskyLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#hingeloss">HingeLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#huberlossv0">HuberLossV0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#iouloss">IoULoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#logisticloss">LogisticLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#ntxentloss">NTXentLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#rocstarloss">RocStarLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#rsquareloss">RSquareLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#supervisedcontrastiveloss">SupervisedContrastiveLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#trevskyloss">TrevskyLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#tripletmarginlosswithsampler">TripletMarginLossWithSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#warploss">WARPLoss</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#optimizers">Optimizers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#adamp">AdamP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#lamb">Lamb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#lookahead">Lookahead</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#qhadamw">QHAdamW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#radam">RAdam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#ralamb">Ralamb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#sgdp">SGDP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#schedulers">Schedulers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#onecyclelrwithwarmup">OneCycleLRWithWarmup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#runner">Runner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#irunner">IRunner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#irunnererror">IRunnerError</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#engine">Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#callback">Callback</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#icallback">ICallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#callbackorder">CallbackOrder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#id1">Callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#callbackwrapper">CallbackWrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#ilogger">ILogger</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#dataset">Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#datasetfromsampler">DatasetFromSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#selfsuperviseddatasetwrapper">SelfSupervisedDatasetWrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#loader">Loader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#batchlimitloaderwrapper">BatchLimitLoaderWrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#batchprefetchloaderwrapper">BatchPrefetchLoaderWrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#samplers">Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#balanceclasssampler">BalanceClassSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#batchbalanceclasssampler">BatchBalanceClassSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#distributedsamplerwrapper">DistributedSamplerWrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#dynamicbalanceclasssampler">DynamicBalanceClassSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#miniepochsampler">MiniEpochSampler</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/engines.html">Engines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/engines.html#cpuengine">CPUEngine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/engines.html#gpuengine">GPUEngine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/engines.html#dataparallelengine">DataParallelEngine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/engines.html#distributeddataparallelengine">DistributedDataParallelEngine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/engines.html#distributedxlaengine">DistributedXLAEngine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/loggers.html">Loggers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#cometlogger">CometLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#consolelogger">ConsoleLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#csvlogger">CSVLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#mlflowlogger">MLflowLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#neptunelogger">NeptuneLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#tensorboardlogger">TensorboardLogger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/loggers.html#wandblogger">WandbLogger</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/metrics.html">Metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-interfaces">Metric Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#imetric">IMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#icallbackbatchmetric">ICallbackBatchMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#icallbackloadermetric">ICallbackLoaderMetric</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-sub-interfaces">Metric Sub-Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accumulativemetric">AccumulativeMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#additivemetric">AdditiveMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#functionalbatchmetric">FunctionalBatchMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#functionalloadermetric">FunctionalLoaderMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#regionbasedmetric">RegionBasedMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#topkmetric">TopKMetric</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#metric-api">Metric API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#accuracymetric">AccuracyMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#aucmetric">AUCMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#binaryprecisionrecallf1metric">BinaryPrecisionRecallF1Metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#cmcmetric">CMCMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#dicemetric">DiceMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#hitratemetric">HitrateMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#ioumetric">IOUMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#mapmetric">MAPMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multiclassprecisionrecallf1supportmetric">MulticlassPrecisionRecallF1SupportMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multilabelaccuracymetric">MultilabelAccuracyMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#multilabelprecisionrecallf1supportmetric">MultilabelPrecisionRecallF1SupportMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#mrrmetric">MRRMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#ndcgmetric">NDCGMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#r2squared">R2Squared</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#reidcmcmetric">ReidCMCMetric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#trevskymetric">TrevskyMetric</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#functional-api">Functional API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._accuracy">Accuracy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._auc">AUC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._average_precision">Average Precision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._classification">Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._cmc_score">CMC Score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._f1_score">F1 score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._focal">Focal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._hitrate">Hitrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._mrr">MRR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._ndcg">NDCG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._precision">Precision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#id13">R2Squared</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._recall">Recall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._segmentation">Segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional._misc">Misc</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/runners.html">Runners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/runners.html#isupervisedrunner">ISupervisedRunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/runners.html#runner">Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/runners.html#supervisedrunner">SupervisedRunner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.distributed">Distributed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.onnx">Onnx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.pruning">Pruning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.quantization">Quantization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.torch">Torch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.tracing">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.image">Image (contrib)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.report">Report (contrib)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.thresholds">Thresholds (contrib)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.visualization">Visualization (contrib)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="getting_started/quickstart.html" class="btn btn-neutral float-right" title="Quickstart 101" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Catalyst</a><ul>
+<li><a class="reference internal" href="#pytorch-framework-for-deep-learning-r-d">PyTorch framework for Deep Learning R&amp;D.</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#step-by-step-guide">Step by step guide</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#tests">Tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+         <script src="_static/jquery.js"></script>
+         <script src="_static/underscore.js"></script>
+         <script src="_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
