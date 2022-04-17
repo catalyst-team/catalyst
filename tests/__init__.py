@@ -1,16 +1,16 @@
 # flake8: noqa
 # Needed to collect coverage data
 import os
-import path
+import pathlib
 
-DATA_ROOT = path.Path(os.path.abspath(os.path.dirname(__file__))).abspath()
+DATA_ROOT = pathlib.Path(os.path.abspath(os.path.dirname(__file__))).abspath()
 MOVIELENS_ROOT = (
-    path.Path(os.path.abspath(os.path.dirname(__file__)))
+    pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
     .joinpath("./movielens")
     .abspath()
 )
 MOVIELENS20M_ROOT = (
-    path.Path(os.path.abspath(os.path.dirname(__file__)))
+    pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
     .joinpath("./movielens20m")
     .abspath()
 )
