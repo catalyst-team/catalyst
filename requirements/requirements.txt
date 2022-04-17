@@ -3,7 +3,7 @@ numpy>=1.18
 torch>=1.4.0
 
 # hardware backend
-accelerate
+accelerate>=0.5.1
 
 # registry
 hydra-slayer>=0.4.0

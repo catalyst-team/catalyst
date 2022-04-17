@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- `catalyst-tune` for Config API added [#1411](https://github.com/catalyst-team/catalyst/pull/1411)
 
 ### Changed
 
