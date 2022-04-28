@@ -4,12 +4,15 @@
 set -eo pipefail -v
 
 function clean_requirements() {
-pip uninstall -r requirements/requirements-dev.txt -y
+pip uninstall -r requirements/requirements-comet.txt -y
   pip uninstall -r requirements/requirements-cv.txt -y
+  pip uninstall -r requirements/requirements-deepspeed.txt -y
+  pip uninstall -r requirements/requirements-dev.txt -y
   pip uninstall -r requirements/requirements-ml.txt -y
-  pip uninstall -r requirements/requirements-optuna.txt -y
   pip uninstall -r requirements/requirements-mlflow.txt -y
   pip uninstall -r requirements/requirements-neptune.txt -y
+  pip uninstall -r requirements/requirements-optuna.txt -y
+  pip uninstall -r requirements/requirements-wandb.txt -y
   pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
