@@ -27,6 +27,12 @@ jobs:
             requirements: minimal
           - python-version: 3.10
             requirements: minimal
+          - python-version: 3.7
+            os: macOS-10.15
+            requirements: minimal
+          - python-version: 3.8
+            os: macOS-10.15
+            requirements: minimal
 
     timeout-minutes: 60
     steps:
