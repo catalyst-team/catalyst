@@ -20,7 +20,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04]  # windows-2019,
-        python-version: [3.7, 3.8]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11-dev"]
         requirements: [minimal, latest]
         exclude:
           # pypi problems
