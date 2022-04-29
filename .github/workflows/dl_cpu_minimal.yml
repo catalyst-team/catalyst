@@ -20,32 +20,19 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04, macOS-10.15]  #, windows-2019,
-        python-version: [3.7, 3.8]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
         requirements: [minimal]
         exclude:
-          # pickle problems
-          - python-version: 3.8
-            os: macOS-10.15
-          - python-version: 3.6
-            os: macOS-10.15
-          # github CI problems
-          - python-version: 3.8
-            os: ubuntu-18.04
+          - python-version: 3.9
             requirements: minimal
-          - python-version: 3.8
-            os: ubuntu-20.04
+          - python-version: 3.10
             requirements: minimal
           - python-version: 3.7
             os: macOS-10.15
-#          - python-version: 3.7
-#            os: ubuntu-18.04
-#            requirements: minimal
-#          - python-version: 3.7
-#            os: ubuntu-20.04
-#            requirements: minimal
-#          - python-version: 3.7
-#            os: macOS-10.15
-#            requirements: minimal
+            requirements: minimal
+          - python-version: 3.8
+            os: macOS-10.15
+            requirements: minimal
 
     timeout-minutes: 60
     steps:
