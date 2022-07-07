@@ -134,6 +134,14 @@ def _is_mlflow_available():
     except ImportError:
         return False
 
+def _is_aim_available():
+    try:
+        import aim  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
 
 def _is_wandb_available():
     try:
@@ -201,6 +209,7 @@ class Settings(FrozenClass):
         comet_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
         neptune_required: Optional[bool] = None,
+        aim_required: Optional[bool] = None,
         wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
@@ -306,6 +315,11 @@ class Settings(FrozenClass):
             neptune_required,
             _is_neptune_available,
             "neptune is not available, to install it, run `pip install neptune-client`.",
+        )
+        self.aim_required: bool = _get_optional_value(
+            aim_required,
+            _is_aim_available,
+            "aim is not available, to install it, run `pip install aim`.",
         )
         self.wandb_required: bool = _get_optional_value(
             wandb_required,

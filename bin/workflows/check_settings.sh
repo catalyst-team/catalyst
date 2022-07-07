@@ -13,6 +13,7 @@ pip uninstall -r requirements/requirements-comet.txt -y
   pip uninstall -r requirements/requirements-neptune.txt -y
   pip uninstall -r requirements/requirements-optuna.txt -y
   pip uninstall -r requirements/requirements-wandb.txt -y
+  pip uninstall -r requirements/requirements-aim.txt -y
   pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed

@@ -8,7 +8,7 @@ Speaking about the logging, Catalyst united the monitoring system API support in
 
 
 With such a simple API,
-we already provide integrations for `Tensorboard`_, `MLFlow`_, Comet, Neptune and Wandb monitoring systems.
+we already provide integrations for `Tensorboard`_, `MLFlow`_, Aim, Comet, Neptune and Wandb monitoring systems.
 All currently supported loggers you could find under the `Logger API section`_.
 
 

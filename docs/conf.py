@@ -119,6 +119,7 @@ autodoc_mock_imports = [
     "alchemy",
     "neptune",
     "wandb",
+    "aim",
     "gym",
     "gridfs",
     "pymongo",

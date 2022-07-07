@@ -22,6 +22,7 @@ Nevertheless, there are much more availabe:
     pip install catalyst[optuna] # + optuna
     pip install catalyst[profiler] # + profiler
     pip install catalyst[wandb] # + wandb
+    pip install catalyst[aim] # + aim
     pip install catalyst[all] # + catalyst[cv], catalyst[ml], catalyst[optuna]
 
 

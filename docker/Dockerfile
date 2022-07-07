@@ -44,6 +44,7 @@ RUN if [ "$CATALYST_ONNX_GPU" = "1" ] ; then pip install -U catalyst[onnx-gpu] -
 RUN if [ "$CATALYST_MLFLOW" = "1" ] ; then pip install -U catalyst[mlflow] --no-cache-dir ; else echo "catalyst[mlflow] is not required" ; fi
 RUN if [ "$CATALYST_NEPTUNE" = "1" ] ; then pip install -U catalyst[neptune] --no-cache-dir ; else echo "catalyst[neptune] is not required" ; fi
 RUN if [ "$CATALYST_WANDB" = "1" ] ; then pip install -U catalyst[wandb] --no-cache-dir ; else echo "catalyst[wandb] is not required" ; fi
+RUN if [ "$CATALYST_AIM" = "1" ] ; then pip install -U catalyst[aim] --no-cache-dir ; else echo "catalyst[aim] is not required" ; fi
 RUN if [ "$CATALYST_DEEPSPEED" = "1" ] ; then pip install -U catalyst[deepspeed] --no-cache-dir ; else echo "catalyst[deepspeed] is not required" ; fi
 RUN if [ "$CATALYST_ALL" = "1" ] ; then pip install -U catalyst[all] --no-cache-dir ; else echo "catalyst[all] is not required" ; fi
 

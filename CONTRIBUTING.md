@@ -89,6 +89,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
         -r ./catalyst/requirements/requirements-mlflow.txt \
         -r ./catalyst/requirements/requirements-neptune.txt \
         -r ./catalyst/requirements/requirements-wandb.txt \
+        -r ./catalyst/requirements/requirements-aim.txt \
         -r ./catalyst/requirements/requirements-profiler.txt
     ```
 0. Break your work into small, single-purpose updates if possible.

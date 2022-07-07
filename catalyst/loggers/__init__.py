@@ -8,6 +8,9 @@ from catalyst.settings import SETTINGS
 if SETTINGS.mlflow_required:
     from catalyst.loggers.mlflow import MLflowLogger
 
+if SETTINGS.aim_required:
+    from catalyst.loggers.aim import AimLogger
+
 if SETTINGS.wandb_required:
     from catalyst.loggers.wandb import WandbLogger
 
@@ -21,6 +24,9 @@ __all__ = ["ConsoleLogger", "CSVLogger", "TensorboardLogger"]
 
 if SETTINGS.mlflow_required:
     __all__ += ["MLflowLogger"]
+
+if SETTINGS.aim_required:
+    __all__ += ["AimLogger"]
 
 if SETTINGS.wandb_required:
     __all__ += ["WandbLogger"]

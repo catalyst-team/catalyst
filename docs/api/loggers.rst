@@ -50,6 +50,13 @@ TensorboardLogger
     :undoc-members:
     :show-inheritance:
 
+AimLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.wandb.AimLogger
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 WandbLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.wandb.WandbLogger
