@@ -1,10 +1,5 @@
 from typing import Dict, Optional, List, Union, Any, TYPE_CHECKING, NoReturn
-import os
-import pickle
-import warnings
-
 import numpy as np
-
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 
@@ -18,7 +13,7 @@ class AimLogger(ILogger):
     """Aim experimentation tracking for logging hypeparametrs, metrics .
 
     Aim documentation: https://aimstack.readthedocs.io/en/latest/.
-    
+
     Args:
         experiment: Name of the experiment in Aim to log to.
         run_hash: Run hash.
@@ -31,7 +26,7 @@ class AimLogger(ILogger):
     Python API examples:
         .. code-block:: python
             from catalyst import dl
-            runner = dl.SupervisedRunner()
+            runner=dl.SupervisedRunner()
             runner.train(
                 ...,
                 loggers={"aim": dl.AimLogger(experiment_name="test_exp")}
@@ -46,7 +41,7 @@ class AimLogger(ILogger):
                         "aim": dl.AimLogger(experiment_name="test_exp")
                     }
                 # ...
-            runner = CustomRunner().run()
+            runner=CustomRunner().run()
     """
 
     def __init__(
@@ -59,21 +54,21 @@ class AimLogger(ILogger):
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **kwargs,
     ):
-        self.experiment_name = experiment_name
-        self.run_hash = run_hash
-        self.exclude = exclude
-        self.kwargs = kwargs
+        self.experiment_name=experiment_name
+        self.run_hash=run_hash
+        self.exclude=exclude
+        self.kwargs=kwargs
 
         super().__init__(
             log_batch_metrics=log_batch_metrics,
             log_epoch_metrics=log_epoch_metrics,
         )
 
-        self.exclude = [] if exclude is None else exclude
-        self.repo = repo
+        self.exclude=[] if exclude is None else exclude
+        self.repo=repo
 
-        self.aim_run = aim.Run(experiment = experiment_name, run_hash = run_hash, repo = repo)
-
+        self.aim_run=aim.Run(experiment=experiment_name, \
+            run_hash=run_hash, repo=repo)
 
     @property
     def logger(self):
@@ -97,7 +92,7 @@ class AimLogger(ILogger):
         """
 
         if scope == "batch" and self.log_batch_metrics:
-            metrics = {k: float(v) for k, v in metrics.items()}
+            metrics={k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics,
                 runner=runner,
@@ -121,10 +116,8 @@ class AimLogger(ILogger):
         metric_type: str,
         scope: str = "",
     ):
-        # print("Metric Type:", metric_type)
-        # print("Scope:", scope)
-        # print("Metrics:", metrics)
-        context, kwargs  = self._aim_context(runner, scope, metric_type)
+
+        context, kwargs =self._aim_context(runner, scope, metric_type)
         for metric_name, value in metrics.items():
             self.aim_run.track(value,name=metric_name, context=context,epoch=kwargs["epoch"])
 
@@ -137,23 +130,23 @@ class AimLogger(ILogger):
         scope: str = None,
         kind: str = "text",
         artifact_kwargs: Dict[str, Any] = {},
-    ) -> None:
+    ) -> NoReturn:
         """Logs a local file or directory as an artifact to the logger."""
         
         if path_to_artifact:
-            mode = "r" if kind == "text" else "rb"
+            mode="r" if kind == "text" else "rb"
             with open(path_to_artifact, mode) as f:
-                artifact = f.read()
+                artifact=f.read()
 
 
-        kind_dict = {
+        kind_dict={
             "audio": aim.Audio,
             "figure": aim.Figure,
             "image": aim.Image,
             "text": aim.Text,
         }
-        value = kind_dict[kind](artifact, **artifact_kwargs)
-        context, kwargs = self._aim_context(runner, scope)
+        value=kind_dict[kind](artifact, **artifact_kwargs)
+        context, kwargs=self._aim_context(runner, scope)
         self.aim_run.track(value, tag, context=context, epoch=kwargs["epoch"])
 
 
@@ -166,24 +159,21 @@ class AimLogger(ILogger):
         image_kwargs: Dict[str, Any] = {},
     ) -> None:
         """Logs image to Aim for current scope on current step."""
-        value = aim.Image(image, **image_kwargs)
-        context, kwargs = self._aim_context(runner, scope)
+        value=aim.Image(image, **image_kwargs)
+        context, kwargs=self._aim_context(runner, scope)
         self.aim_run.track(value, tag, context=context, epoch=kwargs["epoch"])
 
 
-    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> NoReturn:
         """
         Logs parameters for current scope.
         Args:
             hparams: Parameters to log.
             runner: experiment runner
         """
-        hparams = self._build_params_dict(hparams, self.exclude)
-
-        # print(hparams)
-
+        hparams=self._build_params_dict(hparams, self.exclude)
         for k, v in hparams.items():
-            self.aim_run[k] = v
+            self.aim_run[k]=v
 
 
 
@@ -194,18 +184,18 @@ class AimLogger(ILogger):
         all_scope_steps: bool = False,
     ):
         if metric_type is None:
-            metric_type = runner.loader_key
-        context = {}
+            metric_type=runner.loader_key
+        context={}
         if metric_type is not None:
-            context["metric_type"] = metric_type
+            context["metric_type"]=metric_type
         if scope is not None:
-            context["metric_context"] = scope
+            context["metric_context"]=scope
         
-        kwargs = {}
+        kwargs={}
         if all_scope_steps or scope == "batch":
-            kwargs["step"] = runner.batch_step
+            kwargs["step"]=runner.batch_step
         if all_scope_steps or scope == "epoch" or scope == "loader":
-            kwargs["epoch"] = runner.epoch_step
+            kwargs["epoch"]=runner.epoch_step
 
         return context, kwargs
 
@@ -218,19 +208,19 @@ class AimLogger(ILogger):
         dictionary: Dict[str, Any],
         exclude: List[str],
     ):
-        clear_dict = {}
-        strap_dict = {}
+        clear_dict={}
+        strap_dict={}
         for name, value in dictionary.items():
             if name in exclude:
                 continue
 
             if isinstance(value, dict):
                 if name not in strap_dict:
-                    strap_dict[name] = {}
+                    strap_dict[name]={}
                 
-                strap_dict[name] = self._build_params_dict(value, exclude)
+                strap_dict[name]=self._build_params_dict(value, exclude)
             else:
-                strap_dict[name] = value
+                strap_dict[name]=value
 
         
         clear_dict.update(strap_dict)
@@ -238,4 +228,4 @@ class AimLogger(ILogger):
         return clear_dict
 
 
-__all__ = ["AimLogger"]
+__all__=["AimLogger"]
