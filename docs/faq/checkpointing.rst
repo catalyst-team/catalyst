@@ -45,8 +45,8 @@ Catalyst has a user-friendly utils to save the model:
 
     model = Net()
     checkpoint = utils.pack_checkpoint(model=model)
-    utils.save_checkpoint(checkpoint, logdir="/path/to/logdir", suffix="my_checkpoint")
-    #  now you could find your checkpoint under "/path/to/logdir/my_checkpoint.pth" location
+    utils.save_checkpoint(checkpoint, path="/path/to/outputfile.pth")
+    #  now you could find your checkpoint under "/path/to/outputfile.pth" location
 
 Load runner
 ----------------------------------------------------
