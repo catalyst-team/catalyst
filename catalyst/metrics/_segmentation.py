@@ -106,8 +106,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             metric for each class
         """
         tp, fp, fn = get_segmentation_statistics(
-            outputs=outputs.cpu().detach(),
-            targets=targets.cpu().detach(),
+            outputs=outputs.detach(),
+            targets=targets.detach(),
             class_dim=self.class_dim,
             threshold=self.threshold,
         )
