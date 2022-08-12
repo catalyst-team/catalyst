@@ -60,7 +60,7 @@ def build_parser() -> ArgumentParser:
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
-    all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
+    all_commands = ", \n".join([f"    {x}" for x in COMMANDS.keys()])
 
     subparsers = parser.add_subparsers(
         metavar="{command}", dest="command", help=f"available commands: \n{all_commands}"
