@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
--
+- Added `runner.log_artifact` to `CheckpointCallback` to log model checkpoints as artifacts to all the loggers.
 
 ### Removed
 
@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- Fixed bug in the `WandbLogger.log_artifact` method.
 
 
 ## [22.02.1] - 2022-02-27
