@@ -225,6 +225,11 @@ class CheckpointCallback(ICheckpointCallback):
                     for checkpoint in self._storage
                 ]
             )
+            for checkpoint in self._storage[::-1]:
+                runner.log_artifact(
+                    tag=checkpoint.metric,
+                    path_to_artifact=checkpoint.logpath
+                )
             print(log_message)
         if self.load_best_on_end:
             self._load(runner=runner, resume_logpath=self._storage[0].logpath)

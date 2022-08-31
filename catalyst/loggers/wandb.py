@@ -113,7 +113,7 @@ class WandbLogger(ILogger):
         if artifact is None and path_to_artifact is None:
             ValueError("Both artifact and path_to_artifact cannot be None")
 
-        artifact = wandb.Artifact(
+        _artifact = wandb.Artifact(
             name=self.run.id + "_aritfacts",
             type="artifact",
             metadata={"loader_key": runner.loader_key, "scope": scope},
@@ -127,10 +127,10 @@ class WandbLogger(ILogger):
             pickle.dump(artifact, art_file)
             art_file.close()
 
-            artifact.add_file(str(os.path.join(art_file_dir, tag)))
+            _artifact.add_file(str(os.path.join(art_file_dir, tag)))
         else:
-            artifact.add_file(path_to_artifact)
-        self.run.log_artifact(artifact)
+            _artifact.add_file(path_to_artifact)
+        self.run.log_artifact(_artifact, aliases=[str(tag)])
 
     def log_image(
         self,
