@@ -1,16 +1,16 @@
-from typing import Dict, Optional, List, Union, Any, TYPE_CHECKING, NoReturn
+from typing import TYPE_CHECKING, Any, Optional, Union, List, Dict
 import numpy as np
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
+from aim import Run, Repo, Audio, Image, Figure, Text
+from aim.ext.resource.configs import DEFAULT_SYSTEM_TRACKING_INT
 
-if SETTINGS.aim_required:
-    import aim
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
 class AimLogger(ILogger):
-    """Aim experimentation tracking for logging hypeparametrs, metrics .
+    """Aim logger for parameters, metrics, images and other artifacts.
 
     Aim documentation: https://aimstack.readthedocs.io/en/latest/.
 
@@ -26,7 +26,7 @@ class AimLogger(ILogger):
     Python API examples:
         .. code-block:: python
             from catalyst import dl
-            runner=dl.SupervisedRunner()
+            runner = dl.SupervisedRunner()
             runner.train(
                 ...,
                 loggers={"aim": dl.AimLogger(experiment_name="test_exp")}
@@ -41,46 +41,59 @@ class AimLogger(ILogger):
                         "aim": dl.AimLogger(experiment_name="test_exp")
                     }
                 # ...
-            runner=CustomRunner().run()
+            runner = CustomRunner().run()
     """
 
     def __init__(
         self,
-        experiment_name: str,
+        experiment_name: Optional[str] = None,
         run_hash: Optional[str] = None,
-        exclude: Optional[str] = None,
-        repo: Optional[Union[str, aim.Repo]] = '.',
+        exclude: Optional[List[str]] = None,
+        repo: Optional[Union[str, Repo]] = None,
+        system_tracking_interval: Optional[int] = DEFAULT_SYSTEM_TRACKING_INT,
+        log_system_params: bool = True,
         log_batch_metrics: bool = SETTINGS.log_batch_metrics,
         log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
         **kwargs,
     ):
-        self.experiment_name = experiment_name
-        self.run_hash = run_hash
-        self.exclude = exclude
-        self.kwargs = kwargs
-
         super().__init__(
             log_batch_metrics=log_batch_metrics,
             log_epoch_metrics=log_epoch_metrics,
         )
 
-        self.exclude = [] if exclude is None else exclude
-        self.repo = repo
+        self.exclude: List[str] = [] if exclude is None else exclude
+        self._run: Run = None
+        self.run_hash = run_hash
 
-        self.aim_run = aim.Run(experiment=experiment_name,
-                               run_hash=run_hash, repo=repo)
+        if self.run_hash:
+            self._run = Run(
+                run_hash,
+                repo=repo,
+                system_tracking_interval=system_tracking_interval,
+                log_system_params=log_system_params,
+                **kwargs,
+            )
+        else:
+            self._run = Run(
+                repo=repo,
+                experiment=experiment_name,
+                system_tracking_interval=system_tracking_interval,
+                log_system_params=log_system_params,
+                **kwargs,
+            )
+            self.run_hash = self._run.hash
 
     @property
     def logger(self):
-        """Logger property."""
-        return self.aim_run
+        """Internal logger/experiment/etc. from the monitoring system."""
+        return self._run
 
     def log_metrics(
         self,
         metrics: Dict[str, float],
         scope: str,
         runner: "IRunner",
-    ) -> NoReturn:
+    ) -> None:
         """
         Log metrics to Aim.
 
@@ -108,6 +121,23 @@ class AimLogger(ILogger):
                     scope=scope,
                 )
 
+    def log_figure(
+        self,
+        tag: str,
+        fig: Any,
+        runner: "IRunner",
+        scope: Optional[str] = None,
+        kwargs: Dict[str, Any] = {},
+    ) -> None:
+        """Logs figure to Aim for current scope on current step."""
+        value = Figure(fig, **kwargs)
+        context, kwargs = self._aim_context(runner, scope)
+        self.run.track(value, tag, context=context, **kwargs)
+
+    def close_log(self) -> None:
+        """End an active Aim run."""
+        self._run.close()
+
     def _log_metrics(
         self,
         metrics: Dict[str, float],
@@ -118,19 +148,20 @@ class AimLogger(ILogger):
 
         context, kwargs = self._aim_context(runner, scope, metric_type)
         for metric_name, value in metrics.items():
-            self.aim_run.track(value, name=metric_name,
-                               context=context, epoch=kwargs["epoch"])
+            self._run.track(
+                value, name=metric_name, context=context, epoch=kwargs["epoch"]
+            )
 
     def log_artifact(
         self,
         tag: str,
         runner: "IRunner",
         artifact: object = None,
-        path_to_artifact: str = None,
-        scope: str = None,
+        path_to_artifact: Optional[str] = None,
+        scope: Optional[str] = None,
         kind: str = "text",
         artifact_kwargs: Dict[str, Any] = {},
-    ) -> NoReturn:
+    ) -> None:
         """Logs a local file or directory as an artifact to the logger."""
 
         if path_to_artifact:
@@ -139,29 +170,29 @@ class AimLogger(ILogger):
                 artifact = f.read()
 
         kind_dict = {
-            "audio": aim.Audio,
-            "figure": aim.Figure,
-            "image": aim.Image,
-            "text": aim.Text,
+            "audio": Audio,
+            "figure": Figure,
+            "image": Image,
+            "text": Text,
         }
         value = kind_dict[kind](artifact, **artifact_kwargs)
         context, kwargs = self._aim_context(runner, scope)
-        self.aim_run.track(value, tag, context=context, epoch=kwargs["epoch"])
+        self._run.track(value, tag, context=context, epoch=kwargs["epoch"])
 
     def log_image(
         self,
         tag: str,
         image: np.ndarray,
         runner: "IRunner",
-        scope: str = None,
+        scope: Optional[str] = None,
         image_kwargs: Dict[str, Any] = {},
     ) -> None:
         """Logs image to Aim for current scope on current step."""
-        value = aim.Image(image, **image_kwargs)
+        value = Image(image, **image_kwargs)
         context, kwargs = self._aim_context(runner, scope)
-        self.aim_run.track(value, tag, context=context, epoch=kwargs["epoch"])
+        self._run.track(value, tag, context=context, **kwargs)
 
-    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> NoReturn:
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """
         Logs parameters for current scope.
         Args:
@@ -172,12 +203,13 @@ class AimLogger(ILogger):
         for k, v in hparams.items():
             self.aim_run[k] = v
 
-    def _aim_context(self,
-                     runner: "IRunner",
-                     scope: Optional[str],
-                     metric_type: Optional[str] = None,
-                     all_scope_steps: bool = False,
-                     ):
+    def _aim_context(
+        self,
+        runner: "IRunner",
+        scope: Optional[str],
+        metric_type: Optional[str] = None,
+        all_scope_steps: bool = False,
+    ):
         if metric_type is None:
             metric_type = runner.loader_key
         context = {}
@@ -194,15 +226,11 @@ class AimLogger(ILogger):
 
         return context, kwargs
 
-    def close_log(self) -> NoReturn:
-        """Close log."""
-        self.aim_run.close()
-        del self.aim_run
-
-    def _build_params_dict(self,
-                           dictionary: Dict[str, Any],
-                           exclude: List[str],
-                           ):
+    def _build_params_dict(
+        self,
+        dictionary: Dict[str, Any],
+        exclude: List[str],
+    ):
         clear_dict = {}
         strap_dict = {}
         for name, value in dictionary.items():
