@@ -145,10 +145,6 @@ def average_precision(
             targets_sort_by_outputs[:, : (index + 1)], dim=1
         ) / float(index + 1)
 
-        precisions[:, index] = torch.sum(
-            targets_sort_by_outputs[:, : (index + 1)], dim=1
-        ) / float(index + 1)
-
     only_relevant_precision = precisions * targets_sort_by_outputs
     ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
