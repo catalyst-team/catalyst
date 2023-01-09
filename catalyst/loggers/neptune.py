@@ -34,38 +34,38 @@ class NeptuneLogger(ILogger):
     model checkpoints, etc.).
 
     Neptune documentation:
-    https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst
+    https://docs.neptune.ai/integrations/catalyst/
 
     When the logger is created, link to the run in Neptune will be printed to stdout.
     It looks like this:
-    https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379
+    https://app.neptune.ai/common/catalyst-integration/e/CATALYST-1486
 
     To start with Neptune please check
-    `Neptune getting-started docs <http://docs.neptune.ai/getting-started/installation>`_
-    because you will need ``api_token`` and project to log your Catalyst runs to.
+    `Neptune getting-started docs <https://docs.neptune.ai/setup/installation/>`_
+    because you will need an ``api_token`` and a project to log your Catalyst runs to.
 
     .. note::
-        You can use public api_token ``ANONYMOUS`` and set project to
+        You can use public api_token ``neptune.ANONYMOUS_API_TOKEN`` (you will need to import `neptune.new` to use this) and set project to
         ``common/catalyst-integration`` for testing without registration.
 
     Args:
         base_namespace: Optional, ``str``, root namespace within Neptune's run.
           Default is "experiment".
         api_token: Optional, ``str``. Your Neptune API token. Read more about it in the
-          `Neptune docs <http://docs.neptune.ai/getting-started/installation>`_.
+          `Neptune docs <https://docs.neptune.ai/setup/setting_api_token/>`_.
         project: Optional, ``str``. Name of the project to log runs to.
           It looks like this: "my_workspace/my_project".
         run: Optional, pass Neptune run object if you want to continue logging
           to the existing run (resume run).
           Read more about it
-          `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
+          `here <https://docs.neptune.ai/tutorials/re-running_failed_training/#resume-the-failed-run>`_.
         log_batch_metrics: boolean flag to log batch metrics
           (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
           (default: SETTINGS.log_epoch_metrics or True).
         neptune_run_kwargs: Optional, additional keyword arguments
           to be passed directly to the
-          `neptune.init()  <https://docs.neptune.ai/api-reference/neptune#init>`_
+          `neptune.init_run()  <https://docs.neptune.ai/api/neptune/#init_run>`_
           function.
 
     Python API examples:
@@ -125,7 +125,7 @@ class NeptuneLogger(ILogger):
         self._project = project
         self._neptune_run_kwargs = neptune_run_kwargs
         if run is None:
-            self.run = neptune.init(
+            self.run = neptune.init_run(
                 project=self._project,
                 api_token=self._api_token,
                 **self._neptune_run_kwargs,
@@ -146,7 +146,7 @@ class NeptuneLogger(ILogger):
 
     def _log_metrics(self, metrics: Dict[str, float], neptune_path: str, step: int):
         for key, value in metrics.items():
-            self.run[f"{neptune_path}/{key}"].log(value=float(value), step=step)
+            self.run[neptune_path][key].log(value=float(value), step=step)
 
     def _log_image(self, image: np.ndarray, neptune_path: str):
         self.run[neptune_path].log(neptune.types.File.as_image(image))
@@ -230,7 +230,7 @@ class NeptuneLogger(ILogger):
 
     def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyper-parameters to Neptune."""
-        self.run[f"{self.base_namespace}/hparams"] = hparams
+        self.run[self.base_namespace]["hparams"] = hparams
 
     def log_metrics(
         self,
