@@ -1,4 +1,5 @@
 from typing import Dict, TYPE_CHECKING
+import contextlib
 
 import numpy as np
 
@@ -17,15 +18,15 @@ def _prepare_metrics(metrics):
     for k in list(processed_metrics.keys()):
         if k.endswith("/std"):
             k_stripped = k[:-4]
-            k_val = k_stripped + "/val"
+            k_val = f"{k_stripped}/val"
             if k_val not in processed_metrics.keys():
                 processed_metrics[k_val] = processed_metrics.pop(k_stripped)
-    for k in processed_metrics.keys():
-        for j in processed_metrics.keys():
+    for k in processed_metrics:
+        for j in processed_metrics:
             if j.startswith(k) and j != k and k not in conflict_keys:
                 conflict_keys.append(k)
     for i in conflict_keys:
-        processed_metrics[i + "_val"] = processed_metrics.pop(i)
+        processed_metrics[f"{i}_val"] = processed_metrics.pop(i)
     return processed_metrics
 
 
@@ -45,7 +46,8 @@ class NeptuneLogger(ILogger):
     because you will need an ``api_token`` and a project to log your Catalyst runs to.
 
     .. note::
-        You can use public api_token ``neptune.ANONYMOUS_API_TOKEN`` (you will need to import `neptune.new` to use this) and set project to
+        You can use public api_token ``neptune.ANONYMOUS_API_TOKEN``
+        (you will need to import `neptune.new` to use this) and set project to
         ``common/catalyst-integration`` for testing without registration.
 
     Args:
@@ -58,7 +60,7 @@ class NeptuneLogger(ILogger):
         run: Optional, pass Neptune run object if you want to continue logging
           to the existing run (resume run).
           Read more about it
-          `here <https://docs.neptune.ai/tutorials/re-running_failed_training/#resume-the-failed-run>`_.
+          `here <https://docs.neptune.ai/logging/to_existing_object/>`_.
         log_batch_metrics: boolean flag to log batch metrics
           (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
@@ -132,12 +134,10 @@ class NeptuneLogger(ILogger):
             )
         else:
             self.run = run
-        try:
+        with contextlib.suppress(ImportError, NameError, AttributeError):
             import catalyst.__version__ as version
 
             self.run["source_code/integrations/neptune-catalyst"] = version
-        except (ImportError, NameError, AttributeError):
-            pass
 
     @property
     def logger(self):
@@ -210,7 +210,7 @@ class NeptuneLogger(ILogger):
         scope: str = None,
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
-        if scope == "batch" or scope == "loader":
+        if scope in {"batch", "loader"}:
             log_path = "/".join(
                 [
                     self.base_namespace,
