@@ -1,1 +1,1 @@
-neptune
+neptune-client
