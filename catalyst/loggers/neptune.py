@@ -8,6 +8,7 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.neptune_required:
     import neptune.new as neptune
+    from neptune.new.utils import stringify_unsupported
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
@@ -230,7 +231,7 @@ class NeptuneLogger(ILogger):
 
     def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
         """Logs hyper-parameters to Neptune."""
-        self.run[self.base_namespace]["hparams"] = hparams
+        self.run[self.base_namespace]["hparams"] = stringify_unsupported(hparams)
 
     def log_metrics(
         self,
