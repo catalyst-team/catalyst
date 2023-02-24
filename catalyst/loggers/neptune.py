@@ -7,8 +7,8 @@ from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 
 if SETTINGS.neptune_required:
-    import neptune.new as neptune
-    from neptune.new.utils import stringify_unsupported
+    import neptune
+    from neptune.utils import stringify_unsupported
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
@@ -48,7 +48,7 @@ class NeptuneLogger(ILogger):
 
     .. note::
         You can use public api_token ``neptune.ANONYMOUS_API_TOKEN``
-        (you will need to import `neptune.new` to use this) and set project to
+        (you will need to import `neptune` to use this) and set project to
         ``common/catalyst-integration`` for testing without registration.
 
     Args:
@@ -147,10 +147,10 @@ class NeptuneLogger(ILogger):
 
     def _log_metrics(self, metrics: Dict[str, float], neptune_path: str, step: int):
         for key, value in metrics.items():
-            self.run[neptune_path][key].log(value=float(value), step=step)
+            self.run[neptune_path][key].append(value=float(value), step=step)
 
     def _log_image(self, image: np.ndarray, neptune_path: str):
-        self.run[neptune_path].log(neptune.types.File.as_image(image))
+        self.run[neptune_path].append(neptune.types.File.as_image(image))
 
     def _log_artifact(self, artifact: object, path_to_artifact: str, neptune_path: str):
         if artifact is not None:
