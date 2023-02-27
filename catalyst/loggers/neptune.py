@@ -58,7 +58,7 @@ class NeptuneLogger(ILogger):
           `Neptune docs <https://docs.neptune.ai/setup/setting_api_token/>`_.
         project: Optional, ``str``. Name of the project to log runs to.
           It looks like this: "my_workspace/my_project".
-        run: Optional, pass Neptune run object if you want to continue logging
+        run: Optional, pass Neptune run or handler object if you want to continue logging
           to the existing run (resume run).
           Read more about it
           `here <https://docs.neptune.ai/logging/to_existing_object/>`_.
@@ -137,8 +137,10 @@ class NeptuneLogger(ILogger):
             self.run = run
         with contextlib.suppress(ImportError, NameError, AttributeError):
             import catalyst.__version__ as version
-
-            self.run["source_code/integrations/neptune-catalyst"] = version
+            root_obj = self.run
+            if isinstance(self.run, neptune.handler.Handler):
+                root_obj = self.run.get_root_object()
+            root_obj["source_code/integrations/neptune-catalyst"] = version
 
     @property
     def logger(self):
