@@ -7,8 +7,14 @@ from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 
 if SETTINGS.neptune_required:
-    import neptune
-    from neptune.utils import stringify_unsupported
+    try:  # >1.0 package structure
+        import neptune
+        from neptune.utils import stringify_unsupported
+        from neptune.handler import Handler
+    except ImportError:  # <1.0 package structure
+        import neptune.new as neptune
+        from neptune.new.utils import stringify_unsupported
+        from neptune.new.handler import Handler
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
@@ -273,7 +279,10 @@ class NeptuneLogger(ILogger):
 
     def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
-        self.run.wait()
+        root_obj = self.run
+        if isinstance(root_obj, Handler):
+            root_obj = root_obj.get_root_object()
+        root_obj.wait()
 
 
 __all__ = ["NeptuneLogger"]
