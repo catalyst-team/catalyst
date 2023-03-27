@@ -145,7 +145,7 @@ jobs:
 
       - name: Publish Docker to Docker Hub (base)
         if: matrix.catalyst_requirements == "base"
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         env:
           PYTORCH_TAG: "${{ matrix.pytorch }}"
         with:
@@ -157,7 +157,7 @@ jobs:
 
       - name: Publish Docker to Docker Hub ([all])
         if: matrix.catalyst_requirements == "all"
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         env:
           PYTORCH_TAG: "${{ matrix.pytorch }}"
           CATALYST_ALL: "1"
