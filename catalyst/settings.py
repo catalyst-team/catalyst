@@ -155,7 +155,7 @@ def _is_comet_available():
 
 def _is_neptune_available():
     try:
-        import neptune.new as neptune  # noqa: F401
+        import neptune  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -305,7 +305,7 @@ class Settings(FrozenClass):
         self.neptune_required: bool = _get_optional_value(
             neptune_required,
             _is_neptune_available,
-            "neptune is not available, to install it, run `pip install neptune-client`.",
+            "neptune is not available, to install it, run `pip install neptune`.",
         )
         self.wandb_required: bool = _get_optional_value(
             wandb_required,

@@ -7,8 +7,14 @@ from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
 
 if SETTINGS.neptune_required:
-    import neptune.new as neptune
-    from neptune.new.utils import stringify_unsupported
+    try:  # >1.0 package structure
+        import neptune
+        from neptune.utils import stringify_unsupported
+        from neptune.handler import Handler
+    except ImportError:  # <1.0 package structure
+        import neptune.new as neptune
+        from neptune.new.utils import stringify_unsupported
+        from neptune.new.handler import Handler
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
@@ -35,40 +41,40 @@ class NeptuneLogger(ILogger):
     """Neptune logger for parameters, metrics, images and other artifacts (videos, audio,
     model checkpoints, etc.).
 
-    Neptune documentation:
-    https://docs.neptune.ai/integrations/catalyst/
+    To get started with Neptune, see the
+    `Neptune installation steps <https://docs.neptune.ai/setup/installation/>`_
+    because you will need your API token and a project to log your Catalyst runs to.
 
-    When the logger is created, link to the run in Neptune will be printed to stdout.
+    When the logger is created, a link to the Neptune run is printed to stdout.
     It looks like this:
     https://app.neptune.ai/common/catalyst-integration/e/CATALYST-1486
 
-    To start with Neptune please check
-    `Neptune getting-started docs <https://docs.neptune.ai/setup/installation/>`_
-    because you will need an ``api_token`` and a project to log your Catalyst runs to.
+    For details, see the Catalyst integration guide in the
+    `Neptune documentation <https://docs.neptune.ai/integrations/catalyst/>`_
 
     .. note::
-        You can use public api_token ``neptune.ANONYMOUS_API_TOKEN``
-        (you will need to import `neptune.new` to use this) and set project to
+        You can use the public api_token ``neptune.ANONYMOUS_API_TOKEN``
+        (you will need to import `neptune` to use this) and set the project to
         ``common/catalyst-integration`` for testing without registration.
 
     Args:
-        base_namespace: Optional, ``str``, root namespace within Neptune's run.
-          Default is "experiment".
+        base_namespace: Optional, ``str``, root namespace where all the metadata tracked
+            by the logger is stored. The default is "experiment".
         api_token: Optional, ``str``. Your Neptune API token. Read more about it in the
           `Neptune docs <https://docs.neptune.ai/setup/setting_api_token/>`_.
         project: Optional, ``str``. Name of the project to log runs to.
-          It looks like this: "my_workspace/my_project".
-        run: Optional, pass Neptune run object if you want to continue logging
-          to the existing run (resume run).
-          Read more about it
-          `here <https://docs.neptune.ai/logging/to_existing_object/>`_.
+          It looks like this: "workspace-name/project-name".
+        run: Optional, Neptune run object. Read more about resuming a run in the
+          `Neptune docs <https://docs.neptune.ai/logging/to_existing_object/>`_.
+          You can also pass a namespace handler object; for example, ``run["test"]``,
+          in which case all metadata is logged under the "test" namespace inside the run.
         log_batch_metrics: boolean flag to log batch metrics
           (default: SETTINGS.log_batch_metrics or False).
         log_epoch_metrics: boolean flag to log epoch metrics
           (default: SETTINGS.log_epoch_metrics or True).
         neptune_run_kwargs: Optional, additional keyword arguments
           to be passed directly to the
-          `neptune.init_run()  <https://docs.neptune.ai/api/neptune/#init_run>`_
+          `neptune.init_run() <https://docs.neptune.ai/api/neptune/#init_run>`_
           function.
 
     Python API examples:
@@ -137,8 +143,10 @@ class NeptuneLogger(ILogger):
             self.run = run
         with contextlib.suppress(ImportError, NameError, AttributeError):
             import catalyst.__version__ as version
-
-            self.run["source_code/integrations/neptune-catalyst"] = version
+            root_obj = self.run
+            if isinstance(self.run, neptune.handler.Handler):
+                root_obj = self.run.get_root_object()
+            root_obj["source_code/integrations/neptune-catalyst"] = version
 
     @property
     def logger(self):
@@ -147,10 +155,10 @@ class NeptuneLogger(ILogger):
 
     def _log_metrics(self, metrics: Dict[str, float], neptune_path: str, step: int):
         for key, value in metrics.items():
-            self.run[neptune_path][key].log(value=float(value), step=step)
+            self.run[neptune_path][key].append(value=float(value), step=step)
 
     def _log_image(self, image: np.ndarray, neptune_path: str):
-        self.run[neptune_path].log(neptune.types.File.as_image(image))
+        self.run[neptune_path].append(neptune.types.File.as_image(image))
 
     def _log_artifact(self, artifact: object, path_to_artifact: str, neptune_path: str):
         if artifact is not None:
@@ -271,7 +279,10 @@ class NeptuneLogger(ILogger):
 
     def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
-        self.run.wait()
+        root_obj = self.run
+        if isinstance(root_obj, Handler):
+            root_obj = root_obj.get_root_object()
+        root_obj.wait()
 
 
 __all__ = ["NeptuneLogger"]
