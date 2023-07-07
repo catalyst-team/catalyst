@@ -343,9 +343,10 @@ class Runner(IRunner):
             .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
 
         """
+        mixed_precision = 'fp16' if fp16 else 'no'
         # experiment setup
         self._engine = (
-            engine or self.engine or get_available_engine(cpu=cpu, fp16=fp16, ddp=ddp)
+            engine or self.engine or get_available_engine(cpu=cpu, mixed_precision=mixed_precision, ddp=ddp)
         )
         # self._trial = trial
         self._loggers = loggers
@@ -428,7 +429,8 @@ class Runner(IRunner):
 
             .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples  # noqa: E501, W505
         """
-        self.engine = engine or get_available_engine(cpu=cpu, fp16=fp16)
+        mixed_precision = 'fp16' if fp16 else 'no'
+        self.engine = engine or get_available_engine(cpu=cpu, mixed_precision=mixed_precision)
 
         if model is not None:
             self.model = model

@@ -90,7 +90,7 @@ def get_device() -> torch.device:
 
 def get_available_engine(
     cpu: bool = False,
-    fp16: bool = False,
+    mixed_precision: str = 'no',
     ddp: bool = False,
 ) -> "Engine":
     """Returns available engine based on given arguments.
@@ -98,7 +98,7 @@ def get_available_engine(
     Args:
         cpu (bool): option to use cpu for training. Default is `False`.
         ddp (bool): option to use DDP for training. Default is `False`.
-        fp16 (bool): option to use APEX for training. Default is `False`.
+        mixed_precision (str): whether or not to use mixed precision training. Default is `no`.
 
     Returns:
         Engine which match requirements.
@@ -120,11 +120,11 @@ def get_available_engine(
     is_multiple_gpus = torch.cuda.device_count() > 1
     if is_multiple_gpus:
         if ddp:
-            return DistributedDataParallelEngine(fp16=fp16)
+            return DistributedDataParallelEngine(mixed_precision=mixed_precision)
         else:
-            return DataParallelEngine(fp16=fp16)
+            return DataParallelEngine(mixed_precision=mixed_precision)
     else:
-        return GPUEngine(fp16=fp16)
+        return GPUEngine(mixed_precision=mixed_precision)
 
 
 def get_available_gpus():
