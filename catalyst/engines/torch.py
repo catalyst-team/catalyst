@@ -40,10 +40,10 @@ class DataParallelEngine(Engine):
         """Init."""
         super().__init__(*args, cpu=False, **kwargs)
 
-    def prepare_model(self, model):
+    def prepare_model(self, model, device_placement, evaluation_mode):
         """Overrides."""
         model = torch.nn.DataParallel(model)
-        model = super().prepare_model(model)
+        model = super().prepare_model(model, device_placement, evaluation_mode)
         return model
 
 
