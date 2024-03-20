@@ -7,7 +7,7 @@ docutils==0.17.1
 # git+https://github.com/readthedocs/sphinx_rtd_theme
 mock==3.0.5
 catalyst-codestyle==21.09.2
-black==21.8b0
+black==24.3.0
 click<=8.0.4
 catalyst-sphinx-theme==1.2.0
 tomlkit==0.7.2
