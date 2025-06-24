@@ -155,7 +155,7 @@ def _is_comet_available():
 
 def _is_neptune_available():
     try:
-        import neptune.new as neptune  # noqa: F401
+        import neptune  # noqa: F401
 
         return True
     except ModuleNotFoundError:
