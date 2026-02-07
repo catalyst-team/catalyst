@@ -125,7 +125,7 @@ class BatchBalanceClassSampler(Sampler):
 
     One of the purposes of this sampler is to be used for
     forming triplets and pos/neg pairs inside the batch.
-    To guarante existance of these pairs in the batch,
+    To guarantee existence of these pairs in the batch,
     `num_classes` and `num_samples` should be > 1. (1)
 
     This type of sampling can be found in the classical paper of Person Re-Id,

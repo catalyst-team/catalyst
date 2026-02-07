@@ -36,7 +36,7 @@ class BalanceBatchSampler(Sampler):
 
     One of the purposes of this sampler is to be used for
     forming triplets and pos/neg pairs inside the batch.
-    To guarante existance of these pairs in the batch,
+    To guarantee existence of these pairs in the batch,
     P and K should be > 1. (1)
 
     Behavior in corner cases:
