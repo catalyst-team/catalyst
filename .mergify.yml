@@ -24,11 +24,6 @@ pull_request_rules:
   #       method: squash
 
   # deletes the head branch of the pull request, that is the branch which hosts the commits
-  - name: delete head branch after merge
-    conditions:
-      - merged
-    actions:
-      delete_head_branch: {}
 
   # ask author of PR to resolve conflict
   - name: ask to resolve conflict
